@@ -1,8 +1,8 @@
 import hashlib
 import json
 import re
-from typing import List, Dict, Tuple, Optional
 import unicodedata
+from typing import List, Dict, Tuple, Optional
 
 
 class ZipperEngine:
@@ -11,7 +11,8 @@ class ZipperEngine:
             self.profile = json.load(f)
 
         self.id = self.profile.get('id', 'unknown')
-        self.name = self.profile.get('name', 'Unknown')
+        self.lineage_group = self.profile.get('lineage_group', 'generic')
+        self.evolution_stage = self.profile.get('evolution_stage', 'modern')
         self.bases = self.profile.get('bases', [])
         self.fusion_weights = self.profile.get('fusion_weights', [0.5, 0.5])
         self.fusion_rules = self.profile.get('fusion_rules', {})
@@ -26,331 +27,284 @@ class ZipperEngine:
         if total > 0:
             self.fusion_weights = [w / total for w in self.fusion_weights]
 
+    def _get_deterministic_hash(self, input_str: str, salt: str = "") -> int:
+        combined = f"{input_str.lower()}_{salt}_{self.lineage_group}_{self.global_seed}"
+        return int(hashlib.sha256(combined.encode()).hexdigest(), 16)
+
     def process_texts(self, base_texts: List[str]) -> str:
         if len(base_texts) != len(self.bases):
-            raise ValueError(
-                f"Expected {len(self.bases)} base texts, got {len(base_texts)}")
+            raise ValueError(f"Expected {len(self.bases)} base texts")
 
-        normalized_texts = [self._normalize_text(text) for text in base_texts]
-        word_groups = self._align_word_groups(normalized_texts)
+        base_lines = [text.splitlines() for text in base_texts]
+        max_lines = max(len(lines) for lines in base_lines)
 
-        result_words = []
-        for group in word_groups:
-            anchor_word = group[0] if group and group[0] else ""
+        final_lines = []
+        for i in range(max_lines):
+            current_line_set = [base_lines[j][i] if i < len(
+                base_lines[j]) else "" for j in range(len(self.bases))]
 
-            prefix = ""
-            suffix = ""
+            if not any(current_line_set):
+                final_lines.append("")
+                continue
 
-            if anchor_word:
-                m_start = re.match(r"^([^\w]*)", anchor_word)
-                if m_start:
-                    prefix = m_start.group(1)
+            normalized_line_set = [self._normalize_text(
+                line) for line in current_line_set]
+            word_lists = [line.split() for line in normalized_line_set]
+            max_words = max(len(wl) for wl in word_lists)
 
-                m_end = re.search(r"([^\w]*)$", anchor_word)
-                if m_end:
-                    suffix = m_end.group(1)
+            line_tokens = []
+            for k in range(max_words):
+                group = [wl[k] if k < len(wl) else "" for wl in word_lists]
+                anchor_word = group[0] if group[0] else (
+                    group[1] if len(group) > 1 else "")
 
-            clean_group = []
-            for word in group:
-                clean_word = re.sub(r"^[^\w]*|[^\w]*$", "", word)
-                clean_group.append(clean_word)
+                prefix, suffix = self._extract_punctuation(anchor_word)
+                clean_group = [re.sub(r"^[^\w]*|[^\w]*$", "", word)
+                               for word in group]
 
-            fused_word = self._fuse_word_group(clean_group)
+                shared_root = self._generate_shared_root(clean_group)
+                evolved_word = self._apply_diachronic_drift(
+                    shared_root, clean_group)
 
-            if fused_word:
-                result_words.append(f"{prefix}{fused_word}{suffix}")
-            elif prefix or suffix:
-                result_words.append(f"{prefix}{suffix}")
+                if evolved_word:
+                    is_caps = anchor_word and anchor_word[0].isupper()
+                    processed_word = evolved_word.capitalize() if is_caps else evolved_word
 
-        result_text = ' '.join(result_words)
-        result_text = self._apply_orthography(result_text)
-        result_text = self._apply_capitalization(result_text, base_texts[0])
+                    line_tokens.append({
+                        "word": processed_word,
+                        "prefix": prefix,
+                        "suffix": suffix,
+                        "original": clean_group
+                    })
 
-        return result_text
+            line_tokens = self._apply_agglutination_logic(line_tokens)
+
+            processed_words = []
+            for token in line_tokens:
+                w = self._apply_orthography(token["word"])
+                processed_words.append(
+                    f"{token['prefix']}{w}{token['suffix']}")
+
+            final_lines.append(" ".join(processed_words))
+
+        return "\n".join(final_lines)
+
+    def _extract_punctuation(self, word: str) -> Tuple[str, str]:
+        prefix = ""
+        suffix = ""
+        if word:
+            m_start = re.match(r"^([^\w]*)", word)
+            if m_start:
+                prefix = m_start.group(1)
+            m_end = re.search(r"([^\w]*)$", word)
+            if m_end:
+                suffix = m_end.group(1)
+        return prefix, suffix
 
     def _normalize_text(self, text: str) -> str:
         text = text.strip()
         if not self.fusion_rules.get('preserve_accents', False):
-            text = self._remove_accents(text)
+            nfd = unicodedata.normalize('NFD', text)
+            text = ''.join(
+                char for char in nfd if unicodedata.category(char) != 'Mn')
         return text
 
-    def _remove_accents(self, text: str) -> str:
-        nfd = unicodedata.normalize('NFD', text)
-        return ''.join(char for char in nfd if unicodedata.category(char) != 'Mn')
-
-    def _align_word_groups(self, texts: List[str]) -> List[List[str]]:
-        word_lists = [text.split() for text in texts]
-        if not word_lists or not any(word_lists):
-            return []
-
-        max_len = max(len(wl) for wl in word_lists)
-
-        aligned_groups = []
-        for i in range(max_len):
-            group = []
-            for word_list in word_lists:
-                if word_list:
-                    group.append(word_list[i % len(word_list)])
-                else:
-                    group.append('')
-            aligned_groups.append(group)
-
-        return aligned_groups
-
-    def _fuse_word_group(self, word_group: List[str]) -> str:
+    def _generate_shared_root(self, word_group: List[str]) -> str:
         valid_words = [w for w in word_group if w]
         if not valid_words:
-            return ''
+            return ""
 
-        seed_str = '|'.join(word_group) + f'|{self.id}|{self.global_seed}'
-        seed_hash = int(hashlib.sha256(seed_str.encode()).hexdigest(), 16)
+        if self.fusion_rules.get('prefer_cognates', True):
+            lowered = [w.lower() for w in valid_words]
+            if len(set(lowered)) == 1:
+                return lowered[0]
 
-        syllable_groups = [self._syllabify(word) for word in valid_words]
+        root_seed = self._get_deterministic_hash("|".join(word_group))
+        syllable_pools = [self._syllabify(w) for w in valid_words]
+        max_syl = max(len(p) for p in syllable_pools)
 
-        target_len = self.fusion_rules.get('max_syllables', 0)
-
-        max_syllables = max(len(sg) for sg in syllable_groups)
-
-        result_syllables = []
-        for syl_idx in range(max_syllables):
-            available_syllables = []
-            source_indices = []
-
-            for src_idx, syl_group in enumerate(syllable_groups):
-                if syl_idx < len(syl_group):
-                    available_syllables.append(syl_group[syl_idx])
-                    source_indices.append(src_idx)
-
-            if not available_syllables:
+        root_syllables = []
+        for s_idx in range(max_syl):
+            candidates = []
+            for p in syllable_pools:
+                if s_idx < len(p):
+                    candidates.append(p[s_idx])
+            if not candidates:
                 continue
+            syl_hash = (root_seed + s_idx) % (2**32)
+            root_syllables.append(self._blend_syllables(candidates, syl_hash))
 
-            position_seed = (seed_hash + syl_idx * 7919) % (2**32)
-            chosen_idx = position_seed % len(available_syllables)
-            source_lang_idx = source_indices[chosen_idx]
+        return "".join(root_syllables)
 
-            weight = self.fusion_weights[source_lang_idx] if source_lang_idx < len(
-                self.fusion_weights) else 0.5
+    def _apply_diachronic_drift(self, root: str, original_group: List[str]) -> str:
+        if not root:
+            return ""
+        drift_seed = self._get_deterministic_hash(root, self.id)
+        result = root.lower()
+        vowels = self.phonotactics.get('vowels', 'aeiou')
 
-            if weight > 0.5:
-                chosen_syl = available_syllables[chosen_idx]
-            else:
-                blend_syl = self._blend_syllables(
-                    available_syllables, position_seed)
-                chosen_syl = blend_syl
+        if self.evolution_stage == "archaic":
+            if self.orthography.get('gemination_rules', False):
+                if drift_seed % 100 < 40:
+                    result = re.sub(
+                        r'([bcdfghjklmnpqrstvwxyz])', r'\1\1', result, count=1)
+            if drift_seed % 100 < 30:
+                result = re.sub(r'([aeiou])', r'\1\1', result, count=1)
+            suffixes = self.orthography.get('archaic_suffixes', [])
+            if suffixes and len(result) > 3 and result[-1] not in vowels:
+                result += suffixes[drift_seed % len(suffixes)]
+        elif self.evolution_stage == "modern":
+            result = re.sub(r'(.)\1+', r'\1', result)
+            if len(result) > 4 and result[-1] in vowels:
+                if drift_seed % 100 < 25:
+                    result = result[:-1]
+            result = result.replace('th', 't').replace(
+                'ph', 'f').replace('qu', 'k')
 
-            result_syllables.append(chosen_syl)
-
-        if target_len > 0 and len(result_syllables) > target_len:
-            keep_start = 1
-            keep_end = 1
-            mid_needed = target_len - (keep_start + keep_end)
-
-            if mid_needed > 0:
-                mid_idx = len(result_syllables) // 2
-                start_mid = mid_idx - (mid_needed // 2)
-                result_syllables = result_syllables[:keep_start] + \
-                    result_syllables[start_mid:start_mid + mid_needed] + \
-                    result_syllables[-keep_end:]
-            else:
-                result_syllables = result_syllables[:keep_start] + \
-                    result_syllables[-keep_end:]
-
-        fused_word = ''.join(result_syllables)
-        fused_word = self._apply_phonotactics(fused_word, seed_hash)
-
-        return fused_word
+        result = self._apply_phonotactics(result, drift_seed)
+        return result
 
     def _syllabify(self, word: str) -> List[str]:
         if not word:
             return []
-
         word = word.lower()
-        vowels = set('aeiouàâäãåæèéêëìíîïòóôöõøùúûüýÿœ')
-
+        v_list = self.phonotactics.get('vowels', 'aeiouyäëïöüáéíóúàèìòù')
+        d_list = self.phonotactics.get('diphthongs', [])
         syllables = []
-        current_syl = ''
-
+        curr = ""
         i = 0
         while i < len(word):
-            char = word[i]
-            current_syl += char
-
-            if char in vowels:
-                if i + 1 < len(word) and word[i + 1] in vowels:
-                    current_syl += word[i + 1]
-                    i += 1
-
-                if i + 1 < len(word) and word[i + 1] not in vowels:
-                    consonant_cluster = ''
-                    j = i + 1
-                    while j < len(word) and word[j] not in vowels:
-                        consonant_cluster += word[j]
+            is_d = i + 1 < len(word) and word[i:i+2] in d_list
+            part = word[i:i+2] if is_d else word[i]
+            curr += part
+            is_vowel_part = any(v in part for v in v_list)
+            if is_vowel_part:
+                next_i = i + 2 if is_d else i + 1
+                if next_i < len(word):
+                    j = next_i
+                    cluster = ""
+                    while j < len(word) and not any(v in word[j] for v in v_list):
+                        cluster += word[j]
                         j += 1
-
-                    if len(consonant_cluster) > 1:
-                        split_point = len(consonant_cluster) // 2
-                        current_syl += consonant_cluster[:split_point]
-                        syllables.append(current_syl)
-                        current_syl = consonant_cluster[split_point:]
-                        i = j - len(consonant_cluster) + split_point
-                    else:
-                        current_syl += consonant_cluster
-                        syllables.append(current_syl)
-                        current_syl = ''
-                        i = j
-                    continue
+                    if j < len(word):
+                        if len(cluster) > 1:
+                            mid = len(cluster) // 2
+                            curr += cluster[:mid]
+                            syllables.append(curr)
+                            curr = cluster[mid:]
+                        else:
+                            syllables.append(curr)
+                            curr = cluster
+                        i = j - 1
                 else:
-                    syllables.append(current_syl)
-                    current_syl = ''
-
-            i += 1
-
-        if current_syl:
+                    syllables.append(curr)
+                    curr = ""
+            i += 2 if is_d else 1
+        if curr:
             if syllables:
-                syllables[-1] += current_syl
+                syllables[-1] += curr
             else:
-                syllables.append(current_syl)
+                syllables.append(curr)
+        return syllables
 
-        return syllables if syllables else [word]
-
-    def _blend_syllables(self, syllables: List[str], seed: int) -> str:
-        if not syllables:
-            return ''
-        if len(syllables) == 1:
-            return syllables[0]
-
-        choice = seed % 4
-
-        if choice == 0:
-            onset = self._extract_onset(syllables[0])
-            nucleus = self._extract_nucleus(syllables[1])
-            coda = self._extract_coda(syllables[0])
-            return onset + nucleus + coda
-        elif choice == 1:
-            onset = self._extract_onset(syllables[1])
-            nucleus = self._extract_nucleus(syllables[0])
-            coda = self._extract_coda(syllables[1])
-            return onset + nucleus + coda
-        elif choice == 2:
-            mid = len(syllables[0]) // 2
-            return syllables[0][:mid] + syllables[1][mid:]
+    def _blend_syllables(self, options: List[str], seed: int) -> str:
+        if not options:
+            return ""
+        if len(options) == 1:
+            return options[0]
+        weight_pivot = (seed % 100) / 100.0
+        if weight_pivot < self.fusion_weights[0]:
+            base, alt = options[0], (options[1] if len(
+                options) > 1 else options[0])
         else:
-            return syllables[seed % len(syllables)]
+            base, alt = (options[1] if len(options) >
+                         1 else options[0]), options[0]
+        mode = (seed >> 8) % 3
+        if mode == 0:
+            return base
+        return self._get_onset(base) + self._get_nucleus(alt) + self._get_coda(base)
 
-    def _extract_onset(self, syllable: str) -> str:
-        vowels = set('aeiouàâäãåæèéêëìíîïòóôöõøùúûüýÿœ')
-        onset = ''
-        for char in syllable:
-            if char.lower() not in vowels:
-                onset += char
+    def _get_onset(self, syl: str) -> str:
+        v = self.phonotactics.get('vowels', 'aeiouyäëïöüáéíóúàèìòù')
+        res = ""
+        for c in syl:
+            if c not in v:
+                res += c
             else:
                 break
-        return onset
+        return res
 
-    def _extract_nucleus(self, syllable: str) -> str:
-        vowels = set('aeiouàâäãåæèéêëìíîïòóôöõøùúûüýÿœ')
-        onset_end = 0
-        for i, char in enumerate(syllable):
-            if char.lower() in vowels:
-                onset_end = i
+    def _get_nucleus(self, syl: str) -> str:
+        v = self.phonotactics.get('vowels', 'aeiouyäëïöüáéíóúàèìòù')
+        res = ""
+        found = False
+        for c in syl:
+            if c in v:
+                res += c
+                found = True
+            elif found:
                 break
+        return res if res else "e"
 
-        nucleus = ''
-        for i in range(onset_end, len(syllable)):
-            if syllable[i].lower() in vowels:
-                nucleus += syllable[i]
-            else:
-                break
-
-        return nucleus
-
-    def _extract_coda(self, syllable: str) -> str:
-        vowels = set('aeiouàâäãåæèéêëìíîïòóôöõøùúûüýÿœ')
-        coda_start = len(syllable)
-        for i in range(len(syllable) - 1, -1, -1):
-            if syllable[i].lower() not in vowels:
-                coda_start = i
-            else:
-                break
-
-        if coda_start < len(syllable):
-            return syllable[coda_start:]
-        return ''
+    def _get_coda(self, syl: str) -> str:
+        v = self.phonotactics.get('vowels', 'aeiouyäëïöüáéíóúàèìòù')
+        last_v = -1
+        for i in range(len(syl)):
+            if syl[i] in v:
+                last_v = i
+        return syl[last_v+1:] if last_v != -1 else ""
 
     def _apply_phonotactics(self, word: str, seed: int) -> str:
-        vowels = set(self.phonotactics.get(
-            'vowels', 'aeiouàâäãåæèéêëìíîïòóôöõøùúûüýÿœ'))
-        forbidden_finals = self.phonotactics.get(
-            'forbidden_final_consonants', [])
-        max_consonant_cluster = self.phonotactics.get(
-            'max_consonant_cluster', 3)
-        max_vowel_cluster = self.phonotactics.get('max_vowel_cluster', 2)
+        if not word:
+            return ""
+        v_str = self.phonotactics.get('vowels', 'aeiouyäëïöüáéíóúàèìòù')
+        max_c = self.phonotactics.get('max_consonant_cluster', 3)
+        ep_v = self.phonotactics.get('epenthesis_vowel', 'e')
+        pattern = f'([^ {v_str}]{{{max_c + 1},}})'
+        word = re.sub(pattern, lambda m: m.group(
+            1)[:max_c] + ep_v + m.group(1)[max_c:], word)
+        for cluster in self.phonotactics.get('forbidden_initial_clusters', []):
+            if word.startswith(cluster):
+                word = ep_v + word
+        f_bad = self.phonotactics.get('forbidden_final_consonants', [])
+        if word and word[-1] in f_bad:
+            word = word[:-1] + (ep_v if seed % 2 == 0 else "")
+        return word
 
-        if word and word[-1].lower() in forbidden_finals:
-            replacement_vowels = list(vowels)
-            if replacement_vowels:
-                vowel_idx = seed % len(replacement_vowels)
-                word = word[:-1] + replacement_vowels[vowel_idx]
-
-        result = []
-        consonant_count = 0
-        vowel_count = 0
-
-        for char in word:
-            is_vowel = char.lower() in vowels
-
-            if is_vowel:
-                if vowel_count >= max_vowel_cluster:
-                    consonant_count = 1
-                    vowel_count = 0
-                else:
-                    result.append(char)
-                    vowel_count += 1
-                    consonant_count = 0
-            else:
-                if consonant_count >= max_consonant_cluster:
-                    vowel_count = 1
-                    consonant_count = 0
-                else:
-                    result.append(char)
-                    consonant_count += 1
-                    vowel_count = 0
-
-        return ''.join(result)
+    def _apply_agglutination_logic(self, tokens: List[dict]) -> List[dict]:
+        factor = self.fusion_rules.get('agglutination_factor', 0.0)
+        if factor <= 0 or not tokens:
+            return tokens
+        new_tokens = []
+        i = 0
+        while i < len(tokens):
+            curr = tokens[i]
+            if i + 1 < len(tokens):
+                nxt = tokens[i+1]
+                agg_seed = self._get_deterministic_hash(
+                    curr["word"] + nxt["word"], "agg")
+                should_agg = (agg_seed % 1000) < (factor * 1000)
+                if should_agg and not curr["suffix"] and not nxt["prefix"] and len(curr["word"]) < 6:
+                    combined = curr["word"] + nxt["word"].lower()
+                    if self.evolution_stage == "archaic":
+                        combined = re.sub(r'([aeiou])\1+', r'\1\1', combined)
+                    new_tokens.append({
+                        "word": combined,
+                        "prefix": curr["prefix"],
+                        "suffix": nxt["suffix"],
+                        "original": curr["original"] + nxt["original"]
+                    })
+                    i += 2
+                    continue
+            new_tokens.append(curr)
+            i += 1
+        return new_tokens
 
     def _apply_orthography(self, text: str) -> str:
-        long_vowel_map = self.orthography.get('long_vowel_mapping', {})
-        primary_accent = self.orthography.get('primary_accent', '')
-        transform_s_cedilla = self.orthography.get(
-            'transform_s_to_cedilla', False)
-
-        for original, replacement in long_vowel_map.items():
-            pattern = original * 2
-            text = text.replace(pattern, replacement)
-
-        if primary_accent == 'acute':
-            text = text.replace('ä', 'á').replace('ö', 'ó').replace('ü', 'ú')
-        elif primary_accent == 'circumflex':
-            text = text.replace('ä', 'â').replace('ö', 'ô').replace('ü', 'û')
-        elif primary_accent == 'grave':
-            text = text.replace('ä', 'à').replace('ö', 'ò').replace('ü', 'ù')
-
-        if transform_s_cedilla:
-            text = text.replace('s', 'ç')
-
+        mapping = self.orthography.get('long_vowel_mapping', {})
+        sorted_keys = sorted(mapping.keys(), key=len, reverse=True)
+        for k in sorted_keys:
+            text = text.replace(k, mapping[k])
+        if self.orthography.get('transform_s_to_cedilla', False):
+            text = text.replace('s', 'ç').replace('S', 'Ç')
         return text
-
-    def _apply_capitalization(self, result_text: str, reference_text: str) -> str:
-        if not self.fusion_rules.get('preserve_caps', False):
-            return result_text
-
-        result_words = result_text.split()
-        reference_words = reference_text.split()
-
-        for i in range(min(len(result_words), len(reference_words))):
-            if reference_words[i] and reference_words[i][0].isupper():
-                if result_words[i]:
-                    result_words[i] = result_words[i][0].upper() + \
-                        result_words[i][1:]
-
-        return ' '.join(result_words)
