@@ -5,7 +5,7 @@
   "evolution_stage": "modern",
   "description": "Língua mista entre Francês e Bretão, mantendo a tonalidade suave do francês com influências célticas bretãs. Não é aglutinante e pertence ao grupo Western Alio-Raabian.",
   "bases": ["fr", "br"],
-  "fusion_weights": [0.7, 0.3],
+  "fusion_weights": [0.95, 0.05],
   "fusion_rules": {
     "min_cut_point": 0.5,
     "max_syllables": 0,
