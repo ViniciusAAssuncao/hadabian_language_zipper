@@ -1,0 +1,56 @@
+{
+  "id": "cauterian",
+  "name": "Cauteriano",
+  "lineage_group": "western_alio_raabian",
+  "evolution_stage": "modern",
+  "description": "Língua mista entre Francês e Bretão, mantendo a tonalidade suave do francês com influências célticas bretãs. Não é aglutinante e pertence ao grupo Western Alio-Raabian.",
+  "bases": ["fr", "br"],
+  "fusion_weights": [0.95, 0.05],
+  "fusion_rules": {
+    "min_cut_point": 0.5,
+    "max_syllables": 0,
+    "preserve_caps": true,
+    "preserve_accents": true,
+    "contraction_handling": "separate",
+    "prefer_cognates": true,
+    "shared_base_strength": 0.75,
+    "agglutination_factor": 0.0,
+    "morpheme_retention": 0.4
+  },
+  "phonotactics": {
+    "vowels": "aeiouyàâäèéêëìíîïòóôöùúûüœæ",
+    "diphthongs": [
+      "ai",
+      "ei",
+      "oi",
+      "ui",
+      "au",
+      "eu",
+      "ou",
+      "ie",
+      "ue",
+      "œu",
+      "æu"
+    ],
+    "forbidden_final_consonants": ["h", "w", "x", "z"],
+    "forbidden_initial_clusters": ["tl", "dl", "rb", "km"],
+    "max_consonant_cluster": 3,
+    "max_vowel_cluster": 2,
+    "epenthesis_vowel": "e"
+  },
+  "orthography": {
+    "long_vowel_mapping": {
+      "aa": "â",
+      "ee": "é",
+      "ii": "î",
+      "oo": "ô",
+      "uu": "û",
+      "ae": "æ",
+      "oe": "œ"
+    },
+    "primary_accent": "circumflex",
+    "transform_s_to_cedilla": true
+  },
+  "semantic_general": "formal",
+  "global_seed": 84216
+}

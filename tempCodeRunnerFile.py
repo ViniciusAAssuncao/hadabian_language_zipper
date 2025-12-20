@@ -121,24 +121,16 @@ class ZipperEngine:
 
         root_seed = self._get_deterministic_hash("|".join(word_group))
         syllable_pools = [self._syllabify(w) for w in valid_words]
+        max_syl = max(len(p) for p in syllable_pools)
 
-        target_len = 0
-        for idx, weight in enumerate(self.fusion_weights):
-            if idx < len(syllable_pools):
-                target_len += len(syllable_pools[idx]) * weight
-
-        max_syl = int(round(target_len)) if target_len > 0 else 1
         root_syllables = []
-
         for s_idx in range(max_syl):
             candidates = []
             for p in syllable_pools:
-                if p:
-                    candidates.append(p[s_idx % len(p)])
-
+                if s_idx < len(p):
+                    candidates.append(p[s_idx])
             if not candidates:
                 continue
-
             syl_hash = (root_seed + s_idx) % (2**32)
             root_syllables.append(self._blend_syllables(candidates, syl_hash))
 
@@ -166,12 +158,8 @@ class ZipperEngine:
             if len(result) > 4 and result[-1] in vowels:
                 if drift_seed % 100 < 25:
                     result = result[:-1]
-
             result = result.replace('th', 't').replace(
                 'ph', 'f').replace('qu', 'k')
-
-            result = re.sub(
-                f'([{vowels}])([{vowels}])([{vowels}]+)', r'\1\2', result)
 
         result = self._apply_phonotactics(result, drift_seed)
         return result
@@ -224,36 +212,17 @@ class ZipperEngine:
             return ""
         if len(options) == 1:
             return options[0]
-
-        weights = self.fusion_weights
-        if len(weights) < len(options):
-            weights = weights + [0.5] * (len(options) - len(weights))
-
-        pivot = (seed % 1000) / 1000.0
-
-        primary_idx = 0
-        acc = 0
-        for i, w in enumerate(weights):
-            acc += w
-            if pivot <= acc:
-                primary_idx = i
-                break
-
-        secondary_idx = (primary_idx + 1) % len(options)
-
-        base = options[primary_idx]
-        alt = options[secondary_idx]
-
-        morpheme_retention = self.fusion_rules.get('morpheme_retention', 0.5)
-
-        if (seed >> 4) % 100 < (morpheme_retention * 100):
+        weight_pivot = (seed % 100) / 100.0
+        if weight_pivot < self.fusion_weights[0]:
+            base, alt = options[0], (options[1] if len(
+                options) > 1 else options[0])
+        else:
+            base, alt = (options[1] if len(options) >
+                         1 else options[0]), options[0]
+        mode = (seed >> 8) % 3
+        if mode == 0:
             return base
-
-        onset = self._get_onset(base)
-        nucleus = self._get_nucleus(alt if (seed % 2 == 0) else base)
-        coda = self._get_coda(base if (seed % 3 == 0) else alt)
-
-        return onset + nucleus + coda
+        return self._get_onset(base) + self._get_nucleus(alt) + self._get_coda(base)
 
     def _get_onset(self, syl: str) -> str:
         v = self.phonotactics.get('vowels', 'aeiouyäëïöüáéíóúàèìòù')
@@ -291,22 +260,15 @@ class ZipperEngine:
         v_str = self.phonotactics.get('vowels', 'aeiouyäëïöüáéíóúàèìòù')
         max_c = self.phonotactics.get('max_consonant_cluster', 3)
         ep_v = self.phonotactics.get('epenthesis_vowel', 'e')
-
         pattern = f'([^ {v_str}]{{{max_c + 1},}})'
         word = re.sub(pattern, lambda m: m.group(
             1)[:max_c] + ep_v + m.group(1)[max_c:], word)
-
         for cluster in self.phonotactics.get('forbidden_initial_clusters', []):
             if word.startswith(cluster):
                 word = ep_v + word
-
         f_bad = self.phonotactics.get('forbidden_final_consonants', [])
         if word and word[-1] in f_bad:
-            if seed % 2 == 0:
-                word = word[:-1] + ep_v
-            else:
-                word = word[:-1]
-
+            word = word[:-1] + (ep_v if seed % 2 == 0 else "")
         return word
 
     def _apply_agglutination_logic(self, tokens: List[dict]) -> List[dict]:

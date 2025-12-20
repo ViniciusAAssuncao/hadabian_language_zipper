@@ -1,0 +1,46 @@
+{
+  "id": "high_north_corimian",
+  "name": "Alto Corimês do Norte",
+  "lineage_group": "north_aendurian",
+  "evolution_stage": "archaic",
+  "description": "A língua matriz de Aendur Setentrional. Caracteriza-se por uma aglutinação extrema, casos gramaticais fundidos e uma fonotática densa que exige precisão articulatória.",
+  "bases": ["af", "es"],
+  "fusion_weights": [1.0, 0.0],
+  "fusion_rules": {
+    "min_cut_point": 0.3,
+    "max_syllables": 5,
+    "preserve_caps": true,
+    "preserve_accents": true,
+    "contraction_handling": "separate",
+    "prefer_cognates": false,
+    "shared_base_strength": 1.0,
+    "agglutination_factor": 0.98,
+    "morpheme_retention": 1.0
+  },
+  "phonotactics": {
+    "vowels": "aeiouyäëïöüáéíóúàèìòù",
+    "diphthongs": ["ie", "ei", "ai", "oi", "ui", "au", "eu", "ou", "ua", "uo"],
+    "forbidden_final_consonants": ["h"],
+    "forbidden_initial_clusters": [],
+    "max_consonant_cluster": 4,
+    "max_vowel_cluster": 3,
+    "epenthesis_vowel": "i"
+  },
+  "orthography": {
+    "long_vowel_mapping": {
+      "aa": "ā",
+      "ee": "ē",
+      "ii": "ī",
+      "oo": "ō",
+      "uu": "ū",
+      "yy": "ŷ",
+      "ae": "æ",
+      "oe": "ø"
+    },
+    "primary_accent": "diaeresis",
+    "transform_s_to_cedilla": false,
+    "archaic_suffixes": ["k", "tz", "arra", "en", "eko", "tar"],
+    "gemination_rules": true
+  },
+  "global_seed": 73194
+}
