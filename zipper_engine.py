@@ -3,10 +3,17 @@ import json
 import re
 import unicodedata
 from typing import List, Dict, Tuple, Optional
+from pathlib import Path
+
+from translation_cache import TranslationCache, MorphemeCache, ContextualMemory
+from morphology_analyzer import MorphologyAnalyzer, ConsistencyValidator, WordQualityScorer
+from learning_system import LearningSystem, ConvergenceEngine, AdaptiveWeightSystem
+from context_engine import SemanticContextEngine, ContextualTranslator, PhraseAnalyzer
 
 
 class ZipperEngine:
-    def __init__(self, profile_path: str):
+    def __init__(self, profile_path: str, enable_learning: bool = True,
+                 enable_caching: bool = True, enable_context: bool = True):
         with open(profile_path, 'r', encoding='utf-8') as f:
             self.profile = json.load(f)
 
@@ -19,6 +26,32 @@ class ZipperEngine:
         self.phonotactics = self.profile.get('phonotactics', {})
         self.orthography = self.profile.get('orthography', {})
         self.global_seed = self.profile.get('global_seed', 12345)
+
+        self.enable_learning = enable_learning
+        self.enable_caching = enable_caching
+        self.enable_context = enable_context
+
+        vowel_str = self.phonotactics.get('vowels', 'aeiou')
+        self.morphology_analyzer = MorphologyAnalyzer(vowel_str)
+        self.consistency_validator = ConsistencyValidator()
+        self.word_quality_scorer = WordQualityScorer(self.morphology_analyzer)
+
+        if self.enable_caching:
+            self.translation_cache = TranslationCache(self.id)
+            self.morpheme_cache = MorphemeCache(self.id)
+            self.contextual_memory = ContextualMemory(self.id)
+
+        if self.enable_learning:
+            self.learning_system = LearningSystem(self.id)
+            self.convergence_engine = ConvergenceEngine(self.id)
+            self.adaptive_weights = AdaptiveWeightSystem(
+                self.fusion_weights.copy())
+
+        if self.enable_context:
+            self.semantic_engine = SemanticContextEngine(self.id)
+            self.contextual_translator = ContextualTranslator(
+                self.semantic_engine)
+            self.phrase_analyzer = PhraseAnalyzer()
 
         self._normalize_weights()
 
@@ -47,6 +80,10 @@ class ZipperEngine:
                 final_lines.append("")
                 continue
 
+            if self.enable_context:
+                full_line = ' '.join(current_line_set)
+                self.semantic_engine.extract_collocations(full_line)
+
             normalized_line_set = [self._normalize_text(
                 line) for line in current_line_set]
             word_lists = [line.split() for line in normalized_line_set]
@@ -55,6 +92,26 @@ class ZipperEngine:
             line_tokens = []
             for k in range(max_words):
                 group = [wl[k] if k < len(wl) else "" for wl in word_lists]
+
+                if self.enable_caching:
+                    cached_translation = self.translation_cache.get_translation(
+                        group)
+                    if cached_translation:
+                        anchor_word = group[0] if group[0] else group[1] if len(
+                            group) > 1 else ""
+                        prefix, suffix = self._extract_punctuation(anchor_word)
+                        is_caps = anchor_word and anchor_word[0].isupper()
+                        processed_word = cached_translation.capitalize() if is_caps else cached_translation
+
+                        line_tokens.append({
+                            "word": processed_word,
+                            "prefix": prefix,
+                            "suffix": suffix,
+                            "original": group,
+                            "from_cache": True
+                        })
+                        continue
+
                 anchor_word = group[0] if group[0] else (
                     group[1] if len(group) > 1 else "")
 
@@ -68,13 +125,71 @@ class ZipperEngine:
 
                 if evolved_word:
                     is_caps = anchor_word and anchor_word[0].isupper()
+
+                    if self.morphology_analyzer.detect_stacking(evolved_word):
+                        evolved_word = self.morphology_analyzer.fix_stacking(
+                            evolved_word)
+
+                    evolved_word = self.morphology_analyzer.fix_reduplication(
+                        evolved_word)
+
+                    if not self.morphology_analyzer.is_valid_word_structure(
+                        evolved_word,
+                        self.phonotactics.get('max_consonant_cluster', 3),
+                        self.phonotactics.get('max_vowel_cluster', 2)
+                    ):
+                        evolved_word = self.morphology_analyzer.repair_word_structure(
+                            evolved_word,
+                            self.phonotactics.get('epenthesis_vowel', 'e'),
+                            self.phonotactics.get('max_consonant_cluster', 3)
+                        )
+
+                    quality_score = self.word_quality_scorer.score_word(
+                        evolved_word, clean_group)
+
+                    if self.enable_learning and quality_score > 0.3:
+                        self.learning_system.record_generation_attempt(
+                            clean_group, evolved_word, quality_score, False
+                        )
+
+                    if self.enable_caching:
+                        is_valid, previous = self.consistency_validator.validate_translation(
+                            '|'.join(clean_group), evolved_word
+                        )
+
+                        if not is_valid and previous:
+                            if self.enable_learning:
+                                confidence = self.learning_system.get_confidence_for_pattern(
+                                    clean_group)
+                                if confidence > 0.7:
+                                    evolved_word = previous
+
+                        self.translation_cache.set_translation(
+                            clean_group, evolved_word)
+                        self.consistency_validator.record_translation(
+                            '|'.join(clean_group), evolved_word)
+
+                    if self.enable_learning:
+                        cache_key = '|'.join(clean_group)
+                        self.convergence_engine.record_translation(
+                            cache_key, evolved_word)
+
+                        converged, preferred = self.convergence_engine.check_convergence(
+                            cache_key)
+                        if converged and preferred:
+                            evolved_word = preferred
+                            if self.enable_caching:
+                                self.translation_cache.merge_variations(
+                                    clean_group, preferred)
+
                     processed_word = evolved_word.capitalize() if is_caps else evolved_word
 
                     line_tokens.append({
                         "word": processed_word,
                         "prefix": prefix,
                         "suffix": suffix,
-                        "original": clean_group
+                        "original": clean_group,
+                        "from_cache": False
                     })
 
             line_tokens = self._apply_agglutination_logic(line_tokens)
@@ -86,6 +201,17 @@ class ZipperEngine:
                     f"{token['prefix']}{w}{token['suffix']}")
 
             final_lines.append(" ".join(processed_words))
+
+        if self.enable_caching:
+            self.translation_cache.save_cache()
+            self.morpheme_cache.save_morphemes()
+            self.contextual_memory.save_memory()
+
+        if self.enable_learning:
+            self.learning_system.save_learning_data()
+
+        if self.enable_context:
+            self.semantic_engine.save_context_data()
 
         return "\n".join(final_lines)
 
@@ -119,15 +245,30 @@ class ZipperEngine:
             if len(set(lowered)) == 1:
                 return lowered[0]
 
+        if self.enable_caching:
+            cached_root = self.morpheme_cache.get_root('|'.join(valid_words))
+            if cached_root:
+                return cached_root
+
         root_seed = self._get_deterministic_hash("|".join(word_group))
-        syllable_pools = [self._syllabify(w) for w in valid_words]
+
+        syllable_pools = []
+        for word in valid_words:
+            syllables = self.morphology_analyzer.extract_syllables_advanced(
+                word,
+                self.phonotactics.get('diphthongs', [])
+            )
+            syllable_pools.append(syllables)
+
+        if not any(syllable_pools):
+            return ""
 
         target_len = 0
         for idx, weight in enumerate(self.fusion_weights):
-            if idx < len(syllable_pools):
+            if idx < len(syllable_pools) and syllable_pools[idx]:
                 target_len += len(syllable_pools[idx]) * weight
 
-        max_syl = int(round(target_len)) if target_len > 0 else 1
+        max_syl = max(1, int(round(target_len)))
         root_syllables = []
 
         for s_idx in range(max_syl):
@@ -140,9 +281,15 @@ class ZipperEngine:
                 continue
 
             syl_hash = (root_seed + s_idx) % (2**32)
-            root_syllables.append(self._blend_syllables(candidates, syl_hash))
+            blended = self._blend_syllables(candidates, syl_hash)
+            root_syllables.append(blended)
 
-        return "".join(root_syllables)
+        result = "".join(root_syllables)
+
+        if self.enable_caching and result:
+            self.morpheme_cache.add_root('|'.join(valid_words), result)
+
+        return result
 
     def _apply_diachronic_drift(self, root: str, original_group: List[str]) -> str:
         if not root:
@@ -162,7 +309,8 @@ class ZipperEngine:
             if suffixes and len(result) > 3 and result[-1] not in vowels:
                 result += suffixes[drift_seed % len(suffixes)]
         elif self.evolution_stage == "modern":
-            result = re.sub(r'(.)\1+', r'\1', result)
+            result = re.sub(r'(.)\1{2,}', r'\1', result)
+
             if len(result) > 4 and result[-1] in vowels:
                 if drift_seed % 100 < 25:
                     result = result[:-1]
@@ -170,54 +318,14 @@ class ZipperEngine:
             result = result.replace('th', 't').replace(
                 'ph', 'f').replace('qu', 'k')
 
-            result = re.sub(
-                f'([{vowels}])([{vowels}])([{vowels}]+)', r'\1\2', result)
-
         result = self._apply_phonotactics(result, drift_seed)
         return result
 
     def _syllabify(self, word: str) -> List[str]:
-        if not word:
-            return []
-        word = word.lower()
-        v_list = self.phonotactics.get('vowels', 'aeiouyäëïöüáéíóúàèìòù')
-        d_list = self.phonotactics.get('diphthongs', [])
-        syllables = []
-        curr = ""
-        i = 0
-        while i < len(word):
-            is_d = i + 1 < len(word) and word[i:i+2] in d_list
-            part = word[i:i+2] if is_d else word[i]
-            curr += part
-            is_vowel_part = any(v in part for v in v_list)
-            if is_vowel_part:
-                next_i = i + 2 if is_d else i + 1
-                if next_i < len(word):
-                    j = next_i
-                    cluster = ""
-                    while j < len(word) and not any(v in word[j] for v in v_list):
-                        cluster += word[j]
-                        j += 1
-                    if j < len(word):
-                        if len(cluster) > 1:
-                            mid = len(cluster) // 2
-                            curr += cluster[:mid]
-                            syllables.append(curr)
-                            curr = cluster[mid:]
-                        else:
-                            syllables.append(curr)
-                            curr = cluster
-                        i = j - 1
-                else:
-                    syllables.append(curr)
-                    curr = ""
-            i += 2 if is_d else 1
-        if curr:
-            if syllables:
-                syllables[-1] += curr
-            else:
-                syllables.append(curr)
-        return syllables
+        return self.morphology_analyzer.extract_syllables_advanced(
+            word,
+            self.phonotactics.get('diphthongs', [])
+        )
 
     def _blend_syllables(self, options: List[str], seed: int) -> str:
         if not options:
@@ -241,8 +349,9 @@ class ZipperEngine:
 
         secondary_idx = (primary_idx + 1) % len(options)
 
-        base = options[primary_idx]
-        alt = options[secondary_idx]
+        base = options[primary_idx] if primary_idx < len(
+            options) else options[0]
+        alt = options[secondary_idx] if secondary_idx < len(options) else base
 
         morpheme_retention = self.fusion_rules.get('morpheme_retention', 0.5)
 
@@ -253,7 +362,12 @@ class ZipperEngine:
         nucleus = self._get_nucleus(alt if (seed % 2 == 0) else base)
         coda = self._get_coda(base if (seed % 3 == 0) else alt)
 
-        return onset + nucleus + coda
+        blended = onset + nucleus + coda
+
+        if not blended:
+            return base
+
+        return blended
 
     def _get_onset(self, syl: str) -> str:
         v = self.phonotactics.get('vowels', 'aeiouyäëïöüáéíóúàèìòù')
@@ -292,7 +406,7 @@ class ZipperEngine:
         max_c = self.phonotactics.get('max_consonant_cluster', 3)
         ep_v = self.phonotactics.get('epenthesis_vowel', 'e')
 
-        pattern = f'([^ {v_str}]{{{max_c + 1},}})'
+        pattern = f'([^{v_str}\\s]{{{max_c + 1},}})'
         word = re.sub(pattern, lambda m: m.group(
             1)[:max_c] + ep_v + m.group(1)[max_c:], word)
 
@@ -324,13 +438,21 @@ class ZipperEngine:
                 should_agg = (agg_seed % 1000) < (factor * 1000)
                 if should_agg and not curr["suffix"] and not nxt["prefix"] and len(curr["word"]) < 6:
                     combined = curr["word"] + nxt["word"].lower()
+
+                    if self.morphology_analyzer.detect_stacking(combined):
+                        new_tokens.append(curr)
+                        i += 1
+                        continue
+
                     if self.evolution_stage == "archaic":
                         combined = re.sub(r'([aeiou])\1+', r'\1\1', combined)
+
                     new_tokens.append({
                         "word": combined,
                         "prefix": curr["prefix"],
                         "suffix": nxt["suffix"],
-                        "original": curr["original"] + nxt["original"]
+                        "original": curr["original"] + nxt["original"],
+                        "from_cache": False
                     })
                     i += 2
                     continue
@@ -346,3 +468,62 @@ class ZipperEngine:
         if self.orthography.get('transform_s_to_cedilla', False):
             text = text.replace('s', 'ç').replace('S', 'Ç')
         return text
+
+    def consolidate_cache(self, min_frequency: int = 3):
+        if not self.enable_caching:
+            return 0
+
+        consolidated = self.translation_cache.consolidate_variations(
+            min_frequency)
+        self.translation_cache.save_cache()
+        return consolidated
+
+    def consolidate_learning(self, min_usage: int = 5, min_confidence: float = 0.6):
+        if not self.enable_learning:
+            return 0
+
+        consolidated_rules = self.learning_system.consolidate_rules(
+            min_usage, min_confidence)
+        cleaned_patterns = self.learning_system.cleanup_low_quality_patterns()
+        self.learning_system.save_learning_data()
+
+        return consolidated_rules + cleaned_patterns
+
+    def get_statistics(self) -> Dict:
+        stats = {
+            'profile_id': self.id,
+            'bases': self.bases,
+            'weights': self.fusion_weights,
+            'evolution_stage': self.evolution_stage
+        }
+
+        if self.enable_caching:
+            stats['cache'] = self.translation_cache.get_statistics()
+
+        if self.enable_learning:
+            stats['learning'] = self.learning_system.get_learning_statistics()
+            stats['convergence'] = self.convergence_engine.get_stability_report()
+
+        if self.enable_context:
+            stats['consistency'] = {
+                'rate': self.consistency_validator.get_consistency_rate(),
+                'inconsistencies': len(self.consistency_validator.get_inconsistencies())
+            }
+
+        return stats
+
+    def export_dictionary(self, output_path: str, min_frequency: int = 1) -> int:
+        if not self.enable_caching:
+            return 0
+
+        return self.translation_cache.export_dictionary(output_path, min_frequency)
+
+    def optimize_weights(self):
+        if not self.enable_learning:
+            return self.fusion_weights
+
+        optimal_weights = self.adaptive_weights.get_optimal_weights()
+        self.fusion_weights = optimal_weights
+        self._normalize_weights()
+
+        return self.fusion_weights
