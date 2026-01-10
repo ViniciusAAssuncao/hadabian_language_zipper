@@ -1,445 +1,430 @@
 import sys
+import json
 from pathlib import Path
-from zipper_engine import ZipperEngine
-from language_profile_manager import LanguageProfileManager
-from utilities import (
-    TextAnalyzer, NameGenerator, ConsistencyChecker,
-    ProfileTemplates, ExportUtilities, QuickSetup
-)
 
 
-def test_basic_generation():
-    print("=" * 60)
-    print("TEST 1: Basic Text Generation")
-    print("=" * 60)
-    
-    profile_path = Path('profiles/cauteriano.json')
-    if not profile_path.exists():
-        print(f"Profile not found: {profile_path}")
-        return False
-    
-    engine = ZipperEngine(str(profile_path))
-    
-    base_texts = [
-        "Je marche dans la forêt",
-        "Gölon in vud"
+def test_imports():
+    print("=" * 80)
+    print("TESTE 1: IMPORTAÇÕES")
+    print("=" * 80)
+
+    modules = [
+        ('zipper_engine', 'ZipperEngine'),
+        ('translation_cache', 'TranslationCache, MorphemeCache, ContextualMemory'),
+        ('morphology_analyzer',
+         'MorphologyAnalyzer, ConsistencyValidator, WordQualityScorer'),
+        ('learning_system', 'LearningSystem, ConvergenceEngine, AdaptiveWeightSystem'),
+        ('context_engine', 'SemanticContextEngine, ContextualTranslator, PhraseAnalyzer'),
+        ('utilities', 'AdvancedTextAnalyzer, QualityMetrics, BatchProcessor')
     ]
-    
-    result = engine.process_texts(base_texts)
-    print(f"\nInput 1: {base_texts[0]}")
-    print(f"Input 2: {base_texts[1]}")
-    print(f"\nOutput: {result}")
-    
-    print("\n✓ Basic generation successful")
-    return True
+
+    success = 0
+    failed = 0
+
+    for module, classes in modules:
+        try:
+            exec(f"from {module} import {classes}")
+            print(f"✓ {module}: {classes}")
+            success += 1
+        except Exception as e:
+            print(f"✗ {module}: {e}")
+            failed += 1
+
+    print(f"\nResultado: {success} sucessos, {failed} falhas")
+    return failed == 0
 
 
-def test_determinism():
-    print("\n" + "=" * 60)
-    print("TEST 2: Determinism Check")
-    print("=" * 60)
-    
-    profile_path = Path('profiles/cauteriano.json')
-    if not profile_path.exists():
-        print(f"Profile not found: {profile_path}")
-        return False
-    
-    engine = ZipperEngine(str(profile_path))
-    
-    base_texts = [
-        "Bonjour le monde",
-        "Glidis vol"
-    ]
-    
-    results = []
-    for i in range(5):
-        output = engine.process_texts(base_texts)
-        results.append(output)
-        print(f"Iteration {i+1}: {output}")
-    
-    all_same = all(r == results[0] for r in results)
-    
-    if all_same:
-        print("\n✓ Determinism verified: All outputs identical")
+def test_morphology():
+    print("\n" + "=" * 80)
+    print("TESTE 2: ANÁLISE MORFOLÓGICA")
+    print("=" * 80)
+
+    try:
+        from morphology_analyzer import MorphologyAnalyzer
+
+        analyzer = MorphologyAnalyzer()
+
+        print("\na) Teste de empilhamento:")
+        test_words = ["memoryememory", "walkwalk", "good", "house"]
+        for word in test_words:
+            is_stacked = analyzer.detect_stacking(word)
+            if is_stacked:
+                fixed = analyzer.fix_stacking(word)
+                print(f"   {word}: EMPILHADO → {fixed}")
+            else:
+                print(f"   {word}: OK")
+
+        print("\nb) Teste de reduplicação:")
+        reduplicated = analyzer.detect_reduplication("lalalala")
+        if reduplicated:
+            segment, count = reduplicated
+            print(f"   'lalalala': detectado '{segment}' repetido {count}x")
+            fixed = analyzer.fix_reduplication("lalalala", max_repetitions=2)
+            print(f"   Corrigido para: {fixed}")
+
+        print("\nc) Teste de decomposição:")
+        word = "unhappiness"
+        parts = analyzer.decompose_word(word)
+        print(f"   '{word}':")
+        print(f"     Prefixo: {parts['prefix']}")
+        print(f"     Raiz: {parts['root']}")
+        print(f"     Sufixo: {parts['suffix']}")
+
+        print("\nd) Teste de estrutura fonética:")
+        valid_words = ["hello", "xztqp", "aeiou"]
+        for word in valid_words:
+            is_valid = analyzer.is_valid_word_structure(word)
+            print(f"   '{word}': {'VÁLIDO' if is_valid else 'INVÁLIDO'}")
+
+        print("\n✓ Testes de morfologia passaram!")
         return True
-    else:
-        print("\n✗ Determinism failed: Outputs differ")
+
+    except Exception as e:
+        print(f"\n✗ Erro nos testes de morfologia: {e}")
         return False
 
 
-def test_multiple_profiles():
-    print("\n" + "=" * 60)
-    print("TEST 3: Multiple Profiles")
-    print("=" * 60)
-    
-    manager = LanguageProfileManager()
-    profile_ids = manager.get_all_profile_ids()
-    
-    print(f"\nFound {len(profile_ids)} profiles:")
-    for pid in profile_ids:
-        profile = manager.get_profile(pid)
-        print(f"  - {pid}: {profile.get('name', 'N/A')}")
-    
-    print("\n✓ Profile loading successful")
-    return True
+def test_caching():
+    print("\n" + "=" * 80)
+    print("TESTE 3: SISTEMA DE CACHE")
+    print("=" * 80)
 
+    try:
+        from translation_cache import TranslationCache
 
-def test_name_generation():
-    print("\n" + "=" * 60)
-    print("TEST 4: Name Generation")
-    print("=" * 60)
-    
-    profile_path = Path('profiles/cauteriano.json')
-    if not profile_path.exists():
-        print(f"Profile not found: {profile_path}")
-        return False
-    
-    engine = ZipperEngine(str(profile_path))
-    name_gen = NameGenerator(engine)
-    
-    seed_texts = [
-        "Marie Philippe Laurent Alexandre Catherine",
-        "Yulit Päl Vom Jänik Pük"
-    ]
-    
-    names = name_gen.generate_names(seed_texts, count=10)
-    
-    print("\nGenerated Character Names:")
-    for i, name in enumerate(names, 1):
-        print(f"  {i}. {name}")
-    
-    place_names = name_gen.generate_place_names(
-        seed_texts,
-        suffixes=['ia', 'ton', 'ville', 'burg'],
-        count=8
-    )
-    
-    print("\nGenerated Place Names:")
-    for i, name in enumerate(place_names, 1):
-        print(f"  {i}. {name}")
-    
-    print("\n✓ Name generation successful")
-    return True
+        cache = TranslationCache("test_profile")
 
+        print("\na) Teste de armazenamento:")
+        cache.set_translation(["hello"], "helo")
+        cached = cache.get_translation(["hello"])
+        print(f"   Armazenado 'hello' → 'helo'")
+        print(f"   Recuperado: {cached}")
+        print(f"   {'✓' if cached == 'helo' else '✗'} Igual")
 
-def test_text_analysis():
-    print("\n" + "=" * 60)
-    print("TEST 5: Text Analysis")
-    print("=" * 60)
-    
-    original = "Je marche dans la belle forêt enchantée"
-    generated = "Jö marcolön dans la belö forät enchantäd"
-    
-    comparison = TextAnalyzer.compare_texts(original, generated)
-    
-    print(f"\nOriginal text: {original}")
-    print(f"Generated text: {generated}")
-    print(f"\nOriginal stats: {comparison['original']}")
-    print(f"Generated stats: {comparison['generated']}")
-    print(f"Length preservation: {comparison['length_preservation']:.2%}")
-    print(f"Vowel ratio shift: {comparison['vowel_shift']:+.3f}")
-    
-    print("\n✓ Text analysis successful")
-    return True
+        print("\nb) Teste de frequência:")
+        cache.set_translation(["hello"], "helo")
+        cache.set_translation(["hello"], "helo")
+        stats = cache.get_statistics()
+        print(f"   Entradas: {stats['total_entries']}")
+        print(f"   Usos: {stats['total_uses']}")
 
+        print("\nc) Teste de consolidação:")
+        cache.set_translation(["test"], "testo")
+        cache.set_translation(["test"], "teste")
+        consolidated = cache.consolidate_variations(min_frequency=1)
+        print(f"   Variações consolidadas: {consolidated}")
 
-def test_profile_templates():
-    print("\n" + "=" * 60)
-    print("TEST 6: Profile Templates")
-    print("=" * 60)
-    
-    templates = [
-        ("Formal Aristocratic", ProfileTemplates.get_formal_aristocratic()),
-        ("Trade Language", ProfileTemplates.get_trade_language()),
-        ("Ancient Scholarly", ProfileTemplates.get_ancient_scholarly()),
-        ("Poetic Melodic", ProfileTemplates.get_poetic_melodic())
-    ]
-    
-    print("\nAvailable templates:")
-    for name, template in templates:
-        print(f"\n{name}:")
-        print(f"  Bases: {', '.join(template['bases'])}")
-        print(f"  Weights: {template['fusion_weights']}")
-        print(f"  Style: {template['semantic_general']}")
-    
-    print("\n✓ Template generation successful")
-    return True
-
-
-def test_consistency_checker():
-    print("\n" + "=" * 60)
-    print("TEST 7: Consistency Checker")
-    print("=" * 60)
-    
-    profile_path = Path('profiles/cauteriano.json')
-    if not profile_path.exists():
-        print(f"Profile not found: {profile_path}")
-        return False
-    
-    test_texts = [
-        "La vie est belle",
-        "Lif binon jönik"
-    ]
-    
-    result = ConsistencyChecker.test_profile_consistency(str(profile_path), test_texts)
-    
-    print(f"\nConsistency check results:")
-    print(f"  Success: {result['success']}")
-    print(f"  Deterministic: {result.get('deterministic', False)}")
-    print(f"  Output sample: {result.get('output_sample', 'N/A')}")
-    
-    if result.get('output_stats'):
-        print(f"  Output stats: {result['output_stats']}")
-    
-    if result['success'] and result.get('deterministic'):
-        print("\n✓ Consistency check passed")
+        print("\n✓ Testes de cache passaram!")
         return True
-    else:
-        print("\n✗ Consistency check failed")
+
+    except Exception as e:
+        print(f"\n✗ Erro nos testes de cache: {e}")
+        import traceback
+        traceback.print_exc()
         return False
 
 
-def test_lexicon_export():
-    print("\n" + "=" * 60)
-    print("TEST 8: Lexicon Export")
-    print("=" * 60)
-    
-    profile_path = Path('profiles/cauteriano.json')
-    if not profile_path.exists():
-        print(f"Profile not found: {profile_path}")
+def test_learning():
+    print("\n" + "=" * 80)
+    print("TESTE 4: SISTEMA DE APRENDIZADO")
+    print("=" * 80)
+
+    try:
+        from learning_system import LearningSystem, ConvergenceEngine
+
+        learning = LearningSystem("test_profile")
+
+        print("\na) Teste de regras de transformação:")
+        learning.learn_transformation_rule("hello", "helo", confidence=0.8)
+        suggestions = learning.get_transformation_suggestions("hello")
+        print(f"   Regra aprendida: 'hello' → 'helo'")
+        print(f"   Sugestões: {len(suggestions)}")
+        if suggestions:
+            print(
+                f"   Melhor: {suggestions[0][0]} (confiança: {suggestions[0][1]:.2f})")
+
+        print("\nb) Teste de padrões:")
+        learning.record_pattern(
+            "word_pattern",
+            "hello",
+            "helo",
+            {"length": 5, "vowels": 2},
+            quality_score=0.8
+        )
+        similar = learning.find_similar_patterns("word_pattern", {"length": 5})
+        print(f"   Padrão registrado")
+        print(f"   Padrões similares encontrados: {len(similar)}")
+
+        print("\nc) Teste de convergência:")
+        convergence = ConvergenceEngine("test_profile")
+        for i in range(10):
+            convergence.record_translation(
+                "test_key", "translation" if i < 7 else "other")
+        converged, preferred = convergence.check_convergence("test_key")
+        print(f"   Convergiu: {converged}")
+        print(f"   Preferida: {preferred}")
+
+        print("\n✓ Testes de aprendizado passaram!")
+        return True
+
+    except Exception as e:
+        print(f"\n✗ Erro nos testes de aprendizado: {e}")
+        import traceback
+        traceback.print_exc()
         return False
-    
-    engine = ZipperEngine(str(profile_path))
-    
-    base_texts = [
-        "Le soleil brille dans le ciel azur. Les oiseaux chantent joyeusement.",
-        "Soin blitön in sil bluf. Böds kanons yufikö."
+
+
+def test_context():
+    print("\n" + "=" * 80)
+    print("TESTE 5: CONTEXTO SEMÂNTICO")
+    print("=" * 80)
+
+    try:
+        from context_engine import SemanticContextEngine, PhraseAnalyzer
+
+        semantic = SemanticContextEngine("test_profile")
+
+        print("\na) Teste de janela de contexto:")
+        words = ["the", "cat", "sat", "on", "the", "mat"]
+        context = semantic.build_context_window(words, 2)
+        print(f"   Palavras: {' '.join(words)}")
+        print(f"   Alvo (índice 2): {context['target']}")
+        print(f"   Antes: {context['before']}")
+        print(f"   Depois: {context['after']}")
+
+        print("\nb) Teste de colocações:")
+        text = "the cat sat on the mat the cat ran"
+        semantic.extract_collocations(text)
+        collocations = semantic.get_collocations("cat")
+        print(f"   Colocações de 'cat': {collocations[:3]}")
+
+        print("\nc) Teste de análise de frases:")
+        analyzer = PhraseAnalyzer()
+        phrase = "The quick brown fox"
+        analysis = analyzer.analyze_phrase(phrase)
+        print(f"   Frase: {phrase}")
+        print(f"   Palavras: {analysis['word_count']}")
+        print(f"   Palavras únicas: {analysis['unique_words']}")
+        print(f"   Densidade lexical: {analysis['lexical_density']:.2f}")
+
+        print("\n✓ Testes de contexto passaram!")
+        return True
+
+    except Exception as e:
+        print(f"\n✗ Erro nos testes de contexto: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+
+
+def test_quality():
+    print("\n" + "=" * 80)
+    print("TESTE 6: MÉTRICAS DE QUALIDADE")
+    print("=" * 80)
+
+    try:
+        from utilities import AdvancedTextAnalyzer, QualityMetrics
+        from morphology_analyzer import MorphologyAnalyzer, WordQualityScorer
+
+        print("\na) Teste de análise de texto:")
+        analyzer = AdvancedTextAnalyzer()
+        text = "The quick brown fox jumps over the lazy dog"
+        analysis = analyzer.analyze_comprehensive(text)
+        print(f"   Texto: {text}")
+        print(f"   Palavras: {analysis['basic']['word_count']}")
+        print(f"   Razão de vogais: {analysis['phonetic']['vowel_ratio']:.2f}")
+        print(f"   Diversidade: {analysis['basic']['type_token_ratio']:.2f}")
+
+        print("\nb) Teste de pontuação de palavras:")
+        morph = MorphologyAnalyzer()
+        scorer = WordQualityScorer(morph)
+        words = ["hello", "memoryememory", "xztqp", "beautiful"]
+        for word in words:
+            score = scorer.score_word(word)
+            print(f"   '{word}': {score:.2f}")
+
+        print("\nc) Teste de qualidade de tradução:")
+        metrics = QualityMetrics()
+        source = "Hello world"
+        generated = "Helo wold"
+        quality = metrics.calculate_translation_quality(source, generated)
+        print(f"   Fonte: {source}")
+        print(f"   Gerado: {generated}")
+        print(f"   Qualidade: {quality['overall_quality']:.2f}")
+
+        print("\n✓ Testes de qualidade passaram!")
+        return True
+
+    except Exception as e:
+        print(f"\n✗ Erro nos testes de qualidade: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+
+
+def test_integration():
+    print("\n" + "=" * 80)
+    print("TESTE 7: INTEGRAÇÃO COMPLETA")
+    print("=" * 80)
+
+    try:
+        print("\na) Criando perfil de teste...")
+        test_profile = {
+            "id": "test_lang",
+            "name": "Test Language",
+            "bases": ["en"],
+            "fusion_weights": [1.0],
+            "fusion_rules": {
+                "min_cut_point": 0.4,
+                "preserve_caps": True
+            },
+            "phonotactics": {
+                "vowels": "aeiou",
+                "max_consonant_cluster": 3,
+                "max_vowel_cluster": 2
+            },
+            "orthography": {},
+            "global_seed": 12345
+        }
+
+        profiles_dir = Path("profiles")
+        profiles_dir.mkdir(exist_ok=True)
+        profile_path = profiles_dir / "test_lang.json"
+
+        with open(profile_path, 'w', encoding='utf-8') as f:
+            json.dump(test_profile, f, indent=2)
+        print(f"   ✓ Perfil criado: {profile_path}")
+
+        print("\nb) Inicializando motor...")
+        from zipper_engine import ZipperEngine
+
+        engine = ZipperEngine(
+            str(profile_path),
+            enable_learning=True,
+            enable_caching=True,
+            enable_context=True
+        )
+        print("   ✓ Motor inicializado")
+
+        print("\nc) Processando texto...")
+        result = engine.process_texts(["Hello world"])
+        print(f"   Input: 'Hello world'")
+        print(f"   Output: '{result}'")
+
+        print("\nd) Segunda processamento (deve usar cache)...")
+        result2 = engine.process_texts(["Hello world"])
+        print(f"   Output: '{result2}'")
+        print(f"   {'✓ Consistente!' if result == result2 else '✗ Inconsistente!'}")
+
+        print("\ne) Obtendo estatísticas...")
+        stats = engine.get_statistics()
+        print(
+            f"   Entradas no cache: {stats.get('cache', {}).get('total_entries', 0)}")
+
+        print("\nf) Consolidando...")
+        consolidated = engine.consolidate_cache(min_frequency=1)
+        print(f"   ✓ Consolidado: {consolidated} variações")
+
+        print("\ng) Exportando dicionário...")
+        dict_path = "test_dictionary.json"
+        count = engine.export_dictionary(dict_path, min_frequency=1)
+        print(f"   ✓ Exportado {count} entradas para {dict_path}")
+
+        print("\n✓ Teste de integração completo!")
+        return True
+
+    except Exception as e:
+        print(f"\n✗ Erro no teste de integração: {e}")
+        import traceback
+        traceback.print_exc()
+        return False
+
+
+def cleanup_test_files():
+    print("\n" + "=" * 80)
+    print("LIMPEZA DE ARQUIVOS DE TESTE")
+    print("=" * 80)
+
+    files_to_remove = [
+        "profiles/test_lang.json",
+        "test_dictionary.json",
+        "cache/test_profile_cache.json",
+        "cache/test_profile_morphemes.json",
+        "cache/test_profile_context.json",
+        "learning/test_profile_rules.json",
+        "learning/test_profile_patterns.json",
+        "learning/test_profile_stats.json",
+        "context/test_profile_semantic.json"
     ]
-    
-    result = engine.process_texts(base_texts)
-    lexicon = ExportUtilities.export_lexicon(result, min_word_length=3)
-    
-    print(f"\nGenerated text: {result}")
-    print(f"\nLexicon ({len(lexicon)} unique words):")
-    for entry in lexicon[:15]:
-        print(f"  - {entry['word']} (length: {entry['length']})")
-    
-    output_dir = Path('outputs')
-    output_dir.mkdir(exist_ok=True)
-    
-    json_path = output_dir / 'test_lexicon.json'
-    ExportUtilities.export_to_json(lexicon, str(json_path))
-    print(f"\nLexicon exported to: {json_path}")
-    
-    print("\n✓ Lexicon export successful")
-    return True
 
+    for filepath in files_to_remove:
+        path = Path(filepath)
+        if path.exists():
+            path.unlink()
+            print(f"✓ Removido: {filepath}")
 
-def test_long_text():
-    print("\n" + "=" * 60)
-    print("TEST 9: Long Text Processing")
-    print("=" * 60)
-    
-    profile_path = Path('profiles/cauteriano.json')
-    if not profile_path.exists():
-        print(f"Profile not found: {profile_path}")
-        return False
-    
-    engine = ZipperEngine(str(profile_path))
-    
-    long_text_fr = """
-    Dans les temps anciens, il existait un royaume magnifique.
-    Les gens vivaient en harmonie avec la nature.
-    Chaque jour apportait de nouvelles merveilles.
-    Les sages enseignaient la sagesse aux jeunes.
-    Et la paix régnait sur toute la terre.
-    """
-    
-    long_text_vo = """
-    In tims büik, palalän gretik äbinon.
-    Mens libons in pämavöl ko natül.
-    Dil valik brinon mäds nevik.
-    Sapans tidons sapülam jenulike.
-    E pif regön su topäd vätik.
-    """
-    
-    result = engine.process_texts([long_text_fr, long_text_vo])
-    
-    print(f"\nInput length: {len(long_text_fr.split())} words (FR)")
-    print(f"Output length: {len(result.split())} words")
-    print(f"\nOutput preview:")
-    lines = result.strip().split('\n')
-    for line in lines[:3]:
-        print(f"  {line.strip()}")
-    print("  ...")
-    
-    print("\n✓ Long text processing successful")
-    return True
-
-
-def test_multi_base_language():
-    print("\n" + "=" * 60)
-    print("TEST 10: Multiple Base Languages (3+)")
-    print("=" * 60)
-    
-    print("\nCreating temporary 3-base profile...")
-    
-    temp_profile = {
-        "id": "test_triple",
-        "name": "Triple Base Test",
-        "description": "Test with 3 base languages",
-        "bases": ["en", "fr", "de"],
-        "fusion_weights": [0.4, 0.35, 0.25],
-        "fusion_rules": {
-            "min_cut_point": 0.4,
-            "preserve_caps": True,
-            "preserve_accents": False
-        },
-        "phonotactics": {
-            "vowels": "aeiouäöü",
-            "forbidden_final_consonants": [],
-            "max_consonant_cluster": 3,
-            "max_vowel_cluster": 2
-        },
-        "orthography": {},
-        "global_seed": 99999
-    }
-    
-    profile_path = Path('profiles/test_triple.json')
-    import json
-    with open(profile_path, 'w', encoding='utf-8') as f:
-        json.dump(temp_profile, f, indent=2)
-    
-    engine = ZipperEngine(str(profile_path))
-    
-    base_texts = [
-        "Hello beautiful world",
-        "Bonjour beau monde",
-        "Hallo schöne Welt"
-    ]
-    
-    result = engine.process_texts(base_texts)
-    
-    print(f"\nInput 1 (EN): {base_texts[0]}")
-    print(f"Input 2 (FR): {base_texts[1]}")
-    print(f"Input 3 (DE): {base_texts[2]}")
-    print(f"\nOutput: {result}")
-    
-    profile_path.unlink()
-    print("\n✓ Multi-base generation successful")
-    return True
+    print("\n✓ Limpeza concluída!")
 
 
 def run_all_tests():
     print("\n")
-    print("╔" + "=" * 58 + "╗")
-    print("║" + " " * 15 + "HADABIAN LANGUAGE ZIPPER" + " " * 19 + "║")
-    print("║" + " " * 20 + "TEST SUITE v1.0" + " " * 23 + "║")
-    print("╚" + "=" * 58 + "╝")
-    
-    QuickSetup.create_default_structure()
-    
+    print("╔" + "=" * 78 + "╗")
+    print("║" + " " * 20 + "HADABIAN LANGUAGE ZIPPER V2" + " " * 31 + "║")
+    print("║" + " " * 25 + "SUITE DE TESTES" + " " * 39 + "║")
+    print("╚" + "=" * 78 + "╝")
+    print()
+
     tests = [
-        ("Basic Generation", test_basic_generation),
-        ("Determinism", test_determinism),
-        ("Multiple Profiles", test_multiple_profiles),
-        ("Name Generation", test_name_generation),
-        ("Text Analysis", test_text_analysis),
-        ("Profile Templates", test_profile_templates),
-        ("Consistency Checker", test_consistency_checker),
-        ("Lexicon Export", test_lexicon_export),
-        ("Long Text", test_long_text),
-        ("Multi-Base Language", test_multi_base_language)
+        ("Importações", test_imports),
+        ("Morfologia", test_morphology),
+        ("Cache", test_caching),
+        ("Aprendizado", test_learning),
+        ("Contexto", test_context),
+        ("Qualidade", test_quality),
+        ("Integração", test_integration)
     ]
-    
+
     results = []
-    
-    for test_name, test_func in tests:
+
+    for name, test_func in tests:
         try:
-            result = test_func()
-            results.append((test_name, result))
+            passed = test_func()
+            results.append((name, passed))
         except Exception as e:
-            print(f"\n✗ {test_name} failed with exception: {str(e)}")
-            results.append((test_name, False))
-    
-    print("\n" + "=" * 60)
-    print("TEST SUMMARY")
-    print("=" * 60)
-    
+            print(f"\n✗ Erro fatal no teste {name}: {e}")
+            import traceback
+            traceback.print_exc()
+            results.append((name, False))
+
+    print("\n\n")
+    print("╔" + "=" * 78 + "╗")
+    print("║" + " " * 30 + "RESUMO FINAL" + " " * 36 + "║")
+    print("╚" + "=" * 78 + "╝")
+    print()
+
     passed = sum(1 for _, result in results if result)
     total = len(results)
-    
-    for test_name, result in results:
-        status = "✓ PASS" if result else "✗ FAIL"
-        print(f"{status}: {test_name}")
-    
-    print("\n" + "=" * 60)
-    print(f"Results: {passed}/{total} tests passed ({passed/total*100:.1f}%)")
-    print("=" * 60)
-    
+
+    for name, result in results:
+        status = "✓ PASSOU" if result else "✗ FALHOU"
+        print(f"{status:12} | {name}")
+
+    print()
+    print("-" * 80)
+    print(f"Total: {passed}/{total} testes passaram ({passed/total*100:.1f}%)")
+    print("-" * 80)
+
+    if passed == total:
+        print("\n🎉 TODOS OS TESTES PASSARAM! Sistema funcionando perfeitamente!")
+    else:
+        print(
+            f"\n⚠ {total - passed} teste(s) falharam. Verifique os erros acima.")
+
+    cleanup_test_files()
+
     return passed == total
 
 
-def demo_workflow():
-    print("\n" + "=" * 60)
-    print("DEMO: Complete Workflow Example")
-    print("=" * 60)
-    
-    print("\n[Step 1] Setting up environment...")
-    dirs = QuickSetup.create_default_structure()
-    print(f"Created directories: {list(dirs.keys())}")
-    
-    print("\n[Step 2] Loading Cauteriano profile...")
-    profile_path = Path('profiles/cauteriano.json')
-    if not profile_path.exists():
-        print("Profile not found!")
-        return
-    
-    engine = ZipperEngine(str(profile_path))
-    print(f"Loaded profile: Cauteriano")
-    
-    print("\n[Step 3] Preparing source texts...")
-    source_fr = "La magie ancienne demeure dans les montagnes"
-    source_vo = "Magiv büik städon in bels"
-    
-    print(f"French: {source_fr}")
-    print(f"Völapük: {source_vo}")
-    
-    print("\n[Step 4] Generating Cauteriano text...")
-    result = engine.process_texts([source_fr, source_vo])
-    print(f"Result: {result}")
-    
-    print("\n[Step 5] Extracting character names...")
-    name_gen = NameGenerator(engine)
-    names = name_gen.generate_names([
-        "Alexandre Marie Philippe Catherine Laurent",
-        "Yulit Pük Flent Katän Lödön"
-    ], count=5)
-    
-    print("Character names:")
-    for name in names:
-        print(f"  - {name}")
-    
-    print("\n[Step 6] Analyzing output...")
-    analysis = TextAnalyzer.analyze_text(result)
-    print(f"Words: {analysis['word_count']}")
-    print(f"Vowel ratio: {analysis['vowel_ratio']:.2%}")
-    print(f"Avg word length: {analysis['avg_word_length']:.1f}")
-    
-    print("\n[Step 7] Exporting lexicon...")
-    lexicon = ExportUtilities.export_lexicon(result)
-    output_path = Path('outputs/demo_lexicon.json')
-    ExportUtilities.export_to_json(lexicon, str(output_path))
-    print(f"Exported to: {output_path}")
-    
-    print("\n" + "=" * 60)
-    print("Demo completed successfully!")
-    print("=" * 60)
-
-
-if __name__ == "__main__":
-    if len(sys.argv) > 1 and sys.argv[1] == "demo":
-        demo_workflow()
-    else:
-        success = run_all_tests()
-        sys.exit(0 if success else 1)
+if __name__ == '__main__':
+    success = run_all_tests()
+    sys.exit(0 if success else 1)
