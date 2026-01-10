@@ -1,0 +1,55 @@
+{
+  "id": "example_sov",
+  "name": "Exemplo SOV com Casos",
+  "description": "Língua exemplo com ordem SOV e sistema de casos morfológicos",
+  "word_order": "SOV",
+  "source_language_order": "SVO",
+  "global_seed": 42857,
+  
+  "phonotactics": {
+    "vowels": "aeiou",
+    "consonants": "bdfghjklmnprstvz",
+    "syllable_templates": ["CV", "CVC", "V", "VC"],
+    "min_syllables": 1,
+    "max_syllables": 3,
+    "max_consonant_cluster": 2,
+    "max_vowel_cluster": 1,
+    "forbidden_initial_clusters": ["zr", "nm"],
+    "forbidden_final_consonants": ["h"],
+    "epenthesis_vowel": "i",
+    "diphthongs": ["ai", "ei", "ou", "au"]
+  },
+  
+  "case_system": {
+    "enabled": true,
+    "markers": {
+      "nominative": "",
+      "accusative": "-m",
+      "dative": "-n",
+      "genitive": "-s",
+      "locative": "-l"
+    },
+    "marker_position": "suffix"
+  },
+  
+  "agreement_rules": {
+    "gender_agreement": false,
+    "number_agreement": true
+  },
+  
+  "topicalization": {
+    "enabled": true,
+    "position": "initial",
+    "topic_marker": "wa"
+  },
+  
+  "focus_structure": {
+    "enabled": true,
+    "object_focus_marker": "ko",
+    "verb_focus_marker": "do"
+  },
+  
+  "style": {
+    "capitalization": true
+  }
+}

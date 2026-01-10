@@ -2,7 +2,6 @@
 /learning
 /context
 /cache
-/original_profiles
-/__pycache__
+./ConHab/__pycache__
 .vscode
 __pycache__
