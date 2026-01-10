@@ -3,5 +3,6 @@
 /context
 /cache
 /original_profiles
+/__pycache__
 .vscode
 __pycache__
