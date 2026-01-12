@@ -1,131 +1,341 @@
 {
   "sentence_cache": {
-    "66b7709b37121b016b1f937cc50924f4": [
-      0,
-      2,
-      3,
-      4,
-      5,
-      6,
-      9,
-      1,
-      7,
-      8,
-      10,
-      11
-    ],
-    "95092deaeb04f9d8de46610845ceae1b": [
-      0,
-      1,
-      2,
-      3,
-      5,
-      8,
-      9,
-      13,
-      14,
-      16,
-      17,
-      18,
-      19,
-      20,
-      22,
-      4,
-      6,
-      7,
-      10,
-      11,
-      12,
-      15,
-      21
-    ],
-    "d80dda3b0b99b0daa2cda5a38a489ffe": [
-      0,
-      1,
-      2,
-      3,
-      5,
-      6,
-      7,
-      8,
-      9,
-      10,
-      11,
-      13,
-      14,
-      15,
-      16,
-      17,
-      19,
-      20,
-      21,
-      22,
-      23,
-      24,
-      25,
-      27,
-      28,
-      29,
-      30,
-      31,
-      33,
-      34,
-      36,
-      37,
-      26,
-      4,
-      12,
-      18,
-      32,
-      35
-    ],
-    "5888867eae3762786abf2d3ed5b7482d": [
-      0,
-      1,
-      5,
-      6,
-      7,
-      2,
-      3,
-      4
-    ],
-    "1cf1fc5768adfaa2c323a9df884d0b9f": [
-      0,
-      1,
-      2,
-      3
-    ],
-    "2022fa4532fbfa734321fdcd8c112e69": [
-      0,
-      1,
-      2
-    ],
-    "a31319437451fc95b7b6c85499b69d09": [
-      1,
-      2,
-      0
-    ],
-    "67077c4a9eec89318e4009c66a794e6f": [
-      0
-    ],
-    "d5b25eb1ca11d3307c5d49bb7ac65cb9": [
-      0,
-      1,
-      2,
-      3
-    ],
-    "9ffd7c887868f1fd376e36a9a62baca8": [
-      0,
-      1,
-      2,
-      3,
-      4,
-      5
-    ],
-    "dcf8a6a6769dd668822fe0a5d7644d6b": [
-      0,
-      1
-    ]
+    "280e60bbca3ef63935ec7c9afe0fb4b2": {
+      "indices": [
+        0,
+        1,
+        3,
+        4,
+        5,
+        6,
+        7,
+        2,
+        8,
+        9,
+        12,
+        10,
+        11,
+        13
+      ],
+      "words": [
+        "Eu",
+        "não",
+        "preciso",
+        "de",
+        "um",
+        "homem",
+        "bom",
+        ",",
+        "eu",
+        "não",
+        "estou",
+        "pedindo",
+        "isto",
+        "."
+      ],
+      "functions": [
+        {
+          "word": "Eu",
+          "pos": "PRON",
+          "deprel": "nsubj",
+          "function": "S",
+          "index": 0,
+          "dependencies": [
+            2
+          ]
+        },
+        {
+          "word": "não",
+          "pos": "ADV",
+          "deprel": "advmod",
+          "function": "MOD",
+          "index": 1,
+          "dependencies": [
+            2
+          ]
+        },
+        {
+          "word": "preciso",
+          "pos": "VERB",
+          "deprel": "root",
+          "function": "V",
+          "index": 2,
+          "dependencies": []
+        },
+        {
+          "word": "de",
+          "pos": "ADP",
+          "deprel": "case",
+          "function": "MOD",
+          "index": 3,
+          "dependencies": [
+            5
+          ]
+        },
+        {
+          "word": "um",
+          "pos": "DET",
+          "deprel": "det",
+          "function": "MOD",
+          "index": 4,
+          "dependencies": [
+            5
+          ]
+        },
+        {
+          "word": "homem",
+          "pos": "NOUN",
+          "deprel": "obj",
+          "function": "O",
+          "index": 5,
+          "dependencies": [
+            2
+          ]
+        },
+        {
+          "word": "bom",
+          "pos": "ADJ",
+          "deprel": "amod",
+          "function": "MOD",
+          "index": 6,
+          "dependencies": [
+            5
+          ]
+        },
+        {
+          "word": ",",
+          "pos": "PUNCT",
+          "deprel": "punct",
+          "function": "PUNCT",
+          "index": 7,
+          "dependencies": [
+            11
+          ]
+        },
+        {
+          "word": "eu",
+          "pos": "PRON",
+          "deprel": "nsubj",
+          "function": "S",
+          "index": 8,
+          "dependencies": [
+            11
+          ]
+        },
+        {
+          "word": "não",
+          "pos": "ADV",
+          "deprel": "advmod",
+          "function": "MOD",
+          "index": 9,
+          "dependencies": [
+            11
+          ]
+        },
+        {
+          "word": "estou",
+          "pos": "AUX",
+          "deprel": "aux",
+          "function": "V",
+          "index": 10,
+          "dependencies": [
+            11
+          ]
+        },
+        {
+          "word": "pedindo",
+          "pos": "VERB",
+          "deprel": "parataxis",
+          "function": "V",
+          "index": 11,
+          "dependencies": [
+            2
+          ]
+        },
+        {
+          "word": "isto",
+          "pos": "PRON",
+          "deprel": "obj",
+          "function": "O",
+          "index": 12,
+          "dependencies": [
+            11
+          ]
+        },
+        {
+          "word": ".",
+          "pos": "PUNCT",
+          "deprel": "punct",
+          "function": "PUNCT",
+          "index": 13,
+          "dependencies": [
+            2
+          ]
+        }
+      ]
+    },
+    "f1c2fae95f67ff7fa7ff9cffca0ed75f": {
+      "indices": [
+        0,
+        2,
+        3,
+        4,
+        5,
+        7,
+        8,
+        9,
+        10,
+        11,
+        1,
+        6,
+        12
+      ],
+      "words": [
+        "Eu",
+        "sou",
+        "um",
+        "homem",
+        "bom",
+        "e",
+        "estou",
+        "em",
+        "o",
+        "leito",
+        "de",
+        "morte",
+        "."
+      ],
+      "functions": [
+        {
+          "word": "Eu",
+          "pos": "PRON",
+          "deprel": "nsubj",
+          "function": "S",
+          "index": 0,
+          "dependencies": [
+            3
+          ]
+        },
+        {
+          "word": "sou",
+          "pos": "AUX",
+          "deprel": "cop",
+          "function": "V",
+          "index": 1,
+          "dependencies": [
+            3
+          ]
+        },
+        {
+          "word": "um",
+          "pos": "DET",
+          "deprel": "det",
+          "function": "MOD",
+          "index": 2,
+          "dependencies": [
+            3
+          ]
+        },
+        {
+          "word": "homem",
+          "pos": "NOUN",
+          "deprel": "root",
+          "function": "MOD",
+          "index": 3,
+          "dependencies": []
+        },
+        {
+          "word": "bom",
+          "pos": "ADJ",
+          "deprel": "amod",
+          "function": "MOD",
+          "index": 4,
+          "dependencies": [
+            3
+          ]
+        },
+        {
+          "word": "e",
+          "pos": "CCONJ",
+          "deprel": "cc",
+          "function": "MOD",
+          "index": 5,
+          "dependencies": [
+            9
+          ]
+        },
+        {
+          "word": "estou",
+          "pos": "AUX",
+          "deprel": "cop",
+          "function": "V",
+          "index": 6,
+          "dependencies": [
+            9
+          ]
+        },
+        {
+          "word": "em",
+          "pos": "ADP",
+          "deprel": "case",
+          "function": "MOD",
+          "index": 7,
+          "dependencies": [
+            9
+          ]
+        },
+        {
+          "word": "o",
+          "pos": "DET",
+          "deprel": "det",
+          "function": "MOD",
+          "index": 8,
+          "dependencies": [
+            9
+          ]
+        },
+        {
+          "word": "leito",
+          "pos": "NOUN",
+          "deprel": "conj",
+          "function": "MOD",
+          "index": 9,
+          "dependencies": [
+            3
+          ]
+        },
+        {
+          "word": "de",
+          "pos": "ADP",
+          "deprel": "case",
+          "function": "MOD",
+          "index": 10,
+          "dependencies": [
+            11
+          ]
+        },
+        {
+          "word": "morte",
+          "pos": "NOUN",
+          "deprel": "nmod",
+          "function": "MOD",
+          "index": 11,
+          "dependencies": [
+            9
+          ]
+        },
+        {
+          "word": ".",
+          "pos": "PUNCT",
+          "deprel": "punct",
+          "function": "PUNCT",
+          "index": 12,
+          "dependencies": [
+            3
+          ]
+        }
+      ]
+    }
   },
   "profile_id": "example_sov",
   "word_order": "SOV"

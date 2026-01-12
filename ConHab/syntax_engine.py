@@ -3,68 +3,7 @@ import json
 from typing import List, Dict, Optional, Tuple, Set
 from collections import defaultdict
 from pathlib import Path
-
-
-class POSTagger:
-    def __init__(self, profile_id: str):
-        self.profile_id = profile_id
-        self.pos_cache: Dict[str, str] = {}
-        self.pattern_rules: List[Dict] = []
-        self.function_words = self._initialize_function_words()
-
-    def _initialize_function_words(self) -> Dict[str, Set[str]]:
-        return {
-            'DET': {'o', 'a', 'os', 'as', 'um', 'uma', 'uns', 'umas', 'este', 'esse', 'aquele', 'esta', 'essa', 'aquela'},
-            'PREP': {'de', 'em', 'para', 'por', 'com', 'sem', 'sobre', 'entre', 'até', 'desde', 'durante'},
-            'CONJ': {'e', 'ou', 'mas', 'porém', 'que', 'se', 'porque', 'quando', 'embora'},
-            'PRON': {'eu', 'tu', 'ele', 'ela', 'nós', 'vós', 'eles', 'elas', 'me', 'te', 'se', 'lhe', 'nos', 'vos', 'meu', 'teu', 'seu'},
-            'AUX': {'ser', 'estar', 'ter', 'haver', 'ir', 'vir', 'poder', 'dever', 'querer', 'é', 'são', 'foi', 'está', 'tem', 'tinha'}
-        }
-
-    def tag_word(self, word: str, position: int, context: List[str]) -> str:
-        clean_word = word.lower().strip('.,!?;:')
-
-        if clean_word in self.pos_cache:
-            return self.pos_cache[clean_word]
-
-        for pos_type, words in self.function_words.items():
-            if clean_word in words:
-                self.pos_cache[clean_word] = pos_type
-                return pos_type
-
-        if position == 0 or (position > 0 and context[position-1].lower() in {'.', '!', '?'}):
-            if clean_word not in self.function_words.get('PREP', set()):
-                tag = 'NOUN'
-                self.pos_cache[clean_word] = tag
-                return tag
-
-        if clean_word.endswith(('ar', 'er', 'ir', 'ou', 'ava', 'ia')):
-            tag = 'VERB'
-            self.pos_cache[clean_word] = tag
-            return tag
-
-        if clean_word.endswith(('mente', 'ção', 'dade', 'ismo', 'ista')):
-            tag = 'NOUN'
-            self.pos_cache[clean_word] = tag
-            return tag
-
-        if position > 0:
-            prev = context[position-1].lower()
-            if prev in self.function_words.get('DET', set()):
-                tag = 'NOUN'
-                self.pos_cache[clean_word] = tag
-                return tag
-
-        tag = 'NOUN'
-        self.pos_cache[clean_word] = tag
-        return tag
-
-    def tag_sentence(self, words: List[str]) -> List[Tuple[str, str]]:
-        tagged = []
-        for i, word in enumerate(words):
-            pos = self.tag_word(word, i, words)
-            tagged.append((word, pos))
-        return tagged
+import requests
 
 
 class SyntacticFunction:
@@ -74,78 +13,39 @@ class SyntacticFunction:
     ADJUNCT = 'ADJ'
     COMPLEMENT = 'COMP'
     MODIFIER = 'MOD'
+    PUNCT = 'PUNCT'
     UNKNOWN = 'UNK'
 
 
-class FunctionIdentifier:
-    def __init__(self, pos_tagger: POSTagger):
-        self.tagger = pos_tagger
+class Chunk:
+    def __init__(self, words: List[Tuple[str, int]], function: str, head_index: int,
+                 chunk_type: str = 'simple', parent_chunk: Optional['Chunk'] = None):
+        self.words = words
+        self.function = function
+        self.head_index = head_index
+        self.chunk_type = chunk_type
+        self.parent_chunk = parent_chunk
+        self.child_chunks: List['Chunk'] = []
+        self.dependent_indices = set(word[1] for word in words)
 
-    def identify_functions(self, tagged_words: List[Tuple[str, str]]) -> List[Dict]:
-        functions = []
+    def get_head_word(self) -> Tuple[str, int]:
+        return self.words[self.head_index] if self.words else None
 
-        i = 0
-        while i < len(tagged_words):
-            word, pos = tagged_words[i]
+    def get_all_indices(self) -> List[int]:
+        return sorted([word[1] for word in self.words])
 
-            func_entry = {
-                'word': word,
-                'pos': pos,
-                'function': SyntacticFunction.UNKNOWN,
-                'index': i,
-                'dependencies': []
-            }
+    def contains_index(self, index: int) -> bool:
+        return index in self.dependent_indices
 
-            if pos == 'VERB':
-                func_entry['function'] = SyntacticFunction.VERB
-
-            elif pos == 'NOUN':
-                if i == 0 or self._is_after_punctuation(tagged_words, i):
-                    func_entry['function'] = SyntacticFunction.SUBJECT
-                else:
-                    verb_before = self._find_verb_before(tagged_words, i)
-                    if verb_before is not None:
-                        func_entry['function'] = SyntacticFunction.OBJECT
-                        func_entry['dependencies'].append(verb_before)
-                    else:
-                        func_entry['function'] = SyntacticFunction.SUBJECT
-
-            elif pos == 'DET':
-                func_entry['function'] = SyntacticFunction.MODIFIER
-                if i + 1 < len(tagged_words):
-                    func_entry['dependencies'].append(i + 1)
-
-            elif pos == 'PREP':
-                func_entry['function'] = SyntacticFunction.ADJUNCT
-                if i + 1 < len(tagged_words):
-                    func_entry['dependencies'].append(i + 1)
-
-            else:
-                func_entry['function'] = SyntacticFunction.MODIFIER
-
-            functions.append(func_entry)
-            i += 1
-
-        return functions
-
-    def _is_after_punctuation(self, tagged_words: List[Tuple[str, str]], index: int) -> bool:
-        if index == 0:
-            return True
-        prev_word = tagged_words[index - 1][0]
-        return prev_word.strip() in {'.', '!', '?', ';', ':'}
-
-    def _find_verb_before(self, tagged_words: List[Tuple[str, str]], index: int) -> Optional[int]:
-        for i in range(index - 1, -1, -1):
-            if tagged_words[i][1] == 'VERB':
-                return i
-            if tagged_words[i][0].strip() in {'.', '!', '?'}:
-                return None
-        return None
+    def __repr__(self):
+        words_str = ' '.join([w[0] for w in self.words])
+        return f"Chunk({self.chunk_type}:{self.function}='{words_str}', head_idx={self.head_index})"
 
 
 class WordOrderMapper:
-    def __init__(self, source_order: str = 'SVO'):
+    def __init__(self, source_order: str = 'SVO', profile: Optional[Dict] = None):
         self.source_order = source_order
+        self.profile = profile or {}
         self.order_mappings = {
             'SVO': {'S': 0, 'V': 1, 'O': 2},
             'SOV': {'S': 0, 'O': 1, 'V': 2},
@@ -154,52 +54,320 @@ class WordOrderMapper:
             'OSV': {'O': 0, 'S': 1, 'V': 2},
             'OVS': {'O': 0, 'V': 1, 'S': 2}
         }
+        self.function_words = {'DET', 'PREP', 'ADJ', 'ADV'}
+        self.agreement_rules = self.profile.get('agreement_rules', {})
+        self.adjunct_position = self.agreement_rules.get(
+            'adjunct_position', 'auto')
 
     def map_to_target_order(self, functions: List[Dict], target_order: str) -> List[int]:
         if target_order not in self.order_mappings:
             target_order = 'SVO'
 
-        core_elements = {'S': [], 'V': [], 'O': []}
-        other_elements = []
+        clauses_indices = self._partition_into_clauses(functions)
 
-        for func in functions:
-            if func['function'] == SyntacticFunction.SUBJECT:
-                core_elements['S'].append(func)
-            elif func['function'] == SyntacticFunction.VERB:
-                core_elements['V'].append(func)
-            elif func['function'] == SyntacticFunction.OBJECT:
-                core_elements['O'].append(func)
+        final_indices = []
+
+        for clause_indices_set in clauses_indices:
+            local_indices = sorted(list(clause_indices_set))
+
+            clause_functions_subset = []
+
+            for i, original_idx in enumerate(local_indices):
+                f = functions[original_idx].copy()
+                f['original_index'] = original_idx
+                f['index'] = i
+                clause_functions_subset.append(f)
+
+            reordered_local_indices = self._map_single_clause(
+                clause_functions_subset, target_order)
+
+            for local_idx in reordered_local_indices:
+                final_indices.append(
+                    clause_functions_subset[local_idx]['original_index'])
+
+        return final_indices
+
+    def _partition_into_clauses(self, functions: List[Dict]) -> List[Set[int]]:
+        partitions = []
+        current_indices = set()
+
+        clause_starters = {'e', 'mas', 'porém', 'todavia', 'contudo',
+                           'ou', 'então', 'portanto', 'porque', 'pois', 'logo'}
+        subject_pronouns = {'eu', 'tu', 'ele', 'ela', 'nós', 'vós',
+                            'eles', 'elas', 'você', 'vocês', 'isso', 'isto', 'aquilo'}
+
+        for i, f in enumerate(functions):
+            word = f['word'].lower()
+            pos = f['pos']
+
+            is_boundary = False
+
+            if pos == 'PUNCT' and word in {',', ';', '.', '!', '?', ':'}:
+                if i + 1 < len(functions):
+                    next_f = functions[i+1]
+                    next_word = next_f['word'].lower()
+                    if next_word in clause_starters:
+                        is_boundary = True
+                    elif next_f['function'] == SyntacticFunction.SUBJECT:
+                        is_boundary = True
+                    elif next_word in subject_pronouns:
+                        is_boundary = True
+                    elif next_f['pos'] == 'VERB' and next_f['function'] == SyntacticFunction.VERB:
+                        is_boundary = True
+
+            current_indices.add(f['index'])
+
+            if is_boundary:
+                partitions.append(current_indices)
+                current_indices = set()
+
+        if current_indices:
+            partitions.append(current_indices)
+
+        return partitions
+
+    def _map_single_clause(self, functions: List[Dict], target_order: str) -> List[int]:
+        chunks = self._build_chunks(functions)
+        self._attach_orphaned_punctuation(chunks, functions)
+
+        core_chunks = {'S': [], 'V': [], 'O': []}
+        adjunct_chunks = []
+        modifier_chunks = []
+
+        for chunk in chunks:
+            if chunk.function == SyntacticFunction.SUBJECT:
+                core_chunks['S'].append(chunk)
+            elif chunk.function == SyntacticFunction.VERB:
+                core_chunks['V'].append(chunk)
+            elif chunk.function == SyntacticFunction.OBJECT:
+                core_chunks['O'].append(chunk)
+            elif chunk.function == SyntacticFunction.ADJUNCT:
+                adjunct_chunks.append(chunk)
             else:
-                other_elements.append(func)
+                modifier_chunks.append(chunk)
 
+        adjunct_position = self._determine_adjunct_position(target_order)
+
+        return self._legacy_reorder(chunks, target_order, adjunct_position, adjunct_chunks, adjuncts_added=False)
+
+    def _legacy_reorder(self, chunks, target_order, adjunct_position, adjunct_chunks, adjuncts_added):
         target_mapping = self.order_mappings[target_order]
 
-        ordered_groups = [[], [], []]
-        for key, position in target_mapping.items():
-            ordered_groups[position] = core_elements[key]
+        core_chunks = {'S': [], 'V': [], 'O': []}
+        local_adjuncts = []
+        local_modifiers = []
+        final_closers = []
+
+        for c in chunks:
+            if c.function == SyntacticFunction.PUNCT and c.words[0][0] in {'.', '!', '?'}:
+                final_closers.append(c)
+            elif c.function == SyntacticFunction.SUBJECT:
+                core_chunks['S'].append(c)
+            elif c.function == SyntacticFunction.VERB:
+                core_chunks['V'].append(c)
+            elif c.function == SyntacticFunction.OBJECT:
+                core_chunks['O'].append(c)
+            elif c.function == SyntacticFunction.ADJUNCT:
+                local_adjuncts.append(c)
+            else:
+                local_modifiers.append(c)
+
+        ordered_chunks = []
+
+        if adjunct_position == 'before_subject':
+            ordered_chunks.extend(local_adjuncts)
+            adjuncts_added = True
+
+        ordered_chunks.extend(core_chunks['S'])
+
+        ordered_chunks.extend(local_modifiers)
+
+        ordered_chunks.extend(core_chunks['O'])
+
+        ordered_chunks.extend(core_chunks['V'])
+
+        if not adjuncts_added:
+            ordered_chunks.extend(local_adjuncts)
+
+        ordered_chunks.extend(final_closers)
 
         result_indices = []
-
-        for group in ordered_groups:
-            for element in group:
-                modifiers = [f for f in other_elements if element['index'] in f.get(
-                    'dependencies', [])]
-
-                for mod in modifiers:
-                    if mod['pos'] in {'DET', 'PREP'} and mod['index'] < element['index']:
-                        result_indices.append(mod['index'])
-
-                result_indices.append(element['index'])
-
-                for mod in modifiers:
-                    if mod['index'] > element['index']:
-                        result_indices.append(mod['index'])
-
-        remaining = [f['index']
-                     for f in other_elements if f['index'] not in result_indices]
-        result_indices.extend(sorted(remaining))
-
+        seen = set()
+        for chunk in ordered_chunks:
+            indices = chunk.get_all_indices()
+            for idx in indices:
+                if idx not in seen:
+                    result_indices.append(idx)
+                    seen.add(idx)
         return result_indices
+
+    def _build_chunks(self, functions: List[Dict]) -> List[Chunk]:
+        chunks = []
+        processed_indices = set()
+
+        i = 0
+        while i < len(functions):
+            if i in processed_indices:
+                i += 1
+                continue
+
+            func = functions[i]
+            pos = func['pos']
+            func_type = func['function']
+
+            if func_type == SyntacticFunction.PUNCT:
+                chunk = Chunk([(func['word'], func['index'])],
+                              SyntacticFunction.PUNCT, 0, 'punct')
+                chunks.append(chunk)
+                processed_indices.add(i)
+                i += 1
+                continue
+
+            if pos == 'NOUN' and func_type in {SyntacticFunction.SUBJECT, SyntacticFunction.OBJECT}:
+                np_chunk = self._build_noun_phrase_chunk(
+                    functions, i, processed_indices)
+                if np_chunk:
+                    chunks.append(np_chunk)
+                    continue
+
+            elif pos == 'VERB' and func_type == SyntacticFunction.VERB:
+                vp_chunk = self._build_verb_phrase_chunk(
+                    functions, i, processed_indices)
+                if vp_chunk:
+                    chunks.append(vp_chunk)
+                    continue
+
+            elif pos == 'PREP' and func_type == SyntacticFunction.ADJUNCT:
+                pp_chunk = self._build_prepositional_phrase_chunk(
+                    functions, i, processed_indices)
+                if pp_chunk:
+                    chunks.append(pp_chunk)
+                    continue
+
+            chunk = Chunk(
+                words=[(func['word'], func['index'])],
+                function=func_type,
+                head_index=0,
+                chunk_type='simple'
+            )
+            chunks.append(chunk)
+            processed_indices.add(i)
+            i += 1
+
+        return chunks
+
+    def _attach_orphaned_punctuation(self, chunks: List[Chunk], functions: List[Dict]):
+        index_to_chunk = {}
+        processed_indices = set()
+
+        for chunk in chunks:
+            for _, idx in chunk.words:
+                index_to_chunk[idx] = chunk
+                processed_indices.add(idx)
+        glue_punct = {',', ';', ':', ')', ']', '}', '...', '…', '%'}
+        closers = {'.', '!', '?'}
+
+        for chunk in chunks:
+            if chunk.chunk_type == 'punct' and chunk.words:
+                word = chunk.words[0][0]
+                idx = chunk.words[0][1]
+
+                if word in glue_punct:
+                    chunk_idx = chunks.index(chunk)
+                    if chunk_idx > 0:
+                        prev_chunk = chunks[chunk_idx-1]
+                        prev_chunk.words.append((word, idx))
+                        prev_chunk.dependent_indices.add(idx)
+                        prev_chunk.words.sort(key=lambda x: x[1])
+                        chunk.words = []
+
+        chunks[:] = [c for c in chunks if c.words]
+
+    def _build_noun_phrase_chunk(self, functions: List[Dict], noun_index: int,
+                                 processed_indices: Set[int]) -> Optional[Chunk]:
+        if noun_index >= len(functions):
+            return None
+        noun_func = functions[noun_index]
+        np_words = [(noun_func['word'], noun_func['index'])]
+
+        i = noun_index - 1
+        while i >= 0 and i not in processed_indices:
+            func = functions[i]
+            if func['pos'] in {'DET', 'ADJ', 'PRON', 'ADV', 'NUM'}:
+                np_words.insert(0, (func['word'], func['index']))
+                processed_indices.add(i)
+                i -= 1
+            else:
+                break
+
+        i = noun_index + 1
+        while i < len(functions) and i not in processed_indices:
+            func = functions[i]
+            if func['pos'] == 'ADJ':
+                np_words.append((func['word'], func['index']))
+                processed_indices.add(i)
+                i += 1
+            else:
+                break
+
+        processed_indices.add(noun_index)
+        return Chunk(np_words, noun_func['function'], 0, 'NP')
+
+    def _build_verb_phrase_chunk(self, functions: List[Dict], verb_index: int,
+                                 processed_indices: Set[int]) -> Optional[Chunk]:
+        if verb_index >= len(functions):
+            return None
+        verb_func = functions[verb_index]
+        vp_words = [(verb_func['word'], verb_func['index'])]
+
+        i = verb_index - 1
+        while i >= 0 and i not in processed_indices:
+            func = functions[i]
+            if func['pos'] in {'AUX', 'ADV', 'PRON', 'PART', 'SCONJ'}:
+                vp_words.insert(0, (func['word'], func['index']))
+                processed_indices.add(i)
+                i -= 1
+            else:
+                break
+
+        processed_indices.add(verb_index)
+        return Chunk(vp_words, SyntacticFunction.VERB, 0, 'VP')
+
+    def _build_prepositional_phrase_chunk(self, functions: List[Dict], prep_index: int,
+                                          processed_indices: Set[int]) -> Optional[Chunk]:
+        if prep_index >= len(functions):
+            return None
+        prep_func = functions[prep_index]
+        pp_words = [(prep_func['word'], prep_index)]
+
+        i = prep_index + 1
+        while i < len(functions) and i not in processed_indices and functions[i]['pos'] == 'DET':
+            pp_words.append((functions[i]['word'], functions[i]['index']))
+            processed_indices.add(i)
+            i += 1
+
+        if i < len(functions) and i not in processed_indices:
+            if functions[i]['pos'] in {'NOUN', 'PRON', 'PROPN'}:
+                np = self._build_noun_phrase_chunk(
+                    functions, i, processed_indices)
+                if np:
+                    for w in np.words:
+                        if w[1] not in [x[1] for x in pp_words]:
+                            pp_words.append(w)
+                            processed_indices.add(w[1])
+            elif functions[i]['pos'] == 'ADJ':
+                pp_words.append((functions[i]['word'], functions[i]['index']))
+                processed_indices.add(i)
+
+        processed_indices.add(prep_index)
+        return Chunk(pp_words, SyntacticFunction.ADJUNCT, 0, 'PP')
+
+    def _determine_adjunct_position(self, target_order: str) -> str:
+        if self.adjunct_position != 'auto':
+            return self.adjunct_position
+        if target_order == 'SOV':
+            return 'after_object'
+        return 'after_verb'
 
 
 class CaseMorphology:
@@ -248,10 +416,10 @@ class SyntaxEngine:
         self.profile_id = self.profile.get('id', 'unknown')
         self.word_order = self.profile.get('word_order', 'SVO')
         self.source_order = self.profile.get('source_language_order', 'SVO')
+        self.ud_model = 'portuguese-bosque-ud-2.17-251125'
 
-        self.pos_tagger = POSTagger(self.profile_id)
-        self.function_identifier = FunctionIdentifier(self.pos_tagger)
-        self.word_order_mapper = WordOrderMapper(self.source_order)
+        self.word_order_mapper = WordOrderMapper(
+            self.source_order, self.profile)
         self.case_morphology = CaseMorphology(self.profile)
 
         self.syntax_cache_dir = Path("./syntax_cache")
@@ -259,7 +427,7 @@ class SyntaxEngine:
         self.syntax_cache_file = self.syntax_cache_dir / \
             f"{self.profile_id}_syntax.json"
 
-        self.sentence_cache: Dict[str, List[int]] = {}
+        self.sentence_cache: Dict[str, Dict] = {}
         self.load_cache()
 
     def load_cache(self):
@@ -280,86 +448,173 @@ class SyntaxEngine:
         with open(self.syntax_cache_file, 'w', encoding='utf-8') as f:
             json.dump(data, f, indent=2, ensure_ascii=False)
 
-    def process_sentence(self, words: List[str]) -> Tuple[List[str], List[Dict]]:
-        cache_key = self._get_cache_key(words)
+    def process_sentence(self, sentence: str) -> Tuple[List[str], List[Dict]]:
+        cache_key = self._get_cache_key(sentence)
 
         if cache_key in self.sentence_cache:
-            indices = self.sentence_cache[cache_key]
-            reordered = [words[i] for i in indices if i < len(words)]
-            return reordered, []
+            cached = self.sentence_cache[cache_key]
+            reordered_words = []
 
-        tagged = self.pos_tagger.tag_sentence(words)
-
-        functions = self.function_identifier.identify_functions(tagged)
-
-        new_indices = self.word_order_mapper.map_to_target_order(
-            functions, self.word_order)
-
-        self.sentence_cache[cache_key] = new_indices
-
-        reordered_words = []
-        for idx in new_indices:
-            if idx < len(words):
-                word = words[idx]
-                function = functions[idx]['function'] if idx < len(
-                    functions) else SyntacticFunction.UNKNOWN
+            for idx in cached['indices']:
+                word = cached['words'][idx]
+                function = cached['functions'][idx]['function']
                 word_with_case = self.case_morphology.apply_case(
                     word, function, self.word_order)
                 reordered_words.append(word_with_case)
 
-        return reordered_words, functions
+            final_tokens = self._glue_tokens(
+                reordered_words, [cached['functions'][i] for i in cached['indices']])
+            return final_tokens, cached['functions']
+
+        url = "https://lindat.mff.cuni.cz/services/udpipe/api/process"
+        params = {
+            'data': sentence,
+            'model': self.ud_model,
+            'tokenizer': '',
+            'tagger': '',
+            'parser': '',
+            'output': 'conllu'
+        }
+        try:
+            response = requests.post(url, data=params, timeout=10)
+            if not response.ok:
+                return sentence.split(), []
+            data = response.json()
+            conllu = data['result']
+        except:
+            return sentence.split(), []
+
+        functions = []
+        words = []
+        i = 0
+        for line in conllu.splitlines():
+            if not line.strip() or line.startswith('#'):
+                continue
+            parts = line.split('\t')
+            if len(parts) != 10 or '-' in parts[0]:
+                continue
+
+            word = parts[1]
+            upos = parts[3]
+            deprel = parts[7]
+            head = int(parts[6]) - 1 if parts[6] != '0' else -1
+            function = self._map_deprel_to_function(deprel, upos)
+
+            functions.append({
+                'word': word,
+                'pos': upos,
+                'deprel': deprel,
+                'function': function,
+                'index': i,
+                'dependencies': [head] if head != -1 else [],
+            })
+            words.append(word)
+            i += 1
+
+        new_indices = self.word_order_mapper.map_to_target_order(
+            functions, self.word_order)
+
+        raw_reordered_words = []
+        ordered_functions = []
+
+        for idx in new_indices:
+            word = functions[idx]['word']
+            function = functions[idx]['function']
+            word_with_case = self.case_morphology.apply_case(
+                word, function, self.word_order)
+            raw_reordered_words.append(word_with_case)
+            ordered_functions.append(functions[idx])
+
+        final_tokens = self._glue_tokens(
+            raw_reordered_words, ordered_functions)
+
+        self.sentence_cache[cache_key] = {
+            'indices': new_indices,
+            'words': words,
+            'functions': functions
+        }
+
+        return final_tokens, functions
+
+    def _glue_tokens(self, words: List[str], function_objs: List[Dict]) -> List[str]:
+        final_tokens = []
+        punct_suffix = {'.', ',', '!', '?', ';', ':', '...',
+                        '…', ')', ']', '}', '»', '”', '"', "'", '%'}
+        punct_prefix = {'(', '[', '{', '«', '“', '¿', '¡'}
+
+        for i, word in enumerate(words):
+            if not final_tokens:
+                final_tokens.append(word)
+                continue
+
+            last_token = final_tokens[-1]
+
+            if word in punct_suffix:
+                final_tokens[-1] = last_token + word
+            elif any(last_token.startswith(p) for p in punct_prefix) and last_token in punct_prefix:
+                final_tokens[-1] = last_token + word
+            else:
+                final_tokens.append(word)
+
+        return final_tokens
 
     def process_text(self, text: str) -> Tuple[str, List[Dict]]:
         sentences = self._split_sentences(text)
-
         all_functions = []
         reordered_sentences = []
 
         for sentence in sentences:
-            words = sentence.split()
-            if not words:
+            if not sentence.strip():
                 reordered_sentences.append("")
                 continue
 
-            reordered, functions = self.process_sentence(words)
-            reordered_sentences.append(' '.join(reordered))
+            reordered_words, functions = self.process_sentence(sentence)
+            reordered_sentences.append(' '.join(reordered_words))
             all_functions.append({
                 'original': sentence,
-                'reordered': ' '.join(reordered),
+                'reordered': ' '.join(reordered_words),
                 'functions': functions
             })
 
         self.save_cache()
-
         return ' '.join(reordered_sentences), all_functions
 
     def _split_sentences(self, text: str) -> List[str]:
         import re
         sentences = re.split(r'([.!?]+\s*)', text)
-
         result = []
         i = 0
         while i < len(sentences):
-            if i + 1 < len(sentences) and sentences[i + 1].strip():
-                result.append(sentences[i] + sentences[i + 1])
+            if i + 1 < len(sentences) and sentences[i+1].strip():
+                result.append(sentences[i] + sentences[i+1])
                 i += 2
             elif sentences[i].strip():
                 result.append(sentences[i])
                 i += 1
             else:
                 i += 1
-
         return result
 
-    def _get_cache_key(self, words: List[str]) -> str:
-        joined = '|'.join(words).lower()
-        return hashlib.md5(joined.encode()).hexdigest()
+    def _get_cache_key(self, sentence: str) -> str:
+        return hashlib.md5(sentence.lower().encode()).hexdigest()
+
+    def _map_deprel_to_function(self, deprel: str, upos: str) -> str:
+        deprel = deprel.lower()
+        if upos in {'VERB', 'AUX'}:
+            return SyntacticFunction.VERB
+        if 'nsubj' in deprel:
+            return SyntacticFunction.SUBJECT
+        if deprel in {'obj', 'iobj', 'ccomp'}:
+            return SyntacticFunction.OBJECT
+        if deprel in {'obl', 'advcl'}:
+            return SyntacticFunction.ADJUNCT
+        if upos == 'PUNCT':
+            return SyntacticFunction.PUNCT
+        return SyntacticFunction.MODIFIER
 
     def get_statistics(self) -> Dict:
         return {
             'profile_id': self.profile_id,
             'word_order': self.word_order,
-            'source_order': self.source_order,
             'cached_sentences': len(self.sentence_cache),
-            'case_system_enabled': self.case_morphology.enabled
         }
