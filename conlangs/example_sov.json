@@ -9,30 +9,15 @@
   "phonotactics": {
     "vowels": "aeiou",
     "consonants": "bdfghjklmnprstvz",
-    "syllable_templates": [
-      "CV",
-      "CVC",
-      "V",
-      "VC"
-    ],
+    "syllable_templates": ["CV", "CVC", "V", "VC"],
     "min_syllables": 1,
     "max_syllables": 3,
     "max_consonant_cluster": 2,
     "max_vowel_cluster": 1,
-    "forbidden_initial_clusters": [
-      "zr",
-      "nm"
-    ],
-    "forbidden_final_consonants": [
-      "h"
-    ],
+    "forbidden_initial_clusters": ["zr", "nm"],
+    "forbidden_final_consonants": ["h"],
     "epenthesis_vowel": "i",
-    "diphthongs": [
-      "ai",
-      "ei",
-      "ou",
-      "au"
-    ]
+    "diphthongs": ["ai", "ei", "ou", "au"]
   },
   "case_system": {
     "enabled": true,
@@ -44,6 +29,36 @@
       "locative": "-l"
     },
     "marker_position": "suffix"
+  },
+  "tam_system": {
+    "enabled": true,
+    "rules": [
+      {
+        "features": ["Tense=Past"],
+        "marker": "ed",
+        "type": "suffix"
+      },
+      {
+        "features": ["Tense=Imp"],
+        "marker": "va",
+        "type": "suffix"
+      },
+      {
+        "features": ["Tense=Fut"],
+        "marker": "go",
+        "type": "particle_before"
+      },
+      {
+        "features": ["Mood=Cnd"],
+        "marker": "ria",
+        "type": "suffix"
+      },
+      {
+        "features": ["Mood=Sub"],
+        "marker": "ke",
+        "type": "particle_before"
+      }
+    ]
   },
   "agreement_rules": {
     "gender_agreement": false,

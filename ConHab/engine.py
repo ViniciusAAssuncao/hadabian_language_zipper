@@ -6,7 +6,7 @@ from syntax_engine import SyntaxEngine, SyntacticFunction
 from morphosyntax_analyzer import (
     DependencyParser, ConstituentAnalyzer, ClauseSegmenter,
     AgreementChecker, SyntacticComplexityAnalyzer,
-    TopicalizationHandler, FocusStructureHandler
+    TopicalizationHandler, FocusStructureHandler, TAMHandler
 )
 
 
@@ -124,6 +124,7 @@ class OriginalLanguageEngine:
         self.focus_handler = FocusStructureHandler(self.profile)
         self.affix_handler = AffixHandler(self.profile)
         self.degree_handler = DegreeHandler(self.profile)
+        self.tam_handler = TAMHandler(self.profile)
         self.word_cache: Dict[str, str] = {}
         self.load_word_cache()
 
@@ -243,6 +244,10 @@ class OriginalLanguageEngine:
 
                     if not degree_type:
                         self.word_cache[clean_word_lower] = translated
+
+                if self.tam_handler.enabled and pos_map.get(orig_word) == 'VERB':
+                    translated = self.tam_handler.apply_tam(
+                        translated, word_feats)
 
                 translated = translated.lower()
                 if clean_word_lower in named_entities:

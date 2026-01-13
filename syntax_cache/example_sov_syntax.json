@@ -1,18 +1,16 @@
 {
   "sentence_cache": {
-    "cf685f4a1e188bc1107a011489f5cb25": {
+    "c869c1a2fad8590c86127a0b23396465": {
       "indices": [
         1,
         3,
-        2,
-        4
+        2
       ],
       "words": [
         "O",
         "gato",
-        "bebe",
-        "leite",
-        "."
+        "bebeu",
+        "leite"
       ],
       "functions": [
         {
@@ -40,10 +38,10 @@
           ]
         },
         {
-          "word": "bebe",
+          "word": "bebeu",
           "lemma": "beber",
           "pos": "VERB",
-          "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin",
+          "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Past|VerbForm=Fin",
           "deprel": "root",
           "function": "V",
           "index": 2,
@@ -60,14 +58,199 @@
           "dependencies": [
             2
           ]
+        }
+      ]
+    },
+    "dcef278683274381638f35b6b22c7ea1": {
+      "indices": [
+        1,
+        3,
+        2
+      ],
+      "words": [
+        "O",
+        "gato",
+        "bebia",
+        "leite"
+      ],
+      "functions": [
+        {
+          "word": "O",
+          "lemma": "o",
+          "pos": "DET",
+          "feats": "Definite=Def|Gender=Masc|Number=Sing|PronType=Art",
+          "deprel": "det",
+          "function": "MOD",
+          "index": 0,
+          "dependencies": [
+            1
+          ]
         },
         {
-          "word": ".",
-          "lemma": ".",
-          "pos": "PUNCT",
+          "word": "gato",
+          "lemma": "gato",
+          "pos": "NOUN",
+          "feats": "Gender=Masc|Number=Sing",
+          "deprel": "nsubj",
+          "function": "S",
+          "index": 1,
+          "dependencies": [
+            2
+          ]
+        },
+        {
+          "word": "bebia",
+          "lemma": "beber",
+          "pos": "VERB",
+          "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Imp|VerbForm=Fin",
+          "deprel": "root",
+          "function": "V",
+          "index": 2,
+          "dependencies": []
+        },
+        {
+          "word": "leite",
+          "lemma": "leite",
+          "pos": "NOUN",
+          "feats": "Gender=Masc|Number=Sing",
+          "deprel": "obj",
+          "function": "O",
+          "index": 3,
+          "dependencies": [
+            2
+          ]
+        }
+      ]
+    },
+    "9edcab0f1ce22a3b4fdadadf39b82e84": {
+      "indices": [
+        1,
+        3,
+        2
+      ],
+      "words": [
+        "O",
+        "gato",
+        "beberá",
+        "leite"
+      ],
+      "functions": [
+        {
+          "word": "O",
+          "lemma": "o",
+          "pos": "DET",
+          "feats": "Definite=Def|Gender=Masc|Number=Sing|PronType=Art",
+          "deprel": "det",
+          "function": "MOD",
+          "index": 0,
+          "dependencies": [
+            1
+          ]
+        },
+        {
+          "word": "gato",
+          "lemma": "gato",
+          "pos": "NOUN",
+          "feats": "Gender=Masc|Number=Sing",
+          "deprel": "nsubj",
+          "function": "S",
+          "index": 1,
+          "dependencies": [
+            2
+          ]
+        },
+        {
+          "word": "beberá",
+          "lemma": "beber",
+          "pos": "VERB",
+          "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Fut|VerbForm=Fin",
+          "deprel": "root",
+          "function": "V",
+          "index": 2,
+          "dependencies": []
+        },
+        {
+          "word": "leite",
+          "lemma": "leite",
+          "pos": "NOUN",
+          "feats": "Gender=Masc|Number=Sing",
+          "deprel": "obj",
+          "function": "O",
+          "index": 3,
+          "dependencies": [
+            2
+          ]
+        }
+      ]
+    },
+    "257ef046cbdb01136dc8fdd8ce962e63": {
+      "indices": [
+        1,
+        3,
+        4,
+        2
+      ],
+      "words": [
+        "O",
+        "gato",
+        "beberá",
+        "MESMO",
+        "leite"
+      ],
+      "functions": [
+        {
+          "word": "O",
+          "lemma": "o",
+          "pos": "DET",
+          "feats": "Definite=Def|Gender=Masc|Number=Sing|PronType=Art",
+          "deprel": "det",
+          "function": "MOD",
+          "index": 0,
+          "dependencies": [
+            1
+          ]
+        },
+        {
+          "word": "gato",
+          "lemma": "gato",
+          "pos": "NOUN",
+          "feats": "Gender=Masc|Number=Sing",
+          "deprel": "nsubj",
+          "function": "S",
+          "index": 1,
+          "dependencies": [
+            2
+          ]
+        },
+        {
+          "word": "beberá",
+          "lemma": "beber",
+          "pos": "VERB",
+          "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Fut|VerbForm=Fin",
+          "deprel": "root",
+          "function": "V",
+          "index": 2,
+          "dependencies": []
+        },
+        {
+          "word": "MESMO",
+          "lemma": "mesmo",
+          "pos": "ADV",
           "feats": "_",
-          "deprel": "punct",
-          "function": "PUNCT",
+          "deprel": "advmod",
+          "function": "MOD",
+          "index": 3,
+          "dependencies": [
+            2
+          ]
+        },
+        {
+          "word": "leite",
+          "lemma": "leite",
+          "pos": "NOUN",
+          "feats": "Gender=Masc|Number=Sing",
+          "deprel": "obj",
+          "function": "O",
           "index": 4,
           "dependencies": [
             2
