@@ -1,11 +1,11 @@
 {
   "id": "example_sov",
-  "name": "Exemplo SOV com Casos",
-  "description": "Língua exemplo com ordem SOV e sistema de casos morfológicos",
+  "name": "Exemplo SOV com Casos e Harmonia",
+  "description": "Língua exemplo com ordem SOV, sistema de casos e harmonização vocálica.",
   "word_order": "SOV",
   "source_language_order": "SVO",
+  "drop_articles": true,
   "global_seed": 42857,
-  
   "phonotactics": {
     "vowels": "aeiou",
     "consonants": "bdfghjklmnprstvz",
@@ -19,36 +19,207 @@
     "epenthesis_vowel": "i",
     "diphthongs": ["ai", "ei", "ou", "au"]
   },
-  
+  "vowel_harmony": {
+    "enabled": true,
+    "groups": {
+      "front": "ei",
+      "back": "aou"
+    },
+    "rules": [
+      {
+        "input": "a",
+        "map": {
+          "front": "e",
+          "back": "a"
+        }
+      },
+      {
+        "input": "o",
+        "map": {
+          "front": "e",
+          "back": "o"
+        }
+      }
+    ]
+  },
   "case_system": {
     "enabled": true,
     "markers": {
       "nominative": "",
-      "accusative": "-m",
-      "dative": "-n",
-      "genitive": "-s",
-      "locative": "-l"
+      "accusative": "-ma",
+      "dative": "-na",
+      "genitive": "-sa",
+      "locative": "-la"
     },
     "marker_position": "suffix"
   },
-  
+  "tam_system": {
+    "enabled": true,
+    "rules": [
+      {
+        "features": ["Tense=Past"],
+        "marker": "da",
+        "type": "suffix"
+      },
+      {
+        "features": ["Tense=Imp"],
+        "marker": "va",
+        "type": "suffix"
+      },
+      {
+        "features": ["Tense=Fut"],
+        "marker": "go",
+        "type": "particle_before"
+      },
+      {
+        "features": ["Mood=Cnd"],
+        "marker": "ria",
+        "type": "suffix"
+      },
+      {
+        "features": ["Mood=Sub"],
+        "marker": "ke",
+        "type": "particle_before"
+      }
+    ]
+  },
   "agreement_rules": {
     "gender_agreement": false,
     "number_agreement": true
   },
-  
   "topicalization": {
     "enabled": true,
     "position": "initial",
     "topic_marker": "wa"
   },
-  
   "focus_structure": {
     "enabled": true,
     "object_focus_marker": "ko",
     "verb_focus_marker": "do"
   },
-  
+  "degree_system": {
+    "enabled": true,
+    "source_rules": [
+      {
+        "type": "diminutive",
+        "suffix": "zinho",
+        "replacement": ""
+      },
+      {
+        "type": "diminutive",
+        "suffix": "zinha",
+        "replacement": ""
+      },
+      {
+        "type": "diminutive",
+        "suffix": "inho",
+        "replacement": "o"
+      },
+      {
+        "type": "diminutive",
+        "suffix": "inha",
+        "replacement": "a"
+      },
+      {
+        "type": "augmentative",
+        "suffix": "zão",
+        "replacement": ""
+      },
+      {
+        "type": "augmentative",
+        "suffix": "zona",
+        "replacement": ""
+      },
+      {
+        "type": "augmentative",
+        "suffix": "ão",
+        "replacement": "o"
+      },
+      {
+        "type": "superlative",
+        "suffix": "íssimo",
+        "replacement": "o"
+      },
+      {
+        "type": "superlative",
+        "suffix": "íssima",
+        "replacement": "a"
+      }
+    ],
+    "rules": {
+      "diminutive": {
+        "affix": "ina",
+        "position": "suffix"
+      },
+      "augmentative": {
+        "affix": "ona",
+        "position": "suffix"
+      },
+      "superlative": {
+        "affix": "isa",
+        "position": "suffix"
+      }
+    }
+  },
+  "affix_system": {
+    "enabled": true,
+    "source_suffixes": [
+      {
+        "input_pos": "NOUN",
+        "suffix": "dor",
+        "replacement": "r",
+        "target_pos": "VERB"
+      },
+      {
+        "input_pos": "NOUN",
+        "suffix": "ção",
+        "replacement": "r",
+        "target_pos": "VERB"
+      },
+      {
+        "input_pos": "ADV",
+        "suffix": "mente",
+        "replacement": "x",
+        "target_pos": "ADJ"
+      }
+    ],
+    "derivation_rules": [
+      {
+        "from_pos": "VERB",
+        "to_pos": "NOUN",
+        "type": "agent",
+        "affix": "tu",
+        "position": "suffix"
+      },
+      {
+        "from_pos": "ADJ",
+        "to_pos": "ADV",
+        "affix": "li",
+        "position": "suffix"
+      },
+      {
+        "from_pos": "NOUN",
+        "to_pos": "ADJ",
+        "affix": "ka",
+        "position": "suffix"
+      }
+    ]
+  },
+  "reduplication": {
+    "enabled": true,
+    "rules": [
+      {
+        "features": ["Number=Plur"],
+        "method": "first_syllable",
+        "separator": ""
+      },
+      {
+        "features": ["Degree=Abs"],
+        "method": "whole_word",
+        "separator": "-"
+      }
+    ]
+  },
   "style": {
     "capitalization": true
   }
