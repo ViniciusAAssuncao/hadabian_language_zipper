@@ -3,5 +3,6 @@
 /context
 /cache
 ./ConHab/__pycache__
+/syntax_cache
 .vscode
 __pycache__

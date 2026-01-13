@@ -1,7 +1,7 @@
 {
   "id": "example_sov",
-  "name": "Exemplo SOV com Casos",
-  "description": "Língua exemplo com ordem SOV e sistema de casos morfológicos, com supressão de artigos.",
+  "name": "Exemplo SOV com Casos e Harmonia",
+  "description": "Língua exemplo com ordem SOV, sistema de casos e harmonização vocálica.",
   "word_order": "SOV",
   "source_language_order": "SVO",
   "drop_articles": true,
@@ -19,14 +19,37 @@
     "epenthesis_vowel": "i",
     "diphthongs": ["ai", "ei", "ou", "au"]
   },
+  "vowel_harmony": {
+    "enabled": true,
+    "groups": {
+      "front": "ei",
+      "back": "aou"
+    },
+    "rules": [
+      {
+        "input": "a",
+        "map": {
+          "front": "e",
+          "back": "a"
+        }
+      },
+      {
+        "input": "o",
+        "map": {
+          "front": "e",
+          "back": "o"
+        }
+      }
+    ]
+  },
   "case_system": {
     "enabled": true,
     "markers": {
       "nominative": "",
-      "accusative": "-m",
-      "dative": "-n",
-      "genitive": "-s",
-      "locative": "-l"
+      "accusative": "-ma",
+      "dative": "-na",
+      "genitive": "-sa",
+      "locative": "-la"
     },
     "marker_position": "suffix"
   },
@@ -35,7 +58,7 @@
     "rules": [
       {
         "features": ["Tense=Past"],
-        "marker": "ed",
+        "marker": "da",
         "type": "suffix"
       },
       {
@@ -125,15 +148,15 @@
     ],
     "rules": {
       "diminutive": {
-        "affix": "in",
+        "affix": "ina",
         "position": "suffix"
       },
       "augmentative": {
-        "affix": "on",
+        "affix": "ona",
         "position": "suffix"
       },
       "superlative": {
-        "affix": "is",
+        "affix": "isa",
         "position": "suffix"
       }
     }

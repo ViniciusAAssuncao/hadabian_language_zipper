@@ -6,16 +6,18 @@ from syntax_engine import SyntaxEngine, SyntacticFunction
 from morphosyntax_analyzer import (
     DependencyParser, ConstituentAnalyzer, ClauseSegmenter,
     AgreementChecker, SyntacticComplexityAnalyzer,
-    TopicalizationHandler, FocusStructureHandler, TAMHandler
+    TopicalizationHandler, FocusStructureHandler, TAMHandler,
+    VowelHarmonyHandler
 )
 
 
 class AffixHandler:
-    def __init__(self, profile: Dict):
+    def __init__(self, profile: Dict, harmony_handler: Optional[VowelHarmonyHandler] = None):
         self.profile = profile
         self.affix_system = profile.get('affix_system', {})
         self.enabled = self.affix_system.get('enabled', False)
         self.derivation_rules = self.affix_system.get('derivation_rules', [])
+        self.harmony_handler = harmony_handler
 
     def get_derivation_rule(self, from_pos: str, to_pos: str) -> Optional[Dict]:
         if not self.enabled:
@@ -28,8 +30,13 @@ class AffixHandler:
     def apply_affix(self, word: str, rule: Dict) -> str:
         affix = rule.get('affix', '')
         position = rule.get('position', 'suffix')
+
         if not affix:
             return word
+
+        if position == 'suffix' and self.harmony_handler and self.harmony_handler.enabled:
+            affix = self.harmony_handler.apply_harmony(word, affix)
+
         if position == 'prefix':
             return f"{affix}{word}"
         elif position == 'suffix':
@@ -41,12 +48,13 @@ class AffixHandler:
 
 
 class DegreeHandler:
-    def __init__(self, profile: Dict):
+    def __init__(self, profile: Dict, harmony_handler: Optional[VowelHarmonyHandler] = None):
         self.profile = profile
         self.config = profile.get('degree_system', {})
         self.enabled = self.config.get('enabled', False)
         self.rules = self.config.get('rules', {})
         self.source_rules = self.config.get('source_rules', [])
+        self.harmony_handler = harmony_handler
 
     def detect_degree(self, word: str, lemma: str, feats_str: str) -> Optional[str]:
         if not self.enabled:
@@ -95,6 +103,10 @@ class DegreeHandler:
             return word
         affix = rule.get('affix', '')
         position = rule.get('position', 'suffix')
+
+        if position == 'suffix' and self.harmony_handler and self.harmony_handler.enabled:
+            affix = self.harmony_handler.apply_harmony(word, affix)
+
         if position == 'suffix':
             return f"{word}{affix}"
         elif position == 'prefix':
@@ -164,8 +176,11 @@ class OriginalLanguageEngine:
         self.complexity_analyzer = SyntacticComplexityAnalyzer()
         self.topicalization_handler = TopicalizationHandler(self.profile)
         self.focus_handler = FocusStructureHandler(self.profile)
-        self.affix_handler = AffixHandler(self.profile)
-        self.degree_handler = DegreeHandler(self.profile)
+        self.vowel_harmony_handler = VowelHarmonyHandler(self.profile)
+        self.affix_handler = AffixHandler(
+            self.profile, self.vowel_harmony_handler)
+        self.degree_handler = DegreeHandler(
+            self.profile, self.vowel_harmony_handler)
         self.tam_handler = TAMHandler(self.profile)
         self.reduplication_handler = ReduplicationHandler(self.profile)
         self.word_cache: Dict[str, str] = {}
@@ -195,123 +210,113 @@ class OriginalLanguageEngine:
     def process_text(self, text: str) -> str:
         reordered_text, functions_info = self.syntax_engine.process_text(text)
         final_sentences = []
+
         for sent_data in functions_info:
-            words = sent_data['reordered'].split()
-            all_functions = sent_data['functions']
-            func_map = {}
-            named_entities = set()
-            lemma_map = {}
-            pos_map = {}
-            feats_map = {}
-            for f in all_functions:
-                w = f.get("word")
-                func_map[w] = f.get("function", "")
-                lemma_map[w] = f.get("lemma", "")
-                pos_map[w] = f.get("pos", "")
-                feats_map[w] = f.get("feats", "")
-                if f.get("named_entity", False):
-                    named_entities.add(w)
-
+            ordered_functions = sent_data['functions']
             translated_words = []
-            for idx, orig_word in enumerate(words):
-                clean_word_lower = self._clean_word(orig_word).lower()
-                prefix, suffix = self._extract_punctuation(orig_word)
 
-                raw_lemma = lemma_map.get(orig_word, clean_word_lower).lower()
-                word_feats = feats_map.get(orig_word, "")
+            for func in ordered_functions:
+                orig_word = func.get("word", "")
+                lemma = func.get("lemma", "")
+                pos = func.get("pos", "")
+                feats = func.get("feats", "")
+                syntactic_func = func.get("function", "")
+                is_named_entity = func.get("named_entity", False)
+
+                clean_word_lower = self._clean_word(orig_word).lower()
+                raw_lemma = lemma if lemma else clean_word_lower
+                raw_lemma = raw_lemma.lower()
+
+                if pos == 'PUNCT':
+                    translated_words.append(orig_word)
+                    continue
 
                 degree_type = None
                 if self.degree_handler.enabled:
                     degree_type = self.degree_handler.detect_degree(
-                        clean_word_lower, raw_lemma, word_feats)
+                        clean_word_lower, raw_lemma, feats)
 
-                translated = None
+                base_lemma_for_translation = raw_lemma
 
                 if degree_type:
-                    base_lemma = self.degree_handler.get_base_lemma(
-                        clean_word_lower, raw_lemma, degree_type, word_feats)
+                    base_lemma_for_translation = self.degree_handler.get_base_lemma(
+                        clean_word_lower, raw_lemma, degree_type, feats)
 
-                    if base_lemma not in self.word_cache:
-                        self.word_cache[base_lemma] = self._generate_deterministic_word(
-                            base_lemma)
+                target_lemma = base_lemma_for_translation
+                current_pos = pos
+                applied_derivation_rule = None
 
-                    base_translation = self.word_cache[base_lemma]
-                    translated = self.degree_handler.apply_degree(
-                        base_translation, degree_type)
+                if self.affix_handler.enabled and not degree_type:
+                    source_suffixes = self.profile.get(
+                        'affix_system', {}).get('source_suffixes', [])
+                    for suffix_rule in source_suffixes:
+                        suf_str = suffix_rule.get('suffix', '')
+                        input_pos = suffix_rule.get('input_pos', 'NOUN')
 
-                elif clean_word_lower in self.word_cache:
-                    translated = self.word_cache[clean_word_lower]
-                else:
-                    target_lemma = raw_lemma
-                    current_pos = pos_map.get(orig_word, 'NOUN')
+                        if current_pos == input_pos and base_lemma_for_translation.endswith(suf_str):
+                            replacement = suffix_rule.get('replacement', '')
+                            possible_stem = base_lemma_for_translation[:-len(
+                                suf_str)] + replacement
+                            target_pos_req = suffix_rule.get(
+                                'target_pos', 'VERB')
 
-                    if self.affix_handler.enabled:
-                        source_suffixes = self.profile.get(
-                            'affix_system', {}).get('source_suffixes', [])
-                        for suffix_rule in source_suffixes:
-                            suf_str = suffix_rule.get('suffix', '')
-                            input_pos = suffix_rule.get('input_pos', 'NOUN')
+                            target_lemma = possible_stem
 
-                            if current_pos == input_pos and clean_word_lower.endswith(suf_str):
-                                replacement = suffix_rule.get(
-                                    'replacement', '')
-                                target_pos_req = suffix_rule.get(
-                                    'target_pos', 'VERB')
-                                possible_stem = clean_word_lower[:-
-                                                                 len(suf_str)] + replacement
-
-                                if possible_stem in lemma_map.values() or self.syntax_engine.estimate_lemma_pos(possible_stem) == target_pos_req:
-                                    target_lemma = possible_stem
-                                    break
-
-                        if target_lemma and target_lemma != clean_word_lower:
                             lemma_pos = self.syntax_engine.estimate_lemma_pos(
                                 target_lemma)
-                            rule = self.affix_handler.get_derivation_rule(
+                            applied_derivation_rule = self.affix_handler.get_derivation_rule(
                                 lemma_pos, current_pos)
+                            break
 
-                            if rule:
-                                if target_lemma not in self.word_cache:
-                                    self.word_cache[target_lemma] = self._generate_deterministic_word(
-                                        target_lemma)
+                translated_root = None
 
-                                base_translation = self.word_cache[target_lemma]
-                                translated = self.affix_handler.apply_affix(
-                                    base_translation, rule)
+                if target_lemma not in self.word_cache:
+                    self.word_cache[target_lemma] = self._generate_deterministic_word(
+                        target_lemma)
 
-                    if translated is None:
-                        if target_lemma not in self.word_cache:
-                            self.word_cache[target_lemma] = self._generate_deterministic_word(
-                                target_lemma)
-                        translated = self.word_cache[target_lemma]
+                translated_root = self.word_cache[target_lemma]
 
-                    if not degree_type:
-                        self.word_cache[clean_word_lower] = translated
+                current_form = translated_root
+
+                if applied_derivation_rule:
+                    current_form = self.affix_handler.apply_affix(
+                        current_form, applied_derivation_rule)
+
+                if degree_type:
+                    current_form = self.degree_handler.apply_degree(
+                        current_form, degree_type)
+
+                current_form = self.syntax_engine.case_morphology.apply_case(
+                    current_form,
+                    syntactic_func,
+                    self.syntax_engine.word_order
+                )
+
+                if self.tam_handler.enabled and (pos in {'VERB', 'AUX'} or 'Tense=' in feats or 'Mood=' in feats or 'Aspect=' in feats):
+                    current_form = self.tam_handler.apply_tam(
+                        current_form, feats)
 
                 if self.reduplication_handler.enabled:
-                    translated = self.reduplication_handler.apply_reduplication(
-                        translated, word_feats)
+                    current_form = self.reduplication_handler.apply_reduplication(
+                        current_form, feats)
 
-                if self.tam_handler.enabled and pos_map.get(orig_word) == 'VERB':
-                    translated = self.tam_handler.apply_tam(
-                        translated, word_feats)
+                if is_named_entity:
+                    current_form = current_form.capitalize()
 
-                translated = translated.lower()
-                if clean_word_lower in named_entities:
-                    translated = translated.capitalize()
+                if orig_word[0].isupper() and pos == 'PROPN':
+                    current_form = current_form.capitalize()
 
-                translated_words.append(prefix + translated + suffix)
+                translated_words.append(current_form)
 
-            if self.profile.get("style", {}).get("capitalization", True) and translated_words:
-                for i, token in enumerate(translated_words):
-                    if any(c.isalpha() for c in token):
-                        first_letter_idx = next(
-                            idx for idx, c in enumerate(token) if c.isalpha())
-                        translated_words[i] = token[:first_letter_idx] + \
-                            token[first_letter_idx].upper(
-                        ) + token[first_letter_idx+1:]
-                        break
-            final_sentences.append(' '.join(translated_words))
+            final_sentence_tokens = self.syntax_engine._glue_tokens(
+                translated_words, ordered_functions)
+
+            if final_sentence_tokens:
+                first = final_sentence_tokens[0]
+                if first:
+                    final_sentence_tokens[0] = first[0].upper() + first[1:]
+
+            final_sentences.append(' '.join(final_sentence_tokens))
 
         self.save_word_cache()
         return ' '.join(final_sentences)

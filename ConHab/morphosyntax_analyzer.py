@@ -3,12 +3,69 @@ from collections import defaultdict
 import re
 
 
+class VowelHarmonyHandler:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.config = profile.get('vowel_harmony', {})
+        self.enabled = self.config.get('enabled', False)
+        self.groups = self.config.get('groups', {})
+        self.rules = self.config.get('rules', [])
+
+        self.vowels = "aeiouyáàâãéêíóôõúüö"
+        if self.profile.get('phonotactics'):
+            self.vowels = self.profile['phonotactics'].get(
+                'vowels', self.vowels)
+
+    def _get_vowel_group(self, vowel: str) -> str:
+        if not self.enabled:
+            return None
+        for group_name, vowels in self.groups.items():
+            if vowel in vowels:
+                return group_name
+        return None
+
+    def _find_last_vowel(self, word: str) -> str:
+        for char in reversed(word.lower()):
+            if char in self.vowels:
+                return char
+        return None
+
+    def apply_harmony(self, word: str, suffix: str) -> str:
+        if not self.enabled or not suffix:
+            return suffix
+
+        last_vowel = self._find_last_vowel(word)
+        if not last_vowel:
+            return suffix
+
+        group = self._get_vowel_group(last_vowel)
+        if not group:
+            return suffix
+
+        harmonized_suffix = ""
+
+        for char in suffix:
+            replaced = False
+            for rule in self.rules:
+                if rule['input'] == char:
+                    mapping = rule.get('map', {})
+                    if group in mapping:
+                        harmonized_suffix += mapping[group]
+                        replaced = True
+                        break
+            if not replaced:
+                harmonized_suffix += char
+
+        return harmonized_suffix
+
+
 class TAMHandler:
     def __init__(self, profile: Dict):
         self.profile = profile
         self.config = profile.get('tam_system', {})
         self.enabled = self.config.get('enabled', False)
         self.rules = self.config.get('rules', [])
+        self.harmony_handler = VowelHarmonyHandler(profile)
 
     def apply_tam(self, word: str, feats_str: str) -> str:
         if not self.enabled or not feats_str or feats_str == '_':
@@ -22,6 +79,9 @@ class TAMHandler:
             if rule_feats.issubset(feats):
                 marker = rule.get('marker', '')
                 m_type = rule.get('type', 'suffix')
+
+                if self.harmony_handler.enabled and m_type == 'suffix':
+                    marker = self.harmony_handler.apply_harmony(result, marker)
 
                 if m_type == 'suffix':
                     result = result + marker

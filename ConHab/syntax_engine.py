@@ -352,6 +352,56 @@ class CaseMorphology:
         self.profile = profile
         self.case_system = profile.get('case_system', {})
         self.enabled = self.case_system.get('enabled', False)
+        self.harmony_config = profile.get('vowel_harmony', {})
+        self.harmony_enabled = self.harmony_config.get('enabled', False)
+
+    def _get_vowel_group(self, vowel: str) -> str:
+        if not self.harmony_enabled:
+            return None
+        groups = self.harmony_config.get('groups', {})
+        for group_name, vowels in groups.items():
+            if vowel in vowels:
+                return group_name
+        return None
+
+    def _find_last_vowel(self, word: str) -> str:
+        vowels = "aeiouyáàâãéêíóôõúüö"
+        if self.profile.get('phonotactics'):
+            vowels = self.profile['phonotactics'].get('vowels', vowels)
+
+        for char in reversed(word.lower()):
+            if char in vowels:
+                return char
+        return None
+
+    def _apply_harmony(self, word: str, suffix: str) -> str:
+        if not self.harmony_enabled or not suffix:
+            return suffix
+
+        last_vowel = self._find_last_vowel(word)
+        if not last_vowel:
+            return suffix
+
+        group = self._get_vowel_group(last_vowel)
+        if not group:
+            return suffix
+
+        rules = self.harmony_config.get('rules', [])
+        harmonized_suffix = ""
+
+        for char in suffix:
+            replaced = False
+            for rule in rules:
+                if rule['input'] == char:
+                    mapping = rule.get('map', {})
+                    if group in mapping:
+                        harmonized_suffix += mapping[group]
+                        replaced = True
+                        break
+            if not replaced:
+                harmonized_suffix += char
+
+        return harmonized_suffix
 
     def apply_case(self, word: str, function: str, word_order: str) -> str:
         if not self.enabled:
@@ -367,7 +417,15 @@ class CaseMorphology:
             marker = ''
         if not marker:
             return word
+
         position = self.case_system.get('marker_position', 'suffix')
+
+        if marker.startswith('-'):
+            marker = marker[1:]
+
+        if self.harmony_enabled:
+            marker = self._apply_harmony(word, marker)
+
         if position == 'suffix':
             return word + marker
         elif position == 'prefix':
@@ -428,15 +486,21 @@ class SyntaxEngine:
         if use_cache:
             cached = self.sentence_cache[cache_key]
             reordered_words = []
+
+            ordered_functions = [cached['functions'][i]
+                                 for i in cached['indices']]
+
             for idx in cached['indices']:
                 word = cached['words'][idx]
                 function = cached['functions'][idx]['function']
                 word_with_case = self.case_morphology.apply_case(
                     word, function, self.word_order)
                 reordered_words.append(word_with_case)
+
             final_tokens = self._glue_tokens(
-                reordered_words, [cached['functions'][i] for i in cached['indices']])
-            return final_tokens, cached['functions']
+                reordered_words, ordered_functions)
+
+            return final_tokens, ordered_functions
 
         url = "https://lindat.mff.cuni.cz/services/udpipe/api/process"
         params = {
@@ -487,6 +551,7 @@ class SyntaxEngine:
             functions, self.word_order)
         raw_reordered_words = []
         ordered_functions = []
+
         for idx in new_indices:
             word = functions[idx]['word']
             function = functions[idx]['function']
@@ -494,14 +559,17 @@ class SyntaxEngine:
                 word, function, self.word_order)
             raw_reordered_words.append(word_with_case)
             ordered_functions.append(functions[idx])
+
         final_tokens = self._glue_tokens(
             raw_reordered_words, ordered_functions)
+
         self.sentence_cache[cache_key] = {
             'indices': new_indices,
             'words': words,
             'functions': functions
         }
-        return final_tokens, functions
+
+        return final_tokens, ordered_functions
 
     def estimate_lemma_pos(self, lemma: str) -> str:
         lemma = lemma.lower()
@@ -539,12 +607,13 @@ class SyntaxEngine:
             if not sentence.strip():
                 reordered_sentences.append("")
                 continue
-            reordered_words, functions = self.process_sentence(sentence)
+            reordered_words, ordered_functions = self.process_sentence(
+                sentence)
             reordered_sentences.append(' '.join(reordered_words))
             all_functions.append({
                 'original': sentence,
                 'reordered': ' '.join(reordered_words),
-                'functions': functions
+                'functions': ordered_functions
             })
         self.save_cache()
         return ' '.join(reordered_sentences), all_functions
