@@ -1,6 +1,6 @@
 {
   "sentence_cache": {
-    "c869c1a2fad8590c86127a0b23396465": {
+    "b3481c0fc5b3eafdce94137687368b7a": {
       "indices": [
         1,
         3,
@@ -9,7 +9,7 @@
       "words": [
         "O",
         "gato",
-        "bebeu",
+        "bebe",
         "leite"
       ],
       "functions": [
@@ -38,10 +38,10 @@
           ]
         },
         {
-          "word": "bebeu",
+          "word": "bebe",
           "lemma": "beber",
           "pos": "VERB",
-          "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Past|VerbForm=Fin",
+          "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Pres|VerbForm=Fin",
           "deprel": "root",
           "function": "V",
           "index": 2,
@@ -61,24 +61,24 @@
         }
       ]
     },
-    "dcef278683274381638f35b6b22c7ea1": {
+    "d3a197a0ac35bb07f3822fee90f133a6": {
       "indices": [
         1,
         3,
         2
       ],
       "words": [
-        "O",
-        "gato",
-        "bebia",
+        "Os",
+        "gatos",
+        "bebem",
         "leite"
       ],
       "functions": [
         {
-          "word": "O",
+          "word": "Os",
           "lemma": "o",
           "pos": "DET",
-          "feats": "Definite=Def|Gender=Masc|Number=Sing|PronType=Art",
+          "feats": "Definite=Def|Gender=Masc|Number=Plur|PronType=Art",
           "deprel": "det",
           "function": "MOD",
           "index": 0,
@@ -87,10 +87,10 @@
           ]
         },
         {
-          "word": "gato",
+          "word": "gatos",
           "lemma": "gato",
           "pos": "NOUN",
-          "feats": "Gender=Masc|Number=Sing",
+          "feats": "Gender=Masc|Number=Plur",
           "deprel": "nsubj",
           "function": "S",
           "index": 1,
@@ -99,10 +99,10 @@
           ]
         },
         {
-          "word": "bebia",
+          "word": "bebem",
           "lemma": "beber",
           "pos": "VERB",
-          "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Imp|VerbForm=Fin",
+          "feats": "Mood=Ind|Number=Plur|Person=3|Tense=Pres|VerbForm=Fin",
           "deprel": "root",
           "function": "V",
           "index": 2,
@@ -122,17 +122,19 @@
         }
       ]
     },
-    "9edcab0f1ce22a3b4fdadadf39b82e84": {
+    "59c07128fb3deb2bef2d91e2e908eb0b": {
       "indices": [
         1,
         3,
-        2
+        2,
+        4
       ],
       "words": [
         "O",
-        "gato",
-        "beberá",
-        "leite"
+        "homem",
+        "iria",
+        "a",
+        "Roma"
       ],
       "functions": [
         {
@@ -148,8 +150,8 @@
           ]
         },
         {
-          "word": "gato",
-          "lemma": "gato",
+          "word": "homem",
+          "lemma": "homem",
           "pos": "NOUN",
           "feats": "Gender=Masc|Number=Sing",
           "deprel": "nsubj",
@@ -160,101 +162,133 @@
           ]
         },
         {
-          "word": "beberá",
-          "lemma": "beber",
+          "word": "iria",
+          "lemma": "ir",
           "pos": "VERB",
-          "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Fut|VerbForm=Fin",
+          "feats": "Mood=Cnd|Number=Sing|Person=3|VerbForm=Fin",
           "deprel": "root",
           "function": "V",
           "index": 2,
           "dependencies": []
         },
         {
-          "word": "leite",
-          "lemma": "leite",
-          "pos": "NOUN",
-          "feats": "Gender=Masc|Number=Sing",
-          "deprel": "obj",
-          "function": "O",
-          "index": 3,
-          "dependencies": [
-            2
-          ]
-        }
-      ]
-    },
-    "257ef046cbdb01136dc8fdd8ce962e63": {
-      "indices": [
-        1,
-        3,
-        4,
-        2
-      ],
-      "words": [
-        "O",
-        "gato",
-        "beberá",
-        "MESMO",
-        "leite"
-      ],
-      "functions": [
-        {
-          "word": "O",
-          "lemma": "o",
-          "pos": "DET",
-          "feats": "Definite=Def|Gender=Masc|Number=Sing|PronType=Art",
-          "deprel": "det",
-          "function": "MOD",
-          "index": 0,
-          "dependencies": [
-            1
-          ]
-        },
-        {
-          "word": "gato",
-          "lemma": "gato",
-          "pos": "NOUN",
-          "feats": "Gender=Masc|Number=Sing",
-          "deprel": "nsubj",
-          "function": "S",
-          "index": 1,
-          "dependencies": [
-            2
-          ]
-        },
-        {
-          "word": "beberá",
-          "lemma": "beber",
-          "pos": "VERB",
-          "feats": "Mood=Ind|Number=Sing|Person=3|Tense=Fut|VerbForm=Fin",
-          "deprel": "root",
-          "function": "V",
-          "index": 2,
-          "dependencies": []
-        },
-        {
-          "word": "MESMO",
-          "lemma": "mesmo",
-          "pos": "ADV",
+          "word": "a",
+          "lemma": "a",
+          "pos": "ADP",
           "feats": "_",
-          "deprel": "advmod",
+          "deprel": "case",
           "function": "MOD",
           "index": 3,
           "dependencies": [
-            2
+            4
           ]
         },
         {
-          "word": "leite",
-          "lemma": "leite",
-          "pos": "NOUN",
-          "feats": "Gender=Masc|Number=Sing",
-          "deprel": "obj",
-          "function": "O",
+          "word": "Roma",
+          "lemma": "Roma",
+          "pos": "PROPN",
+          "feats": "Gender=Fem|Number=Sing",
+          "deprel": "obl",
+          "function": "ADJ",
           "index": 4,
           "dependencies": [
             2
           ]
+        }
+      ]
+    },
+    "f861b7efa0525e53ea92adf287fd96e9": {
+      "indices": [
+        1,
+        3,
+        2,
+        4
+      ],
+      "words": [
+        "Os",
+        "homens",
+        "iriam",
+        "a",
+        "Roma"
+      ],
+      "functions": [
+        {
+          "word": "Os",
+          "lemma": "o",
+          "pos": "DET",
+          "feats": "Definite=Def|Gender=Masc|Number=Plur|PronType=Art",
+          "deprel": "det",
+          "function": "MOD",
+          "index": 0,
+          "dependencies": [
+            1
+          ]
+        },
+        {
+          "word": "homens",
+          "lemma": "homem",
+          "pos": "NOUN",
+          "feats": "Gender=Masc|Number=Plur",
+          "deprel": "nsubj",
+          "function": "S",
+          "index": 1,
+          "dependencies": [
+            2
+          ]
+        },
+        {
+          "word": "iriam",
+          "lemma": "ir",
+          "pos": "VERB",
+          "feats": "Mood=Cnd|Number=Plur|Person=3|VerbForm=Fin",
+          "deprel": "root",
+          "function": "V",
+          "index": 2,
+          "dependencies": []
+        },
+        {
+          "word": "a",
+          "lemma": "a",
+          "pos": "ADP",
+          "feats": "_",
+          "deprel": "case",
+          "function": "MOD",
+          "index": 3,
+          "dependencies": [
+            4
+          ]
+        },
+        {
+          "word": "Roma",
+          "lemma": "Roma",
+          "pos": "PROPN",
+          "feats": "Gender=Fem|Number=Sing",
+          "deprel": "obl",
+          "function": "ADJ",
+          "index": 4,
+          "dependencies": [
+            2
+          ]
+        }
+      ]
+    },
+    "2e92d188dbdbd88e7c15831f4abfe1fc": {
+      "indices": [
+        0
+      ],
+      "words": [
+        "Roma"
+      ],
+      "functions": [
+        {
+          "word": "Roma",
+          "lemma": "Roma",
+          "pos": "NOUN",
+          "feats": "Gender=Fem|Number=Sing",
+          "deprel": "root",
+          "function": "MOD",
+          "index": 0,
+          "dependencies": []
         }
       ]
     }

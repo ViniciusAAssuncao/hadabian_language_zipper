@@ -102,6 +102,48 @@ class DegreeHandler:
         return word
 
 
+class ReduplicationHandler:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.config = profile.get('reduplication', {})
+        self.enabled = self.config.get('enabled', False)
+        self.rules = self.config.get('rules', [])
+        phonotactics = profile.get('phonotactics', {})
+        self.vowels = phonotactics.get('vowels', 'aeiou')
+        self.consonants = phonotactics.get(
+            'consonants', 'bcdfghjklmnpqrstvwxyz')
+
+    def apply_reduplication(self, word: str, feats_str: str) -> str:
+        if not self.enabled or not word or not feats_str or feats_str == '_':
+            return word
+
+        feats = set(feats_str.split('|'))
+
+        for rule in self.rules:
+            rule_feats = set(rule.get('features', []))
+            if rule_feats.issubset(feats):
+                method = rule.get('method', 'whole_word')
+                separator = rule.get('separator', '')
+
+                if method == 'whole_word':
+                    return f"{word}{separator}{word}"
+                elif method == 'first_syllable':
+                    syllable = self._get_first_syllable(word)
+                    if syllable:
+                        return f"{syllable}{separator}{word}"
+
+        return word
+
+    def _get_first_syllable(self, word: str) -> str:
+        import re
+        c_set = re.escape(self.consonants)
+        v_set = re.escape(self.vowels)
+        match = re.match(f"^[{c_set}]*[{v_set}]+", word, re.IGNORECASE)
+        if match:
+            return match.group(0)
+        return ""
+
+
 class OriginalLanguageEngine:
     def __init__(self, profile_path: str):
         with open(profile_path, 'r', encoding='utf-8') as f:
@@ -125,6 +167,7 @@ class OriginalLanguageEngine:
         self.affix_handler = AffixHandler(self.profile)
         self.degree_handler = DegreeHandler(self.profile)
         self.tam_handler = TAMHandler(self.profile)
+        self.reduplication_handler = ReduplicationHandler(self.profile)
         self.word_cache: Dict[str, str] = {}
         self.load_word_cache()
 
@@ -244,6 +287,10 @@ class OriginalLanguageEngine:
 
                     if not degree_type:
                         self.word_cache[clean_word_lower] = translated
+
+                if self.reduplication_handler.enabled:
+                    translated = self.reduplication_handler.apply_reduplication(
+                        translated, word_feats)
 
                 if self.tam_handler.enabled and pos_map.get(orig_word) == 'VERB':
                     translated = self.tam_handler.apply_tam(
