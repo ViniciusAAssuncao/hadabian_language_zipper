@@ -10,6 +10,36 @@ from morphosyntax_analyzer import (
 )
 
 
+class AffixHandler:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.affix_system = profile.get('affix_system', {})
+        self.enabled = self.affix_system.get('enabled', False)
+        self.derivation_rules = self.affix_system.get('derivation_rules', [])
+
+    def get_derivation_rule(self, from_pos: str, to_pos: str) -> Optional[Dict]:
+        if not self.enabled:
+            return None
+        for rule in self.derivation_rules:
+            if rule['from_pos'] == from_pos and rule['to_pos'] == to_pos:
+                return rule
+        return None
+
+    def apply_affix(self, word: str, rule: Dict) -> str:
+        affix = rule.get('affix', '')
+        position = rule.get('position', 'suffix')
+        if not affix:
+            return word
+        if position == 'prefix':
+            return f"{affix}{word}"
+        elif position == 'suffix':
+            return f"{word}{affix}"
+        elif position == 'infix':
+            mid = len(word) // 2
+            return f"{word[:mid]}{affix}{word[mid:]}"
+        return word
+
+
 class OriginalLanguageEngine:
     def __init__(self, profile_path: str):
         with open(profile_path, 'r', encoding='utf-8') as f:
@@ -30,6 +60,7 @@ class OriginalLanguageEngine:
         self.complexity_analyzer = SyntacticComplexityAnalyzer()
         self.topicalization_handler = TopicalizationHandler(self.profile)
         self.focus_handler = FocusStructureHandler(self.profile)
+        self.affix_handler = AffixHandler(self.profile)
         self.word_cache: Dict[str, str] = {}
         self.load_word_cache()
 
@@ -62,9 +93,13 @@ class OriginalLanguageEngine:
             all_functions = sent_data['functions']
             func_map = {}
             named_entities = set()
+            lemma_map = {}
+            pos_map = {}
             for f in all_functions:
                 w = f.get("word")
                 func_map[w] = f.get("function", "")
+                lemma_map[w] = f.get("lemma", "")
+                pos_map[w] = f.get("pos", "")
                 if f.get("named_entity", False):
                     named_entities.add(w)
             translated_words = []
@@ -74,8 +109,47 @@ class OriginalLanguageEngine:
                 if clean_word_lower in self.word_cache:
                     translated = self.word_cache[clean_word_lower]
                 else:
-                    translated = self._generate_deterministic_word(
-                        clean_word_lower)
+                    lemma = lemma_map.get(orig_word, clean_word_lower).lower()
+                    current_pos = pos_map.get(orig_word, 'NOUN')
+                    target_lemma = lemma
+
+                    if self.affix_handler.enabled:
+                        source_suffixes = self.profile.get(
+                            'affix_system', {}).get('source_suffixes', [])
+                        for suffix_rule in source_suffixes:
+                            suf_str = suffix_rule.get('suffix', '')
+                            input_pos = suffix_rule.get('input_pos', 'NOUN')
+                            if current_pos == input_pos and clean_word_lower.endswith(suf_str):
+                                replacement = suffix_rule.get(
+                                    'replacement', '')
+                                target_pos_req = suffix_rule.get(
+                                    'target_pos', 'VERB')
+                                possible_stem = clean_word_lower[:-
+                                                                 len(suf_str)] + replacement
+                                if possible_stem in lemma_map.values() or self.syntax_engine.estimate_lemma_pos(possible_stem) == target_pos_req:
+                                    target_lemma = possible_stem
+                                    break
+
+                    if target_lemma and target_lemma != clean_word_lower:
+                        lemma_pos = self.syntax_engine.estimate_lemma_pos(
+                            target_lemma)
+                        rule = self.affix_handler.get_derivation_rule(
+                            lemma_pos, current_pos)
+                        if rule:
+                            if target_lemma in self.word_cache:
+                                base_translation = self.word_cache[target_lemma]
+                            else:
+                                base_translation = self._generate_deterministic_word(
+                                    target_lemma)
+                                self.word_cache[target_lemma] = base_translation
+                            translated = self.affix_handler.apply_affix(
+                                base_translation, rule)
+                        else:
+                            translated = self._generate_deterministic_word(
+                                clean_word_lower)
+                    else:
+                        translated = self._generate_deterministic_word(
+                            clean_word_lower)
                     self.word_cache[clean_word_lower] = translated
                 translated = translated.lower()
                 if clean_word_lower in named_entities:
