@@ -59,6 +59,7 @@ class WordOrderMapper:
         self.agreement_rules = self.profile.get('agreement_rules', {})
         self.adjunct_position = self.agreement_rules.get(
             'adjunct_position', 'auto')
+        self.drop_articles = self.profile.get('drop_articles', False)
 
     def map_to_target_order(self, functions: List[Dict], target_order: str) -> List[int]:
         if target_order not in self.order_mappings:
@@ -171,6 +172,14 @@ class WordOrderMapper:
                     seen.add(idx)
         return result_indices
 
+    def _should_drop(self, func: Dict) -> bool:
+        if not self.drop_articles:
+            return False
+        if func['pos'] != 'DET':
+            return False
+        feats = func.get('feats', '_')
+        return 'PronType=Art' in feats
+
     def _build_chunks(self, functions: List[Dict]) -> List[Chunk]:
         chunks = []
         processed_indices = set()
@@ -179,7 +188,14 @@ class WordOrderMapper:
             if i in processed_indices:
                 i += 1
                 continue
+
             func = functions[i]
+
+            if self._should_drop(func):
+                processed_indices.add(i)
+                i += 1
+                continue
+
             pos = func['pos']
             func_type = func['function']
             if func_type == SyntacticFunction.PUNCT:
@@ -250,6 +266,12 @@ class WordOrderMapper:
         i = noun_index - 1
         while i >= 0 and i not in processed_indices:
             func = functions[i]
+
+            if self._should_drop(func):
+                processed_indices.add(i)
+                i -= 1
+                continue
+
             if func['pos'] in {'DET', 'ADJ', 'PRON', 'ADV', 'NUM'}:
                 np_words.insert(0, (func['word'], func['index']))
                 processed_indices.add(i)
@@ -294,6 +316,11 @@ class WordOrderMapper:
         pp_words = [(prep_func['word'], prep_index)]
         i = prep_index + 1
         while i < len(functions) and i not in processed_indices and functions[i]['pos'] == 'DET':
+            if self._should_drop(functions[i]):
+                processed_indices.add(i)
+                i += 1
+                continue
+
             pp_words.append((functions[i]['word'], functions[i]['index']))
             processed_indices.add(i)
             i += 1

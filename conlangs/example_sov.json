@@ -1,9 +1,10 @@
 {
   "id": "example_sov",
   "name": "Exemplo SOV com Casos",
-  "description": "Língua exemplo com ordem SOV e sistema de casos morfológicos",
+  "description": "Língua exemplo com ordem SOV e sistema de casos morfológicos, com supressão de artigos.",
   "word_order": "SOV",
   "source_language_order": "SVO",
+  "drop_articles": true,
   "global_seed": 42857,
   "phonotactics": {
     "vowels": "aeiou",
