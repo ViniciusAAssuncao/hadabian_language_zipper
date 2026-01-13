@@ -58,6 +58,70 @@
     "object_focus_marker": "ko",
     "verb_focus_marker": "do"
   },
+  "degree_system": {
+    "enabled": true,
+    "source_rules": [
+      {
+        "type": "diminutive",
+        "suffix": "zinho",
+        "replacement": ""
+      },
+      {
+        "type": "diminutive",
+        "suffix": "zinha",
+        "replacement": ""
+      },
+      {
+        "type": "diminutive",
+        "suffix": "inho",
+        "replacement": "o"
+      },
+      {
+        "type": "diminutive",
+        "suffix": "inha",
+        "replacement": "a"
+      },
+      {
+        "type": "augmentative",
+        "suffix": "zão",
+        "replacement": ""
+      },
+      {
+        "type": "augmentative",
+        "suffix": "zona",
+        "replacement": ""
+      },
+      {
+        "type": "augmentative",
+        "suffix": "ão",
+        "replacement": "o"
+      },
+      {
+        "type": "superlative",
+        "suffix": "íssimo",
+        "replacement": "o"
+      },
+      {
+        "type": "superlative",
+        "suffix": "íssima",
+        "replacement": "a"
+      }
+    ],
+    "rules": {
+      "diminutive": {
+        "affix": "in",
+        "position": "suffix"
+      },
+      "augmentative": {
+        "affix": "on",
+        "position": "suffix"
+      },
+      "superlative": {
+        "affix": "is",
+        "position": "suffix"
+      }
+    }
+  },
   "affix_system": {
     "enabled": true,
     "source_suffixes": [

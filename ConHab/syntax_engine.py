@@ -390,7 +390,15 @@ class SyntaxEngine:
 
     def process_sentence(self, sentence: str) -> Tuple[List[str], List[Dict]]:
         cache_key = self._get_cache_key(sentence)
+        use_cache = False
+
         if cache_key in self.sentence_cache:
+            cached = self.sentence_cache[cache_key]
+            if 'functions' in cached and cached['functions']:
+                if 'feats' in cached['functions'][0]:
+                    use_cache = True
+
+        if use_cache:
             cached = self.sentence_cache[cache_key]
             reordered_words = []
             for idx in cached['indices']:
@@ -402,6 +410,7 @@ class SyntaxEngine:
             final_tokens = self._glue_tokens(
                 reordered_words, [cached['functions'][i] for i in cached['indices']])
             return final_tokens, cached['functions']
+
         url = "https://lindat.mff.cuni.cz/services/udpipe/api/process"
         params = {
             'data': sentence,
@@ -431,6 +440,7 @@ class SyntaxEngine:
             word = parts[1]
             lemma = parts[2]
             upos = parts[3]
+            feats = parts[5]
             deprel = parts[7]
             head = int(parts[6]) - 1 if parts[6] != '0' else -1
             function = self._map_deprel_to_function(deprel, upos)
@@ -438,6 +448,7 @@ class SyntaxEngine:
                 'word': word,
                 'lemma': lemma,
                 'pos': upos,
+                'feats': feats,
                 'deprel': deprel,
                 'function': function,
                 'index': i,
