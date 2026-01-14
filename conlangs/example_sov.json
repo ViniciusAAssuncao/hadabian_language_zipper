@@ -55,6 +55,7 @@
   },
   "tam_system": {
     "enabled": true,
+    "infer_imperative_from_context": true,
     "rules": [
       {
         "features": ["Tense=Past"],

@@ -120,9 +120,9 @@ class ReduplicationHandler:
         self.config = profile.get('reduplication', {})
         self.enabled = self.config.get('enabled', False)
         self.rules = self.config.get('rules', [])
-        phonotactics = profile.get('phonotactics', {})
-        self.vowels = phonotactics.get('vowels', 'aeiou')
-        self.consonants = phonotactics.get(
+        self.phonotactics = profile.get('phonotactics', {})
+        self.vowels = self.phonotactics.get('vowels', 'aeiou')
+        self.consonants = self.phonotactics.get(
             'consonants', 'bcdfghjklmnpqrstvwxyz')
 
     def apply_reduplication(self, word: str, feats_str: str) -> str:
@@ -296,7 +296,7 @@ class OriginalLanguageEngine:
 
                 if self.tam_handler.enabled and (pos in {'VERB', 'AUX'} or 'Tense=' in feats or 'Mood=' in feats or 'Aspect=' in feats):
                     current_form = self.tam_handler.apply_tam(
-                        current_form, feats)
+                        current_form, feats, func, ordered_functions)
 
                 if self.reduplication_handler.enabled:
                     current_form = self.reduplication_handler.apply_reduplication(

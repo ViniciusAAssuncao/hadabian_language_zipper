@@ -66,12 +66,31 @@ class TAMHandler:
         self.enabled = self.config.get('enabled', False)
         self.rules = self.config.get('rules', [])
         self.harmony_handler = VowelHarmonyHandler(profile)
+        self.infer_imperative = self.config.get(
+            'infer_imperative_from_context', False)
 
-    def apply_tam(self, word: str, feats_str: str) -> str:
+    def apply_tam(self, word: str, feats_str: str, func: Optional[Dict] = None, all_functions: Optional[List[Dict]] = None) -> str:
         if not self.enabled or not feats_str or feats_str == '_':
             return word
 
         feats = set(f.strip() for f in feats_str.split('|') if f.strip())
+
+        if self.infer_imperative and func and all_functions:
+            deprel = func.get('deprel', '')
+            is_clause_head = deprel in {'root', 'parataxis', 'conj', 'ccomp'}
+            has_subject = False
+            subject_is_after = False
+            my_index = func['index']
+            for f in all_functions:
+                if my_index in f.get('dependencies', []) and 'nsubj' in f.get('deprel', ''):
+                    has_subject = True
+                    if f['index'] > my_index:
+                        subject_is_after = True
+                    break
+
+            if is_clause_head and (not has_subject or subject_is_after):
+                feats.add('Mood=Imp')
+
         result = word
 
         for rule in self.rules:
