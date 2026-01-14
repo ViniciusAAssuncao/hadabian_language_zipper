@@ -403,18 +403,33 @@ class CaseMorphology:
 
         return harmonized_suffix
 
-    def apply_case(self, word: str, function: str, word_order: str) -> str:
+    def apply_case(self, word: str, function: str, word_order: str, deprel: str = '') -> str:
         if not self.enabled:
             return word
         case_markers = self.case_system.get('markers', {})
-        if function == SyntacticFunction.SUBJECT:
-            marker = case_markers.get('nominative', '')
-        elif function == SyntacticFunction.OBJECT:
-            marker = case_markers.get('accusative', '')
-        elif function == SyntacticFunction.ADJUNCT:
-            marker = case_markers.get('dative', '')
-        else:
-            marker = ''
+        marker = ''
+
+        if deprel:
+            core_dep = deprel.split(':')[0]
+            if core_dep == 'obj':
+                marker = case_markers.get('accusative', '')
+            elif core_dep == 'iobj':
+                marker = case_markers.get('dative', '')
+            elif core_dep == 'obl':
+                marker = case_markers.get('dative', '')
+            elif core_dep == 'nsubj':
+                marker = case_markers.get('nominative', '')
+
+        if not marker:
+            if function == SyntacticFunction.SUBJECT:
+                marker = case_markers.get('nominative', '')
+            elif function == SyntacticFunction.OBJECT:
+                marker = case_markers.get('accusative', '')
+            elif function == SyntacticFunction.ADJUNCT:
+                marker = case_markers.get('dative', '')
+            else:
+                marker = ''
+
         if not marker:
             return word
 
@@ -493,8 +508,9 @@ class SyntaxEngine:
             for idx in cached['indices']:
                 word = cached['words'][idx]
                 function = cached['functions'][idx]['function']
+                deprel = cached['functions'][idx].get('deprel', '')
                 word_with_case = self.case_morphology.apply_case(
-                    word, function, self.word_order)
+                    word, function, self.word_order, deprel)
                 reordered_words.append(word_with_case)
 
             final_tokens = self._glue_tokens(
@@ -555,8 +571,9 @@ class SyntaxEngine:
         for idx in new_indices:
             word = functions[idx]['word']
             function = functions[idx]['function']
+            deprel = functions[idx].get('deprel', '')
             word_with_case = self.case_morphology.apply_case(
-                word, function, self.word_order)
+                word, function, self.word_order, deprel)
             raw_reordered_words.append(word_with_case)
             ordered_functions.append(functions[idx])
 

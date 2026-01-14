@@ -221,6 +221,7 @@ class OriginalLanguageEngine:
                 pos = func.get("pos", "")
                 feats = func.get("feats", "")
                 syntactic_func = func.get("function", "")
+                deprel = func.get("deprel", "")
                 is_named_entity = func.get("named_entity", False)
 
                 clean_word_lower = self._clean_word(orig_word).lower()
@@ -289,7 +290,8 @@ class OriginalLanguageEngine:
                 current_form = self.syntax_engine.case_morphology.apply_case(
                     current_form,
                     syntactic_func,
-                    self.syntax_engine.word_order
+                    self.syntax_engine.word_order,
+                    deprel
                 )
 
                 if self.tam_handler.enabled and (pos in {'VERB', 'AUX'} or 'Tense=' in feats or 'Mood=' in feats or 'Aspect=' in feats):

@@ -71,7 +71,7 @@ class TAMHandler:
         if not self.enabled or not feats_str or feats_str == '_':
             return word
 
-        feats = set(feats_str.split('|'))
+        feats = set(f.strip() for f in feats_str.split('|') if f.strip())
         result = word
 
         for rule in self.rules:

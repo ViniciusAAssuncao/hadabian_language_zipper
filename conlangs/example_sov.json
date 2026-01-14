@@ -62,7 +62,7 @@
         "type": "suffix"
       },
       {
-        "features": ["Tense=Imp"],
+        "features": ["Mood=Imp"],
         "marker": "va",
         "type": "suffix"
       },
