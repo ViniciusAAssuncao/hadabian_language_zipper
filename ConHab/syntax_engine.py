@@ -352,6 +352,8 @@ class CaseMorphology:
         self.profile = profile
         self.case_system = profile.get('case_system', {})
         self.enabled = self.case_system.get('enabled', False)
+        self.preposition_handling = self.case_system.get(
+            'preposition_handling', 'coexist')
         self.harmony_config = profile.get('vowel_harmony', {})
         self.harmony_enabled = self.harmony_config.get('enabled', False)
 
@@ -406,6 +408,10 @@ class CaseMorphology:
     def apply_case(self, word: str, function: str, word_order: str, deprel: str = '') -> str:
         if not self.enabled:
             return word
+
+        if self.preposition_handling == 'none' and function not in {SyntacticFunction.SUBJECT, SyntacticFunction.OBJECT}:
+            return word
+
         case_markers = self.case_system.get('markers', {})
         marker = ''
 
@@ -416,7 +422,9 @@ class CaseMorphology:
             elif core_dep == 'iobj':
                 marker = case_markers.get('dative', '')
             elif core_dep == 'obl':
-                marker = case_markers.get('dative', '')
+                marker = case_markers.get('locative', '')
+                if not marker:
+                    marker = case_markers.get('dative', '')
             elif core_dep == 'nsubj':
                 marker = case_markers.get('nominative', '')
 
@@ -426,7 +434,9 @@ class CaseMorphology:
             elif function == SyntacticFunction.OBJECT:
                 marker = case_markers.get('accusative', '')
             elif function == SyntacticFunction.ADJUNCT:
-                marker = case_markers.get('dative', '')
+                marker = case_markers.get('locative', '')
+                if not marker:
+                    marker = case_markers.get('dative', '')
             else:
                 marker = ''
 

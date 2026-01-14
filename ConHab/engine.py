@@ -211,6 +211,10 @@ class OriginalLanguageEngine:
         reordered_text, functions_info = self.syntax_engine.process_text(text)
         final_sentences = []
 
+        case_system = self.profile.get('case_system', {})
+        preposition_handling = case_system.get(
+            'preposition_handling', 'coexist')
+
         for sent_data in functions_info:
             ordered_functions = sent_data['functions']
             translated_words = []
@@ -223,6 +227,9 @@ class OriginalLanguageEngine:
                 syntactic_func = func.get("function", "")
                 deprel = func.get("deprel", "")
                 is_named_entity = func.get("named_entity", False)
+
+                if preposition_handling == 'replace' and pos == 'ADP':
+                    continue
 
                 clean_word_lower = self._clean_word(orig_word).lower()
                 raw_lemma = lemma if lemma else clean_word_lower
