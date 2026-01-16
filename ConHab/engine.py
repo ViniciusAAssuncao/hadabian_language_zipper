@@ -216,6 +216,15 @@ class OriginalLanguageEngine:
         preposition_handling = case_system.get(
             'preposition_handling', 'coexist')
 
+        topicalization_config = self.profile.get('topicalization', {})
+        topic_enabled = topicalization_config.get('enabled', False)
+        topic_marker = topicalization_config.get('topic_marker', 'wa')
+
+        focus_config = self.profile.get('focus_structure', {})
+        focus_enabled = focus_config.get('enabled', False)
+        object_focus_marker = focus_config.get('object_focus_marker', 'ko')
+        suppress_case_on_focus = focus_config.get('suppress_case', False)
+
         for sent_data in functions_info:
             ordered_functions = sent_data['functions']
             translated_words = []
@@ -312,12 +321,33 @@ class OriginalLanguageEngine:
                     current_form = self.degree_handler.apply_degree(
                         current_form, degree_type)
 
-                current_form = self.syntax_engine.case_morphology.apply_case(
-                    current_form,
-                    syntactic_func,
-                    self.syntax_engine.word_order,
-                    deprel
-                )
+                is_topic = False
+                if topic_enabled:
+                    if syntactic_func == SyntacticFunction.SUBJECT:
+                        is_topic = True
+
+                is_focus = False
+                if focus_enabled:
+                    if syntactic_func == SyntacticFunction.OBJECT:
+                        is_focus = True
+
+                apply_case = True
+                if is_focus and suppress_case_on_focus:
+                    apply_case = False
+
+                if apply_case:
+                    current_form = self.syntax_engine.case_morphology.apply_case(
+                        current_form,
+                        syntactic_func,
+                        self.syntax_engine.word_order,
+                        deprel
+                    )
+
+                if is_topic and topic_marker:
+                    current_form = f"{current_form} {topic_marker}"
+
+                if is_focus and object_focus_marker:
+                    current_form = f"{current_form} {object_focus_marker}"
 
                 if self.tam_handler.enabled and (pos in {'VERB', 'AUX'} or 'Tense=' in feats or 'Mood=' in feats or 'Aspect=' in feats):
                     current_form = self.tam_handler.apply_tam(

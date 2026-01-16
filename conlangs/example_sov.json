@@ -97,12 +97,14 @@
   "topicalization": {
     "enabled": true,
     "position": "initial",
-    "topic_marker": "wa"
+    "topic_marker": "wa",
+    "reintroduce_articles": true
   },
   "focus_structure": {
     "enabled": true,
     "object_focus_marker": "ko",
-    "verb_focus_marker": "do"
+    "verb_focus_marker": "do",
+    "suppress_case": true
   },
   "functional_particles": {
     "muito": {

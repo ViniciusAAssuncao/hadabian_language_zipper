@@ -65,6 +65,7 @@ class WordOrderMapper:
         self.drop_articles = self.profile.get('drop_articles', False)
         self.functional_particles = self.profile.get(
             'functional_particles', {})
+        self.topicalization_config = self.profile.get('topicalization', {})
 
     def map_to_target_order(self, functions: List[Dict], target_order: str) -> List[int]:
         if target_order not in self.order_mappings:
@@ -189,13 +190,23 @@ class WordOrderMapper:
                     seen.add(idx)
         return result_indices
 
-    def _should_drop(self, func: Dict) -> bool:
+    def _should_drop(self, func: Dict, functions: List[Dict]) -> bool:
         if func['function'] in {SyntacticFunction.QUANTIFIER, SyntacticFunction.VERB_PARTICLE, SyntacticFunction.INTENSIFIER}:
             return False
         if not self.drop_articles:
             return False
         if func['pos'] != 'DET':
             return False
+
+        if self.topicalization_config.get('reintroduce_articles', False):
+            head_idx = func.get('dependencies', [-1])[0]
+            if head_idx != -1:
+                for f in functions:
+                    if f['index'] == head_idx:
+                        if f['function'] == SyntacticFunction.SUBJECT:
+                            return False
+                        break
+
         feats = func.get('feats', '_')
         return 'PronType=Art' in feats
 
@@ -210,7 +221,7 @@ class WordOrderMapper:
 
             func = functions[i]
 
-            if self._should_drop(func):
+            if self._should_drop(func, functions):
                 processed_indices.add(i)
                 i += 1
                 continue
@@ -310,7 +321,7 @@ class WordOrderMapper:
         while i >= 0 and i not in processed_indices:
             func = functions[i]
 
-            if self._should_drop(func):
+            if self._should_drop(func, functions):
                 processed_indices.add(i)
                 i -= 1
                 continue
@@ -492,7 +503,7 @@ class WordOrderMapper:
         pp_words = [(prep_func['word'], prep_index)]
         i = prep_index + 1
         while i < len(functions) and i not in processed_indices and functions[i]['pos'] == 'DET':
-            if self._should_drop(functions[i]):
+            if self._should_drop(functions[i], functions):
                 processed_indices.add(i)
                 i += 1
                 continue
