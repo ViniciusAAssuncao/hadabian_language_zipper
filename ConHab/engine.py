@@ -183,6 +183,7 @@ class OriginalLanguageEngine:
             self.profile, self.vowel_harmony_handler)
         self.tam_handler = TAMHandler(self.profile)
         self.reduplication_handler = ReduplicationHandler(self.profile)
+        self.functional_config = self.profile.get('functional_particles', {})
         self.word_cache: Dict[str, str] = {}
         self.load_word_cache()
 
@@ -238,6 +239,23 @@ class OriginalLanguageEngine:
                 if pos == 'PUNCT':
                     translated_words.append(orig_word)
                     continue
+
+                if syntactic_func in {SyntacticFunction.QUANTIFIER, SyntacticFunction.VERB_PARTICLE, SyntacticFunction.INTENSIFIER}:
+                    mapping = self.functional_config.get(raw_lemma, {})
+                    translated_word = ""
+                    if syntactic_func == SyntacticFunction.QUANTIFIER:
+                        translated_word = mapping.get(
+                            'noun_word', self._generate_deterministic_word(f'{raw_lemma}_quant'))
+                    elif syntactic_func == SyntacticFunction.VERB_PARTICLE:
+                        translated_word = mapping.get(
+                            'verb_word', self._generate_deterministic_word(f'{raw_lemma}_verb'))
+                    elif syntactic_func == SyntacticFunction.INTENSIFIER:
+                        translated_word = mapping.get(
+                            'adj_word', self._generate_deterministic_word(f'{raw_lemma}_intens'))
+
+                    if translated_word:
+                        translated_words.append(translated_word)
+                        continue
 
                 degree_type = None
                 if self.degree_handler.enabled:

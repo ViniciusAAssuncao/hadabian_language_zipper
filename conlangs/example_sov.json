@@ -64,6 +64,11 @@
         "type": "suffix"
       },
       {
+        "features": ["Tense=Imp"],
+        "marker": "va",
+        "type": "suffix"
+      },
+      {
         "features": ["Mood=Imp"],
         "marker": "va",
         "type": "suffix"
@@ -98,6 +103,16 @@
     "enabled": true,
     "object_focus_marker": "ko",
     "verb_focus_marker": "do"
+  },
+  "functional_particles": {
+    "muito": {
+      "noun_position": "post_nominal",
+      "noun_word": "DURA",
+      "adj_position": "pre_nominal",
+      "adj_word": "BENE",
+      "verb_position": "post_verbal",
+      "verb_word": "FORTI"
+    }
   },
   "degree_system": {
     "enabled": true,
