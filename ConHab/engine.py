@@ -1,14 +1,138 @@
 import json
 import hashlib
 from pathlib import Path
-from typing import List, Dict, Optional, Tuple
+import re
+from typing import List, Dict, Optional, Tuple, Set
 from syntax_engine import SyntaxEngine, SyntacticFunction
 from morphosyntax_analyzer import (
     DependencyParser, ConstituentAnalyzer, ClauseSegmenter,
     AgreementChecker, SyntacticComplexityAnalyzer,
     TopicalizationHandler, FocusStructureHandler, TAMHandler,
-    VowelHarmonyHandler
+    VowelHarmonyHandler, TransitivityAnalyzer
 )
+
+
+class FalseCognateHandler:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.config = profile.get('false_cognates', {})
+        self.enabled = self.config.get('enabled', False)
+        self.manual_pairs = self.config.get('manual_pairs', {})
+        self.natural_chance = self.config.get('natural_confusion_chance', 0.0)
+
+    def get_manual_target(self, lemma: str) -> Optional[str]:
+        if not self.enabled:
+            return None
+        return self.manual_pairs.get(lemma)
+
+    def should_collide_naturally(self, lemma: str, global_seed: int) -> Optional[int]:
+        if not self.enabled or self.natural_chance <= 0:
+            return None
+
+        input_str = f"{lemma}_collision_check_{global_seed}"
+        hash_obj = hashlib.sha256(input_str.encode())
+        hash_val = int(hash_obj.hexdigest(), 16)
+
+        if (hash_val % 1000) / 1000.0 < self.natural_chance:
+            return hash_val % 100
+        return None
+
+
+class PolysemyHandler:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.config = profile.get('polysemy_rules', {})
+        self.enabled = self.config.get('enabled', False)
+        self.merges = self.config.get('merges', {})
+        self.splits = self.config.get('splits', {})
+
+    def resolve_lemma(self, lemma: str, context: Dict) -> str:
+        if not self.enabled:
+            return lemma
+
+        clean_lemma = lemma.lower().strip()
+
+        if clean_lemma in self.merges:
+            return self.merges[clean_lemma]
+
+        if clean_lemma in self.splits:
+            rules = self.splits[clean_lemma]
+            context_feats = set(context.get('feats', '').split('|'))
+            context_deprel = context.get('deprel', '')
+
+            for rule in rules:
+                rule_match = rule.get('rules', {})
+                match_feats = set(rule_match.get('feats', []))
+                match_deprel = rule_match.get('deprel', [])
+
+                feats_ok = True
+                if match_feats:
+                    if not match_feats.issubset(context_feats):
+                        feats_ok = False
+
+                deprel_ok = True
+                if match_deprel:
+                    if context_deprel not in match_deprel:
+                        deprel_ok = False
+
+                if feats_ok and deprel_ok:
+                    suffix = rule.get('target_suffix', '')
+                    return f"{clean_lemma}{suffix}"
+
+        return clean_lemma
+
+
+class SemanticFieldHandler:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.config = profile.get('semantic_fields', {})
+        self.enabled = self.config.get('enabled', False)
+        self.manual_groups = self.config.get('manual_groups', {})
+        self.use_nltk = self.config.get('use_nltk', False)
+        self.nltk_ready = False
+        if self.enabled and self.use_nltk:
+            try:
+                import nltk
+                from nltk.corpus import wordnet
+                try:
+                    wordnet.synsets('teste', lang='por')
+                except LookupError:
+                    nltk.download('wordnet')
+                    nltk.download('omw-1.4')
+                self.wn = wordnet
+                self.nltk_ready = True
+            except ImportError:
+                self.nltk_ready = False
+
+    def get_semantic_root(self, word: str) -> Optional[str]:
+        if not self.enabled:
+            return None
+
+        clean_word = word.lower()
+
+        if clean_word in self.manual_groups:
+            return self.manual_groups[clean_word]
+
+        if self.nltk_ready:
+            try:
+                synsets = self.wn.synsets(clean_word, lang='por')
+                if not synsets:
+                    return None
+
+                synset = synsets[0]
+                hypernyms = synset.hypernyms()
+
+                if hypernyms:
+                    hyper_lemma = hypernyms[0].lemmas(lang='por')
+                    if hyper_lemma:
+                        return hyper_lemma[0].name()
+
+                    english_lemma = hypernyms[0].lemmas()[0].name()
+                    return english_lemma
+            except:
+                pass
+
+        return None
 
 
 class AffixHandler:
@@ -120,9 +244,9 @@ class ReduplicationHandler:
         self.config = profile.get('reduplication', {})
         self.enabled = self.config.get('enabled', False)
         self.rules = self.config.get('rules', [])
-        phonotactics = profile.get('phonotactics', {})
-        self.vowels = phonotactics.get('vowels', 'aeiou')
-        self.consonants = phonotactics.get(
+        self.phonotactics = profile.get('phonotactics', {})
+        self.vowels = self.phonotactics.get('vowels', 'aeiou')
+        self.consonants = self.phonotactics.get(
             'consonants', 'bcdfghjklmnpqrstvwxyz')
 
     def apply_reduplication(self, word: str, feats_str: str) -> str:
@@ -183,6 +307,11 @@ class OriginalLanguageEngine:
             self.profile, self.vowel_harmony_handler)
         self.tam_handler = TAMHandler(self.profile)
         self.reduplication_handler = ReduplicationHandler(self.profile)
+        self.semantic_handler = SemanticFieldHandler(self.profile)
+        self.polysemy_handler = PolysemyHandler(self.profile)
+        self.false_cognate_handler = FalseCognateHandler(self.profile)
+        self.transitivity_analyzer = TransitivityAnalyzer()
+        self.functional_config = self.profile.get('functional_particles', {})
         self.word_cache: Dict[str, str] = {}
         self.load_word_cache()
 
@@ -211,9 +340,28 @@ class OriginalLanguageEngine:
         reordered_text, functions_info = self.syntax_engine.process_text(text)
         final_sentences = []
 
+        case_system = self.profile.get('case_system', {})
+        preposition_handling = case_system.get(
+            'preposition_handling', 'coexist')
+
+        topicalization_config = self.profile.get('topicalization', {})
+        topic_enabled = topicalization_config.get('enabled', False)
+        topic_marker = topicalization_config.get('topic_marker', 'wa')
+
+        focus_config = self.profile.get('focus_structure', {})
+        focus_enabled = focus_config.get('enabled', False)
+        object_focus_marker = focus_config.get('object_focus_marker', 'ko')
+        suppress_case_on_focus = focus_config.get('suppress_case', False)
+
         for sent_data in functions_info:
             ordered_functions = sent_data['functions']
             translated_words = []
+
+            transitivity_map = self.transitivity_analyzer.analyze(
+                ordered_functions)
+
+            topic_idx = self.topicalization_handler.identify_topic(
+                ordered_functions)
 
             for func in ordered_functions:
                 orig_word = func.get("word", "")
@@ -221,7 +369,11 @@ class OriginalLanguageEngine:
                 pos = func.get("pos", "")
                 feats = func.get("feats", "")
                 syntactic_func = func.get("function", "")
+                deprel = func.get("deprel", "")
                 is_named_entity = func.get("named_entity", False)
+
+                if preposition_handling == 'replace' and pos == 'ADP':
+                    continue
 
                 clean_word_lower = self._clean_word(orig_word).lower()
                 raw_lemma = lemma if lemma else clean_word_lower
@@ -230,6 +382,23 @@ class OriginalLanguageEngine:
                 if pos == 'PUNCT':
                     translated_words.append(orig_word)
                     continue
+
+                if syntactic_func in {SyntacticFunction.QUANTIFIER, SyntacticFunction.VERB_PARTICLE, SyntacticFunction.INTENSIFIER}:
+                    mapping = self.functional_config.get(raw_lemma, {})
+                    translated_word = ""
+                    if syntactic_func == SyntacticFunction.QUANTIFIER:
+                        translated_word = mapping.get(
+                            'noun_word', self._generate_deterministic_word(f'{raw_lemma}_quant'))
+                    elif syntactic_func == SyntacticFunction.VERB_PARTICLE:
+                        translated_word = mapping.get(
+                            'verb_word', self._generate_deterministic_word(f'{raw_lemma}_verb'))
+                    elif syntactic_func == SyntacticFunction.INTENSIFIER:
+                        translated_word = mapping.get(
+                            'adj_word', self._generate_deterministic_word(f'{raw_lemma}_intens'))
+
+                    if translated_word:
+                        translated_words.append(translated_word)
+                        continue
 
                 degree_type = None
                 if self.degree_handler.enabled:
@@ -241,6 +410,11 @@ class OriginalLanguageEngine:
                 if degree_type:
                     base_lemma_for_translation = self.degree_handler.get_base_lemma(
                         clean_word_lower, raw_lemma, degree_type, feats)
+
+                if self.polysemy_handler.enabled:
+                    base_lemma_for_translation = self.polysemy_handler.resolve_lemma(
+                        base_lemma_for_translation, func
+                    )
 
                 target_lemma = base_lemma_for_translation
                 current_pos = pos
@@ -286,15 +460,39 @@ class OriginalLanguageEngine:
                     current_form = self.degree_handler.apply_degree(
                         current_form, degree_type)
 
-                current_form = self.syntax_engine.case_morphology.apply_case(
-                    current_form,
-                    syntactic_func,
-                    self.syntax_engine.word_order
-                )
+                is_topic = False
+                if topic_enabled and topic_idx is not None:
+                    if func['index'] == topic_idx:
+                        is_topic = True
+
+                is_focus = False
+                if focus_enabled:
+                    if syntactic_func == SyntacticFunction.OBJECT:
+                        is_focus = True
+
+                apply_case = True
+                if is_focus and suppress_case_on_focus:
+                    apply_case = False
+
+                if apply_case:
+                    is_transitive = transitivity_map.get(func['index'], False)
+                    current_form = self.syntax_engine.case_morphology.apply_case(
+                        current_form,
+                        syntactic_func,
+                        self.syntax_engine.word_order,
+                        deprel,
+                        clause_transitivity=is_transitive
+                    )
+
+                if is_topic and topic_marker:
+                    current_form = f"{current_form} {topic_marker}"
+
+                if is_focus and object_focus_marker:
+                    current_form = f"{current_form} {object_focus_marker}"
 
                 if self.tam_handler.enabled and (pos in {'VERB', 'AUX'} or 'Tense=' in feats or 'Mood=' in feats or 'Aspect=' in feats):
                     current_form = self.tam_handler.apply_tam(
-                        current_form, feats)
+                        current_form, feats, func, ordered_functions)
 
                 if self.reduplication_handler.enabled:
                     current_form = self.reduplication_handler.apply_reduplication(
@@ -349,15 +547,118 @@ class OriginalLanguageEngine:
                 suffix = m_end.group(1)
         return prefix, suffix
 
+    def _mutate_word(self, word: str, seed: int) -> str:
+        if not word or len(word) < 2:
+            return word
+
+        import random
+        random.seed(seed)
+
+        chars = list(word)
+        mutable_indices = [i for i, c in enumerate(chars) if c.isalpha()]
+        if not mutable_indices:
+            return word
+
+        idx_to_mutate = random.choice(mutable_indices)
+        original_char = chars[idx_to_mutate]
+
+        is_vowel = original_char.lower() in self.vowels
+
+        if is_vowel:
+            if len(self.vowels) > 1:
+                options = [v for v in self.vowels if v !=
+                           original_char.lower()]
+                if options:
+                    new_char = random.choice(options)
+                    chars[idx_to_mutate] = new_char
+        else:
+            if len(self.consonants) > 1:
+                options = [c for c in self.consonants if c !=
+                           original_char.lower()]
+                if options:
+                    new_char = random.choice(options)
+                    chars[idx_to_mutate] = new_char
+
+        return "".join(chars)
+
     def _generate_deterministic_word(self, word: str) -> str:
         clean_word = "".join(filter(str.isalpha, word.lower()))
         if not clean_word:
             return word
-        input_str = f"{clean_word}_{self.global_seed}_{self.profile_id}"
+
+        manual_target = self.false_cognate_handler.get_manual_target(
+            clean_word)
+        collision_bucket = self.false_cognate_handler.should_collide_naturally(
+            clean_word, self.global_seed)
+
+        if manual_target:
+            if manual_target in self.word_cache:
+                base_word = self.word_cache[manual_target]
+            else:
+                base_word = self._generate_deterministic_word(manual_target)
+
+            mutation_seed = int(hashlib.sha256(
+                f"{clean_word}_manual_mut_{self.global_seed}".encode()).hexdigest(), 16)
+            return self._mutate_word(base_word, mutation_seed)
+
+        elif collision_bucket is not None:
+            phantom_base_key = f"PHANTOM_BUCKET_{collision_bucket}"
+            if phantom_base_key in self.word_cache:
+                base_word = self.word_cache[phantom_base_key]
+            else:
+                base_word = self._generate_deterministic_word(phantom_base_key)
+                self.word_cache[phantom_base_key] = base_word
+
+            mutation_seed = int(hashlib.sha256(
+                f"{clean_word}_nat_mut_{self.global_seed}".encode()).hexdigest(), 16)
+            return self._mutate_word(base_word, mutation_seed)
+
+        root_semantic = self.semantic_handler.get_semantic_root(clean_word)
+        base_word_str = clean_word
+        is_derived = False
+
+        if root_semantic and root_semantic != clean_word:
+            if root_semantic in self.word_cache:
+                base_conlang_word = self.word_cache[root_semantic]
+            else:
+                base_conlang_word = self._generate_deterministic_word(
+                    root_semantic)
+                self.word_cache[root_semantic] = base_conlang_word
+
+            base_word_str = base_conlang_word
+            is_derived = True
+
+        input_str = f"{base_word_str}_{self.global_seed}_{self.profile_id}"
+        if not is_derived:
+            input_str = f"{clean_word}_{self.global_seed}_{self.profile_id}"
+
         hash_obj = hashlib.sha256(input_str.encode())
         hash_int = int(hash_obj.hexdigest(), 16)
         import random
         random.seed(hash_int)
+
+        if is_derived:
+            num_syllables_root = len(re.findall(
+                r'[aeiouáéíóúâêôãõ]', base_conlang_word, re.IGNORECASE))
+            split_idx = max(1, int(len(base_conlang_word) * 0.6))
+            prefix = base_conlang_word[:split_idx]
+
+            suffix_seed = int(hashlib.sha256(
+                clean_word.encode()).hexdigest(), 16)
+            random.seed(hash_int + suffix_seed)
+
+            generated_word = prefix
+
+            template = random.choice(self.templates)
+            for char_type in template:
+                if char_type == 'C':
+                    if self.consonants:
+                        generated_word += random.choice(list(self.consonants))
+                elif char_type == 'V':
+                    if self.vowels:
+                        generated_word += random.choice(list(self.vowels))
+            return generated_word
+
         num_syllables = random.randint(
             self.phonotactics.get('min_syllables', 1),
             self.phonotactics.get('max_syllables', 3)

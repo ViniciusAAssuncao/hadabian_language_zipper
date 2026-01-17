@@ -10,7 +10,6 @@ class VowelHarmonyHandler:
         self.enabled = self.config.get('enabled', False)
         self.groups = self.config.get('groups', {})
         self.rules = self.config.get('rules', [])
-
         self.vowels = "aeiouyáàâãéêíóôõúüö"
         if self.profile.get('phonotactics'):
             self.vowels = self.profile['phonotactics'].get(
@@ -33,17 +32,13 @@ class VowelHarmonyHandler:
     def apply_harmony(self, word: str, suffix: str) -> str:
         if not self.enabled or not suffix:
             return suffix
-
         last_vowel = self._find_last_vowel(word)
         if not last_vowel:
             return suffix
-
         group = self._get_vowel_group(last_vowel)
         if not group:
             return suffix
-
         harmonized_suffix = ""
-
         for char in suffix:
             replaced = False
             for rule in self.rules:
@@ -55,7 +50,6 @@ class VowelHarmonyHandler:
                         break
             if not replaced:
                 harmonized_suffix += char
-
         return harmonized_suffix
 
 
@@ -66,23 +60,35 @@ class TAMHandler:
         self.enabled = self.config.get('enabled', False)
         self.rules = self.config.get('rules', [])
         self.harmony_handler = VowelHarmonyHandler(profile)
+        self.infer_imperative = self.config.get(
+            'infer_imperative_from_context', False)
 
-    def apply_tam(self, word: str, feats_str: str) -> str:
+    def apply_tam(self, word: str, feats_str: str, func: Optional[Dict] = None, all_functions: Optional[List[Dict]] = None) -> str:
         if not self.enabled or not feats_str or feats_str == '_':
             return word
-
-        feats = set(feats_str.split('|'))
+        feats = set(f.strip() for f in feats_str.split('|') if f.strip())
+        if self.infer_imperative and func and all_functions:
+            deprel = func.get('deprel', '')
+            is_clause_head = deprel in {'root', 'parataxis', 'conj', 'ccomp'}
+            has_subject = False
+            subject_is_after = False
+            my_index = func['index']
+            for f in all_functions:
+                if my_index in f.get('dependencies', []) and 'nsubj' in f.get('deprel', ''):
+                    has_subject = True
+                    if f['index'] > my_index:
+                        subject_is_after = True
+                    break
+            if is_clause_head and (not has_subject or subject_is_after):
+                feats.add('Mood=Imp')
         result = word
-
         for rule in self.rules:
             rule_feats = set(rule.get('features', []))
             if rule_feats.issubset(feats):
                 marker = rule.get('marker', '')
                 m_type = rule.get('type', 'suffix')
-
                 if self.harmony_handler.enabled and m_type == 'suffix':
                     marker = self.harmony_handler.apply_harmony(result, marker)
-
                 if m_type == 'suffix':
                     result = result + marker
                 elif m_type == 'prefix':
@@ -91,7 +97,6 @@ class TAMHandler:
                     result = marker + ' ' + result
                 elif m_type == 'particle_after':
                     result = result + ' ' + marker
-
         return result
 
 
@@ -116,7 +121,6 @@ class DependencyParser:
 
     def parse(self, tagged_words: List[Tuple[str, str]]) -> List[Dict]:
         dependencies = []
-
         for i in range(len(tagged_words)):
             for pattern_info in self.dependency_patterns:
                 pattern = pattern_info['pattern']
@@ -129,17 +133,14 @@ class DependencyParser:
                         'constituents': [tagged_words[j] for j in range(i, min(i + len(pattern), len(tagged_words)))]
                     }
                     dependencies.append(dep)
-
         return dependencies
 
     def _matches_pattern(self, tagged_words: List[Tuple[str, str]], start: int, pattern: List[str]) -> bool:
         if start + len(pattern) > len(tagged_words):
             return False
-
         for i, pos in enumerate(pattern):
             if tagged_words[start + i][1] != pos:
                 return False
-
         return True
 
 
@@ -155,16 +156,13 @@ class ConstituentAnalyzer:
     def identify_constituents(self, tagged_words: List[Tuple[str, str]]) -> List[Dict]:
         constituents = []
         i = 0
-
         while i < len(tagged_words):
             found = False
-
             for constituent_type, patterns in self.constituent_types.items():
                 for pattern_length in range(len(patterns), 0, -1):
                     if i + pattern_length <= len(tagged_words):
                         candidate = [tagged_words[j][1]
                                      for j in range(i, i + pattern_length)]
-
                         if self._matches_constituent(candidate, patterns[:pattern_length]):
                             constituents.append({
                                 'type': constituent_type,
@@ -176,23 +174,18 @@ class ConstituentAnalyzer:
                             i += pattern_length
                             found = True
                             break
-
                 if found:
                     break
-
             if not found:
                 i += 1
-
         return constituents
 
     def _matches_constituent(self, candidate: List[str], pattern: List[str]) -> bool:
         if len(candidate) != len(pattern):
             return False
-
         for i, pos in enumerate(pattern):
             if candidate[i] != pos:
                 return False
-
         return True
 
     def _find_head(self, constituent: List[Tuple[str, str]], const_type: str) -> int:
@@ -208,36 +201,71 @@ class ConstituentAnalyzer:
             for i, (word, pos) in enumerate(constituent):
                 if pos == 'PREP':
                     return i
-
         return 0
 
 
 class ClauseSegmenter:
     def __init__(self):
-        self.clause_boundaries = {'.', '!', '?', ';', ',',
-                                  'e', 'mas', 'ou', 'que', 'porque', 'quando'}
+        self.coordinating_conjunctions = {
+            'e', 'mas', 'ou', 'porém', 'todavia', 'contudo', 'nem', 'logo', 'portanto'}
+        self.subordinating_conjunctions = {
+            'que', 'porque', 'quando', 'se', 'embora', 'enquanto', 'como', 'pois', 'caso', 'para'}
+        self.punctuation = {'.', '!', '?', ';', ','}
+        self.clause_boundaries = self.coordinating_conjunctions.union(
+            self.subordinating_conjunctions).union(self.punctuation)
 
     def segment(self, words: List[str]) -> List[List[str]]:
         clauses = []
         current_clause = []
-
         for word in words:
             clean_word = word.lower().strip('.,!?;:')
-
-            if clean_word in self.clause_boundaries or word.strip() in {',', ';'}:
+            if clean_word in self.clause_boundaries or word.strip() in self.punctuation:
                 if current_clause:
                     clauses.append(current_clause)
                     current_clause = []
-
-                if clean_word not in {',', ';', '.', '!', '?'}:
+                if clean_word not in self.punctuation:
                     current_clause.append(word)
             else:
                 current_clause.append(word)
-
         if current_clause:
             clauses.append(current_clause)
-
         return clauses
+
+    def identify_clause_type(self, clause_tokens: List[str]) -> str:
+        if not clause_tokens:
+            return 'unknown'
+        first_token = clause_tokens[0].lower().strip('.,!?;:')
+        if first_token in self.subordinating_conjunctions:
+            return 'subordinate'
+        return 'main'
+
+
+class TransitivityAnalyzer:
+    def __init__(self):
+        pass
+
+    def analyze(self, functions: List[Dict]) -> Dict[int, bool]:
+        transitivity_map = {}
+        verb_indices = [f['index']
+                        for f in functions if f['pos'] in {'VERB', 'AUX'}]
+
+        for v_idx in verb_indices:
+            is_transitive = False
+            for f in functions:
+                if 'obj' in f.get('deprel', '') and v_idx in f.get('dependencies', []):
+                    is_transitive = True
+                    break
+            transitivity_map[v_idx] = is_transitive
+
+        final_map = {}
+        for f in functions:
+            head_idx = f['dependencies'][0] if f['dependencies'] else -1
+            if head_idx in transitivity_map:
+                final_map[f['index']] = transitivity_map[head_idx]
+            else:
+                final_map[f['index']] = False
+
+        return final_map
 
 
 class AgreementChecker:
@@ -251,29 +279,24 @@ class AgreementChecker:
 
     def check_agreement(self, functions: List[Dict]) -> List[Dict]:
         violations = []
-
         for i, func in enumerate(functions):
             if func['function'] == 'NOUN' and func['pos'] == 'NOUN':
                 modifiers = [f for f in functions if i in f.get(
                     'dependencies', [])]
-
                 for mod in modifiers:
                     if self.gender_enabled:
                         violation = self._check_gender_agreement(func, mod)
                         if violation:
                             violations.append(violation)
-
                     if self.number_enabled:
                         violation = self._check_number_agreement(func, mod)
                         if violation:
                             violations.append(violation)
-
         return violations
 
     def _check_gender_agreement(self, head: Dict, modifier: Dict) -> Optional[Dict]:
         head_gender = self._infer_gender(head['word'])
         mod_gender = self._infer_gender(modifier['word'])
-
         if head_gender != mod_gender:
             return {
                 'type': 'gender_mismatch',
@@ -282,13 +305,11 @@ class AgreementChecker:
                 'head_gender': head_gender,
                 'modifier_gender': mod_gender
             }
-
         return None
 
     def _check_number_agreement(self, head: Dict, modifier: Dict) -> Optional[Dict]:
         head_number = self._infer_number(head['word'])
         mod_number = self._infer_number(modifier['word'])
-
         if head_number != mod_number:
             return {
                 'type': 'number_mismatch',
@@ -297,7 +318,6 @@ class AgreementChecker:
                 'head_number': head_number,
                 'modifier_number': mod_number
             }
-
         return None
 
     def _infer_gender(self, word: str) -> str:
@@ -321,36 +341,29 @@ class SyntacticComplexityAnalyzer:
 
     def analyze(self, functions: List[Dict], dependencies: List[Dict]) -> Dict:
         metrics = {}
-
         metrics['depth'] = self._calculate_depth(dependencies)
         metrics['branching_factor'] = self._calculate_branching(functions)
         metrics['clause_count'] = self._estimate_clauses(functions)
         metrics['embedding_level'] = self._calculate_embedding(dependencies)
-
         return metrics
 
     def _calculate_depth(self, dependencies: List[Dict]) -> int:
         if not dependencies:
             return 0
-
         max_depth = 0
         for dep in dependencies:
             depth = 1
             current = dep
-
             for other in dependencies:
                 if other['start'] >= current['start'] and other['end'] <= current['end']:
                     if other != current:
                         depth += 1
-
             max_depth = max(max_depth, depth)
-
         return max_depth
 
     def _calculate_branching(self, functions: List[Dict]) -> float:
         if not functions:
             return 0.0
-
         total_deps = sum(len(f.get('dependencies', [])) for f in functions)
         return total_deps / len(functions)
 
@@ -362,16 +375,13 @@ class SyntacticComplexityAnalyzer:
     def _calculate_embedding(self, dependencies: List[Dict]) -> int:
         if not dependencies:
             return 0
-
         max_embedding = 0
-
         for i, dep1 in enumerate(dependencies):
             embedding = 0
             for dep2 in dependencies:
                 if dep2['start'] > dep1['start'] and dep2['end'] < dep1['end']:
                     embedding += 1
             max_embedding = max(max_embedding, embedding)
-
         return max_embedding
 
 
@@ -385,32 +395,29 @@ class TopicalizationHandler:
     def apply_topicalization(self, words: List[str], functions: List[Dict], topic_index: Optional[int] = None) -> List[str]:
         if not self.enabled:
             return words
-
         if topic_index is None:
-            topic_index = self._identify_topic(functions)
-
+            topic_index = self.identify_topic(functions)
         if topic_index is None or topic_index >= len(words):
             return words
-
         result = words.copy()
-
         if self.marker:
             result[topic_index] = self.marker + ' ' + result[topic_index]
-
         topic_position = self.topicalization_rules.get('position', 'initial')
-
         if topic_position == 'initial' and topic_index != 0:
             topic_word = result.pop(topic_index)
             result.insert(0, topic_word)
         elif topic_position == 'final' and topic_index != len(result) - 1:
             topic_word = result.pop(topic_index)
             result.append(topic_word)
-
         return result
 
-    def _identify_topic(self, functions: List[Dict]) -> Optional[int]:
+    def identify_topic(self, functions: List[Dict]) -> Optional[int]:
         for func in functions:
             if func['function'] == 'SUBJECT' or func['function'] == 'S':
+                return func['index']
+
+        for func in functions:
+            if func['function'] == 'OBJECT' or func['function'] == 'O':
                 return func['index']
 
         return None
@@ -425,12 +432,10 @@ class FocusStructureHandler:
     def apply_focus(self, words: List[str], functions: List[Dict], focus_type: str = 'neutral') -> List[str]:
         if not self.enabled:
             return words
-
         if focus_type == 'object_focus':
             return self._apply_object_focus(words, functions)
         elif focus_type == 'verb_focus':
             return self._apply_verb_focus(words, functions)
-
         return words
 
     def _apply_object_focus(self, words: List[str], functions: List[Dict]) -> List[str]:
@@ -439,16 +444,12 @@ class FocusStructureHandler:
             if func['function'] == 'OBJECT' or func['function'] == 'O':
                 object_index = func['index']
                 break
-
         if object_index is None or object_index >= len(words):
             return words
-
         result = words.copy()
         focus_marker = self.focus_rules.get('object_focus_marker', '')
-
         if focus_marker:
             result[object_index] = focus_marker + ' ' + result[object_index]
-
         return result
 
     def _apply_verb_focus(self, words: List[str], functions: List[Dict]) -> List[str]:
@@ -457,14 +458,106 @@ class FocusStructureHandler:
             if func['function'] == 'VERB' or func['function'] == 'V':
                 verb_index = func['index']
                 break
-
         if verb_index is None or verb_index >= len(words):
             return words
-
         result = words.copy()
         focus_marker = self.focus_rules.get('verb_focus_marker', '')
-
         if focus_marker:
             result[verb_index] = focus_marker + ' ' + result[verb_index]
-
         return result
+
+
+class CaseMorphology:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.case_system = profile.get('case_system', {})
+        self.enabled = self.case_system.get('enabled', False)
+        self.preposition_handling = self.case_system.get(
+            'preposition_handling', 'coexist')
+        self.harmony_config = profile.get('vowel_harmony', {})
+        self.harmony_enabled = self.harmony_config.get('enabled', False)
+        self.vowel_harmony_handler = VowelHarmonyHandler(profile)
+        self.alignment = profile.get('alignment', 'nominative-accusative')
+
+    def _get_marker_config(self, key: str) -> Tuple[str, str]:
+        case_markers = self.case_system.get('markers', {})
+        config = case_markers.get(key, '')
+
+        default_pos = self.case_system.get('marker_position', 'suffix')
+
+        if isinstance(config, dict):
+            return config.get('marker', ''), config.get('type', default_pos)
+        return config, default_pos
+
+    def apply_case(self, word: str, function: str, word_order: str, deprel: str = '', clause_transitivity: bool = False) -> str:
+        if not self.enabled:
+            return word
+
+        if self.preposition_handling == 'none' and function not in {'SUBJECT', 'OBJECT', 'S', 'O'}:
+            return word
+
+        marker_text = ''
+        marker_type = 'suffix'
+        target_key = ''
+
+        if deprel:
+            core_dep = deprel.split(':')[0]
+            if core_dep == 'obj':
+                target_key = 'accusative'
+                if self.alignment == 'ergative-absolutive':
+                    target_key = 'absolutive'
+            elif core_dep == 'iobj':
+                target_key = 'dative'
+            elif core_dep == 'obl':
+                target_key = 'locative'
+                if not self.case_system.get('markers', {}).get('locative'):
+                    target_key = 'dative'
+            elif core_dep == 'nsubj':
+                if self.alignment == 'ergative-absolutive':
+                    target_key = 'ergative' if clause_transitivity else 'absolutive'
+                else:
+                    target_key = 'nominative'
+
+        if not target_key:
+            if function == 'SUBJECT' or function == 'S':
+                if self.alignment == 'ergative-absolutive':
+                    target_key = 'ergative' if clause_transitivity else 'absolutive'
+                else:
+                    target_key = 'nominative'
+            elif function == 'OBJECT' or function == 'O':
+                if self.alignment == 'ergative-absolutive':
+                    target_key = 'absolutive'
+                else:
+                    target_key = 'accusative'
+            elif function == 'ADJUNCT' or function == 'ADJ':
+                target_key = 'locative'
+                if not self.case_system.get('markers', {}).get('locative'):
+                    target_key = 'dative'
+
+        if target_key:
+            marker_text, marker_type = self._get_marker_config(target_key)
+
+        if not marker_text:
+            return word
+
+        if isinstance(marker_text, str) and marker_text.startswith('-'):
+            marker_text = marker_text[1:]
+
+        if self.harmony_enabled:
+            marker_text = self.vowel_harmony_handler.apply_harmony(
+                word, marker_text)
+
+        if marker_type == 'suffix':
+            return word + marker_text
+        elif marker_type == 'prefix':
+            is_capitalized = word and word[0].isupper()
+            result = marker_text + word.lower()
+            if is_capitalized:
+                result = result[0].upper() + result[1:]
+            return result
+        elif marker_type == 'particle_before':
+            return f"{marker_text} {word}"
+        elif marker_type == 'particle_after':
+            return f"{word} {marker_text}"
+
+        return word + marker_text

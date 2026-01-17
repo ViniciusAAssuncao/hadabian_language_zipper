@@ -1,10 +1,16 @@
 {
   "id": "example_sov",
   "name": "Exemplo SOV com Casos e Harmonia",
-  "description": "Língua exemplo com ordem SOV, sistema de casos e harmonização vocálica.",
-  "word_order": "SOV",
+  "description": "Língua exemplo com ordem SVO na principal e SOV na subordinada (estilo Alemão), sistema de casos e harmonização vocálica.",
+  "word_order": "SVO",
+  "subordinate_word_order": "SOV",
   "source_language_order": "SVO",
   "drop_articles": true,
+  "pro_drop": {
+    "enabled": true,
+    "conditions": ["verb_agreement"]
+  },
+  "alignment": "ergative-absolutive",
   "global_seed": 42857,
   "phonotactics": {
     "vowels": "aeiou",
@@ -18,6 +24,68 @@
     "forbidden_final_consonants": ["h"],
     "epenthesis_vowel": "i",
     "diphthongs": ["ai", "ei", "ou", "au"]
+  },
+  "semantic_fields": {
+    "enabled": true,
+    "auto_detect": true,
+    "use_nltk": true,
+    "threshold": 0.3,
+    "manual_groups": {
+      "rio": "água",
+      "chuva": "água",
+      "sede": "água",
+      "lago": "água",
+      "mar": "água",
+      "fogo": "calor",
+      "sol": "calor"
+    }
+  },
+  "polysemy_rules": {
+    "enabled": true,
+    "merges": {
+      "azul": "céu",
+      "oceano": "mar",
+      "chama": "fogo"
+    },
+    "splits": {
+      "ser": [
+        {
+          "target_suffix": "_permanente",
+          "rules": {
+            "feats": ["Mood=Ind", "Tense=Pres"]
+          }
+        },
+        {
+          "target_suffix": "_transitorio",
+          "rules": {
+            "feats": ["Mood=Sub"]
+          }
+        }
+      ],
+      "banco": [
+        {
+          "target_suffix": "_inst",
+          "rules": {
+            "deprel": ["nmod", "obj"]
+          }
+        },
+        {
+          "target_suffix": "_assento",
+          "rules": {
+            "deprel": ["obl"]
+          }
+        }
+      ]
+    }
+  },
+  "false_cognates": {
+    "enabled": true,
+    "natural_confusion_chance": 0.2,
+    "manual_pairs": {
+      "noite": "dia",
+      "esquerda": "direita",
+      "homem": "mulher"
+    }
   },
   "vowel_harmony": {
     "enabled": true,
@@ -44,10 +112,28 @@
   },
   "case_system": {
     "enabled": true,
+    "preposition_handling": "replace",
     "markers": {
-      "nominative": "",
-      "accusative": "-ma",
-      "dative": "-na",
+      "ergative": {
+        "marker": "ka",
+        "type": "suffix"
+      },
+      "absolutive": {
+        "marker": "",
+        "type": "suffix"
+      },
+      "nominative": {
+        "marker": "wa",
+        "type": "particle_after"
+      },
+      "accusative": {
+        "marker": "ma",
+        "type": "suffix"
+      },
+      "dative": {
+        "marker": "ni",
+        "type": "particle_before"
+      },
       "genitive": "-sa",
       "locative": "-la"
     },
@@ -55,6 +141,7 @@
   },
   "tam_system": {
     "enabled": true,
+    "infer_imperative_from_context": true,
     "rules": [
       {
         "features": ["Tense=Past"],
@@ -63,6 +150,11 @@
       },
       {
         "features": ["Tense=Imp"],
+        "marker": "va",
+        "type": "suffix"
+      },
+      {
+        "features": ["Mood=Imp"],
         "marker": "va",
         "type": "suffix"
       },
@@ -90,12 +182,21 @@
   "topicalization": {
     "enabled": true,
     "position": "initial",
-    "topic_marker": "wa"
+    "topic_marker": "wa",
+    "reintroduce_articles": true
   },
   "focus_structure": {
     "enabled": true,
     "object_focus_marker": "ko",
-    "verb_focus_marker": "do"
+    "verb_focus_marker": "do",
+    "suppress_case": true
+  },
+  "functional_particles": {
+    "muito": {
+      "noun_position": "post_nominal",
+      "adj_position": "pre_nominal",
+      "verb_position": "post_verbal"
+    }
   },
   "degree_system": {
     "enabled": true,
