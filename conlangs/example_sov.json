@@ -6,6 +6,7 @@
   "subordinate_word_order": "SOV",
   "source_language_order": "SVO",
   "drop_articles": true,
+  "alignment": "ergative-absolutive",
   "global_seed": 42857,
   "phonotactics": {
     "vowels": "aeiou",
@@ -109,6 +110,14 @@
     "enabled": true,
     "preposition_handling": "replace",
     "markers": {
+      "ergative": {
+        "marker": "ka",
+        "type": "suffix"
+      },
+      "absolutive": {
+        "marker": "",
+        "type": "suffix"
+      },
       "nominative": {
         "marker": "wa",
         "type": "particle_after"

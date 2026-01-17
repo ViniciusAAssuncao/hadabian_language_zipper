@@ -8,7 +8,7 @@ from morphosyntax_analyzer import (
     DependencyParser, ConstituentAnalyzer, ClauseSegmenter,
     AgreementChecker, SyntacticComplexityAnalyzer,
     TopicalizationHandler, FocusStructureHandler, TAMHandler,
-    VowelHarmonyHandler
+    VowelHarmonyHandler, TransitivityAnalyzer
 )
 
 
@@ -310,6 +310,7 @@ class OriginalLanguageEngine:
         self.semantic_handler = SemanticFieldHandler(self.profile)
         self.polysemy_handler = PolysemyHandler(self.profile)
         self.false_cognate_handler = FalseCognateHandler(self.profile)
+        self.transitivity_analyzer = TransitivityAnalyzer()
         self.functional_config = self.profile.get('functional_particles', {})
         self.word_cache: Dict[str, str] = {}
         self.load_word_cache()
@@ -355,6 +356,9 @@ class OriginalLanguageEngine:
         for sent_data in functions_info:
             ordered_functions = sent_data['functions']
             translated_words = []
+
+            transitivity_map = self.transitivity_analyzer.analyze(
+                ordered_functions)
 
             for func in ordered_functions:
                 orig_word = func.get("word", "")
@@ -468,11 +472,13 @@ class OriginalLanguageEngine:
                     apply_case = False
 
                 if apply_case:
+                    is_transitive = transitivity_map.get(func['index'], False)
                     current_form = self.syntax_engine.case_morphology.apply_case(
                         current_form,
                         syntactic_func,
                         self.syntax_engine.word_order,
-                        deprel
+                        deprel,
+                        clause_transitivity=is_transitive
                     )
 
                 if is_topic and topic_marker:

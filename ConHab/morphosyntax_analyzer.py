@@ -240,6 +240,34 @@ class ClauseSegmenter:
         return 'main'
 
 
+class TransitivityAnalyzer:
+    def __init__(self):
+        pass
+
+    def analyze(self, functions: List[Dict]) -> Dict[int, bool]:
+        transitivity_map = {}
+        verb_indices = [f['index']
+                        for f in functions if f['pos'] in {'VERB', 'AUX'}]
+
+        for v_idx in verb_indices:
+            is_transitive = False
+            for f in functions:
+                if 'obj' in f.get('deprel', '') and v_idx in f.get('dependencies', []):
+                    is_transitive = True
+                    break
+            transitivity_map[v_idx] = is_transitive
+
+        final_map = {}
+        for f in functions:
+            head_idx = f['dependencies'][0] if f['dependencies'] else -1
+            if head_idx in transitivity_map:
+                final_map[f['index']] = transitivity_map[head_idx]
+            else:
+                final_map[f['index']] = False
+
+        return final_map
+
+
 class AgreementChecker:
     def __init__(self, profile: Dict):
         self.profile = profile
@@ -444,6 +472,7 @@ class CaseMorphology:
         self.harmony_config = profile.get('vowel_harmony', {})
         self.harmony_enabled = self.harmony_config.get('enabled', False)
         self.vowel_harmony_handler = VowelHarmonyHandler(profile)
+        self.alignment = profile.get('alignment', 'nominative-accusative')
 
     def _get_marker_config(self, key: str) -> Tuple[str, str]:
         case_markers = self.case_system.get('markers', {})
@@ -455,7 +484,7 @@ class CaseMorphology:
             return config.get('marker', ''), config.get('type', default_pos)
         return config, default_pos
 
-    def apply_case(self, word: str, function: str, word_order: str, deprel: str = '') -> str:
+    def apply_case(self, word: str, function: str, word_order: str, deprel: str = '', clause_transitivity: bool = False) -> str:
         if not self.enabled:
             return word
 
@@ -470,6 +499,8 @@ class CaseMorphology:
             core_dep = deprel.split(':')[0]
             if core_dep == 'obj':
                 target_key = 'accusative'
+                if self.alignment == 'ergative-absolutive':
+                    target_key = 'absolutive'
             elif core_dep == 'iobj':
                 target_key = 'dative'
             elif core_dep == 'obl':
@@ -477,13 +508,22 @@ class CaseMorphology:
                 if not self.case_system.get('markers', {}).get('locative'):
                     target_key = 'dative'
             elif core_dep == 'nsubj':
-                target_key = 'nominative'
+                if self.alignment == 'ergative-absolutive':
+                    target_key = 'ergative' if clause_transitivity else 'absolutive'
+                else:
+                    target_key = 'nominative'
 
         if not target_key:
             if function == 'SUBJECT' or function == 'S':
-                target_key = 'nominative'
+                if self.alignment == 'ergative-absolutive':
+                    target_key = 'ergative' if clause_transitivity else 'absolutive'
+                else:
+                    target_key = 'nominative'
             elif function == 'OBJECT' or function == 'O':
-                target_key = 'accusative'
+                if self.alignment == 'ergative-absolutive':
+                    target_key = 'absolutive'
+                else:
+                    target_key = 'accusative'
             elif function == 'ADJUNCT' or function == 'ADJ':
                 target_key = 'locative'
                 if not self.case_system.get('markers', {}).get('locative'):

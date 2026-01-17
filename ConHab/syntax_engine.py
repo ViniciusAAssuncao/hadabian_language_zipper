@@ -5,6 +5,7 @@ from collections import defaultdict
 from pathlib import Path
 import requests
 import re
+from morphosyntax_analyzer import CaseMorphology
 
 
 class SyntacticFunction:
@@ -568,140 +569,6 @@ class WordOrderMapper:
         if target_order == 'SOV':
             return 'after_object'
         return 'after_verb'
-
-
-class CaseMorphology:
-    def __init__(self, profile: Dict):
-        self.profile = profile
-        self.case_system = profile.get('case_system', {})
-        self.enabled = self.case_system.get('enabled', False)
-        self.preposition_handling = self.case_system.get(
-            'preposition_handling', 'coexist')
-        self.harmony_config = profile.get('vowel_harmony', {})
-        self.harmony_enabled = self.harmony_config.get('enabled', False)
-
-    def _get_vowel_group(self, vowel: str) -> str:
-        if not self.harmony_enabled:
-            return None
-        groups = self.harmony_config.get('groups', {})
-        for group_name, vowels in groups.items():
-            if vowel in vowels:
-                return group_name
-        return None
-
-    def _find_last_vowel(self, word: str) -> str:
-        vowels = "aeiouyáàâãéêíóôõúüö"
-        if self.profile.get('phonotactics'):
-            vowels = self.profile['phonotactics'].get('vowels', vowels)
-
-        for char in reversed(word.lower()):
-            if char in vowels:
-                return char
-        return None
-
-    def _apply_harmony(self, word: str, suffix: str) -> str:
-        if not self.harmony_enabled or not suffix:
-            return suffix
-
-        last_vowel = self._find_last_vowel(word)
-        if not last_vowel:
-            return suffix
-
-        group = self._get_vowel_group(last_vowel)
-        if not group:
-            return suffix
-
-        rules = self.harmony_config.get('rules', [])
-        harmonized_suffix = ""
-
-        for char in suffix:
-            replaced = False
-            for rule in rules:
-                if rule['input'] == char:
-                    mapping = rule.get('map', {})
-                    if group in mapping:
-                        harmonized_suffix += mapping[group]
-                        replaced = True
-                        break
-            if not replaced:
-                harmonized_suffix += char
-
-        return harmonized_suffix
-
-    def _get_marker_config(self, key: str) -> Tuple[str, str]:
-        case_markers = self.case_system.get('markers', {})
-        config = case_markers.get(key, '')
-
-        default_pos = self.case_system.get('marker_position', 'suffix')
-
-        if isinstance(config, dict):
-            return config.get('marker', ''), config.get('type', default_pos)
-        return config, default_pos
-
-    def apply_case(self, word: str, function: str, word_order: str, deprel: str = '') -> str:
-        if not self.enabled:
-            return word
-
-        if self.preposition_handling == 'none' and function not in {SyntacticFunction.SUBJECT, SyntacticFunction.OBJECT}:
-            return word
-
-        marker_text = ''
-        marker_type = 'suffix'
-        target_key = ''
-
-        if deprel:
-            core_dep = deprel.split(':')[0]
-            if core_dep == 'obj':
-                target_key = 'accusative'
-            elif core_dep == 'iobj':
-                target_key = 'dative'
-            elif core_dep == 'obl':
-                loc = self.case_system.get('markers', {}).get('locative')
-                if loc:
-                    target_key = 'locative'
-                else:
-                    target_key = 'dative'
-            elif core_dep == 'nsubj':
-                target_key = 'nominative'
-
-        if not target_key:
-            if function == SyntacticFunction.SUBJECT:
-                target_key = 'nominative'
-            elif function == SyntacticFunction.OBJECT:
-                target_key = 'accusative'
-            elif function == SyntacticFunction.ADJUNCT:
-                loc = self.case_system.get('markers', {}).get('locative')
-                if loc:
-                    target_key = 'locative'
-                else:
-                    target_key = 'dative'
-
-        if target_key:
-            marker_text, marker_type = self._get_marker_config(target_key)
-
-        if not marker_text:
-            return word
-
-        if isinstance(marker_text, str) and marker_text.startswith('-'):
-            marker_text = marker_text[1:]
-
-        if self.harmony_enabled:
-            marker_text = self._apply_harmony(word, marker_text)
-
-        if marker_type == 'suffix':
-            return word + marker_text
-        elif marker_type == 'prefix':
-            is_capitalized = word and word[0].isupper()
-            result = marker_text + word.lower()
-            if is_capitalized:
-                result = result[0].upper() + result[1:]
-            return result
-        elif marker_type == 'particle_before':
-            return f"{marker_text} {word}"
-        elif marker_type == 'particle_after':
-            return f"{word} {marker_text}"
-
-        return word + marker_text
 
 
 class SyntaxEngine:
