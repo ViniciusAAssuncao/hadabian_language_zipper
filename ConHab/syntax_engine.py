@@ -50,6 +50,9 @@ class WordOrderMapper:
     def __init__(self, source_order: str = 'SVO', profile: Optional[Dict] = None):
         self.source_order = source_order
         self.profile = profile or {}
+        self.target_order = self.profile.get('word_order', 'SVO')
+        self.subordinate_order = self.profile.get(
+            'subordinate_word_order', self.target_order)
         self.order_mappings = {
             'SVO': {'S': 0, 'V': 1, 'O': 2, 'COMP': 2},
             'SOV': {'S': 0, 'O': 1, 'COMP': 1, 'V': 2},
@@ -70,52 +73,85 @@ class WordOrderMapper:
     def map_to_target_order(self, functions: List[Dict], target_order: str) -> List[int]:
         if target_order not in self.order_mappings:
             target_order = 'SVO'
-        clauses_indices = self._partition_into_clauses(functions)
+
+        clauses_data = self._partition_into_clauses(functions)
         final_indices = []
-        for clause_indices_set in clauses_indices:
+
+        for clause_indices_set, is_subordinate in clauses_data:
             local_indices = sorted(list(clause_indices_set))
             clause_functions_subset = []
+
             for i, original_idx in enumerate(local_indices):
                 f = functions[original_idx].copy()
                 f['original_index'] = original_idx
                 f['index'] = i
                 clause_functions_subset.append(f)
+
+            current_clause_order = self.subordinate_order if is_subordinate else target_order
+            if current_clause_order not in self.order_mappings:
+                current_clause_order = 'SVO'
+
             reordered_local_indices = self._map_single_clause(
-                clause_functions_subset, target_order)
+                clause_functions_subset, current_clause_order)
+
             for local_idx in reordered_local_indices:
                 final_indices.append(
                     clause_functions_subset[local_idx]['original_index'])
+
         return final_indices
 
-    def _partition_into_clauses(self, functions: List[Dict]) -> List[Set[int]]:
+    def _partition_into_clauses(self, functions: List[Dict]) -> List[Tuple[Set[int], bool]]:
         partitions = []
         current_indices = set()
-        clause_starters = {'e', 'mas', 'porém', 'todavia', 'contudo',
-                           'ou', 'então', 'portanto', 'porque', 'pois', 'logo'}
+
+        coordinating_conjunctions = {
+            'e', 'mas', 'porém', 'todavia', 'contudo', 'ou', 'nem', 'logo', 'portanto'}
+        subordinating_conjunctions = {
+            'que', 'porque', 'quando', 'se', 'embora', 'enquanto', 'como', 'pois', 'caso', 'para'}
         subject_pronouns = {'eu', 'tu', 'ele', 'ela', 'nós', 'vós',
                             'eles', 'elas', 'você', 'vocês', 'isso', 'isto', 'aquilo'}
+
+        is_current_subordinate = False
+
         for i, f in enumerate(functions):
             word = f['word'].lower()
             pos = f['pos']
             is_boundary = False
+            next_is_subordinate = False
+
             if pos == 'PUNCT' and word in {',', ';', '.', '!', '?', ':'}:
                 if i + 1 < len(functions):
                     next_f = functions[i+1]
                     next_word = next_f['word'].lower()
-                    if next_word in clause_starters:
+
+                    if next_word in coordinating_conjunctions:
                         is_boundary = True
+                        next_is_subordinate = False
+                    elif next_word in subordinating_conjunctions:
+                        is_boundary = True
+                        next_is_subordinate = True
                     elif next_f['function'] == SyntacticFunction.SUBJECT:
                         is_boundary = True
                     elif next_word in subject_pronouns:
                         is_boundary = True
                     elif next_f['pos'] == 'VERB' and next_f['function'] == SyntacticFunction.VERB:
                         is_boundary = True
+
+            elif word in subordinating_conjunctions and f['pos'] in {'SCONJ', 'ADP'}:
+                if i > 0:
+                    is_boundary = True
+                    next_is_subordinate = True
+
             current_indices.add(f['index'])
+
             if is_boundary:
-                partitions.append(current_indices)
+                partitions.append((current_indices, is_current_subordinate))
                 current_indices = set()
+                is_current_subordinate = next_is_subordinate
+
         if current_indices:
-            partitions.append(current_indices)
+            partitions.append((current_indices, is_current_subordinate))
+
         return partitions
 
     def _map_single_clause(self, functions: List[Dict], target_order: str) -> List[int]:

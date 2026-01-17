@@ -206,25 +206,38 @@ class ConstituentAnalyzer:
 
 class ClauseSegmenter:
     def __init__(self):
-        self.clause_boundaries = {'.', '!', '?', ';', ',',
-                                  'e', 'mas', 'ou', 'que', 'porque', 'quando'}
+        self.coordinating_conjunctions = {
+            'e', 'mas', 'ou', 'porém', 'todavia', 'contudo', 'nem', 'logo', 'portanto'}
+        self.subordinating_conjunctions = {
+            'que', 'porque', 'quando', 'se', 'embora', 'enquanto', 'como', 'pois', 'caso', 'para'}
+        self.punctuation = {'.', '!', '?', ';', ','}
+        self.clause_boundaries = self.coordinating_conjunctions.union(
+            self.subordinating_conjunctions).union(self.punctuation)
 
     def segment(self, words: List[str]) -> List[List[str]]:
         clauses = []
         current_clause = []
         for word in words:
             clean_word = word.lower().strip('.,!?;:')
-            if clean_word in self.clause_boundaries or word.strip() in {',', ';'}:
+            if clean_word in self.clause_boundaries or word.strip() in self.punctuation:
                 if current_clause:
                     clauses.append(current_clause)
                     current_clause = []
-                if clean_word not in {',', ';', '.', '!', '?'}:
+                if clean_word not in self.punctuation:
                     current_clause.append(word)
             else:
                 current_clause.append(word)
         if current_clause:
             clauses.append(current_clause)
         return clauses
+
+    def identify_clause_type(self, clause_tokens: List[str]) -> str:
+        if not clause_tokens:
+            return 'unknown'
+        first_token = clause_tokens[0].lower().strip('.,!?;:')
+        if first_token in self.subordinating_conjunctions:
+            return 'subordinate'
+        return 'main'
 
 
 class AgreementChecker:

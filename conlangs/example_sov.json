@@ -1,8 +1,9 @@
 {
   "id": "example_sov",
   "name": "Exemplo SOV com Casos e Harmonia",
-  "description": "Língua exemplo com ordem SOV, sistema de casos e harmonização vocálica.",
-  "word_order": "SOV",
+  "description": "Língua exemplo com ordem SVO na principal e SOV na subordinada (estilo Alemão), sistema de casos e harmonização vocálica.",
+  "word_order": "SVO",
+  "subordinate_word_order": "SOV",
   "source_language_order": "SVO",
   "drop_articles": true,
   "global_seed": 42857,
