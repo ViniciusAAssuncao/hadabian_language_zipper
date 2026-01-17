@@ -6,7 +6,10 @@
   "subordinate_word_order": "SOV",
   "source_language_order": "SVO",
   "drop_articles": true,
-  "pro_drop": true,
+  "pro_drop": {
+    "enabled": true,
+    "conditions": ["verb_agreement"]
+  },
   "alignment": "ergative-absolutive",
   "global_seed": 42857,
   "phonotactics": {

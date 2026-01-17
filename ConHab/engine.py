@@ -360,6 +360,9 @@ class OriginalLanguageEngine:
             transitivity_map = self.transitivity_analyzer.analyze(
                 ordered_functions)
 
+            topic_idx = self.topicalization_handler.identify_topic(
+                ordered_functions)
+
             for func in ordered_functions:
                 orig_word = func.get("word", "")
                 lemma = func.get("lemma", "")
@@ -458,8 +461,8 @@ class OriginalLanguageEngine:
                         current_form, degree_type)
 
                 is_topic = False
-                if topic_enabled:
-                    if syntactic_func == SyntacticFunction.SUBJECT:
+                if topic_enabled and topic_idx is not None:
+                    if func['index'] == topic_idx:
                         is_topic = True
 
                 is_focus = False

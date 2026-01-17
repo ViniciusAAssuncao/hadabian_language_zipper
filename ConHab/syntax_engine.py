@@ -232,7 +232,26 @@ class WordOrderMapper:
         if func['function'] in {SyntacticFunction.QUANTIFIER, SyntacticFunction.VERB_PARTICLE, SyntacticFunction.INTENSIFIER}:
             return False
 
-        if self.pro_drop and func['pos'] == 'PRON' and func['function'] == SyntacticFunction.SUBJECT:
+        is_pro_drop = False
+        pro_drop_conditions = []
+
+        if isinstance(self.pro_drop, bool):
+            is_pro_drop = self.pro_drop
+        elif isinstance(self.pro_drop, dict):
+            is_pro_drop = self.pro_drop.get('enabled', False)
+            pro_drop_conditions = self.pro_drop.get('conditions', [])
+
+        if is_pro_drop and func['pos'] == 'PRON' and func['function'] == SyntacticFunction.SUBJECT:
+            if func['word'].isupper() and len(func['word']) > 1:
+                return False
+
+            if 'verb_agreement' in pro_drop_conditions:
+                has_agreement = self.agreement_rules.get('number_agreement', False) or \
+                    self.agreement_rules.get('person_agreement', False) or \
+                    self.agreement_rules.get('gender_agreement', False)
+                if not has_agreement:
+                    return False
+
             head_idx = func['dependencies'][0] if func['dependencies'] else -1
             if head_idx != -1:
                 head_func = next(

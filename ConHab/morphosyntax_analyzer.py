@@ -396,7 +396,7 @@ class TopicalizationHandler:
         if not self.enabled:
             return words
         if topic_index is None:
-            topic_index = self._identify_topic(functions)
+            topic_index = self.identify_topic(functions)
         if topic_index is None or topic_index >= len(words):
             return words
         result = words.copy()
@@ -411,10 +411,15 @@ class TopicalizationHandler:
             result.append(topic_word)
         return result
 
-    def _identify_topic(self, functions: List[Dict]) -> Optional[int]:
+    def identify_topic(self, functions: List[Dict]) -> Optional[int]:
         for func in functions:
             if func['function'] == 'SUBJECT' or func['function'] == 'S':
                 return func['index']
+
+        for func in functions:
+            if func['function'] == 'OBJECT' or func['function'] == 'O':
+                return func['index']
+
         return None
 
 
