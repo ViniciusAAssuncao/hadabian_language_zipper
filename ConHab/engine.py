@@ -12,6 +12,32 @@ from morphosyntax_analyzer import (
 )
 
 
+class FalseCognateHandler:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.config = profile.get('false_cognates', {})
+        self.enabled = self.config.get('enabled', False)
+        self.manual_pairs = self.config.get('manual_pairs', {})
+        self.natural_chance = self.config.get('natural_confusion_chance', 0.0)
+
+    def get_manual_target(self, lemma: str) -> Optional[str]:
+        if not self.enabled:
+            return None
+        return self.manual_pairs.get(lemma)
+
+    def should_collide_naturally(self, lemma: str, global_seed: int) -> Optional[int]:
+        if not self.enabled or self.natural_chance <= 0:
+            return None
+
+        input_str = f"{lemma}_collision_check_{global_seed}"
+        hash_obj = hashlib.sha256(input_str.encode())
+        hash_val = int(hash_obj.hexdigest(), 16)
+
+        if (hash_val % 1000) / 1000.0 < self.natural_chance:
+            return hash_val % 100
+        return None
+
+
 class PolysemyHandler:
     def __init__(self, profile: Dict):
         self.profile = profile
@@ -283,6 +309,7 @@ class OriginalLanguageEngine:
         self.reduplication_handler = ReduplicationHandler(self.profile)
         self.semantic_handler = SemanticFieldHandler(self.profile)
         self.polysemy_handler = PolysemyHandler(self.profile)
+        self.false_cognate_handler = FalseCognateHandler(self.profile)
         self.functional_config = self.profile.get('functional_particles', {})
         self.word_cache: Dict[str, str] = {}
         self.load_word_cache()
@@ -511,10 +538,71 @@ class OriginalLanguageEngine:
                 suffix = m_end.group(1)
         return prefix, suffix
 
+    def _mutate_word(self, word: str, seed: int) -> str:
+        if not word or len(word) < 2:
+            return word
+
+        import random
+        random.seed(seed)
+
+        chars = list(word)
+        mutable_indices = [i for i, c in enumerate(chars) if c.isalpha()]
+        if not mutable_indices:
+            return word
+
+        idx_to_mutate = random.choice(mutable_indices)
+        original_char = chars[idx_to_mutate]
+
+        is_vowel = original_char.lower() in self.vowels
+
+        if is_vowel:
+            if len(self.vowels) > 1:
+                options = [v for v in self.vowels if v !=
+                           original_char.lower()]
+                if options:
+                    new_char = random.choice(options)
+                    chars[idx_to_mutate] = new_char
+        else:
+            if len(self.consonants) > 1:
+                options = [c for c in self.consonants if c !=
+                           original_char.lower()]
+                if options:
+                    new_char = random.choice(options)
+                    chars[idx_to_mutate] = new_char
+
+        return "".join(chars)
+
     def _generate_deterministic_word(self, word: str) -> str:
         clean_word = "".join(filter(str.isalpha, word.lower()))
         if not clean_word:
             return word
+
+        manual_target = self.false_cognate_handler.get_manual_target(
+            clean_word)
+        collision_bucket = self.false_cognate_handler.should_collide_naturally(
+            clean_word, self.global_seed)
+
+        if manual_target:
+            if manual_target in self.word_cache:
+                base_word = self.word_cache[manual_target]
+            else:
+                base_word = self._generate_deterministic_word(manual_target)
+
+            mutation_seed = int(hashlib.sha256(
+                f"{clean_word}_manual_mut_{self.global_seed}".encode()).hexdigest(), 16)
+            return self._mutate_word(base_word, mutation_seed)
+
+        elif collision_bucket is not None:
+            phantom_base_key = f"PHANTOM_BUCKET_{collision_bucket}"
+            if phantom_base_key in self.word_cache:
+                base_word = self.word_cache[phantom_base_key]
+            else:
+                base_word = self._generate_deterministic_word(phantom_base_key)
+                self.word_cache[phantom_base_key] = base_word
+
+            mutation_seed = int(hashlib.sha256(
+                f"{clean_word}_nat_mut_{self.global_seed}".encode()).hexdigest(), 16)
+            return self._mutate_word(base_word, mutation_seed)
 
         root_semantic = self.semantic_handler.get_semantic_root(clean_word)
         base_word_str = clean_word

@@ -72,6 +72,15 @@
       ]
     }
   },
+  "false_cognates": {
+    "enabled": true,
+    "natural_confusion_chance": 0.2,
+    "manual_pairs": {
+      "noite": "dia",
+      "esquerda": "direita",
+      "homem": "mulher"
+    }
+  },
   "vowel_harmony": {
     "enabled": true,
     "groups": {
