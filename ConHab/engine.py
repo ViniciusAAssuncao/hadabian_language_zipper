@@ -2,7 +2,7 @@ import json
 import hashlib
 from pathlib import Path
 import re
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict, Optional, Tuple, Set
 from syntax_engine import SyntaxEngine, SyntacticFunction
 from morphosyntax_analyzer import (
     DependencyParser, ConstituentAnalyzer, ClauseSegmenter,
@@ -10,6 +10,50 @@ from morphosyntax_analyzer import (
     TopicalizationHandler, FocusStructureHandler, TAMHandler,
     VowelHarmonyHandler
 )
+
+
+class PolysemyHandler:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.config = profile.get('polysemy_rules', {})
+        self.enabled = self.config.get('enabled', False)
+        self.merges = self.config.get('merges', {})
+        self.splits = self.config.get('splits', {})
+
+    def resolve_lemma(self, lemma: str, context: Dict) -> str:
+        if not self.enabled:
+            return lemma
+
+        clean_lemma = lemma.lower().strip()
+
+        if clean_lemma in self.merges:
+            return self.merges[clean_lemma]
+
+        if clean_lemma in self.splits:
+            rules = self.splits[clean_lemma]
+            context_feats = set(context.get('feats', '').split('|'))
+            context_deprel = context.get('deprel', '')
+
+            for rule in rules:
+                rule_match = rule.get('rules', {})
+                match_feats = set(rule_match.get('feats', []))
+                match_deprel = rule_match.get('deprel', [])
+
+                feats_ok = True
+                if match_feats:
+                    if not match_feats.issubset(context_feats):
+                        feats_ok = False
+
+                deprel_ok = True
+                if match_deprel:
+                    if context_deprel not in match_deprel:
+                        deprel_ok = False
+
+                if feats_ok and deprel_ok:
+                    suffix = rule.get('target_suffix', '')
+                    return f"{clean_lemma}{suffix}"
+
+        return clean_lemma
 
 
 class SemanticFieldHandler:
@@ -238,6 +282,7 @@ class OriginalLanguageEngine:
         self.tam_handler = TAMHandler(self.profile)
         self.reduplication_handler = ReduplicationHandler(self.profile)
         self.semantic_handler = SemanticFieldHandler(self.profile)
+        self.polysemy_handler = PolysemyHandler(self.profile)
         self.functional_config = self.profile.get('functional_particles', {})
         self.word_cache: Dict[str, str] = {}
         self.load_word_cache()
@@ -331,6 +376,11 @@ class OriginalLanguageEngine:
                 if degree_type:
                     base_lemma_for_translation = self.degree_handler.get_base_lemma(
                         clean_word_lower, raw_lemma, degree_type, feats)
+
+                if self.polysemy_handler.enabled:
+                    base_lemma_for_translation = self.polysemy_handler.resolve_lemma(
+                        base_lemma_for_translation, func
+                    )
 
                 target_lemma = base_lemma_for_translation
                 current_pos = pos

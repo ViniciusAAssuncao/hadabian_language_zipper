@@ -34,6 +34,44 @@
       "sol": "calor"
     }
   },
+  "polysemy_rules": {
+    "enabled": true,
+    "merges": {
+      "azul": "céu",
+      "oceano": "mar",
+      "chama": "fogo"
+    },
+    "splits": {
+      "ser": [
+        {
+          "target_suffix": "_permanente",
+          "rules": {
+            "feats": ["Mood=Ind", "Tense=Pres"]
+          }
+        },
+        {
+          "target_suffix": "_transitorio",
+          "rules": {
+            "feats": ["Mood=Sub"]
+          }
+        }
+      ],
+      "banco": [
+        {
+          "target_suffix": "_inst",
+          "rules": {
+            "deprel": ["nmod", "obj"]
+          }
+        },
+        {
+          "target_suffix": "_assento",
+          "rules": {
+            "deprel": ["obl"]
+          }
+        }
+      ]
+    }
+  },
   "vowel_harmony": {
     "enabled": true,
     "groups": {
