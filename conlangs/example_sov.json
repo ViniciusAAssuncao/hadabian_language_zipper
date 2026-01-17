@@ -108,9 +108,18 @@
     "enabled": true,
     "preposition_handling": "replace",
     "markers": {
-      "nominative": "",
-      "accusative": "-ma",
-      "dative": "-na",
+      "nominative": {
+        "marker": "wa",
+        "type": "particle_after"
+      },
+      "accusative": {
+        "marker": "ma",
+        "type": "suffix"
+      },
+      "dative": {
+        "marker": "ni",
+        "type": "particle_before"
+      },
       "genitive": "-sa",
       "locative": "-la"
     },

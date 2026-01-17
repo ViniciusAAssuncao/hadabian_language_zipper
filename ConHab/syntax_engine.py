@@ -592,6 +592,16 @@ class CaseMorphology:
 
         return harmonized_suffix
 
+    def _get_marker_config(self, key: str) -> Tuple[str, str]:
+        case_markers = self.case_system.get('markers', {})
+        config = case_markers.get(key, '')
+
+        default_pos = self.case_system.get('marker_position', 'suffix')
+
+        if isinstance(config, dict):
+            return config.get('marker', ''), config.get('type', default_pos)
+        return config, default_pos
+
     def apply_case(self, word: str, function: str, word_order: str, deprel: str = '') -> str:
         if not self.enabled:
             return word
@@ -599,54 +609,63 @@ class CaseMorphology:
         if self.preposition_handling == 'none' and function not in {SyntacticFunction.SUBJECT, SyntacticFunction.OBJECT}:
             return word
 
-        case_markers = self.case_system.get('markers', {})
-        marker = ''
+        marker_text = ''
+        marker_type = 'suffix'
+        target_key = ''
 
         if deprel:
             core_dep = deprel.split(':')[0]
             if core_dep == 'obj':
-                marker = case_markers.get('accusative', '')
+                target_key = 'accusative'
             elif core_dep == 'iobj':
-                marker = case_markers.get('dative', '')
+                target_key = 'dative'
             elif core_dep == 'obl':
-                marker = case_markers.get('locative', '')
-                if not marker:
-                    marker = case_markers.get('dative', '')
+                loc = self.case_system.get('markers', {}).get('locative')
+                if loc:
+                    target_key = 'locative'
+                else:
+                    target_key = 'dative'
             elif core_dep == 'nsubj':
-                marker = case_markers.get('nominative', '')
+                target_key = 'nominative'
 
-        if not marker:
+        if not target_key:
             if function == SyntacticFunction.SUBJECT:
-                marker = case_markers.get('nominative', '')
+                target_key = 'nominative'
             elif function == SyntacticFunction.OBJECT:
-                marker = case_markers.get('accusative', '')
+                target_key = 'accusative'
             elif function == SyntacticFunction.ADJUNCT:
-                marker = case_markers.get('locative', '')
-                if not marker:
-                    marker = case_markers.get('dative', '')
-            else:
-                marker = ''
+                loc = self.case_system.get('markers', {}).get('locative')
+                if loc:
+                    target_key = 'locative'
+                else:
+                    target_key = 'dative'
 
-        if not marker:
+        if target_key:
+            marker_text, marker_type = self._get_marker_config(target_key)
+
+        if not marker_text:
             return word
 
-        position = self.case_system.get('marker_position', 'suffix')
-
-        if marker.startswith('-'):
-            marker = marker[1:]
+        if isinstance(marker_text, str) and marker_text.startswith('-'):
+            marker_text = marker_text[1:]
 
         if self.harmony_enabled:
-            marker = self._apply_harmony(word, marker)
+            marker_text = self._apply_harmony(word, marker_text)
 
-        if position == 'suffix':
-            return word + marker
-        elif position == 'prefix':
+        if marker_type == 'suffix':
+            return word + marker_text
+        elif marker_type == 'prefix':
             is_capitalized = word and word[0].isupper()
-            result = marker + word.lower()
+            result = marker_text + word.lower()
             if is_capitalized:
                 result = result[0].upper() + result[1:]
             return result
-        return word
+        elif marker_type == 'particle_before':
+            return f"{marker_text} {word}"
+        elif marker_type == 'particle_after':
+            return f"{word} {marker_text}"
+
+        return word + marker_text
 
 
 class SyntaxEngine:

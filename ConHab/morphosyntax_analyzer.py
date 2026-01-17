@@ -419,3 +419,87 @@ class FocusStructureHandler:
         if focus_marker:
             result[verb_index] = focus_marker + ' ' + result[verb_index]
         return result
+
+
+class CaseMorphology:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.case_system = profile.get('case_system', {})
+        self.enabled = self.case_system.get('enabled', False)
+        self.preposition_handling = self.case_system.get(
+            'preposition_handling', 'coexist')
+        self.harmony_config = profile.get('vowel_harmony', {})
+        self.harmony_enabled = self.harmony_config.get('enabled', False)
+        self.vowel_harmony_handler = VowelHarmonyHandler(profile)
+
+    def _get_marker_config(self, key: str) -> Tuple[str, str]:
+        case_markers = self.case_system.get('markers', {})
+        config = case_markers.get(key, '')
+
+        default_pos = self.case_system.get('marker_position', 'suffix')
+
+        if isinstance(config, dict):
+            return config.get('marker', ''), config.get('type', default_pos)
+        return config, default_pos
+
+    def apply_case(self, word: str, function: str, word_order: str, deprel: str = '') -> str:
+        if not self.enabled:
+            return word
+
+        if self.preposition_handling == 'none' and function not in {'SUBJECT', 'OBJECT', 'S', 'O'}:
+            return word
+
+        marker_text = ''
+        marker_type = 'suffix'
+        target_key = ''
+
+        if deprel:
+            core_dep = deprel.split(':')[0]
+            if core_dep == 'obj':
+                target_key = 'accusative'
+            elif core_dep == 'iobj':
+                target_key = 'dative'
+            elif core_dep == 'obl':
+                target_key = 'locative'
+                if not self.case_system.get('markers', {}).get('locative'):
+                    target_key = 'dative'
+            elif core_dep == 'nsubj':
+                target_key = 'nominative'
+
+        if not target_key:
+            if function == 'SUBJECT' or function == 'S':
+                target_key = 'nominative'
+            elif function == 'OBJECT' or function == 'O':
+                target_key = 'accusative'
+            elif function == 'ADJUNCT' or function == 'ADJ':
+                target_key = 'locative'
+                if not self.case_system.get('markers', {}).get('locative'):
+                    target_key = 'dative'
+
+        if target_key:
+            marker_text, marker_type = self._get_marker_config(target_key)
+
+        if not marker_text:
+            return word
+
+        if isinstance(marker_text, str) and marker_text.startswith('-'):
+            marker_text = marker_text[1:]
+
+        if self.harmony_enabled:
+            marker_text = self.vowel_harmony_handler.apply_harmony(
+                word, marker_text)
+
+        if marker_type == 'suffix':
+            return word + marker_text
+        elif marker_type == 'prefix':
+            is_capitalized = word and word[0].isupper()
+            result = marker_text + word.lower()
+            if is_capitalized:
+                result = result[0].upper() + result[1:]
+            return result
+        elif marker_type == 'particle_before':
+            return f"{marker_text} {word}"
+        elif marker_type == 'particle_after':
+            return f"{word} {marker_text}"
+
+        return word + marker_text
