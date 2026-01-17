@@ -67,6 +67,7 @@ class WordOrderMapper:
         self.adjunct_position = self.agreement_rules.get(
             'adjunct_position', 'auto')
         self.drop_articles = self.profile.get('drop_articles', False)
+        self.pro_drop = self.profile.get('pro_drop', False)
         self.functional_particles = self.profile.get(
             'functional_particles', {})
         self.topicalization_config = self.profile.get('topicalization', {})
@@ -230,6 +231,15 @@ class WordOrderMapper:
     def _should_drop(self, func: Dict, functions: List[Dict]) -> bool:
         if func['function'] in {SyntacticFunction.QUANTIFIER, SyntacticFunction.VERB_PARTICLE, SyntacticFunction.INTENSIFIER}:
             return False
+
+        if self.pro_drop and func['pos'] == 'PRON' and func['function'] == SyntacticFunction.SUBJECT:
+            head_idx = func['dependencies'][0] if func['dependencies'] else -1
+            if head_idx != -1:
+                head_func = next(
+                    (f for f in functions if f['original_index'] == head_idx), None)
+                if head_func and head_func['pos'] in {'VERB', 'AUX'}:
+                    return True
+
         if not self.drop_articles:
             return False
         if func['pos'] != 'DET':

@@ -6,6 +6,7 @@
   "subordinate_word_order": "SOV",
   "source_language_order": "SVO",
   "drop_articles": true,
+  "pro_drop": true,
   "alignment": "ergative-absolutive",
   "global_seed": 42857,
   "phonotactics": {
