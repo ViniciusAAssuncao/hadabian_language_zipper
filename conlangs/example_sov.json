@@ -19,6 +19,21 @@
     "epenthesis_vowel": "i",
     "diphthongs": ["ai", "ei", "ou", "au"]
   },
+  "semantic_fields": {
+    "enabled": true,
+    "auto_detect": true,
+    "use_nltk": true,
+    "threshold": 0.3,
+    "manual_groups": {
+      "rio": "água",
+      "chuva": "água",
+      "sede": "água",
+      "lago": "água",
+      "mar": "água",
+      "fogo": "calor",
+      "sol": "calor"
+    }
+  },
   "vowel_harmony": {
     "enabled": true,
     "groups": {
@@ -109,11 +124,8 @@
   "functional_particles": {
     "muito": {
       "noun_position": "post_nominal",
-      "noun_word": "DURA",
       "adj_position": "pre_nominal",
-      "adj_word": "BENE",
-      "verb_position": "post_verbal",
-      "verb_word": "FORTI"
+      "verb_position": "post_verbal"
     }
   },
   "degree_system": {

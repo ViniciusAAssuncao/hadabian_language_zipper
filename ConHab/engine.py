@@ -1,6 +1,7 @@
 import json
 import hashlib
 from pathlib import Path
+import re
 from typing import List, Dict, Optional, Tuple
 from syntax_engine import SyntaxEngine, SyntacticFunction
 from morphosyntax_analyzer import (
@@ -9,6 +10,59 @@ from morphosyntax_analyzer import (
     TopicalizationHandler, FocusStructureHandler, TAMHandler,
     VowelHarmonyHandler
 )
+
+
+class SemanticFieldHandler:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.config = profile.get('semantic_fields', {})
+        self.enabled = self.config.get('enabled', False)
+        self.manual_groups = self.config.get('manual_groups', {})
+        self.use_nltk = self.config.get('use_nltk', False)
+        self.nltk_ready = False
+        if self.enabled and self.use_nltk:
+            try:
+                import nltk
+                from nltk.corpus import wordnet
+                try:
+                    wordnet.synsets('teste', lang='por')
+                except LookupError:
+                    nltk.download('wordnet')
+                    nltk.download('omw-1.4')
+                self.wn = wordnet
+                self.nltk_ready = True
+            except ImportError:
+                self.nltk_ready = False
+
+    def get_semantic_root(self, word: str) -> Optional[str]:
+        if not self.enabled:
+            return None
+
+        clean_word = word.lower()
+
+        if clean_word in self.manual_groups:
+            return self.manual_groups[clean_word]
+
+        if self.nltk_ready:
+            try:
+                synsets = self.wn.synsets(clean_word, lang='por')
+                if not synsets:
+                    return None
+
+                synset = synsets[0]
+                hypernyms = synset.hypernyms()
+
+                if hypernyms:
+                    hyper_lemma = hypernyms[0].lemmas(lang='por')
+                    if hyper_lemma:
+                        return hyper_lemma[0].name()
+
+                    english_lemma = hypernyms[0].lemmas()[0].name()
+                    return english_lemma
+            except:
+                pass
+
+        return None
 
 
 class AffixHandler:
@@ -183,6 +237,7 @@ class OriginalLanguageEngine:
             self.profile, self.vowel_harmony_handler)
         self.tam_handler = TAMHandler(self.profile)
         self.reduplication_handler = ReduplicationHandler(self.profile)
+        self.semantic_handler = SemanticFieldHandler(self.profile)
         self.functional_config = self.profile.get('functional_particles', {})
         self.word_cache: Dict[str, str] = {}
         self.load_word_cache()
@@ -410,11 +465,53 @@ class OriginalLanguageEngine:
         clean_word = "".join(filter(str.isalpha, word.lower()))
         if not clean_word:
             return word
-        input_str = f"{clean_word}_{self.global_seed}_{self.profile_id}"
+
+        root_semantic = self.semantic_handler.get_semantic_root(clean_word)
+        base_word_str = clean_word
+        is_derived = False
+
+        if root_semantic and root_semantic != clean_word:
+            if root_semantic in self.word_cache:
+                base_conlang_word = self.word_cache[root_semantic]
+            else:
+                base_conlang_word = self._generate_deterministic_word(
+                    root_semantic)
+                self.word_cache[root_semantic] = base_conlang_word
+
+            base_word_str = base_conlang_word
+            is_derived = True
+
+        input_str = f"{base_word_str}_{self.global_seed}_{self.profile_id}"
+        if not is_derived:
+            input_str = f"{clean_word}_{self.global_seed}_{self.profile_id}"
+
         hash_obj = hashlib.sha256(input_str.encode())
         hash_int = int(hash_obj.hexdigest(), 16)
         import random
         random.seed(hash_int)
+
+        if is_derived:
+            num_syllables_root = len(re.findall(
+                r'[aeiouáéíóúâêôãõ]', base_conlang_word, re.IGNORECASE))
+            split_idx = max(1, int(len(base_conlang_word) * 0.6))
+            prefix = base_conlang_word[:split_idx]
+
+            suffix_seed = int(hashlib.sha256(
+                clean_word.encode()).hexdigest(), 16)
+            random.seed(hash_int + suffix_seed)
+
+            generated_word = prefix
+
+            template = random.choice(self.templates)
+            for char_type in template:
+                if char_type == 'C':
+                    if self.consonants:
+                        generated_word += random.choice(list(self.consonants))
+                elif char_type == 'V':
+                    if self.vowels:
+                        generated_word += random.choice(list(self.vowels))
+            return generated_word
+
         num_syllables = random.randint(
             self.phonotactics.get('min_syllables', 1),
             self.phonotactics.get('max_syllables', 3)
