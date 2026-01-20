@@ -12,6 +12,65 @@ from morphosyntax_analyzer import (
 )
 
 
+class PhonologyHandler:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.phonotactics = profile.get('phonotactics', {})
+        self.hierarchy_config = self.phonotactics.get('sonority_hierarchy', {})
+        self.enabled = self.hierarchy_config.get('enabled', False)
+        self.scale = self.hierarchy_config.get('scale', {})
+        self.onset_rules = self.hierarchy_config.get('onset_rules', {})
+        self.coda_rules = self.hierarchy_config.get('coda_rules', {})
+        self.forbidden_initial = set(self.phonotactics.get('forbidden_initial_clusters', []))
+        self.forbidden_final = set(self.phonotactics.get('forbidden_final_consonants', []))
+
+    def get_sonority(self, char: str) -> int:
+        return self.scale.get(char.lower(), 0)
+
+    def is_valid_onset_cluster(self, c1: str, c2: str) -> bool:
+        cluster = f"{c1}{c2}".lower()
+        if cluster in self.forbidden_initial:
+            return False
+        
+        if not self.enabled:
+            return True
+
+        s1 = self.get_sonority(c1)
+        s2 = self.get_sonority(c2)
+        dist = s2 - s1
+        min_dist = self.onset_rules.get('min_distance', 1)
+        
+        if dist < min_dist:
+            return False
+        if dist == 0 and not self.onset_rules.get('allow_plateau', False):
+            return False
+        if dist < 0 and not self.onset_rules.get('allow_reversal', False):
+            return False
+            
+        return True
+
+    def is_valid_coda_cluster(self, c1: str, c2: str) -> bool:
+        if not self.enabled:
+            return True
+
+        s1 = self.get_sonority(c1)
+        s2 = self.get_sonority(c2)
+        dist = s1 - s2 
+        min_dist = self.coda_rules.get('min_distance', 0)
+
+        if dist < min_dist:
+            return False
+        if dist == 0 and not self.coda_rules.get('allow_plateau', True):
+            return False
+        if dist < 0 and not self.coda_rules.get('allow_reversal', True):
+            return False
+
+        return True
+
+    def is_valid_final(self, char: str) -> bool:
+        return char.lower() not in self.forbidden_final
+
+
 class FalseCognateHandler:
     def __init__(self, profile: Dict):
         self.profile = profile
@@ -310,6 +369,7 @@ class OriginalLanguageEngine:
         self.semantic_handler = SemanticFieldHandler(self.profile)
         self.polysemy_handler = PolysemyHandler(self.profile)
         self.false_cognate_handler = FalseCognateHandler(self.profile)
+        self.phonology_handler = PhonologyHandler(self.profile)
         self.transitivity_analyzer = TransitivityAnalyzer()
         self.functional_config = self.profile.get('functional_particles', {})
         self.word_cache: Dict[str, str] = {}
@@ -648,31 +708,108 @@ class OriginalLanguageEngine:
             random.seed(hash_int + suffix_seed)
 
             generated_word = prefix
-
             template = random.choice(self.templates)
+            
+            in_onset = True
+            prev_consonant = None
+
             for char_type in template:
                 if char_type == 'C':
                     if self.consonants:
-                        generated_word += random.choice(list(self.consonants))
+                        candidates = list(self.consonants)
+                        random.shuffle(candidates)
+                        
+                        chosen_c = None
+                        
+                        if prev_consonant:
+                            for cand in candidates:
+                                if in_onset:
+                                    if self.phonology_handler.is_valid_onset_cluster(prev_consonant, cand):
+                                        chosen_c = cand
+                                        break
+                                else:
+                                    if self.phonology_handler.is_valid_coda_cluster(prev_consonant, cand):
+                                        chosen_c = cand
+                                        break
+                                        
+                            if not chosen_c:
+                                chosen_c = candidates[0]
+                        else:
+                            for cand in candidates:
+                                if not in_onset and not self.phonology_handler.is_valid_final(cand):
+                                    continue
+                                chosen_c = cand
+                                break
+                            if not chosen_c:
+                                chosen_c = candidates[0]
+
+                        generated_word += chosen_c
+                        prev_consonant = chosen_c
                 elif char_type == 'V':
                     if self.vowels:
                         generated_word += random.choice(list(self.vowels))
+                    in_onset = False
+                    prev_consonant = None
+                    
             return generated_word
 
         num_syllables = random.randint(
             self.phonotactics.get('min_syllables', 1),
             self.phonotactics.get('max_syllables', 3)
         )
+        
         generated_word = ""
         for _ in range(num_syllables):
             template = random.choice(self.templates)
-            for char_type in template:
+            
+            in_onset = True
+            prev_consonant = None
+            
+            for i, char_type in enumerate(template):
                 if char_type == 'C':
                     if self.consonants:
-                        generated_word += random.choice(list(self.consonants))
+                        candidates = list(self.consonants)
+                        random.shuffle(candidates)
+                        
+                        chosen_c = None
+                        
+                        if prev_consonant:
+                            for cand in candidates:
+                                if in_onset:
+                                    if self.phonology_handler.is_valid_onset_cluster(prev_consonant, cand):
+                                        chosen_c = cand
+                                        break
+                                else:
+                                    if self.phonology_handler.is_valid_coda_cluster(prev_consonant, cand):
+                                        chosen_c = cand
+                                        break
+                                        
+                            if not chosen_c:
+                                chosen_c = candidates[0]
+                        else:
+                            is_final_in_syllable = True
+                            for j in range(i+1, len(template)):
+                                if template[j] == 'V':
+                                    is_final_in_syllable = False
+                                    break
+                            
+                            for cand in candidates:
+                                if is_final_in_syllable and not self.phonology_handler.is_valid_final(cand):
+                                    continue
+                                chosen_c = cand
+                                break
+                            
+                            if not chosen_c:
+                                chosen_c = candidates[0]
+                                
+                        generated_word += chosen_c
+                        prev_consonant = chosen_c
                 elif char_type == 'V':
                     if self.vowels:
                         generated_word += random.choice(list(self.vowels))
+                    in_onset = False
+                    prev_consonant = None
+
         return generated_word if generated_word else word
 
     def analyze_sentence_structure(self, text: str) -> Dict:

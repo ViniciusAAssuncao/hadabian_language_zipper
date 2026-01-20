@@ -8,22 +8,61 @@
   "drop_articles": true,
   "pro_drop": {
     "enabled": true,
-    "conditions": ["verb_agreement"]
+    "conditions": [
+      "verb_agreement"
+    ]
   },
   "alignment": "ergative-absolutive",
   "global_seed": 42857,
   "phonotactics": {
     "vowels": "aeiou",
     "consonants": "bdfghjklmnprstvz",
-    "syllable_templates": ["CV", "CVC", "V", "VC"],
+    "syllable_templates": [
+      "CV",
+      "CVC",
+      "CCV",
+      "CCVC",
+      "V",
+      "VC"
+    ],
     "min_syllables": 1,
     "max_syllables": 3,
     "max_consonant_cluster": 2,
     "max_vowel_cluster": 1,
-    "forbidden_initial_clusters": ["zr", "nm"],
-    "forbidden_final_consonants": ["h"],
+    "forbidden_initial_clusters": [
+      "nm",
+      "mr"
+    ],
+    "forbidden_final_consonants": [
+      "h",
+      "j"
+    ],
     "epenthesis_vowel": "i",
-    "diphthongs": ["ai", "ei", "ou", "au"]
+    "diphthongs": [
+      "ai",
+      "ei",
+      "ou",
+      "au"
+    ],
+    "sonority_hierarchy": {
+      "enabled": true,
+      "scale": {
+        "b": 1, "d": 1, "g": 1, "p": 0, "t": 0, "k": 0,
+        "f": 2, "v": 2, "s": 2, "z": 2, "h": 2, "j": 2,
+        "m": 3, "n": 3,
+        "l": 4, "r": 4
+      },
+      "onset_rules": {
+        "min_distance": 1,
+        "allow_plateau": false,
+        "allow_reversal": false
+      },
+      "coda_rules": {
+        "min_distance": 0,
+        "allow_plateau": true,
+        "allow_reversal": true
+      }
+    }
   },
   "semantic_fields": {
     "enabled": true,
@@ -52,13 +91,18 @@
         {
           "target_suffix": "_permanente",
           "rules": {
-            "feats": ["Mood=Ind", "Tense=Pres"]
+            "feats": [
+              "Mood=Ind",
+              "Tense=Pres"
+            ]
           }
         },
         {
           "target_suffix": "_transitorio",
           "rules": {
-            "feats": ["Mood=Sub"]
+            "feats": [
+              "Mood=Sub"
+            ]
           }
         }
       ],
@@ -66,13 +110,18 @@
         {
           "target_suffix": "_inst",
           "rules": {
-            "deprel": ["nmod", "obj"]
+            "deprel": [
+              "nmod",
+              "obj"
+            ]
           }
         },
         {
           "target_suffix": "_assento",
           "rules": {
-            "deprel": ["obl"]
+            "deprel": [
+              "obl"
+            ]
           }
         }
       ]
@@ -144,32 +193,44 @@
     "infer_imperative_from_context": true,
     "rules": [
       {
-        "features": ["Tense=Past"],
+        "features": [
+          "Tense=Past"
+        ],
         "marker": "da",
         "type": "suffix"
       },
       {
-        "features": ["Tense=Imp"],
+        "features": [
+          "Tense=Imp"
+        ],
         "marker": "va",
         "type": "suffix"
       },
       {
-        "features": ["Mood=Imp"],
+        "features": [
+          "Mood=Imp"
+        ],
         "marker": "va",
         "type": "suffix"
       },
       {
-        "features": ["Tense=Fut"],
+        "features": [
+          "Tense=Fut"
+        ],
         "marker": "go",
         "type": "particle_before"
       },
       {
-        "features": ["Mood=Cnd"],
+        "features": [
+          "Mood=Cnd"
+        ],
         "marker": "ria",
         "type": "suffix"
       },
       {
-        "features": ["Mood=Sub"],
+        "features": [
+          "Mood=Sub"
+        ],
         "marker": "ke",
         "type": "particle_before"
       }
@@ -310,12 +371,16 @@
     "enabled": true,
     "rules": [
       {
-        "features": ["Number=Plur"],
+        "features": [
+          "Number=Plur"
+        ],
         "method": "first_syllable",
         "separator": ""
       },
       {
-        "features": ["Degree=Abs"],
+        "features": [
+          "Degree=Abs"
+        ],
         "method": "whole_word",
         "separator": "-"
       }
