@@ -16,6 +16,22 @@ class PhonologyHandler:
     def __init__(self, profile: Dict):
         self.profile = profile
         self.phonotactics = profile.get('phonotactics', {})
+
+        self.base_consonants = self.phonotactics.get(
+            'consonants', 'bcdfghjklmnpqrstvwxyz')
+        self.base_vowels = self.phonotactics.get('vowels', 'aeiou')
+
+        self.active_style_name = self.phonotactics.get('active_style', None)
+        self.styles = self.phonotactics.get('inventory_styles', {})
+
+        if self.active_style_name and self.active_style_name in self.styles:
+            style = self.styles[self.active_style_name]
+            self.consonants = style.get('consonants', self.base_consonants)
+            self.vowels = style.get('vowels', self.base_vowels)
+        else:
+            self.consonants = self.base_consonants
+            self.vowels = self.base_vowels
+
         self.hierarchy_config = self.phonotactics.get('sonority_hierarchy', {})
         self.enabled = self.hierarchy_config.get('enabled', False)
         self.scale = self.hierarchy_config.get('scale', {})
@@ -415,10 +431,12 @@ class OriginalLanguageEngine:
             self.profile = json.load(f)
         self.profile_id = self.profile.get('id', 'unknown')
         self.global_seed = self.profile.get('global_seed', 12345)
+
+        self.phonology_handler = PhonologyHandler(self.profile)
         self.phonotactics = self.profile.get('phonotactics', {})
-        self.vowels = self.phonotactics.get('vowels', 'aeiou')
-        self.consonants = self.phonotactics.get(
-            'consonants', 'bcdfghjklmnpqrstvwxyz')
+        self.vowels = self.phonology_handler.vowels
+        self.consonants = self.phonology_handler.consonants
+
         self.templates = self.phonotactics.get(
             'syllable_templates', ['CV', 'CVC'])
         self.syntax_engine = SyntaxEngine(profile_path)
@@ -439,7 +457,6 @@ class OriginalLanguageEngine:
         self.semantic_handler = SemanticFieldHandler(self.profile)
         self.polysemy_handler = PolysemyHandler(self.profile)
         self.false_cognate_handler = FalseCognateHandler(self.profile)
-        self.phonology_handler = PhonologyHandler(self.profile)
         self.stress_handler = StressHandler(self.profile)
         self.transitivity_analyzer = TransitivityAnalyzer()
         self.functional_config = self.profile.get('functional_particles', {})

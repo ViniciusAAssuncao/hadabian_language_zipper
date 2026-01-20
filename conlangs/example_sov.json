@@ -17,6 +17,17 @@
   "phonotactics": {
     "vowels": "aeiou",
     "consonants": "bdfghjklmnprstvz",
+    "active_style": "polynesian_style",
+    "inventory_styles": {
+      "polynesian_style": {
+        "consonants": "ptkmnfshlrv",
+        "vowels": "aeiou"
+      },
+      "guttural_style": {
+        "consonants": "qkxgRħʕ",
+        "vowels": "au"
+      }
+    },
     "syllable_templates": [
       "CV",
       "CVC",
