@@ -2,6 +2,7 @@ import json
 import hashlib
 from pathlib import Path
 import re
+import random
 from typing import List, Dict, Optional, Tuple, Set
 from syntax_engine import SyntaxEngine, SyntacticFunction
 from morphosyntax_analyzer import (
@@ -16,10 +17,15 @@ class PhonologyHandler:
     def __init__(self, profile: Dict):
         self.profile = profile
         self.phonotactics = profile.get('phonotactics', {})
+        self.seed = profile.get('global_seed', 12345)
 
-        self.base_consonants = self.phonotactics.get(
-            'consonants', 'bcdfghjklmnpqrstvwxyz')
-        self.base_vowels = self.phonotactics.get('vowels', 'aeiou')
+        self.base_consonants = self.phonotactics.get('consonants')
+        if self.base_consonants is None:
+            self.base_consonants = self._infer_inventory('consonants')
+
+        self.base_vowels = self.phonotactics.get('vowels')
+        if self.base_vowels is None:
+            self.base_vowels = self._infer_inventory('vowels')
 
         self.active_style_name = self.phonotactics.get('active_style', None)
         self.styles = self.phonotactics.get('inventory_styles', {})
@@ -41,6 +47,18 @@ class PhonologyHandler:
             self.phonotactics.get('forbidden_initial_clusters', []))
         self.forbidden_final = set(self.phonotactics.get(
             'forbidden_final_consonants', []))
+
+    def _infer_inventory(self, type_key: str) -> str:
+        rng = random.Random(self.seed + sum(ord(c) for c in type_key))
+        if type_key == 'consonants':
+            pool = [chr(i) for i in range(97, 123) if chr(i) not in 'aeiou']
+            count = rng.randint(5, 18)
+            return "".join(sorted(rng.sample(pool, count)))
+        elif type_key == 'vowels':
+            pool = 'aeiouy'
+            count = rng.randint(3, 6)
+            return "".join(sorted(rng.sample(pool, count)))
+        return ""
 
     def get_sonority(self, char: str) -> int:
         return self.scale.get(char.lower(), 0)
@@ -100,7 +118,12 @@ class StressHandler:
         self.map = self.config.get(
             'accent_map', {'a': 'á', 'e': 'é', 'i': 'í', 'o': 'ó', 'u': 'ú'})
         self.phonotactics = profile.get('phonotactics', {})
-        self.vowels = set(self.phonotactics.get('vowels', 'aeiou'))
+
+        self.vowels = self.phonotactics.get('vowels')
+        if not self.vowels:
+            ph_handler = PhonologyHandler(profile)
+            self.vowels = ph_handler.base_vowels
+        self.vowels = set(self.vowels)
 
     def apply_stress(self, word: str) -> str:
         if not self.enabled or not word:
@@ -390,9 +413,16 @@ class ReduplicationHandler:
         self.enabled = self.config.get('enabled', False)
         self.rules = self.config.get('rules', [])
         self.phonotactics = profile.get('phonotactics', {})
-        self.vowels = self.phonotactics.get('vowels', 'aeiou')
-        self.consonants = self.phonotactics.get(
-            'consonants', 'bcdfghjklmnpqrstvwxyz')
+
+        self.vowels = self.phonotactics.get('vowels')
+        self.consonants = self.phonotactics.get('consonants')
+
+        if not self.vowels or not self.consonants:
+            ph = PhonologyHandler(profile)
+            if not self.vowels:
+                self.vowels = ph.base_vowels
+            if not self.consonants:
+                self.consonants = ph.base_consonants
 
     def apply_reduplication(self, word: str, feats_str: str) -> str:
         if not self.enabled or not word or not feats_str or feats_str == '_':
@@ -434,11 +464,14 @@ class OriginalLanguageEngine:
 
         self.phonology_handler = PhonologyHandler(self.profile)
         self.phonotactics = self.profile.get('phonotactics', {})
+
         self.vowels = self.phonology_handler.vowels
         self.consonants = self.phonology_handler.consonants
 
-        self.templates = self.phonotactics.get(
-            'syllable_templates', ['CV', 'CVC'])
+        self.templates = self.phonotactics.get('syllable_templates')
+        if not self.templates:
+            self.templates = self._infer_templates()
+
         self.syntax_engine = SyntaxEngine(profile_path)
         self.dependency_parser = DependencyParser()
         self.constituent_analyzer = ConstituentAnalyzer()
@@ -462,6 +495,12 @@ class OriginalLanguageEngine:
         self.functional_config = self.profile.get('functional_particles', {})
         self.word_cache: Dict[str, str] = {}
         self.load_word_cache()
+
+    def _infer_templates(self) -> List[str]:
+        rng = random.Random(self.global_seed + 999)
+        options = ['CV', 'CVC', 'V', 'VC', 'CCV', 'CCVC', 'CVCC']
+        count = rng.randint(2, 4)
+        return sorted(rng.sample(options, count))
 
     def load_word_cache(self):
         cache_dir = Path("./cache")
@@ -790,8 +829,6 @@ class OriginalLanguageEngine:
         random.seed(hash_int)
 
         if is_derived:
-            num_syllables_root = len(re.findall(
-                r'[aeiouáéíóúâêôãõ]', base_conlang_word, re.IGNORECASE))
             split_idx = max(1, int(len(base_conlang_word) * 0.6))
             prefix = base_conlang_word[:split_idx]
 
