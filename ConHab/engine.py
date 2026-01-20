@@ -9,7 +9,7 @@ from morphosyntax_analyzer import (
     DependencyParser, ConstituentAnalyzer, ClauseSegmenter,
     AgreementChecker, SyntacticComplexityAnalyzer,
     TopicalizationHandler, FocusStructureHandler, TAMHandler,
-    VowelHarmonyHandler, TransitivityAnalyzer
+    VowelHarmonyHandler, TransitivityAnalyzer, ConsonantMutationHandler
 )
 
 
@@ -492,6 +492,7 @@ class OriginalLanguageEngine:
         self.false_cognate_handler = FalseCognateHandler(self.profile)
         self.stress_handler = StressHandler(self.profile)
         self.transitivity_analyzer = TransitivityAnalyzer()
+        self.mutation_handler = ConsonantMutationHandler(self.profile)
         self.functional_config = self.profile.get('functional_particles', {})
         self.word_cache: Dict[str, str] = {}
         self.load_word_cache()
@@ -544,6 +545,8 @@ class OriginalLanguageEngine:
             ordered_functions = sent_data['functions']
             translated_words = []
 
+            last_func = None
+
             transitivity_map = self.transitivity_analyzer.analyze(
                 ordered_functions)
 
@@ -568,6 +571,7 @@ class OriginalLanguageEngine:
 
                 if pos == 'PUNCT':
                     translated_words.append(orig_word)
+                    last_func = func
                     continue
 
                 if syntactic_func in {SyntacticFunction.QUANTIFIER, SyntacticFunction.VERB_PARTICLE, SyntacticFunction.INTENSIFIER}:
@@ -584,7 +588,13 @@ class OriginalLanguageEngine:
                             'adj_word', self._generate_deterministic_word(f'{raw_lemma}_intens'))
 
                     if translated_word:
+                        if self.mutation_handler.enabled:
+                            prev_word = translated_words[-1] if translated_words else None
+                            translated_word = self.mutation_handler.apply_mutation(
+                                translated_word, prev_word, last_func)
+
                         translated_words.append(translated_word)
+                        last_func = func
                         continue
 
                 degree_type = None
@@ -689,6 +699,11 @@ class OriginalLanguageEngine:
                     current_form = self.stress_handler.apply_stress(
                         current_form)
 
+                if self.mutation_handler.enabled:
+                    prev_word = translated_words[-1] if translated_words else None
+                    current_form = self.mutation_handler.apply_mutation(
+                        current_form, prev_word, last_func)
+
                 if is_named_entity:
                     current_form = current_form.capitalize()
 
@@ -696,6 +711,7 @@ class OriginalLanguageEngine:
                     current_form = current_form.capitalize()
 
                 translated_words.append(current_form)
+                last_func = func
 
             final_sentence_tokens = self.syntax_engine._glue_tokens(
                 translated_words, ordered_functions)

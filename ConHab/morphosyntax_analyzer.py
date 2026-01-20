@@ -53,6 +53,60 @@ class VowelHarmonyHandler:
         return harmonized_suffix
 
 
+class ConsonantMutationHandler:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.config = profile.get('consonant_mutation', {})
+        self.enabled = self.config.get('enabled', False)
+        self.rules = self.config.get('rules', [])
+
+    def apply_mutation(self, current_word: str, previous_word: Optional[str], previous_func: Optional[Dict]) -> str:
+        if not self.enabled or not current_word:
+            return current_word
+        
+        if not previous_word and not previous_func:
+            return current_word
+
+        processed_word = current_word
+        
+        for rule in self.rules:
+            triggers = rule.get('triggers', {})
+            mutations = rule.get('mutations', {})
+            triggered = False
+            
+            trigger_words = set(w.lower() for w in triggers.get('words', []))
+            if previous_word and previous_word.lower() in trigger_words:
+                triggered = True
+            
+            if not triggered and previous_func:
+                trigger_pos = set(triggers.get('pos', []))
+                if previous_func.get('pos') in trigger_pos:
+                    triggered = True
+            
+            if not triggered and previous_word:
+                trigger_ending_chars = triggers.get('ending_chars', [])
+                if trigger_ending_chars:
+                    for char in trigger_ending_chars:
+                        if previous_word.lower().endswith(char):
+                            triggered = True
+                            break
+            
+            if triggered:
+                first_char = processed_word[0]
+                rest = processed_word[1:]
+                
+                is_upper = first_char.isupper()
+                lower_char = first_char.lower()
+                
+                if lower_char in mutations:
+                    new_char = mutations[lower_char]
+                    if is_upper:
+                        new_char = new_char.upper()
+                    processed_word = new_char + rest
+
+        return processed_word
+
+
 class TAMHandler:
     def __init__(self, profile: Dict):
         self.profile = profile

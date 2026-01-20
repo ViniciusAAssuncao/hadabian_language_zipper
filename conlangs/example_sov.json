@@ -1,7 +1,7 @@
 {
   "id": "example_sov",
-  "name": "Exemplo SOV com Casos e Harmonia",
-  "description": "Língua exemplo com ordem SVO na principal e SOV na subordinada (estilo Alemão), sistema de casos e harmonização vocálica.",
+  "name": "Exemplo SOV com Casos, Harmonia e Mutação",
+  "description": "Língua exemplo com ordem SVO na principal e SOV na subordinada, sistema de casos, harmonização vocálica e mutação consonantal.",
   "word_order": "SVO",
   "subordinate_word_order": "SOV",
   "source_language_order": "SVO",
@@ -86,6 +86,39 @@
         "allow_reversal": true
       }
     }
+  },
+  "consonant_mutation": {
+    "enabled": true,
+    "rules": [
+      {
+        "name": "Lenition",
+        "description": "Suaviza consoantes após o marcador de tópico 'wa' ou determinantes",
+        "triggers": {
+          "words": ["wa"],
+          "pos": ["DET"]
+        },
+        "mutations": {
+          "p": "b",
+          "t": "d",
+          "k": "g",
+          "f": "v",
+          "m": "v",
+          "s": "z"
+        }
+      },
+      {
+        "name": "Nasalization",
+        "description": "Nasaliza oclusivas sonoras após palavras terminadas em n ou m",
+        "triggers": {
+          "ending_chars": ["n", "m"]
+        },
+        "mutations": {
+          "b": "m",
+          "d": "n",
+          "g": "ng"
+        }
+      }
+    ]
   },
   "stress_system": {
     "enabled": true,
