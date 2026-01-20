@@ -424,13 +424,18 @@ class ReduplicationHandler:
             if not self.consonants:
                 self.consonants = ph.base_consonants
 
-    def apply_reduplication(self, word: str, feats_str: str) -> str:
+    def apply_reduplication(self, word: str, feats_str: str, pos: str = None) -> str:
         if not self.enabled or not word or not feats_str or feats_str == '_':
             return word
 
         feats = set(feats_str.split('|'))
 
         for rule in self.rules:
+            allowed_pos = rule.get('pos')
+            if allowed_pos and pos:
+                if pos not in allowed_pos:
+                    continue
+
             rule_feats = set(rule.get('features', []))
             if rule_feats.issubset(feats):
                 method = rule.get('method', 'whole_word')
@@ -687,13 +692,17 @@ class OriginalLanguageEngine:
                 if is_focus and object_focus_marker:
                     current_form = f"{current_form} {object_focus_marker}"
 
-                if self.tam_handler.enabled and (pos in {'VERB', 'AUX'} or 'Tense=' in feats or 'Mood=' in feats or 'Aspect=' in feats):
+                if self.tam_handler.enabled and (pos in {'VERB', 'AUX'} or 'Tense=' in feats or 'Mood=' in feats or 'Aspect=' in feats or 'VerbForm=' in feats):
+                    tam_feats = feats
+                    if is_focus:
+                        tam_feats = f"{tam_feats}|Focus=Yes"
+
                     current_form = self.tam_handler.apply_tam(
-                        current_form, feats, func, ordered_functions)
+                        current_form, tam_feats, func, ordered_functions)
 
                 if self.reduplication_handler.enabled:
                     current_form = self.reduplication_handler.apply_reduplication(
-                        current_form, feats)
+                        current_form, feats, pos=current_pos)
 
                 if self.stress_handler.enabled:
                     current_form = self.stress_handler.apply_stress(

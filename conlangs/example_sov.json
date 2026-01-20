@@ -94,8 +94,12 @@
         "name": "Lenition",
         "description": "Suaviza consoantes após o marcador de tópico 'wa' ou determinantes",
         "triggers": {
-          "words": ["wa"],
-          "pos": ["DET"]
+          "words": [
+            "wa"
+          ],
+          "pos": [
+            "DET"
+          ]
         },
         "mutations": {
           "p": "b",
@@ -110,7 +114,10 @@
         "name": "Nasalization",
         "description": "Nasaliza oclusivas sonoras após palavras terminadas em n ou m",
         "triggers": {
-          "ending_chars": ["n", "m"]
+          "ending_chars": [
+            "n",
+            "m"
+          ]
         },
         "mutations": {
           "b": "m",
@@ -263,9 +270,31 @@
     "rules": [
       {
         "features": [
+          "VerbForm=Inf"
+        ],
+        "marker": "nu",
+        "type": "suffix"
+      },
+      {
+        "features": [
+          "VerbForm=Ger"
+        ],
+        "marker": "an",
+        "type": "suffix"
+      },
+      {
+        "features": [
           "Tense=Past"
         ],
         "marker": "da",
+        "type": "suffix"
+      },
+      {
+        "features": [
+          "Tense=Past",
+          "Focus=Yes"
+        ],
+        "marker": "zi",
         "type": "suffix"
       },
       {
@@ -443,8 +472,21 @@
         "features": [
           "Number=Plur"
         ],
+        "pos": [
+          "NOUN"
+        ],
         "method": "first_syllable",
         "separator": ""
+      },
+      {
+        "features": [
+          "Number=Plur"
+        ],
+        "pos": [
+          "VERB"
+        ],
+        "method": "whole_word",
+        "separator": "-"
       },
       {
         "features": [
