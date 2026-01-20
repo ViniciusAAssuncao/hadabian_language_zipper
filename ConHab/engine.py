@@ -21,8 +21,10 @@ class PhonologyHandler:
         self.scale = self.hierarchy_config.get('scale', {})
         self.onset_rules = self.hierarchy_config.get('onset_rules', {})
         self.coda_rules = self.hierarchy_config.get('coda_rules', {})
-        self.forbidden_initial = set(self.phonotactics.get('forbidden_initial_clusters', []))
-        self.forbidden_final = set(self.phonotactics.get('forbidden_final_consonants', []))
+        self.forbidden_initial = set(
+            self.phonotactics.get('forbidden_initial_clusters', []))
+        self.forbidden_final = set(self.phonotactics.get(
+            'forbidden_final_consonants', []))
 
     def get_sonority(self, char: str) -> int:
         return self.scale.get(char.lower(), 0)
@@ -31,7 +33,7 @@ class PhonologyHandler:
         cluster = f"{c1}{c2}".lower()
         if cluster in self.forbidden_initial:
             return False
-        
+
         if not self.enabled:
             return True
 
@@ -39,14 +41,14 @@ class PhonologyHandler:
         s2 = self.get_sonority(c2)
         dist = s2 - s1
         min_dist = self.onset_rules.get('min_distance', 1)
-        
+
         if dist < min_dist:
             return False
         if dist == 0 and not self.onset_rules.get('allow_plateau', False):
             return False
         if dist < 0 and not self.onset_rules.get('allow_reversal', False):
             return False
-            
+
         return True
 
     def is_valid_coda_cluster(self, c1: str, c2: str) -> bool:
@@ -55,7 +57,7 @@ class PhonologyHandler:
 
         s1 = self.get_sonority(c1)
         s2 = self.get_sonority(c2)
-        dist = s1 - s2 
+        dist = s1 - s2
         min_dist = self.coda_rules.get('min_distance', 0)
 
         if dist < min_dist:
@@ -69,6 +71,74 @@ class PhonologyHandler:
 
     def is_valid_final(self, char: str) -> bool:
         return char.lower() not in self.forbidden_final
+
+
+class StressHandler:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.config = profile.get('stress_system', {})
+        self.enabled = self.config.get('enabled', False)
+        self.type = self.config.get('type', 'fixed')
+        self.position = self.config.get('position', 'penultimate')
+        self.graphic = self.config.get('graphic_accent', False)
+        self.map = self.config.get(
+            'accent_map', {'a': 'á', 'e': 'é', 'i': 'í', 'o': 'ó', 'u': 'ú'})
+        self.phonotactics = profile.get('phonotactics', {})
+        self.vowels = set(self.phonotactics.get('vowels', 'aeiou'))
+
+    def apply_stress(self, word: str) -> str:
+        if not self.enabled or not word:
+            return word
+
+        vowel_indices = [i for i, char in enumerate(
+            word) if char.lower() in self.vowels]
+        if not vowel_indices:
+            return word
+
+        target_vowel_idx = -1
+
+        if self.type == 'fixed':
+            if self.position == 'ultimate':
+                target_vowel_idx = vowel_indices[-1]
+            elif self.position == 'penultimate':
+                target_vowel_idx = vowel_indices[-2] if len(
+                    vowel_indices) >= 2 else vowel_indices[-1]
+            elif self.position == 'antepenultimate':
+                target_vowel_idx = vowel_indices[-3] if len(vowel_indices) >= 3 else (
+                    vowel_indices[-2] if len(vowel_indices) >= 2 else vowel_indices[-1])
+            elif self.position == 'initial':
+                target_vowel_idx = vowel_indices[0]
+
+        elif self.type == 'weight':
+            if len(vowel_indices) < 2:
+                target_vowel_idx = vowel_indices[-1]
+            else:
+                penult_idx = vowel_indices[-2]
+                ult_idx = vowel_indices[-1]
+                inter_segment = word[penult_idx+1:ult_idx]
+
+                is_heavy = False
+                if len(inter_segment) > 1:
+                    is_heavy = True
+
+                if is_heavy:
+                    target_vowel_idx = penult_idx
+                else:
+                    target_vowel_idx = vowel_indices[-3] if len(
+                        vowel_indices) >= 3 else penult_idx
+
+        if target_vowel_idx != -1 and self.graphic:
+            chars = list(word)
+            v = chars[target_vowel_idx]
+            lower_v = v.lower()
+            if lower_v in self.map:
+                replacement = self.map[lower_v]
+                if v.isupper():
+                    replacement = replacement.upper()
+                chars[target_vowel_idx] = replacement
+                return "".join(chars)
+
+        return word
 
 
 class FalseCognateHandler:
@@ -370,6 +440,7 @@ class OriginalLanguageEngine:
         self.polysemy_handler = PolysemyHandler(self.profile)
         self.false_cognate_handler = FalseCognateHandler(self.profile)
         self.phonology_handler = PhonologyHandler(self.profile)
+        self.stress_handler = StressHandler(self.profile)
         self.transitivity_analyzer = TransitivityAnalyzer()
         self.functional_config = self.profile.get('functional_particles', {})
         self.word_cache: Dict[str, str] = {}
@@ -558,6 +629,10 @@ class OriginalLanguageEngine:
                     current_form = self.reduplication_handler.apply_reduplication(
                         current_form, feats)
 
+                if self.stress_handler.enabled:
+                    current_form = self.stress_handler.apply_stress(
+                        current_form)
+
                 if is_named_entity:
                     current_form = current_form.capitalize()
 
@@ -709,7 +784,7 @@ class OriginalLanguageEngine:
 
             generated_word = prefix
             template = random.choice(self.templates)
-            
+
             in_onset = True
             prev_consonant = None
 
@@ -718,9 +793,9 @@ class OriginalLanguageEngine:
                     if self.consonants:
                         candidates = list(self.consonants)
                         random.shuffle(candidates)
-                        
+
                         chosen_c = None
-                        
+
                         if prev_consonant:
                             for cand in candidates:
                                 if in_onset:
@@ -731,7 +806,7 @@ class OriginalLanguageEngine:
                                     if self.phonology_handler.is_valid_coda_cluster(prev_consonant, cand):
                                         chosen_c = cand
                                         break
-                                        
+
                             if not chosen_c:
                                 chosen_c = candidates[0]
                         else:
@@ -750,29 +825,29 @@ class OriginalLanguageEngine:
                         generated_word += random.choice(list(self.vowels))
                     in_onset = False
                     prev_consonant = None
-                    
+
             return generated_word
 
         num_syllables = random.randint(
             self.phonotactics.get('min_syllables', 1),
             self.phonotactics.get('max_syllables', 3)
         )
-        
+
         generated_word = ""
         for _ in range(num_syllables):
             template = random.choice(self.templates)
-            
+
             in_onset = True
             prev_consonant = None
-            
+
             for i, char_type in enumerate(template):
                 if char_type == 'C':
                     if self.consonants:
                         candidates = list(self.consonants)
                         random.shuffle(candidates)
-                        
+
                         chosen_c = None
-                        
+
                         if prev_consonant:
                             for cand in candidates:
                                 if in_onset:
@@ -783,7 +858,7 @@ class OriginalLanguageEngine:
                                     if self.phonology_handler.is_valid_coda_cluster(prev_consonant, cand):
                                         chosen_c = cand
                                         break
-                                        
+
                             if not chosen_c:
                                 chosen_c = candidates[0]
                         else:
@@ -792,16 +867,16 @@ class OriginalLanguageEngine:
                                 if template[j] == 'V':
                                     is_final_in_syllable = False
                                     break
-                            
+
                             for cand in candidates:
                                 if is_final_in_syllable and not self.phonology_handler.is_valid_final(cand):
                                     continue
                                 chosen_c = cand
                                 break
-                            
+
                             if not chosen_c:
                                 chosen_c = candidates[0]
-                                
+
                         generated_word += chosen_c
                         prev_consonant = chosen_c
                 elif char_type == 'V':

@@ -47,10 +47,22 @@
     "sonority_hierarchy": {
       "enabled": true,
       "scale": {
-        "b": 1, "d": 1, "g": 1, "p": 0, "t": 0, "k": 0,
-        "f": 2, "v": 2, "s": 2, "z": 2, "h": 2, "j": 2,
-        "m": 3, "n": 3,
-        "l": 4, "r": 4
+        "b": 1,
+        "d": 1,
+        "g": 1,
+        "p": 0,
+        "t": 0,
+        "k": 0,
+        "f": 2,
+        "v": 2,
+        "s": 2,
+        "z": 2,
+        "h": 2,
+        "j": 2,
+        "m": 3,
+        "n": 3,
+        "l": 4,
+        "r": 4
       },
       "onset_rules": {
         "min_distance": 1,
@@ -62,6 +74,19 @@
         "allow_plateau": true,
         "allow_reversal": true
       }
+    }
+  },
+  "stress_system": {
+    "enabled": true,
+    "type": "fixed",
+    "position": "initial",
+    "graphic_accent": true,
+    "accent_map": {
+      "a": "á",
+      "e": "é",
+      "i": "í",
+      "o": "ó",
+      "u": "ú"
     }
   },
   "semantic_fields": {
