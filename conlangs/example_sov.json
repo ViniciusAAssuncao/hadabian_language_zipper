@@ -42,7 +42,9 @@
     "max_vowel_cluster": 1,
     "forbidden_initial_clusters": [
       "nm",
-      "mr"
+      "mr",
+      "nl",
+      "tl"
     ],
     "forbidden_final_consonants": [
       "h",
@@ -355,6 +357,9 @@
       "noun_position": "post_nominal",
       "adj_position": "pre_nominal",
       "verb_position": "post_verbal"
+    },
+    "sempre": {
+      "verb_position": "pre_verbal"
     }
   },
   "degree_system": {
@@ -467,6 +472,7 @@
   },
   "reduplication": {
     "enabled": true,
+    "epenthesis_vowel": "i",
     "rules": [
       {
         "features": [
@@ -480,13 +486,37 @@
       },
       {
         "features": [
-          "Number=Plur"
+          "Aspect=Hab"
         ],
         "pos": [
           "VERB"
         ],
         "method": "whole_word",
         "separator": "-"
+      },
+      {
+        "features": [
+          "Aspect=Iter"
+        ],
+        "pos": [
+          "VERB"
+        ],
+        "method": "first_syllable",
+        "separator": "-"
+      },
+      {
+        "features": [
+          "Focus=Yes"
+        ],
+        "method": "first_syllable",
+        "separator": ""
+      },
+      {
+        "features": [
+          "Pragmatic=Emp"
+        ],
+        "method": "whole_word",
+        "separator": "!"
       },
       {
         "features": [

@@ -103,6 +103,27 @@ class PhonologyHandler:
 
         return True
 
+    def is_valid_contact(self, c1: str, c2: str) -> bool:
+        if c1.lower() in self.vowels:
+            return True
+        if c2.lower() in self.vowels:
+            return True
+
+        cluster = f"{c1}{c2}".lower()
+        if cluster in self.forbidden_initial:
+            return False
+
+        if not self.enabled:
+            return True
+
+        s1 = self.get_sonority(c1)
+        s2 = self.get_sonority(c2)
+
+        if s1 > s2:
+            return True
+
+        return True
+
     def is_valid_final(self, char: str) -> bool:
         return char.lower() not in self.forbidden_final
 
@@ -407,22 +428,29 @@ class DegreeHandler:
 
 
 class ReduplicationHandler:
-    def __init__(self, profile: Dict):
+    def __init__(self, profile: Dict, phonology_handler: Optional[PhonologyHandler] = None):
         self.profile = profile
         self.config = profile.get('reduplication', {})
         self.enabled = self.config.get('enabled', False)
         self.rules = self.config.get('rules', [])
+        self.epenthesis_vowel = self.config.get('epenthesis_vowel')
         self.phonotactics = profile.get('phonotactics', {})
+        self.phonology_handler = phonology_handler
+
+        if not self.epenthesis_vowel:
+            self.epenthesis_vowel = self.phonotactics.get(
+                'epenthesis_vowel', 'i')
 
         self.vowels = self.phonotactics.get('vowels')
         self.consonants = self.phonotactics.get('consonants')
 
         if not self.vowels or not self.consonants:
-            ph = PhonologyHandler(profile)
+            if not self.phonology_handler:
+                self.phonology_handler = PhonologyHandler(profile)
             if not self.vowels:
-                self.vowels = ph.base_vowels
+                self.vowels = self.phonology_handler.base_vowels
             if not self.consonants:
-                self.consonants = ph.base_consonants
+                self.consonants = self.phonology_handler.base_consonants
 
     def apply_reduplication(self, word: str, feats_str: str, pos: str = None) -> str:
         if not self.enabled or not word or not feats_str or feats_str == '_':
@@ -441,12 +469,33 @@ class ReduplicationHandler:
                 method = rule.get('method', 'whole_word')
                 separator = rule.get('separator', '')
 
+                reduplicated_part = ""
+                remainder = word
+
                 if method == 'whole_word':
-                    return f"{word}{separator}{word}"
+                    reduplicated_part = word
                 elif method == 'first_syllable':
-                    syllable = self._get_first_syllable(word)
-                    if syllable:
-                        return f"{syllable}{separator}{word}"
+                    reduplicated_part = self._get_first_syllable(word)
+
+                if not reduplicated_part:
+                    continue
+
+                part1 = reduplicated_part
+                part2 = word
+
+                if part1 and part2:
+                    last_char = part1[-1]
+                    first_char = part2[0]
+
+                    needs_epenthesis = False
+                    if self.phonology_handler:
+                        if not self.phonology_handler.is_valid_contact(last_char, first_char):
+                            needs_epenthesis = True
+
+                    if needs_epenthesis:
+                        return f"{part1}{self.epenthesis_vowel}{separator}{part2}"
+                    else:
+                        return f"{part1}{separator}{part2}"
 
         return word
 
@@ -491,7 +540,8 @@ class OriginalLanguageEngine:
         self.degree_handler = DegreeHandler(
             self.profile, self.vowel_harmony_handler)
         self.tam_handler = TAMHandler(self.profile)
-        self.reduplication_handler = ReduplicationHandler(self.profile)
+        self.reduplication_handler = ReduplicationHandler(
+            self.profile, self.phonology_handler)
         self.semantic_handler = SemanticFieldHandler(self.profile)
         self.polysemy_handler = PolysemyHandler(self.profile)
         self.false_cognate_handler = FalseCognateHandler(self.profile)
@@ -692,17 +742,18 @@ class OriginalLanguageEngine:
                 if is_focus and object_focus_marker:
                     current_form = f"{current_form} {object_focus_marker}"
 
-                if self.tam_handler.enabled and (pos in {'VERB', 'AUX'} or 'Tense=' in feats or 'Mood=' in feats or 'Aspect=' in feats or 'VerbForm=' in feats):
-                    tam_feats = feats
-                    if is_focus:
-                        tam_feats = f"{tam_feats}|Focus=Yes"
+                effective_feats = feats
+                if is_focus:
+                    effective_feats = f"{effective_feats}|Focus=Yes"
 
+                if self.tam_handler.enabled and (pos in {'VERB', 'AUX'} or 'Tense=' in feats or 'Mood=' in feats or 'Aspect=' in feats or 'VerbForm=' in feats):
+                    tam_feats = effective_feats
                     current_form = self.tam_handler.apply_tam(
                         current_form, tam_feats, func, ordered_functions)
 
                 if self.reduplication_handler.enabled:
                     current_form = self.reduplication_handler.apply_reduplication(
-                        current_form, feats, pos=current_pos)
+                        current_form, effective_feats, pos=current_pos)
 
                 if self.stress_handler.enabled:
                     current_form = self.stress_handler.apply_stress(
