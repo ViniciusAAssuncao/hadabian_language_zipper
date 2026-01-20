@@ -1,29 +1,146 @@
 {
   "id": "example_sov",
-  "name": "Exemplo SOV com Casos e Harmonia",
-  "description": "Língua exemplo com ordem SVO na principal e SOV na subordinada (estilo Alemão), sistema de casos e harmonização vocálica.",
+  "name": "Exemplo SOV com Casos, Harmonia e Mutação",
+  "description": "Língua exemplo com ordem SVO na principal e SOV na subordinada, sistema de casos, harmonização vocálica e mutação consonantal.",
   "word_order": "SVO",
   "subordinate_word_order": "SOV",
   "source_language_order": "SVO",
   "drop_articles": true,
   "pro_drop": {
     "enabled": true,
-    "conditions": ["verb_agreement"]
+    "conditions": [
+      "verb_agreement"
+    ]
   },
   "alignment": "ergative-absolutive",
   "global_seed": 42857,
   "phonotactics": {
     "vowels": "aeiou",
     "consonants": "bdfghjklmnprstvz",
-    "syllable_templates": ["CV", "CVC", "V", "VC"],
+    "active_style": "polynesian_style",
+    "inventory_styles": {
+      "polynesian_style": {
+        "consonants": "ptkmnfshlrv",
+        "vowels": "aeiou"
+      },
+      "guttural_style": {
+        "consonants": "qkxgRħʕ",
+        "vowels": "au"
+      }
+    },
+    "syllable_templates": [
+      "CV",
+      "CVC",
+      "CCV",
+      "CCVC",
+      "V",
+      "VC"
+    ],
     "min_syllables": 1,
     "max_syllables": 3,
     "max_consonant_cluster": 2,
     "max_vowel_cluster": 1,
-    "forbidden_initial_clusters": ["zr", "nm"],
-    "forbidden_final_consonants": ["h"],
+    "forbidden_initial_clusters": [
+      "nm",
+      "mr",
+      "nl",
+      "tl"
+    ],
+    "forbidden_final_consonants": [
+      "h",
+      "j"
+    ],
     "epenthesis_vowel": "i",
-    "diphthongs": ["ai", "ei", "ou", "au"]
+    "diphthongs": [
+      "ai",
+      "ei",
+      "ou",
+      "au"
+    ],
+    "sonority_hierarchy": {
+      "enabled": true,
+      "scale": {
+        "b": 1,
+        "d": 1,
+        "g": 1,
+        "p": 0,
+        "t": 0,
+        "k": 0,
+        "f": 2,
+        "v": 2,
+        "s": 2,
+        "z": 2,
+        "h": 2,
+        "j": 2,
+        "m": 3,
+        "n": 3,
+        "l": 4,
+        "r": 4
+      },
+      "onset_rules": {
+        "min_distance": 1,
+        "allow_plateau": false,
+        "allow_reversal": false
+      },
+      "coda_rules": {
+        "min_distance": 0,
+        "allow_plateau": true,
+        "allow_reversal": true
+      }
+    }
+  },
+  "consonant_mutation": {
+    "enabled": true,
+    "rules": [
+      {
+        "name": "Lenition",
+        "description": "Suaviza consoantes após o marcador de tópico 'wa' ou determinantes",
+        "triggers": {
+          "words": [
+            "wa"
+          ],
+          "pos": [
+            "DET"
+          ]
+        },
+        "mutations": {
+          "p": "b",
+          "t": "d",
+          "k": "g",
+          "f": "v",
+          "m": "v",
+          "s": "z"
+        }
+      },
+      {
+        "name": "Nasalization",
+        "description": "Nasaliza oclusivas sonoras após palavras terminadas em n ou m",
+        "triggers": {
+          "ending_chars": [
+            "n",
+            "m"
+          ]
+        },
+        "mutations": {
+          "b": "m",
+          "d": "n",
+          "g": "ng"
+        }
+      }
+    ]
+  },
+  "stress_system": {
+    "enabled": true,
+    "type": "fixed",
+    "position": "initial",
+    "graphic_accent": true,
+    "accent_map": {
+      "a": "á",
+      "e": "é",
+      "i": "í",
+      "o": "ó",
+      "u": "ú"
+    }
   },
   "semantic_fields": {
     "enabled": true,
@@ -52,13 +169,18 @@
         {
           "target_suffix": "_permanente",
           "rules": {
-            "feats": ["Mood=Ind", "Tense=Pres"]
+            "feats": [
+              "Mood=Ind",
+              "Tense=Pres"
+            ]
           }
         },
         {
           "target_suffix": "_transitorio",
           "rules": {
-            "feats": ["Mood=Sub"]
+            "feats": [
+              "Mood=Sub"
+            ]
           }
         }
       ],
@@ -66,13 +188,18 @@
         {
           "target_suffix": "_inst",
           "rules": {
-            "deprel": ["nmod", "obj"]
+            "deprel": [
+              "nmod",
+              "obj"
+            ]
           }
         },
         {
           "target_suffix": "_assento",
           "rules": {
-            "deprel": ["obl"]
+            "deprel": [
+              "obl"
+            ]
           }
         }
       ]
@@ -144,32 +271,66 @@
     "infer_imperative_from_context": true,
     "rules": [
       {
-        "features": ["Tense=Past"],
+        "features": [
+          "VerbForm=Inf"
+        ],
+        "marker": "nu",
+        "type": "suffix"
+      },
+      {
+        "features": [
+          "VerbForm=Ger"
+        ],
+        "marker": "an",
+        "type": "suffix"
+      },
+      {
+        "features": [
+          "Tense=Past"
+        ],
         "marker": "da",
         "type": "suffix"
       },
       {
-        "features": ["Tense=Imp"],
+        "features": [
+          "Tense=Past",
+          "Focus=Yes"
+        ],
+        "marker": "zi",
+        "type": "suffix"
+      },
+      {
+        "features": [
+          "Tense=Imp"
+        ],
         "marker": "va",
         "type": "suffix"
       },
       {
-        "features": ["Mood=Imp"],
+        "features": [
+          "Mood=Imp"
+        ],
         "marker": "va",
         "type": "suffix"
       },
       {
-        "features": ["Tense=Fut"],
+        "features": [
+          "Tense=Fut"
+        ],
         "marker": "go",
         "type": "particle_before"
       },
       {
-        "features": ["Mood=Cnd"],
+        "features": [
+          "Mood=Cnd"
+        ],
         "marker": "ria",
         "type": "suffix"
       },
       {
-        "features": ["Mood=Sub"],
+        "features": [
+          "Mood=Sub"
+        ],
         "marker": "ke",
         "type": "particle_before"
       }
@@ -196,6 +357,9 @@
       "noun_position": "post_nominal",
       "adj_position": "pre_nominal",
       "verb_position": "post_verbal"
+    },
+    "sempre": {
+      "verb_position": "pre_verbal"
     }
   },
   "degree_system": {
@@ -308,14 +472,56 @@
   },
   "reduplication": {
     "enabled": true,
+    "epenthesis_vowel": "i",
     "rules": [
       {
-        "features": ["Number=Plur"],
+        "features": [
+          "Number=Plur"
+        ],
+        "pos": [
+          "NOUN"
+        ],
         "method": "first_syllable",
         "separator": ""
       },
       {
-        "features": ["Degree=Abs"],
+        "features": [
+          "Aspect=Hab"
+        ],
+        "pos": [
+          "VERB"
+        ],
+        "method": "whole_word",
+        "separator": "-"
+      },
+      {
+        "features": [
+          "Aspect=Iter"
+        ],
+        "pos": [
+          "VERB"
+        ],
+        "method": "first_syllable",
+        "separator": "-"
+      },
+      {
+        "features": [
+          "Focus=Yes"
+        ],
+        "method": "first_syllable",
+        "separator": ""
+      },
+      {
+        "features": [
+          "Pragmatic=Emp"
+        ],
+        "method": "whole_word",
+        "separator": "!"
+      },
+      {
+        "features": [
+          "Degree=Abs"
+        ],
         "method": "whole_word",
         "separator": "-"
       }
