@@ -119,8 +119,20 @@ class PhonologyHandler:
         s1 = self.get_sonority(c1)
         s2 = self.get_sonority(c2)
 
-        if s1 > s2:
-            return True
+        contact_rules = self.hierarchy_config.get('contact_rules', {})
+
+        dist = s1 - s2
+
+        min_dist = contact_rules.get('min_distance', 0)
+
+        if dist < min_dist:
+            return False
+
+        if dist == 0 and not contact_rules.get('allow_plateau', True):
+            return False
+
+        if dist < 0 and not contact_rules.get('allow_reversal', False):
+            return False
 
         return True
 
