@@ -527,6 +527,10 @@ class OriginalLanguageEngine:
         with open(profile_path, 'r', encoding='utf-8') as f:
             self.profile = json.load(f)
 
+        self.family_id = None
+        self.shared_base_strength = self.profile.get(
+            'shared_base_strength', 0.0)
+
         if 'linguistic_family' in self.profile:
             family_filename = self.profile['linguistic_family']
             path_obj = Path(profile_path)
@@ -581,6 +585,9 @@ class OriginalLanguageEngine:
         except:
             return
 
+        if 'family_id' in family_data:
+            self.family_id = family_data['family_id']
+
         target_node_id = self.profile.get('family_node')
         if not target_node_id:
             return
@@ -617,8 +624,9 @@ class OriginalLanguageEngine:
             if 'consonants' in shared_ph and 'consonants' not in self.profile['phonotactics']:
                 self.profile['phonotactics']['consonants'] = shared_ph['consonants']
 
-            if 'shared_lexicon_strength' in node:
-                self.profile['shared_lexicon_strength'] = node['shared_lexicon_strength']
+            if 'shared_lexicon_strength' in node and 'shared_base_strength' not in self.profile:
+                self.profile['shared_base_strength'] = node['shared_lexicon_strength']
+                self.shared_base_strength = node['shared_lexicon_strength']
 
     def _infer_templates(self) -> List[str]:
         rng = random.Random(self.global_seed + 999)
@@ -988,7 +996,12 @@ class OriginalLanguageEngine:
             is_derived = True
 
         input_str = f"{base_word_str}_{self.global_seed}_{self.profile_id}"
-        if not is_derived:
+
+        using_family_base = False
+        if self.shared_base_strength > 0 and self.family_id and not is_derived:
+            input_str = f"{clean_word}_{self.family_id}"
+            using_family_base = True
+        elif not is_derived:
             input_str = f"{clean_word}_{self.global_seed}_{self.profile_id}"
 
         hash_obj = hashlib.sha256(input_str.encode())
@@ -1106,6 +1119,16 @@ class OriginalLanguageEngine:
                         generated_word += random.choice(list(self.vowels))
                     in_onset = False
                     prev_consonant = None
+
+        if using_family_base:
+            mutation_chance = 1.0 - self.shared_base_strength
+            mutation_seed_base = f"{clean_word}_{self.global_seed}_mutation"
+            mut_hash = int(hashlib.sha256(
+                mutation_seed_base.encode()).hexdigest(), 16)
+            rng_mut = random.Random(mut_hash)
+
+            if rng_mut.random() < mutation_chance:
+                generated_word = self._mutate_word(generated_word, mut_hash)
 
         return generated_word if generated_word else word
 

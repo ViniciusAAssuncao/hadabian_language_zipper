@@ -1,18 +1,16 @@
 {
-  "id": "test_germanic_derived",
-  "name": "Teste Germânico (Alemão-like)",
-  "description": "Conlang de teste para tronco germânico, com similaridade ao Holandês.",
+  "id": "test_germanic_sibling",
+  "name": "Teste Germânico Irmão (Alta Similaridade)",
+  "description": "Língua irmã da derived, com seed diferente mas mesma base forte.",
   "linguistic_family": "linguistic_trunk_germanic.json",
   "family_node": "high-german",
   "branch_id": "high-german",
   "parent_language": "west-germanic",
-  "shared_base_strength": 0.7,
-  "dialect_of": null,
-  "pidgin_with": null,
+  "shared_base_strength": 0.3,
   "word_order": "SVO",
   "drop_articles": false,
   "alignment": "nominative-accusative",
-  "global_seed": 55992,
+  "global_seed": 99123,
   "phonotactics": {
     "syllable_templates": [
       "CVC",
