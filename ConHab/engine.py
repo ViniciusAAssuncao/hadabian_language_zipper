@@ -3,6 +3,7 @@ import hashlib
 from pathlib import Path
 import re
 import random
+import unicodedata
 from typing import List, Dict, Optional, Tuple, Set, Union
 from syntax_engine import SyntaxEngine, SyntacticFunction
 from morphosyntax_analyzer import (
@@ -118,53 +119,156 @@ class PhonologyHandler:
     def is_valid_final(self, char: str) -> bool:
         return char.lower() not in self.forbidden_final
 
+    def normalize_char(self, char: str) -> str:
+        normalized = unicodedata.normalize('NFD', char)
+        return "".join(c for c in normalized if unicodedata.category(c) != 'Mn')
+
+    def get_closest_phoneme(self, char: str) -> str:
+        char = char.lower()
+        if char in self.vowels or char in self.consonants:
+            return char
+
+        normalized = self.normalize_char(char)
+        if normalized in self.vowels or normalized in self.consonants:
+            return normalized
+
+        target_pool = self.vowels if char in 'aeiouyäëïöü' else self.consonants
+        if not target_pool:
+            target_pool = self.vowels + self.consonants
+
+        char_hash = int(hashlib.sha256(char.encode()).hexdigest(), 16)
+        return target_pool[char_hash % len(target_pool)]
+
+    def nativize_word(self, word: str) -> str:
+        if not word:
+            return word
+
+        nativized = []
+        for char in word:
+            nativized.append(self.get_closest_phoneme(char))
+
+        result = "".join(nativized)
+
+        if result and not self.is_valid_final(result[-1]):
+            valid_finals = [c for c in self.consonants if self.is_valid_final(
+                c)] + list(self.vowels)
+            if valid_finals:
+                seed_val = sum(ord(c) for c in result)
+                rng = random.Random(seed_val)
+
+                strategy = rng.choice(['drop', 'change', 'add_vowel'])
+                if strategy == 'drop':
+                    result = result[:-1]
+                elif strategy == 'change':
+                    result = result[:-1] + rng.choice(valid_finals)
+                elif strategy == 'add_vowel' and self.vowels:
+                    result = result + rng.choice(list(self.vowels))
+
+        return result
+
 
 class ConceptHandler:
     def __init__(self, profile: Dict):
         self.profile = profile
         self.config = profile.get('abstract_concepts', {})
         self.enabled = self.config.get('enabled', False)
-        self.mappings = self.config.get('mappings', {})
+        self.mappings = self.config.get('mappings', {}).copy()
+
+        root_mappings = profile.get('mappings', {})
+        if root_mappings:
+            for k, v in root_mappings.items():
+                if k not in self.mappings:
+                    self.mappings[k] = v
+
+        self.local_overrides = self.config.get('local_overrides', {})
         self.definitions = self.config.get('definitions', {})
+        self.purism_level = profile.get('cultural_purism', 0.0)
+        self.universal_registry = self._load_universal_registry()
+
+    def _load_universal_registry(self) -> Dict:
+        paths_to_try = [
+            Path('reserved_universal.json'),
+            Path('../conlangs/reserved_universal.json'),
+            Path('./conlangs/reserved_universal.json')
+        ]
+
+        for p in paths_to_try:
+            if p.exists():
+                try:
+                    with open(p, 'r', encoding='utf-8') as f:
+                        return json.load(f)
+                except:
+                    continue
+        return {"concepts": {}, "mappings_ln": {}}
 
     def resolve_concept(self, lemma: str, engine_instance) -> Optional[Tuple[str, str, Dict]]:
         if not self.enabled:
             return None
 
         clean_lemma = lemma.lower().strip()
+
         concept_id = self.mappings.get(clean_lemma)
+        if not concept_id:
+            concept_id = self.universal_registry.get(
+                'mappings_ln', {}).get(clean_lemma)
 
         if not concept_id:
             return None
 
-        definition = self.definitions.get(concept_id, {})
-        concept_type = definition.get('type', 'unique')
+        if concept_id in self.local_overrides:
+            word = self.local_overrides[concept_id]
+            return word, 'override', {'origin': 'local_override', 'concept_id': concept_id}
 
-        if concept_type == 'composition':
-            components = definition.get('components', [])
-            connector = definition.get('connector', '')
+        if concept_id in self.definitions:
+            definition = self.definitions[concept_id]
+            concept_type = definition.get('type', 'unique')
 
-            composed_parts = []
-            for comp in components:
-                translated_part = engine_instance._get_word_form(comp)
-                composed_parts.append(translated_part)
+            if concept_type == 'composition':
+                components = definition.get('components', [])
+                connector = definition.get('connector', '')
+                composed_parts = []
+                for comp in components:
+                    translated_part = engine_instance._get_word_form(comp)
+                    composed_parts.append(translated_part)
+                final_word = connector.join(composed_parts)
+                return final_word, 'composition', {}
 
-            final_word = connector.join(composed_parts)
-            return final_word, 'composition', {}
+            elif concept_type == 'adaptation':
+                source = definition.get('source_word', lemma)
+                if not source:
+                    source = lemma
+                nativized = engine_instance.phonology_handler.nativize_word(
+                    source)
+                explanation = definition.get('description', 'Adapted concept.')
+                return nativized, 'adaptation', {'description': explanation, 'source_word': source}
 
-        elif concept_type == 'unique':
-            explanation = definition.get(
-                'description', 'Concept unique to this conlang.')
+            elif concept_type == 'unique':
+                explanation = definition.get(
+                    'description', 'Concept unique to this conlang.')
+                if concept_id in engine_instance.word_cache:
+                    entry = engine_instance.word_cache[concept_id]
+                    word = entry.get('default', '') if isinstance(
+                        entry, dict) else entry
+                    return word, 'unique', {'description': explanation}
+                generated_word = engine_instance._generate_deterministic_word(
+                    concept_id)
+                return generated_word, 'unique', {'description': explanation}
 
-            if concept_id in engine_instance.word_cache:
-                entry = engine_instance.word_cache[concept_id]
-                word = entry.get('default', '') if isinstance(
-                    entry, dict) else entry
-                return word, 'unique', {'description': explanation}
+        if concept_id in self.universal_registry.get('concepts', {}):
+            if self.purism_level >= 0.8:
+                return None
 
-            generated_word = engine_instance._generate_deterministic_word(
-                concept_id)
-            return generated_word, 'unique', {'description': explanation}
+            global_entry = self.universal_registry['concepts'][concept_id]
+            base_word = global_entry['word']
+
+            nativized_word = engine_instance.loanword_handler.nativize_reserved_term(
+                base_word)
+
+            return nativized_word, 'reserved_global', {
+                'description': global_entry.get('description', ''),
+                'original_term': base_word,
+                'concept_id': concept_id
+            }
 
         return None
 
@@ -568,9 +672,12 @@ class LoanwordHandler:
         self.phonology_handler = phonology_handler
         self.seed = profile.get('global_seed', 12345)
 
+    def nativize_reserved_term(self, word: str) -> str:
+        return self.phonology_handler.nativize_word(word)
+
     def process_loanword(self, foreign_word: str, components: List[str] = None, semantic_tags: List[str] = None, engine_ref=None) -> Tuple[str, str]:
         if not self.enabled:
-            return self._phonological_adaptation(foreign_word), "simple_adapt"
+            return self.phonology_handler.nativize_word(foreign_word), "simple_adapt"
 
         rng_input = f"{foreign_word}_mode_select_{self.seed}"
         rng_val = int(hashlib.sha256(rng_input.encode()).hexdigest(), 16)
@@ -596,7 +703,7 @@ class LoanwordHandler:
             if extended_word:
                 return extended_word, "semantic_extension"
 
-        return self._phonological_adaptation(foreign_word), "phonetic_adaptation"
+        return self.phonology_handler.nativize_word(foreign_word), "phonetic_adaptation"
 
     def _create_calque(self, parts: List[str], engine_ref) -> str:
         translated_parts = []
@@ -617,7 +724,7 @@ class LoanwordHandler:
             sample_keys = list(engine_ref.word_cache.keys())
             if sample_keys:
                 rng = random.Random(self.seed + sum(ord(c)
-                                    for c in foreign_word))
+                                                    for c in foreign_word))
                 candidates.append(rng.choice(sample_keys))
 
         if candidates:
@@ -630,28 +737,6 @@ class LoanwordHandler:
             return engine_ref._get_word_form(chosen_lemma)
 
         return None
-
-    def _phonological_adaptation(self, word: str) -> str:
-        adapted = ""
-        native_cons = self.phonology_handler.consonants
-        native_vowels = self.phonology_handler.vowels
-
-        if not native_cons or not native_vowels:
-            return word
-
-        for char in word.lower():
-            if char in native_cons or char in native_vowels:
-                adapted += char
-            else:
-                target_pool = native_vowels if char in 'aeiouy' else native_cons
-                if not target_pool:
-                    target_pool = native_cons + native_vowels
-
-                char_hash = int(hashlib.sha256(char.encode()).hexdigest(), 16)
-                idx = char_hash % len(target_pool)
-                adapted += target_pool[idx]
-
-        return adapted
 
 
 class OriginalLanguageEngine:
@@ -820,6 +905,7 @@ class OriginalLanguageEngine:
 
     def _get_word_form(self, lemma: str, tags: List[str] = None, force_word: str = None, meta: Dict = None) -> str:
         entry = self.word_cache.get(lemma)
+
         if not entry and force_word:
             entry = {
                 "lemma": lemma,
@@ -831,20 +917,26 @@ class OriginalLanguageEngine:
             self.word_cache[lemma] = entry
             return force_word
 
-        if not entry:
-            return self._generate_deterministic_word(lemma)
-        if isinstance(entry, str):
-            return entry
-        if isinstance(entry, dict):
-            if tags:
-                synsets = entry.get('synsets', [])
-                for syn in synsets:
-                    syn_tags = syn.get('tags', [])
-                    for tag in tags:
-                        if tag in syn_tags:
-                            return syn.get('word', entry.get('default'))
-            return entry.get('default')
-        return str(entry)
+        if entry:
+            if isinstance(entry, str):
+                return entry
+            if isinstance(entry, dict):
+                if tags:
+                    synsets = entry.get('synsets', [])
+                    for syn in synsets:
+                        syn_tags = syn.get('tags', [])
+                        for tag in tags:
+                            if tag in syn_tags:
+                                return syn.get('word', entry.get('default'))
+                return entry.get('default')
+            return str(entry)
+
+        concept_result = self.concept_handler.resolve_concept(lemma, self)
+        if concept_result:
+            word, c_type, c_meta = concept_result
+            return self._get_word_form(lemma, tags=['concept'], force_word=word, meta=c_meta)
+
+        return self._generate_deterministic_word(lemma)
 
     def process_text(self, text: str) -> str:
         reordered_text, functions_info = self.syntax_engine.process_text(text)
@@ -919,24 +1011,7 @@ class OriginalLanguageEngine:
                 current_pos = pos
                 applied_derivation_rule = None
 
-                concept_result = self.concept_handler.resolve_concept(
-                    target_lemma, self)
-                is_concept = False
-                concept_word = None
-
-                if concept_result:
-                    concept_word, concept_type, concept_meta = concept_result
-                    is_concept = True
-                    if concept_type == 'unique':
-                        concept_key = self.concept_handler.mappings.get(
-                            target_lemma)
-                        self._get_word_form(concept_key, tags=[
-                            'concept'], force_word=concept_word, meta=concept_meta)
-                        target_lemma = concept_key
-                    else:
-                        current_form = concept_word
-
-                if not is_concept and self.affix_handler.enabled and not degree_type:
+                if self.affix_handler.enabled and not degree_type:
                     source_suffixes = self.profile.get(
                         'affix_system', {}).get('source_suffixes', [])
                     for suffix_rule in source_suffixes:
@@ -958,14 +1033,15 @@ class OriginalLanguageEngine:
                 context_tags = []
                 if self.lexical_registers.get('enabled', False):
                     pass
-                if not is_concept or (is_concept and concept_type == 'unique'):
-                    if target_lemma not in self.word_cache:
-                        self._generate_deterministic_word(target_lemma)
-                    translated_root = self._get_word_form(
-                        target_lemma, context_tags)
-                    current_form = translated_root
 
-                if not is_concept and applied_derivation_rule:
+                if target_lemma not in self.word_cache:
+                    pass
+
+                translated_root = self._get_word_form(
+                    target_lemma, context_tags)
+                current_form = translated_root
+
+                if applied_derivation_rule:
                     current_form = self.affix_handler.apply_affix(
                         current_form, applied_derivation_rule)
                 if degree_type:
@@ -984,25 +1060,7 @@ class OriginalLanguageEngine:
                                 head_lemma = self.polysemy_handler.resolve_lemma(
                                     head_lemma, head_func)
 
-                            head_concept = self.concept_handler.resolve_concept(
-                                head_lemma, self)
-                            if head_concept:
-                                head_word, h_type, _ = head_concept
-                                if h_type == 'unique':
-                                    head_target = self.concept_handler.mappings.get(
-                                        head_lemma)
-                                else:
-                                    head_target = None
-                                    head_conlang_word = head_word
-                            else:
-                                head_target = head_lemma
-
-                            if head_target:
-                                if head_target not in self.word_cache:
-                                    self._generate_deterministic_word(
-                                        head_target)
-                                head_conlang_word = self._get_word_form(
-                                    head_target)
+                            head_conlang_word = self._get_word_form(head_lemma)
 
                             if head_conlang_word:
                                 head_gender = self.gender_handler.infer_gender(

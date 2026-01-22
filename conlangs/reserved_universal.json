@@ -1,0 +1,30 @@
+{
+  "schema_version": "1.0",
+  "description": "Cache global de palavras reservadas e conceitos universais",
+  "ln_language": "português brasileiro",
+  "concepts": {
+    "C_DEUS": {
+      "word": "Äuris",
+      "description": "Deus Supremo Criador de Todas as Coisas - conceito universal em Hadab",
+      "tags": ["divindade", "supremo", "criador", "universal"],
+      "ln_mapping": "Deus",
+      "is_reserved": true,
+      "mandatory_adaptation": false,
+      "phonetic_adaptation_rules": {
+        "allowed_variants": ["Äuris", "Auris", "Aure", "Auri"],
+        "forbidden_forms": ["Deus", "God", "Dios", "Dieu"]
+      },
+      "semantic_constraints": {
+        "must_preserve_meaning": true,
+        "allowed_extensions": ["divindade", "criador", "supremo"],
+        "forbidden_associations": ["diabo", "mal", "satã"]
+      }
+    }
+  },
+  "mappings_ln": {
+    "deus": "C_DEUS",
+    "deus supremo": "C_DEUS",
+    "deus criador": "C_DEUS",
+    "deus todo-poderoso": "C_DEUS"
+  }
+}

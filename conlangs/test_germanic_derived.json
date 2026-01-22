@@ -8,6 +8,7 @@
   "parent_language": "west-germanic",
   "shared_base_strength": 0.7,
   "agglutination_strength": 0.5,
+  "cultural_purism": 0.2,
   "dialect_of": null,
   "pidgin_with": null,
   "word_order": "SVO",
@@ -21,7 +22,25 @@
       "VC"
     ],
     "min_syllables": 1,
-    "max_syllables": 4
+    "max_syllables": 4,
+    "vowels": "aeiou",
+    "consonants": "bdfghkmnprstvz",
+    "forbidden_final_consonants": [
+      "b",
+      "d",
+      "g",
+      "z"
+    ]
+  },
+  "mappings": {
+    "jesus": "N_JESUS",
+    "cristo": "N_CRISTO",
+    "democracia": "C_DEMOCRACY",
+    "arlo": "N_ARLO",
+    "computador": "C_COMPUTER",
+    "saudade": "C_SAUDADE",
+    "hadab": "C_HADAB",
+    "sol": "CONCEPT_SOL"
   },
   "semantic_fields": {
     "enabled": true
@@ -31,7 +50,8 @@
     "mappings": {
       "democracia": "C_DEMOCRACY",
       "saudade": "C_SAUDADE",
-      "computador": "C_COMPUTER"
+      "computador": "C_COMPUTER",
+      "deus": "C_DEUS"
     },
     "definitions": {
       "C_DEMOCRACY": {
@@ -53,6 +73,26 @@
       "C_SAUDADE": {
         "type": "unique",
         "description": "Sentimento profundo de melancolia e desejo pela ausência de algo ou alguém."
+      },
+      "N_JESUS": {
+        "type": "adaptation",
+        "source_word": "Jesus",
+        "description": "Nome próprio histórico adaptado."
+      },
+      "N_CRISTO": {
+        "type": "adaptation",
+        "source_word": "Cristo",
+        "description": "Título religioso histórico adaptado."
+      },
+      "N_ARLO": {
+        "type": "adaptation",
+        "source_word": "Arlo",
+        "description": "Esporte coletivo de alta intensidade em Hadab."
+      },
+      "C_HADAB": {
+        "type": "adaptation",
+        "source_word": "Hadab",
+        "description": "Nome do planeta e civilização de origem."
       }
     }
   },
@@ -129,9 +169,9 @@
   "loanword_policy": {
     "enabled": true,
     "modes": {
-        "phonetic_adaptation": 0.3,
-        "calque": 0.6,
-        "semantic_extension": 0.1
+      "phonetic_adaptation": 0.8,
+      "calque": 0.1,
+      "semantic_extension": 0.1
     },
     "calque_connector": ""
   }
