@@ -524,7 +524,8 @@ class ReduplicationHandler:
 
 class OriginalLanguageEngine:
     def __init__(self, profile_path: str):
-        self.profile = self._load_profile_with_inheritance(profile_path)
+        with open(profile_path, 'r', encoding='utf-8') as f:
+            self.profile = json.load(f)
         self.profile_id = self.profile.get('id', 'unknown')
         self.global_seed = self.profile.get('global_seed', 12345)
 
@@ -539,19 +540,6 @@ class OriginalLanguageEngine:
             self.templates = self._infer_templates()
 
         self.syntax_engine = SyntaxEngine(profile_path)
-        self.syntax_engine.profile = self.profile
-        self.syntax_engine.word_order = self.profile.get('word_order', 'SVO')
-        self.syntax_engine.word_order_mapper.profile = self.profile
-        self.syntax_engine.word_order_mapper.target_order = self.syntax_engine.word_order
-        self.syntax_engine.word_order_mapper.subordinate_order = self.profile.get(
-            'subordinate_word_order', 'SVO')
-        self.syntax_engine.word_order_mapper.agreement_rules = self.profile.get(
-            'agreement_rules', {})
-        self.syntax_engine.word_order_mapper.functional_particles = self.profile.get(
-            'functional_particles', {})
-        self.syntax_engine.case_morphology = self.syntax_engine.case_morphology.__class__(
-            self.profile)
-
         self.dependency_parser = DependencyParser()
         self.constituent_analyzer = ConstituentAnalyzer()
         self.clause_segmenter = ClauseSegmenter()
@@ -577,33 +565,6 @@ class OriginalLanguageEngine:
         self.functional_config = self.profile.get('functional_particles', {})
         self.word_cache: Dict[str, str] = {}
         self.load_word_cache()
-
-    def _load_profile_with_inheritance(self, path: str) -> Dict:
-        path_obj = Path(path)
-        try:
-            with open(path_obj, 'r', encoding='utf-8') as f:
-                current_profile = json.load(f)
-        except Exception:
-            return {}
-
-        parent_file = current_profile.get('parent_language')
-        if parent_file:
-            parent_path = path_obj.parent / parent_file
-            if parent_path.exists():
-                parent_profile = self._load_profile_with_inheritance(
-                    str(parent_path))
-                return self._deep_merge(parent_profile, current_profile)
-
-        return current_profile
-
-    def _deep_merge(self, base: Dict, override: Dict) -> Dict:
-        merged = base.copy()
-        for key, value in override.items():
-            if key in merged and isinstance(merged[key], dict) and isinstance(value, dict):
-                merged[key] = self._deep_merge(merged[key], value)
-            else:
-                merged[key] = value
-        return merged
 
     def _infer_templates(self) -> List[str]:
         rng = random.Random(self.global_seed + 999)
