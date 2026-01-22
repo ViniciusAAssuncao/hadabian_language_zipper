@@ -559,26 +559,77 @@ class LoanwordHandler:
         self.profile = profile
         self.config = profile.get('loanword_policy', {})
         self.enabled = self.config.get('enabled', False)
-        self.strategy = self.config.get('strategy_preference', 'adaptation')
-        self.calque_chance = self.config.get('calque_chance', 0.2)
+        self.modes = self.config.get('modes', {
+            'phonetic_adaptation': 0.8,
+            'calque': 0.15,
+            'semantic_extension': 0.05
+        })
+        self.calque_connector = self.config.get('calque_connector', '')
         self.phonology_handler = phonology_handler
         self.seed = profile.get('global_seed', 12345)
 
-    def process_loanword(self, foreign_word: str, definition_parts: List[str] = None) -> Tuple[str, str]:
+    def process_loanword(self, foreign_word: str, components: List[str] = None, semantic_tags: List[str] = None, engine_ref=None) -> Tuple[str, str]:
         if not self.enabled:
-            return self._simple_adaptation(foreign_word), "simple_adapt"
+            return self._phonological_adaptation(foreign_word), "simple_adapt"
 
-        rng_input = f"{foreign_word}_loan_{self.seed}"
+        rng_input = f"{foreign_word}_mode_select_{self.seed}"
         rng_val = int(hashlib.sha256(rng_input.encode()).hexdigest(), 16)
-        prob = (rng_val % 1000) / 1000.0
+        val = (rng_val % 1000) / 1000.0
 
-        if definition_parts and prob < self.calque_chance:
-            return self._create_calque(definition_parts), "calque"
+        p_adapt = self.modes.get('phonetic_adaptation', 0.8)
+        p_calque = self.modes.get('calque', 0.15)
 
-        return self._phonological_adaptation(foreign_word), "adaptation"
+        mode = "phonetic_adaptation"
+        if val < p_adapt:
+            mode = "phonetic_adaptation"
+        elif val < (p_adapt + p_calque):
+            mode = "calque"
+        else:
+            mode = "semantic_extension"
 
-    def _create_calque(self, parts: List[str]) -> str:
-        return "_".join([p.upper() for p in parts])
+        if mode == "calque" and components and engine_ref:
+            return self._create_calque(components, engine_ref), "calque"
+
+        if mode == "semantic_extension" and engine_ref:
+            extended_word = self._apply_semantic_extension(
+                foreign_word, semantic_tags, engine_ref)
+            if extended_word:
+                return extended_word, "semantic_extension"
+
+        return self._phonological_adaptation(foreign_word), "phonetic_adaptation"
+
+    def _create_calque(self, parts: List[str], engine_ref) -> str:
+        translated_parts = []
+        for part in parts:
+            native_word = engine_ref._get_word_form(part)
+            translated_parts.append(native_word)
+        return self.calque_connector.join(translated_parts)
+
+    def _apply_semantic_extension(self, foreign_word: str, tags: List[str], engine_ref) -> Optional[str]:
+        candidates = []
+        if tags and engine_ref.semantic_handler.enabled:
+            for tag in tags:
+                related = engine_ref.semantic_handler.get_semantic_root(tag)
+                if related:
+                    candidates.append(related)
+
+        if not candidates:
+            sample_keys = list(engine_ref.word_cache.keys())
+            if sample_keys:
+                rng = random.Random(self.seed + sum(ord(c)
+                                    for c in foreign_word))
+                candidates.append(rng.choice(sample_keys))
+
+        if candidates:
+            chosen_lemma = candidates[0]
+            if chosen_lemma in engine_ref.word_cache:
+                entry = engine_ref.word_cache[chosen_lemma]
+                if isinstance(entry, dict):
+                    return entry.get("default", "")
+                return entry
+            return engine_ref._get_word_form(chosen_lemma)
+
+        return None
 
     def _phonological_adaptation(self, word: str) -> str:
         adapted = ""
@@ -601,9 +652,6 @@ class LoanwordHandler:
                 adapted += target_pool[idx]
 
         return adapted
-
-    def _simple_adaptation(self, word: str) -> str:
-        return re.sub(r'[^a-zA-Z]', '', word).lower()
 
 
 class OriginalLanguageEngine:
@@ -715,6 +763,8 @@ class OriginalLanguageEngine:
                 self.profile['dialect_variation'] = node['dialect_variation']
             if 'lexical_registers_defaults' in node and 'lexical_registers_defaults' not in self.profile:
                 self.profile['lexical_registers_defaults'] = node['lexical_registers_defaults']
+            if 'loanword_policy_defaults' in node and 'loanword_policy' not in self.profile:
+                self.profile['loanword_policy'] = node['loanword_policy_defaults']
         if 'agglutination_strength' not in self.profile:
             self.profile['agglutination_strength'] = 1.0
 
@@ -744,6 +794,29 @@ class OriginalLanguageEngine:
         cache_file = cache_dir / f"{self.profile_id}_words.json"
         with open(cache_file, 'w', encoding='utf-8') as f:
             json.dump(self.word_cache, f, indent=2, ensure_ascii=False)
+
+    def absorb_term(self, foreign_term: str, components: List[str] = None, semantic_tags: List[str] = None) -> Dict:
+        result_word, mode = self.loanword_handler.process_loanword(
+            foreign_term, components, semantic_tags, self
+        )
+
+        entry = {
+            "lemma": foreign_term,
+            "default": result_word,
+            "synsets": [
+                {
+                    "word": result_word,
+                    "tags": ["loanword", mode],
+                    "affinity": 1.0
+                }
+            ],
+            "origin": "loanword",
+            "absorption_mode": mode
+        }
+
+        self.word_cache[foreign_term] = entry
+        self.save_word_cache()
+        return entry
 
     def _get_word_form(self, lemma: str, tags: List[str] = None, force_word: str = None, meta: Dict = None) -> str:
         entry = self.word_cache.get(lemma)
@@ -858,7 +931,7 @@ class OriginalLanguageEngine:
                         concept_key = self.concept_handler.mappings.get(
                             target_lemma)
                         self._get_word_form(concept_key, tags=[
-                                            'concept'], force_word=concept_word, meta=concept_meta)
+                            'concept'], force_word=concept_word, meta=concept_meta)
                         target_lemma = concept_key
                     else:
                         current_form = concept_word

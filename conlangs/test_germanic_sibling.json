@@ -15,8 +15,11 @@
   "divergence_factor": 0.8,
   "loanword_policy": {
     "enabled": true,
-    "strategy_preference": "adaptation", 
-    "calque_chance": 0.3,
+    "modes": {
+        "phonetic_adaptation": 0.5,
+        "calque": 0.1,
+        "semantic_extension": 0.4
+    },
     "adaptation_strictness": "high"
   },
   "phonotactics": {

@@ -1,6 +1,6 @@
 {
   "family_id": "germanic",
-  "description": "Tronco das l\u00ednguas germ\u00e2nicas, com ancestrais proto e branches.",
+  "description": "Tronco das línguas germânicas, com ancestrais proto e branches.",
   "proto_languages": [
     {
       "id": "proto-indo-european",
@@ -26,10 +26,10 @@
       "id": "proto-germanic",
       "parent_id": "proto-indo-european",
       "level": 1,
-      "description": "Proto-Germ\u00e2nico, derivado do PIE.",
+      "description": "Proto-Germânico, derivado do PIE.",
       "shared_phonotactics": {
         "vowels": "aeiou",
-        "consonants": "ptkbdgmn\u014bhrlf\u03b8s\u03c7"
+        "consonants": "ptkbdgmnŋhrlfθsχ"
       },
       "shared_lexicon_strength": 0.5,
       "agglutination_strength": 0.8,
@@ -42,10 +42,10 @@
       "id": "west-germanic",
       "parent_id": "proto-germanic",
       "level": 2,
-      "description": "Germ\u00e2nico Ocidental.",
+      "description": "Germânico Ocidental.",
       "shared_phonotactics": {
         "vowels": "aeiouy",
-        "consonants": "ptkbdgmn\u014bhrlf\u03b8s\u03c7v"
+        "consonants": "ptkbdgmnŋhrlfθsχv"
       },
       "shared_lexicon_strength": 0.7,
       "agglutination_strength": 0.7
@@ -54,9 +54,9 @@
       "id": "north-germanic",
       "parent_id": "proto-germanic",
       "level": 2,
-      "description": "Germ\u00e2nico N\u00f3rdico.",
+      "description": "Germânico Nórdico.",
       "shared_phonotactics": {
-        "vowels": "aeiouy\u00f8\u00e5",
+        "vowels": "aeiouyøå",
         "consonants": "ptkbdgmnrsfvjh"
       },
       "shared_lexicon_strength": 0.65,
@@ -67,14 +67,14 @@
     {
       "id": "high-german",
       "parent_id": "west-germanic",
-      "description": "Alto Germ\u00e2nico.",
+      "description": "Alto Germânico.",
       "shared_lexicon_strength": 0.8,
       "agglutination_strength": 0.6
     },
     {
       "id": "weser-rhine",
       "parent_id": "west-germanic",
-      "description": "Weser-Reno Germ\u00e2nico.",
+      "description": "Weser-Reno Germânico.",
       "shared_lexicon_strength": 0.75,
       "agglutination_strength": 0.5
     }
@@ -120,5 +120,14 @@
         "mutation_factor": 4
       }
     ]
+  },
+  "loanword_policy_defaults": {
+    "enabled": true,
+    "modes": {
+        "phonetic_adaptation": 0.6,
+        "calque": 0.3,
+        "semantic_extension": 0.1
+    },
+    "calque_connector": ""
   }
 }
