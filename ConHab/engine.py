@@ -9,7 +9,8 @@ from morphosyntax_analyzer import (
     DependencyParser, ConstituentAnalyzer, ClauseSegmenter,
     AgreementChecker, SyntacticComplexityAnalyzer,
     TopicalizationHandler, FocusStructureHandler, TAMHandler,
-    VowelHarmonyHandler, TransitivityAnalyzer, ConsonantMutationHandler
+    VowelHarmonyHandler, TransitivityAnalyzer, ConsonantMutationHandler,
+    GenderHandler
 )
 
 
@@ -560,6 +561,7 @@ class OriginalLanguageEngine:
         self.stress_handler = StressHandler(self.profile)
         self.transitivity_analyzer = TransitivityAnalyzer()
         self.mutation_handler = ConsonantMutationHandler(self.profile)
+        self.gender_handler = GenderHandler(self.profile)
         self.functional_config = self.profile.get('functional_particles', {})
         self.word_cache: Dict[str, str] = {}
         self.load_word_cache()
@@ -723,6 +725,30 @@ class OriginalLanguageEngine:
                 if degree_type:
                     current_form = self.degree_handler.apply_degree(
                         current_form, degree_type)
+
+                if self.gender_handler.enabled and (pos in {'ADJ', 'DET', 'VERB'} or syntactic_func in {SyntacticFunction.MODIFIER, SyntacticFunction.COMPLEMENT}):
+                    deps = func.get('dependencies', [])
+                    head_idx = deps[0] if deps else -1
+                    if head_idx != -1:
+                        head_func = next(
+                            (f for f in ordered_functions if f['index'] == head_idx), None)
+                        if head_func and head_func.get('pos') == 'NOUN':
+                            head_lemma = head_func.get(
+                                'lemma', head_func.get('word').lower())
+                            if self.polysemy_handler.enabled:
+                                head_lemma = self.polysemy_handler.resolve_lemma(
+                                    head_lemma, head_func)
+
+                            head_target = head_lemma
+                            if head_target not in self.word_cache:
+                                self.word_cache[head_target] = self._generate_deterministic_word(
+                                    head_target)
+
+                            head_conlang_word = self.word_cache[head_target]
+                            head_gender = self.gender_handler.infer_gender(
+                                head_conlang_word)
+                            current_form = self.gender_handler.apply_agreement(
+                                current_form, head_gender, pos)
 
                 is_topic = False
                 if topic_enabled and topic_idx is not None:
