@@ -154,6 +154,57 @@ class TAMHandler:
         return result
 
 
+class GenderHandler:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.config = profile.get('gender_system', {})
+        self.enabled = self.config.get('enabled', False)
+        self.inference_rules = self.config.get('inference', [])
+        self.markers = self.config.get('markers', {})
+        self.default_gender = self.config.get('default', 'masculine')
+        self.harmony_handler = VowelHarmonyHandler(profile)
+
+    def infer_gender(self, word: str) -> str:
+        if not self.enabled or not word:
+            return self.default_gender
+        
+        word_lower = word.lower()
+        for rule in self.inference_rules:
+            suffix = rule.get('suffix', '')
+            if suffix and word_lower.endswith(suffix):
+                return rule.get('gender', self.default_gender)
+        
+        return self.default_gender
+
+    def apply_agreement(self, word: str, target_gender: str, pos: str) -> str:
+        if not self.enabled or not target_gender:
+            return word
+        
+        marker_config = self.markers.get(target_gender)
+        if not marker_config:
+            return word
+
+        targets = marker_config.get('targets', [])
+        if pos not in targets:
+            return word
+
+        marker = marker_config.get('marker', '')
+        position = marker_config.get('position', 'suffix')
+
+        if not marker:
+            return word
+
+        if self.harmony_handler.enabled and position == 'suffix':
+            marker = self.harmony_handler.apply_harmony(word, marker)
+
+        if position == 'suffix':
+            return word + marker
+        elif position == 'prefix':
+            return marker + word
+        
+        return word
+
+
 class DependencyParser:
     def __init__(self):
         self.dependency_patterns = self._initialize_patterns()
@@ -330,6 +381,7 @@ class AgreementChecker:
             'gender_agreement', False)
         self.number_enabled = self.agreement_rules.get(
             'number_agreement', False)
+        self.gender_handler = GenderHandler(profile)
 
     def check_agreement(self, functions: List[Dict]) -> List[Dict]:
         violations = []
@@ -349,8 +401,8 @@ class AgreementChecker:
         return violations
 
     def _check_gender_agreement(self, head: Dict, modifier: Dict) -> Optional[Dict]:
-        head_gender = self._infer_gender(head['word'])
-        mod_gender = self._infer_gender(modifier['word'])
+        head_gender = self.gender_handler.infer_gender(head['word'])
+        mod_gender = self.gender_handler.infer_gender(modifier['word'])
         if head_gender != mod_gender:
             return {
                 'type': 'gender_mismatch',
@@ -373,14 +425,6 @@ class AgreementChecker:
                 'modifier_number': mod_number
             }
         return None
-
-    def _infer_gender(self, word: str) -> str:
-        word_lower = word.lower()
-        if word_lower.endswith('a'):
-            return 'feminine'
-        elif word_lower.endswith('o'):
-            return 'masculine'
-        return 'neutral'
 
     def _infer_number(self, word: str) -> str:
         word_lower = word.lower()

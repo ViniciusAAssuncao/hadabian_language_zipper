@@ -1,7 +1,7 @@
 {
   "id": "example_sov",
-  "name": "Exemplo SOV com Casos, Harmonia e Mutação",
-  "description": "Língua exemplo com ordem SVO na principal e SOV na subordinada, sistema de casos, harmonização vocálica e mutação consonantal.",
+  "name": "Exemplo SOV com Casos, Harmonia, Mutação e Gênero",
+  "description": "Língua exemplo com ordem SVO na principal e SOV na subordinada, sistema de casos, harmonização vocálica, mutação consonantal e gênero gramatical.",
   "word_order": "SVO",
   "subordinate_word_order": "SOV",
   "source_language_order": "SVO",
@@ -337,8 +337,59 @@
     ]
   },
   "agreement_rules": {
-    "gender_agreement": false,
+    "gender_agreement": true,
     "number_agreement": true
+  },
+  "gender_system": {
+    "enabled": true,
+    "default": "neutro",
+    "inference": [
+      {
+        "suffix": "a",
+        "gender": "feminino"
+      },
+      {
+        "suffix": "i",
+        "gender": "feminino"
+      },
+      {
+        "suffix": "o",
+        "gender": "masculino"
+      },
+      {
+        "suffix": "u",
+        "gender": "masculino"
+      }
+    ],
+    "markers": {
+      "masculino": {
+        "targets": [
+          "ADJ",
+          "DET",
+          "VERB"
+        ],
+        "marker": "os",
+        "position": "suffix"
+      },
+      "feminino": {
+        "targets": [
+          "ADJ",
+          "DET",
+          "VERB"
+        ],
+        "marker": "as",
+        "position": "suffix"
+      },
+      "neutro": {
+        "targets": [
+          "ADJ",
+          "DET",
+          "VERB"
+        ],
+        "marker": "um",
+        "position": "suffix"
+      }
+    }
   },
   "topicalization": {
     "enabled": true,
