@@ -7,6 +7,7 @@
   "branch_id": "high-german",
   "parent_language": "west-germanic",
   "shared_base_strength": 0.3,
+  "agglutination_strength": 0.8,
   "word_order": "SVO",
   "drop_articles": false,
   "alignment": "nominative-accusative",

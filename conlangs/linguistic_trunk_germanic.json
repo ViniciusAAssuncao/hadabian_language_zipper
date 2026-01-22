@@ -10,7 +10,13 @@
         "vowels": "aeiou",
         "consonants": "ptkbdgmnhlrswy"
       },
-      "shared_lexicon_strength": 0.3
+      "shared_lexicon_strength": 0.3,
+      "agglutination_strength": 0.9,
+      "gender_system": {
+        "enabled": true,
+        "genders": ["masculine", "feminine", "neuter"],
+        "default": "masculine"
+      }
     },
     {
       "id": "proto-germanic",
@@ -22,6 +28,7 @@
         "consonants": "ptkbdgmnŋhrlfθsχ"
       },
       "shared_lexicon_strength": 0.5,
+      "agglutination_strength": 0.8,
       "reconstructions": ["*dagaz", "*fader"]
     },
     {
@@ -33,7 +40,8 @@
         "vowels": "aeiouy",
         "consonants": "ptkbdgmnŋhrlfθsχv"
       },
-      "shared_lexicon_strength": 0.7
+      "shared_lexicon_strength": 0.7,
+      "agglutination_strength": 0.7
     },
     {
       "id": "north-germanic",
@@ -44,7 +52,8 @@
         "vowels": "aeiouyøå",
         "consonants": "ptkbdgmnrsfvjh"
       },
-      "shared_lexicon_strength": 0.65
+      "shared_lexicon_strength": 0.65,
+      "agglutination_strength": 0.75
     }
   ],
   "branches": [
@@ -52,13 +61,15 @@
       "id": "high-german",
       "parent_id": "west-germanic",
       "description": "Alto Germânico.",
-      "shared_lexicon_strength": 0.8
+      "shared_lexicon_strength": 0.8,
+      "agglutination_strength": 0.6
     },
     {
       "id": "weser-rhine",
       "parent_id": "west-germanic",
       "description": "Weser-Reno Germânico.",
-      "shared_lexicon_strength": 0.75
+      "shared_lexicon_strength": 0.75,
+      "agglutination_strength": 0.5
     }
   ],
   "intelligibility": {

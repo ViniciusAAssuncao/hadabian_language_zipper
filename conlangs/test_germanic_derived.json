@@ -7,6 +7,7 @@
   "branch_id": "high-german",
   "parent_language": "west-germanic",
   "shared_base_strength": 0.7,
+  "agglutination_strength": 0.5,
   "dialect_of": null,
   "pidgin_with": null,
   "word_order": "SVO",
@@ -27,5 +28,47 @@
   },
   "style": {
     "capitalization": true
+  },
+  "affix_system": {
+    "enabled": true,
+    "derivation_rules": [
+      {
+        "from_pos": "NOUN",
+        "to_pos": "ADJ",
+        "affix": "lik",
+        "position": "suffix"
+      },
+      {
+        "from_pos": "VERB",
+        "to_pos": "NOUN",
+        "affix": "ung",
+        "position": "suffix"
+      }
+    ]
+  },
+  "case_system": {
+    "enabled": true,
+    "markers": {
+      "accusative": "n",
+      "dative": "em",
+      "genitive": "es",
+      "plural": "en"
+    },
+    "marker_position": "suffix"
+  },
+  "tam_system": {
+    "enabled": true,
+    "rules": [
+      {
+        "features": ["Tense=Past"],
+        "marker": "te",
+        "type": "suffix"
+      },
+      {
+        "features": ["Person=1"],
+        "marker": "e",
+        "type": "suffix"
+      }
+    ]
   }
 }
