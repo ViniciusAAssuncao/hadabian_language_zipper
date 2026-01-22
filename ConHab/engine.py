@@ -119,6 +119,56 @@ class PhonologyHandler:
         return char.lower() not in self.forbidden_final
 
 
+class ConceptHandler:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.config = profile.get('abstract_concepts', {})
+        self.enabled = self.config.get('enabled', False)
+        self.mappings = self.config.get('mappings', {})
+        self.definitions = self.config.get('definitions', {})
+
+    def resolve_concept(self, lemma: str, engine_instance) -> Optional[Tuple[str, str, Dict]]:
+        if not self.enabled:
+            return None
+
+        clean_lemma = lemma.lower().strip()
+        concept_id = self.mappings.get(clean_lemma)
+
+        if not concept_id:
+            return None
+
+        definition = self.definitions.get(concept_id, {})
+        concept_type = definition.get('type', 'unique')
+
+        if concept_type == 'composition':
+            components = definition.get('components', [])
+            connector = definition.get('connector', '')
+
+            composed_parts = []
+            for comp in components:
+                translated_part = engine_instance._get_word_form(comp)
+                composed_parts.append(translated_part)
+
+            final_word = connector.join(composed_parts)
+            return final_word, 'composition', {}
+
+        elif concept_type == 'unique':
+            explanation = definition.get(
+                'description', 'Concept unique to this conlang.')
+
+            if concept_id in engine_instance.word_cache:
+                entry = engine_instance.word_cache[concept_id]
+                word = entry.get('default', '') if isinstance(
+                    entry, dict) else entry
+                return word, 'unique', {'description': explanation}
+
+            generated_word = engine_instance._generate_deterministic_word(
+                concept_id)
+            return generated_word, 'unique', {'description': explanation}
+
+        return None
+
+
 class StressHandler:
     def __init__(self, profile: Dict):
         self.profile = profile
@@ -604,6 +654,7 @@ class OriginalLanguageEngine:
         self.synonym_handler = SynonymHandler(self.profile)
         self.loanword_handler = LoanwordHandler(
             self.profile, self.phonology_handler)
+        self.concept_handler = ConceptHandler(self.profile)
         self.functional_config = self.profile.get('functional_particles', {})
         self.lexical_registers = self.profile.get('lexical_registers', {})
         if not self.lexical_registers and 'lexical_registers_defaults' in self.profile:
@@ -694,8 +745,19 @@ class OriginalLanguageEngine:
         with open(cache_file, 'w', encoding='utf-8') as f:
             json.dump(self.word_cache, f, indent=2, ensure_ascii=False)
 
-    def _get_word_form(self, lemma: str, tags: List[str] = None) -> str:
+    def _get_word_form(self, lemma: str, tags: List[str] = None, force_word: str = None, meta: Dict = None) -> str:
         entry = self.word_cache.get(lemma)
+        if not entry and force_word:
+            entry = {
+                "lemma": lemma,
+                "default": force_word,
+                "synsets": [{"word": force_word, "tags": tags if tags else ["unique"], "affinity": 1.0}]
+            }
+            if meta:
+                entry.update(meta)
+            self.word_cache[lemma] = entry
+            return force_word
+
         if not entry:
             return self._generate_deterministic_word(lemma)
         if isinstance(entry, str):
@@ -783,7 +845,25 @@ class OriginalLanguageEngine:
                 target_lemma = base_lemma_for_translation
                 current_pos = pos
                 applied_derivation_rule = None
-                if self.affix_handler.enabled and not degree_type:
+
+                concept_result = self.concept_handler.resolve_concept(
+                    target_lemma, self)
+                is_concept = False
+                concept_word = None
+
+                if concept_result:
+                    concept_word, concept_type, concept_meta = concept_result
+                    is_concept = True
+                    if concept_type == 'unique':
+                        concept_key = self.concept_handler.mappings.get(
+                            target_lemma)
+                        self._get_word_form(concept_key, tags=[
+                                            'concept'], force_word=concept_word, meta=concept_meta)
+                        target_lemma = concept_key
+                    else:
+                        current_form = concept_word
+
+                if not is_concept and self.affix_handler.enabled and not degree_type:
                     source_suffixes = self.profile.get(
                         'affix_system', {}).get('source_suffixes', [])
                     for suffix_rule in source_suffixes:
@@ -805,12 +885,14 @@ class OriginalLanguageEngine:
                 context_tags = []
                 if self.lexical_registers.get('enabled', False):
                     pass
-                if target_lemma not in self.word_cache:
-                    self._generate_deterministic_word(target_lemma)
-                translated_root = self._get_word_form(
-                    target_lemma, context_tags)
-                current_form = translated_root
-                if applied_derivation_rule:
+                if not is_concept or (is_concept and concept_type == 'unique'):
+                    if target_lemma not in self.word_cache:
+                        self._generate_deterministic_word(target_lemma)
+                    translated_root = self._get_word_form(
+                        target_lemma, context_tags)
+                    current_form = translated_root
+
+                if not is_concept and applied_derivation_rule:
                     current_form = self.affix_handler.apply_affix(
                         current_form, applied_derivation_rule)
                 if degree_type:
@@ -828,15 +910,32 @@ class OriginalLanguageEngine:
                             if self.polysemy_handler.enabled:
                                 head_lemma = self.polysemy_handler.resolve_lemma(
                                     head_lemma, head_func)
-                            head_target = head_lemma
-                            if head_target not in self.word_cache:
-                                self._generate_deterministic_word(head_target)
-                            head_conlang_word = self._get_word_form(
-                                head_target)
-                            head_gender = self.gender_handler.infer_gender(
-                                head_conlang_word)
-                            current_form = self.gender_handler.apply_agreement(
-                                current_form, head_gender, pos)
+
+                            head_concept = self.concept_handler.resolve_concept(
+                                head_lemma, self)
+                            if head_concept:
+                                head_word, h_type, _ = head_concept
+                                if h_type == 'unique':
+                                    head_target = self.concept_handler.mappings.get(
+                                        head_lemma)
+                                else:
+                                    head_target = None
+                                    head_conlang_word = head_word
+                            else:
+                                head_target = head_lemma
+
+                            if head_target:
+                                if head_target not in self.word_cache:
+                                    self._generate_deterministic_word(
+                                        head_target)
+                                head_conlang_word = self._get_word_form(
+                                    head_target)
+
+                            if head_conlang_word:
+                                head_gender = self.gender_handler.infer_gender(
+                                    head_conlang_word)
+                                current_form = self.gender_handler.apply_agreement(
+                                    current_form, head_gender, pos)
                 is_topic = False
                 if topic_enabled and topic_idx is not None:
                     if func['index'] == topic_idx:

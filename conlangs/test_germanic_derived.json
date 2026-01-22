@@ -1,7 +1,7 @@
 {
   "id": "test_germanic_derived",
-  "name": "Teste Germânico (Alemão-like)",
-  "description": "Conlang de teste para tronco germânico, com similaridade ao Holandês.",
+  "name": "Teste Germ\u00e2nico (Alem\u00e3o-like)",
+  "description": "Conlang de teste para tronco germ\u00e2nico, com similaridade ao Holand\u00eas.",
   "linguistic_family": "linguistic_trunk_germanic.json",
   "family_node": "high-german",
   "branch_id": "high-german",
@@ -26,13 +26,55 @@
   "semantic_fields": {
     "enabled": true
   },
+  "abstract_concepts": {
+    "enabled": true,
+    "mappings": {
+      "democracia": "C_DEMOCRACY",
+      "saudade": "C_SAUDADE",
+      "computador": "C_COMPUTER"
+    },
+    "definitions": {
+      "C_DEMOCRACY": {
+        "type": "composition",
+        "components": [
+          "povo",
+          "poder"
+        ],
+        "connector": "o"
+      },
+      "C_COMPUTER": {
+        "type": "composition",
+        "components": [
+          "mente",
+          "m\u00e1quina"
+        ],
+        "connector": ""
+      },
+      "C_SAUDADE": {
+        "type": "unique",
+        "description": "Sentimento profundo de melancolia e desejo pela aus\u00eancia de algo ou algu\u00e9m."
+      }
+    }
+  },
   "lexical_registers": {
     "enabled": true,
     "default_fallback": "common",
     "registers": [
-      {"name": "formal", "chance": 0.3, "mutation_factor": 1},
-      {"name": "vulgar", "chance": 0.1, "mutation_factor": 5},
-      {"name": "archaic", "chance": 0.05, "mutation_factor": 3}
+      {
+        "name": "formal",
+        "chance": 0.3,
+        "mutation_factor": 1
+      },
+      {
+        "name": "vulgar",
+        "chance": 0.1,
+        "mutation_factor": 5
+      },
+      {
+        "name": "archaic",
+        "chance": 0.05,
+        "mutation_factor": 3
+      }
     ]
   },
   "style": {
@@ -69,12 +111,16 @@
     "enabled": true,
     "rules": [
       {
-        "features": ["Tense=Past"],
+        "features": [
+          "Tense=Past"
+        ],
         "marker": "te",
         "type": "suffix"
       },
       {
-        "features": ["Person=1"],
+        "features": [
+          "Person=1"
+        ],
         "marker": "e",
         "type": "suffix"
       }

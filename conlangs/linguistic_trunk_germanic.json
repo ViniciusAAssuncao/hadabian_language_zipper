@@ -1,6 +1,6 @@
 {
   "family_id": "germanic",
-  "description": "Tronco das línguas germânicas, com ancestrais proto e branches.",
+  "description": "Tronco das l\u00ednguas germ\u00e2nicas, com ancestrais proto e branches.",
   "proto_languages": [
     {
       "id": "proto-indo-european",
@@ -14,7 +14,11 @@
       "agglutination_strength": 0.9,
       "gender_system": {
         "enabled": true,
-        "genders": ["masculine", "feminine", "neuter"],
+        "genders": [
+          "masculine",
+          "feminine",
+          "neuter"
+        ],
         "default": "masculine"
       }
     },
@@ -22,23 +26,26 @@
       "id": "proto-germanic",
       "parent_id": "proto-indo-european",
       "level": 1,
-      "description": "Proto-Germânico, derivado do PIE.",
+      "description": "Proto-Germ\u00e2nico, derivado do PIE.",
       "shared_phonotactics": {
         "vowels": "aeiou",
-        "consonants": "ptkbdgmnŋhrlfθsχ"
+        "consonants": "ptkbdgmn\u014bhrlf\u03b8s\u03c7"
       },
       "shared_lexicon_strength": 0.5,
       "agglutination_strength": 0.8,
-      "reconstructions": ["*dagaz", "*fader"]
+      "reconstructions": [
+        "*dagaz",
+        "*fader"
+      ]
     },
     {
       "id": "west-germanic",
       "parent_id": "proto-germanic",
       "level": 2,
-      "description": "Germânico Ocidental.",
+      "description": "Germ\u00e2nico Ocidental.",
       "shared_phonotactics": {
         "vowels": "aeiouy",
-        "consonants": "ptkbdgmnŋhrlfθsχv"
+        "consonants": "ptkbdgmn\u014bhrlf\u03b8s\u03c7v"
       },
       "shared_lexicon_strength": 0.7,
       "agglutination_strength": 0.7
@@ -47,9 +54,9 @@
       "id": "north-germanic",
       "parent_id": "proto-germanic",
       "level": 2,
-      "description": "Germânico Nórdico.",
+      "description": "Germ\u00e2nico N\u00f3rdico.",
       "shared_phonotactics": {
-        "vowels": "aeiouyøå",
+        "vowels": "aeiouy\u00f8\u00e5",
         "consonants": "ptkbdgmnrsfvjh"
       },
       "shared_lexicon_strength": 0.65,
@@ -60,14 +67,14 @@
     {
       "id": "high-german",
       "parent_id": "west-germanic",
-      "description": "Alto Germânico.",
+      "description": "Alto Germ\u00e2nico.",
       "shared_lexicon_strength": 0.8,
       "agglutination_strength": 0.6
     },
     {
       "id": "weser-rhine",
       "parent_id": "west-germanic",
-      "description": "Weser-Reno Germânico.",
+      "description": "Weser-Reno Germ\u00e2nico.",
       "shared_lexicon_strength": 0.75,
       "agglutination_strength": 0.5
     }
@@ -92,10 +99,26 @@
   "lexical_registers_defaults": {
     "enabled": true,
     "registers": [
-      {"name": "formal", "chance": 0.2, "mutation_factor": 1},
-      {"name": "informal", "chance": 0.2, "mutation_factor": 2},
-      {"name": "archaic", "chance": 0.05, "mutation_factor": 3},
-      {"name": "poetic", "chance": 0.1, "mutation_factor": 4}
+      {
+        "name": "formal",
+        "chance": 0.2,
+        "mutation_factor": 1
+      },
+      {
+        "name": "informal",
+        "chance": 0.2,
+        "mutation_factor": 2
+      },
+      {
+        "name": "archaic",
+        "chance": 0.05,
+        "mutation_factor": 3
+      },
+      {
+        "name": "poetic",
+        "chance": 0.1,
+        "mutation_factor": 4
+      }
     ]
   }
 }
