@@ -3,7 +3,7 @@ import hashlib
 from pathlib import Path
 import re
 import random
-from typing import List, Dict, Optional, Tuple, Set
+from typing import List, Dict, Optional, Tuple, Set, Union
 from syntax_engine import SyntaxEngine, SyntacticFunction
 from morphosyntax_analyzer import (
     DependencyParser, ConstituentAnalyzer, ClauseSegmenter,
@@ -514,7 +514,10 @@ class OriginalLanguageEngine:
         self.mutation_handler = ConsonantMutationHandler(self.profile)
         self.gender_handler = GenderHandler(self.profile)
         self.functional_config = self.profile.get('functional_particles', {})
-        self.word_cache: Dict[str, str] = {}
+        self.lexical_registers = self.profile.get('lexical_registers', {})
+        if not self.lexical_registers and 'lexical_registers_defaults' in self.profile:
+            self.lexical_registers = self.profile['lexical_registers_defaults']
+        self.word_cache: Dict[str, Union[str, Dict]] = {}
         self.load_word_cache()
 
     def _load_and_merge_family(self, family_path: Path):
@@ -564,6 +567,8 @@ class OriginalLanguageEngine:
                 self.profile['pidgin_rules'] = node['pidgin_rules']
             if 'dialect_variation' in node and 'dialect_variation' not in self.profile:
                 self.profile['dialect_variation'] = node['dialect_variation']
+            if 'lexical_registers_defaults' in node and 'lexical_registers_defaults' not in self.profile:
+                self.profile['lexical_registers_defaults'] = node['lexical_registers_defaults']
         if 'agglutination_strength' not in self.profile:
             self.profile['agglutination_strength'] = 1.0
 
@@ -593,6 +598,23 @@ class OriginalLanguageEngine:
         cache_file = cache_dir / f"{self.profile_id}_words.json"
         with open(cache_file, 'w', encoding='utf-8') as f:
             json.dump(self.word_cache, f, indent=2, ensure_ascii=False)
+
+    def _get_word_form(self, lemma: str, tags: List[str] = None) -> str:
+        entry = self.word_cache.get(lemma)
+        if not entry:
+            return self._generate_deterministic_word(lemma)
+        if isinstance(entry, str):
+            return entry
+        if isinstance(entry, dict):
+            if tags:
+                synsets = entry.get('synsets', [])
+                for syn in synsets:
+                    syn_tags = syn.get('tags', [])
+                    for tag in tags:
+                        if tag in syn_tags:
+                            return syn.get('word', entry.get('default'))
+            return entry.get('default')
+        return str(entry)
 
     def process_text(self, text: str) -> str:
         reordered_text, functions_info = self.syntax_engine.process_text(text)
@@ -637,13 +659,13 @@ class OriginalLanguageEngine:
                     translated_word = ""
                     if syntactic_func == SyntacticFunction.QUANTIFIER:
                         translated_word = mapping.get(
-                            'noun_word', self._generate_deterministic_word(f'{raw_lemma}_quant'))
+                            'noun_word', self._get_word_form(f'{raw_lemma}_quant'))
                     elif syntactic_func == SyntacticFunction.VERB_PARTICLE:
                         translated_word = mapping.get(
-                            'verb_word', self._generate_deterministic_word(f'{raw_lemma}_verb'))
+                            'verb_word', self._get_word_form(f'{raw_lemma}_verb'))
                     elif syntactic_func == SyntacticFunction.INTENSIFIER:
                         translated_word = mapping.get(
-                            'adj_word', self._generate_deterministic_word(f'{raw_lemma}_intens'))
+                            'adj_word', self._get_word_form(f'{raw_lemma}_intens'))
                     if translated_word:
                         if self.mutation_handler.enabled:
                             prev_word = translated_words[-1] if translated_words else None
@@ -685,10 +707,13 @@ class OriginalLanguageEngine:
                                 lemma_pos, current_pos)
                             break
                 translated_root = None
+                context_tags = []
+                if self.lexical_registers.get('enabled', False):
+                    pass
                 if target_lemma not in self.word_cache:
-                    self.word_cache[target_lemma] = self._generate_deterministic_word(
-                        target_lemma)
-                translated_root = self.word_cache[target_lemma]
+                    self._generate_deterministic_word(target_lemma)
+                translated_root = self._get_word_form(
+                    target_lemma, context_tags)
                 current_form = translated_root
                 if applied_derivation_rule:
                     current_form = self.affix_handler.apply_affix(
@@ -710,9 +735,9 @@ class OriginalLanguageEngine:
                                     head_lemma, head_func)
                             head_target = head_lemma
                             if head_target not in self.word_cache:
-                                self.word_cache[head_target] = self._generate_deterministic_word(
-                                    head_target)
-                            head_conlang_word = self.word_cache[head_target]
+                                self._generate_deterministic_word(head_target)
+                            head_conlang_word = self._get_word_form(
+                                head_target)
                             head_gender = self.gender_handler.infer_gender(
                                 head_conlang_word)
                             current_form = self.gender_handler.apply_agreement(
@@ -826,61 +851,14 @@ class OriginalLanguageEngine:
                     chars[idx_to_mutate] = new_char
         return "".join(chars)
 
-    def _generate_deterministic_word(self, word: str) -> str:
-        clean_word = "".join(filter(str.isalpha, word.lower()))
-        if not clean_word:
-            return word
-        manual_target = self.false_cognate_handler.get_manual_target(
-            clean_word)
-        collision_bucket = self.false_cognate_handler.should_collide_naturally(
-            clean_word, self.global_seed)
-        if manual_target:
-            if manual_target in self.word_cache:
-                base_word = self.word_cache[manual_target]
-            else:
-                base_word = self._generate_deterministic_word(manual_target)
-            mutation_seed = int(hashlib.sha256(
-                f"{clean_word}_manual_mut_{self.global_seed}".encode()).hexdigest(), 16)
-            return self._mutate_word(base_word, mutation_seed)
-        elif collision_bucket is not None:
-            phantom_base_key = f"PHANTOM_BUCKET_{collision_bucket}"
-            if phantom_base_key in self.word_cache:
-                base_word = self.word_cache[phantom_base_key]
-            else:
-                base_word = self._generate_deterministic_word(phantom_base_key)
-                self.word_cache[phantom_base_key] = base_word
-            mutation_seed = int(hashlib.sha256(
-                f"{clean_word}_nat_mut_{self.global_seed}".encode()).hexdigest(), 16)
-            return self._mutate_word(base_word, mutation_seed)
-        root_semantic = self.semantic_handler.get_semantic_root(clean_word)
-        base_word_str = clean_word
-        is_derived = False
-        if root_semantic and root_semantic != clean_word:
-            if root_semantic in self.word_cache:
-                base_conlang_word = self.word_cache[root_semantic]
-            else:
-                base_conlang_word = self._generate_deterministic_word(
-                    root_semantic)
-                self.word_cache[root_semantic] = base_conlang_word
-            base_word_str = base_conlang_word
-            is_derived = True
-        input_str = f"{base_word_str}_{self.global_seed}_{self.profile_id}"
-        using_family_base = False
-        if self.shared_base_strength > 0 and self.family_id and not is_derived:
-            input_str = f"{clean_word}_{self.family_id}"
-            using_family_base = True
-        elif not is_derived:
-            input_str = f"{clean_word}_{self.global_seed}_{self.profile_id}"
-        hash_obj = hashlib.sha256(input_str.encode())
-        hash_int = int(hash_obj.hexdigest(), 16)
-        import random
-        random.seed(hash_int)
-        if is_derived:
+    def _generate_word_from_seed(self, clean_word: str, seed: int, is_derived: bool = False, base_conlang_word: str = "") -> str:
+        random.seed(seed)
+        if is_derived and base_conlang_word:
             split_idx = max(1, int(len(base_conlang_word) * 0.6))
             prefix = base_conlang_word[:split_idx]
             suffix_seed = int(hashlib.sha256(
                 clean_word.encode()).hexdigest(), 16)
-            random.seed(hash_int + suffix_seed)
+            random.seed(seed + suffix_seed)
             generated_word = prefix
             template = random.choice(self.templates)
             in_onset = True
@@ -919,6 +897,7 @@ class OriginalLanguageEngine:
                     in_onset = False
                     prev_consonant = None
             return generated_word
+
         num_syllables = random.randint(
             self.phonotactics.get('min_syllables', 1),
             self.phonotactics.get('max_syllables', 3)
@@ -966,15 +945,151 @@ class OriginalLanguageEngine:
                         generated_word += random.choice(list(self.vowels))
                     in_onset = False
                     prev_consonant = None
-        if using_family_base:
-            mutation_chance = 1.0 - self.shared_base_strength
-            mutation_seed_base = f"{clean_word}_{self.global_seed}_mutation"
-            mut_hash = int(hashlib.sha256(
-                mutation_seed_base.encode()).hexdigest(), 16)
-            rng_mut = random.Random(mut_hash)
-            if rng_mut.random() < mutation_chance:
-                generated_word = self._mutate_word(generated_word, mut_hash)
-        return generated_word if generated_word else word
+        return generated_word
+
+    def _generate_deterministic_word(self, word: str) -> str:
+        clean_word = "".join(filter(str.isalpha, word.lower()))
+        if not clean_word:
+            return word
+
+        entry = {
+            "lemma": clean_word,
+            "default": "",
+            "synsets": []
+        }
+
+        manual_target = self.false_cognate_handler.get_manual_target(
+            clean_word)
+        collision_bucket = self.false_cognate_handler.should_collide_naturally(
+            clean_word, self.global_seed)
+
+        base_word = ""
+        is_manual = False
+
+        if manual_target:
+            if manual_target in self.word_cache:
+                target_entry = self.word_cache[manual_target]
+                if isinstance(target_entry, dict):
+                    base_word = target_entry.get("default", "")
+                else:
+                    base_word = target_entry
+            else:
+                base_word = self._generate_deterministic_word(manual_target)
+                target_entry = self.word_cache[manual_target]
+                if isinstance(target_entry, dict):
+                    base_word = target_entry.get("default", "")
+                else:
+                    base_word = target_entry
+
+            mutation_seed = int(hashlib.sha256(
+                f"{clean_word}_manual_mut_{self.global_seed}".encode()).hexdigest(), 16)
+            base_word = self._mutate_word(base_word, mutation_seed)
+            is_manual = True
+
+        elif collision_bucket is not None:
+            phantom_base_key = f"PHANTOM_BUCKET_{collision_bucket}"
+            if phantom_base_key in self.word_cache:
+                phantom_entry = self.word_cache[phantom_base_key]
+                if isinstance(phantom_entry, dict):
+                    base_word = phantom_entry.get("default", "")
+                else:
+                    base_word = phantom_entry
+            else:
+                base_word = self._generate_deterministic_word(phantom_base_key)
+                if phantom_base_key in self.word_cache:
+                    phantom_entry = self.word_cache[phantom_base_key]
+                    if isinstance(phantom_entry, dict):
+                        base_word = phantom_entry.get("default", "")
+                    else:
+                        base_word = phantom_entry
+
+            mutation_seed = int(hashlib.sha256(
+                f"{clean_word}_nat_mut_{self.global_seed}".encode()).hexdigest(), 16)
+            base_word = self._mutate_word(base_word, mutation_seed)
+            is_manual = True
+
+        if not is_manual:
+            root_semantic = self.semantic_handler.get_semantic_root(clean_word)
+            base_word_str = clean_word
+            is_derived = False
+            base_conlang_word = ""
+
+            if root_semantic and root_semantic != clean_word:
+                if root_semantic in self.word_cache:
+                    root_entry = self.word_cache[root_semantic]
+                    if isinstance(root_entry, dict):
+                        base_conlang_word = root_entry.get("default", "")
+                    else:
+                        base_conlang_word = root_entry
+                else:
+                    self._generate_deterministic_word(root_semantic)
+                    if root_semantic in self.word_cache:
+                        root_entry = self.word_cache[root_semantic]
+                        if isinstance(root_entry, dict):
+                            base_conlang_word = root_entry.get("default", "")
+                        else:
+                            base_conlang_word = root_entry
+
+                base_word_str = base_conlang_word
+                is_derived = True
+
+            input_str = f"{base_word_str}_{self.global_seed}_{self.profile_id}"
+            using_family_base = False
+
+            if self.shared_base_strength > 0 and self.family_id and not is_derived:
+                input_str = f"{clean_word}_{self.family_id}"
+                using_family_base = True
+            elif not is_derived:
+                input_str = f"{clean_word}_{self.global_seed}_{self.profile_id}"
+
+            hash_obj = hashlib.sha256(input_str.encode())
+            hash_int = int(hash_obj.hexdigest(), 16)
+
+            base_word = self._generate_word_from_seed(
+                clean_word, hash_int, is_derived, base_conlang_word)
+
+            if using_family_base:
+                mutation_chance = 1.0 - self.shared_base_strength
+                mutation_seed_base = f"{clean_word}_{self.global_seed}_mutation"
+                mut_hash = int(hashlib.sha256(
+                    mutation_seed_base.encode()).hexdigest(), 16)
+                rng_mut = random.Random(mut_hash)
+                if rng_mut.random() < mutation_chance:
+                    base_word = self._mutate_word(base_word, mut_hash)
+
+        base_word = base_word if base_word else word
+        entry["default"] = base_word
+        entry["synsets"].append(
+            {"word": base_word, "tags": ["common", "neutral"], "affinity": 1.0})
+
+        if self.lexical_registers.get('enabled', False):
+            registers = self.lexical_registers.get('registers', [])
+            for reg in registers:
+                name = reg.get('name')
+                chance = reg.get('chance', 0.0)
+                mutation_factor = reg.get('mutation_factor', 1)
+
+                reg_seed_str = f"{clean_word}_{name}_{self.global_seed}"
+                reg_hash = int(hashlib.sha256(
+                    reg_seed_str.encode()).hexdigest(), 16)
+                reg_rng = random.Random(reg_hash)
+
+                if reg_rng.random() < chance:
+                    variant_word = base_word
+                    for _ in range(mutation_factor):
+                        mutation_seed = reg_rng.randint(0, 999999)
+                        variant_word = self._mutate_word(
+                            variant_word, mutation_seed)
+
+                    if variant_word != base_word:
+                        entry["synsets"].append({
+                            "word": variant_word,
+                            "tags": [name],
+                            "affinity": 0.9 - (mutation_factor * 0.1)
+                        })
+
+        self.word_cache[clean_word] = entry
+        return base_word
 
     def analyze_sentence_structure(self, text: str) -> Dict:
         reordered_text, functions_info = self.syntax_engine.process_text(text)

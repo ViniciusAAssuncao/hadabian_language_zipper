@@ -24,6 +24,12 @@
   "semantic_fields": {
     "enabled": true
   },
+  "lexical_registers": {
+    "enabled": true,
+    "registers": [
+      {"name": "poetic", "chance": 0.4, "mutation_factor": 7}
+    ]
+  },
   "style": {
     "capitalization": true
   }

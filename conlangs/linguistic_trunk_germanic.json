@@ -84,5 +84,14 @@
   "dialect_variation": {
     "enabled": true,
     "variation_strength": 0.2
+  },
+  "lexical_registers_defaults": {
+    "enabled": true,
+    "registers": [
+      {"name": "formal", "chance": 0.2, "mutation_factor": 1},
+      {"name": "informal", "chance": 0.2, "mutation_factor": 2},
+      {"name": "archaic", "chance": 0.05, "mutation_factor": 3},
+      {"name": "poetic", "chance": 0.1, "mutation_factor": 4}
+    ]
   }
 }

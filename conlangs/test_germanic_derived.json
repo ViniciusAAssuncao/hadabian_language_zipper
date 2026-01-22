@@ -26,6 +26,15 @@
   "semantic_fields": {
     "enabled": true
   },
+  "lexical_registers": {
+    "enabled": true,
+    "default_fallback": "common",
+    "registers": [
+      {"name": "formal", "chance": 0.3, "mutation_factor": 1},
+      {"name": "vulgar", "chance": 0.1, "mutation_factor": 5},
+      {"name": "archaic", "chance": 0.05, "mutation_factor": 3}
+    ]
+  },
   "style": {
     "capitalization": true
   },
