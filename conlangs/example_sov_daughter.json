@@ -1,0 +1,31 @@
+{
+  "id": "example_sov_daughter",
+  "parent_language": "proto_omni.json",
+  "name": "Exemplo SOV (Herdeira)",
+  "description": "Herda fonologia do Proto-Omni, mas muda a ordem para SOV e adiciona harmonia vocálica.",
+  "word_order": "SOV",
+  "subordinate_word_order": "SOV",
+  "vowel_harmony": {
+    "enabled": true,
+    "groups": {
+      "front": "ei",
+      "back": "aou"
+    },
+    "rules": [
+      {
+        "input": "a",
+        "map": {
+          "front": "e",
+          "back": "a"
+        }
+      }
+    ]
+  },
+  "case_system": {
+    "markers": {
+      "ergative": "ka",
+      "absolutive": ""
+    },
+    "alignment": "ergative-absolutive"
+  }
+}

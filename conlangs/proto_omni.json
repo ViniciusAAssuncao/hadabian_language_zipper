@@ -1,0 +1,66 @@
+{
+  "id": "proto_omni",
+  "name": "Proto-Omni (Língua Pai)",
+  "description": "Base fonológica e gramatical para a família Omni.",
+  "global_seed": 42857,
+  "phonotactics": {
+    "vowels": "aeiou",
+    "consonants": "ptkmnfshlrv",
+    "syllable_templates": ["CV", "CVC", "V", "VC"],
+    "min_syllables": 1,
+    "max_syllables": 3,
+    "epenthesis_vowel": "i",
+    "diphthongs": ["ai", "ei", "ou", "au"],
+    "sonority_hierarchy": {
+      "enabled": true,
+      "scale": {
+        "p": 0, "t": 0, "k": 0,
+        "f": 2, "s": 2, "h": 2,
+        "m": 3, "n": 3,
+        "l": 4, "r": 4,
+        "v": 2
+      }
+    }
+  },
+  "stress_system": {
+    "enabled": true,
+    "type": "fixed",
+    "position": "penultimate",
+    "graphic_accent": true
+  },
+  "semantic_fields": {
+    "enabled": true,
+    "auto_detect": true,
+    "manual_groups": {
+      "rio": "água",
+      "lago": "água",
+      "mar": "água"
+    }
+  },
+  "case_system": {
+    "enabled": true,
+    "preposition_handling": "replace",
+    "markers": {
+      "nominative": "",
+      "accusative": "ma",
+      "genitive": "sa",
+      "dative": "ni",
+      "locative": "la"
+    }
+  },
+  "tam_system": {
+    "enabled": true,
+    "rules": [
+      {
+        "features": ["Tense=Past"],
+        "marker": "da",
+        "type": "suffix"
+      },
+      {
+        "features": ["Tense=Fut"],
+        "marker": "go",
+        "type": "particle_before"
+      }
+    ]
+  }
+}
