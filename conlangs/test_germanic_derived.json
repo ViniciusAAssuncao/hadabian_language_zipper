@@ -1,0 +1,30 @@
+{
+  "id": "test_germanic_derived",
+  "name": "Nova Língua Germânica de Teste",
+  "description": "Língua derivada do tronco germânico para testar herança de propriedades.",
+  "linguistic_family": "linguistic_trunk_germanic.json",
+  "family_node": "high-german",
+  "word_order": "SVO",
+  "drop_articles": false,
+  "alignment": "nominative-accusative",
+  "global_seed": 55992,
+  "phonotactics": {
+    "syllable_templates": [
+      "CVC",
+      "CV",
+      "VC"
+    ],
+    "min_syllables": 1,
+    "max_syllables": 4
+  },
+  "semantic_fields": {
+    "enabled": true,
+    "manual_groups": {
+      "água": "wasser",
+      "fogo": "feuer"
+    }
+  },
+  "style": {
+    "capitalization": true
+  }
+}

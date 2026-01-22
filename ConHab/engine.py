@@ -526,6 +526,14 @@ class OriginalLanguageEngine:
     def __init__(self, profile_path: str):
         with open(profile_path, 'r', encoding='utf-8') as f:
             self.profile = json.load(f)
+
+        if 'linguistic_family' in self.profile:
+            family_filename = self.profile['linguistic_family']
+            path_obj = Path(profile_path)
+            family_path = path_obj.parent / family_filename
+            if family_path.exists():
+                self._load_and_merge_family(family_path)
+
         self.profile_id = self.profile.get('id', 'unknown')
         self.global_seed = self.profile.get('global_seed', 12345)
 
@@ -565,6 +573,52 @@ class OriginalLanguageEngine:
         self.functional_config = self.profile.get('functional_particles', {})
         self.word_cache: Dict[str, str] = {}
         self.load_word_cache()
+
+    def _load_and_merge_family(self, family_path: Path):
+        try:
+            with open(family_path, 'r', encoding='utf-8') as f:
+                family_data = json.load(f)
+        except:
+            return
+
+        target_node_id = self.profile.get('family_node')
+        if not target_node_id:
+            return
+
+        nodes = {}
+        for p in family_data.get('proto_languages', []):
+            nodes[p['id']] = p
+        for b in family_data.get('branches', []):
+            nodes[b['id']] = b
+
+        if target_node_id not in nodes:
+            return
+
+        chain = []
+        current_id = target_node_id
+        while current_id:
+            if current_id in nodes:
+                node = nodes[current_id]
+                chain.append(node)
+                current_id = node.get('parent_id')
+            else:
+                break
+
+        chain.reverse()
+
+        if 'phonotactics' not in self.profile:
+            self.profile['phonotactics'] = {}
+
+        for node in chain:
+            shared_ph = node.get('shared_phonotactics', {})
+            if 'vowels' in shared_ph and 'vowels' not in self.profile['phonotactics']:
+                self.profile['phonotactics']['vowels'] = shared_ph['vowels']
+
+            if 'consonants' in shared_ph and 'consonants' not in self.profile['phonotactics']:
+                self.profile['phonotactics']['consonants'] = shared_ph['consonants']
+
+            if 'shared_lexicon_strength' in node:
+                self.profile['shared_lexicon_strength'] = node['shared_lexicon_strength']
 
     def _infer_templates(self) -> List[str]:
         rng = random.Random(self.global_seed + 999)
