@@ -85,6 +85,10 @@
     "enabled": true,
     "variation_strength": 0.2
   },
+  "diachronic_settings": {
+    "default_divergence_factor": 0.1,
+    "max_synonym_variants": 3
+  },
   "lexical_registers_defaults": {
     "enabled": true,
     "registers": [

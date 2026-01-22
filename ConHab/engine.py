@@ -468,6 +468,94 @@ class ReduplicationHandler:
         return ""
 
 
+class SynonymHandler:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.seed = profile.get('global_seed', 12345)
+        self.divergence_factor = profile.get('divergence_factor', 0.0)
+
+        self.diachronic_settings = profile.get('diachronic_settings', {})
+        if not self.diachronic_settings:
+            linguistic_family_path = profile.get('linguistic_family')
+            if linguistic_family_path:
+                pass
+            self.diachronic_settings = {
+                'default_divergence_factor': 0.1, 'max_synonym_variants': 3}
+
+        self.max_variants = self.diachronic_settings.get(
+            'max_synonym_variants', 3)
+
+    def get_divergent_variant_suffix(self, lemma: str) -> str:
+        if self.divergence_factor <= 0:
+            return ""
+
+        input_str = f"{lemma}_divergence_check_{self.seed}"
+        hash_obj = hashlib.sha256(input_str.encode())
+        hash_val = int(hash_obj.hexdigest(), 16)
+        probability = (hash_val % 1000) / 1000.0
+
+        if probability < self.divergence_factor:
+            variant_seed_str = f"{lemma}_variant_select_{self.seed}"
+            var_hash = int(hashlib.sha256(
+                variant_seed_str.encode()).hexdigest(), 16)
+            variant_idx = (var_hash % (self.max_variants - 1)) + 1
+            return f"_var{variant_idx}"
+
+        return ""
+
+
+class LoanwordHandler:
+    def __init__(self, profile: Dict, phonology_handler: PhonologyHandler):
+        self.profile = profile
+        self.config = profile.get('loanword_policy', {})
+        self.enabled = self.config.get('enabled', False)
+        self.strategy = self.config.get('strategy_preference', 'adaptation')
+        self.calque_chance = self.config.get('calque_chance', 0.2)
+        self.phonology_handler = phonology_handler
+        self.seed = profile.get('global_seed', 12345)
+
+    def process_loanword(self, foreign_word: str, definition_parts: List[str] = None) -> Tuple[str, str]:
+        if not self.enabled:
+            return self._simple_adaptation(foreign_word), "simple_adapt"
+
+        rng_input = f"{foreign_word}_loan_{self.seed}"
+        rng_val = int(hashlib.sha256(rng_input.encode()).hexdigest(), 16)
+        prob = (rng_val % 1000) / 1000.0
+
+        if definition_parts and prob < self.calque_chance:
+            return self._create_calque(definition_parts), "calque"
+
+        return self._phonological_adaptation(foreign_word), "adaptation"
+
+    def _create_calque(self, parts: List[str]) -> str:
+        return "_".join([p.upper() for p in parts])
+
+    def _phonological_adaptation(self, word: str) -> str:
+        adapted = ""
+        native_cons = self.phonology_handler.consonants
+        native_vowels = self.phonology_handler.vowels
+
+        if not native_cons or not native_vowels:
+            return word
+
+        for char in word.lower():
+            if char in native_cons or char in native_vowels:
+                adapted += char
+            else:
+                target_pool = native_vowels if char in 'aeiouy' else native_cons
+                if not target_pool:
+                    target_pool = native_cons + native_vowels
+
+                char_hash = int(hashlib.sha256(char.encode()).hexdigest(), 16)
+                idx = char_hash % len(target_pool)
+                adapted += target_pool[idx]
+
+        return adapted
+
+    def _simple_adaptation(self, word: str) -> str:
+        return re.sub(r'[^a-zA-Z]', '', word).lower()
+
+
 class OriginalLanguageEngine:
     def __init__(self, profile_path: str):
         with open(profile_path, 'r', encoding='utf-8') as f:
@@ -513,6 +601,9 @@ class OriginalLanguageEngine:
         self.transitivity_analyzer = TransitivityAnalyzer()
         self.mutation_handler = ConsonantMutationHandler(self.profile)
         self.gender_handler = GenderHandler(self.profile)
+        self.synonym_handler = SynonymHandler(self.profile)
+        self.loanword_handler = LoanwordHandler(
+            self.profile, self.phonology_handler)
         self.functional_config = self.profile.get('functional_particles', {})
         self.lexical_registers = self.profile.get('lexical_registers', {})
         if not self.lexical_registers and 'lexical_registers_defaults' in self.profile:
@@ -528,6 +619,10 @@ class OriginalLanguageEngine:
             return
         if 'family_id' in family_data:
             self.family_id = family_data['family_id']
+
+        if 'diachronic_settings' in family_data:
+            self.profile['diachronic_settings'] = family_data['diachronic_settings']
+
         target_node_id = self.profile.get('family_node')
         if not target_node_id:
             return
@@ -1033,14 +1128,18 @@ class OriginalLanguageEngine:
                 base_word_str = base_conlang_word
                 is_derived = True
 
+            divergent_suffix = self.synonym_handler.get_divergent_variant_suffix(
+                base_word_str)
+            base_word_str += divergent_suffix
+
             input_str = f"{base_word_str}_{self.global_seed}_{self.profile_id}"
             using_family_base = False
 
-            if self.shared_base_strength > 0 and self.family_id and not is_derived:
+            if self.shared_base_strength > 0 and self.family_id and not is_derived and not divergent_suffix:
                 input_str = f"{clean_word}_{self.family_id}"
                 using_family_base = True
             elif not is_derived:
-                input_str = f"{clean_word}_{self.global_seed}_{self.profile_id}"
+                input_str = f"{clean_word}{divergent_suffix}_{self.global_seed}_{self.profile_id}"
 
             hash_obj = hashlib.sha256(input_str.encode())
             hash_int = int(hash_obj.hexdigest(), 16)
