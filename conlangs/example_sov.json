@@ -578,6 +578,9 @@
       }
     ]
   },
+  "numeric_handling": {
+    "ignore_digits": true
+  },
   "style": {
     "capitalization": true
   }

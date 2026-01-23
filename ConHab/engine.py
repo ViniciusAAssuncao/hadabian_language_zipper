@@ -951,6 +951,9 @@ class OriginalLanguageEngine:
         focus_enabled = focus_config.get('enabled', False)
         object_focus_marker = focus_config.get('object_focus_marker', 'ko')
         suppress_case_on_focus = focus_config.get('suppress_case', False)
+        ignore_digits = self.profile.get(
+            'numeric_handling', {}).get('ignore_digits', True)
+
         for sent_data in functions_info:
             ordered_functions = sent_data['functions']
             translated_words = []
@@ -976,6 +979,13 @@ class OriginalLanguageEngine:
                     translated_words.append(orig_word)
                     last_func = func
                     continue
+
+                if ignore_digits and pos == 'NUM':
+                    if re.search(r'\d', orig_word):
+                        translated_words.append(orig_word)
+                        last_func = func
+                        continue
+
                 if syntactic_func in {SyntacticFunction.QUANTIFIER, SyntacticFunction.VERB_PARTICLE, SyntacticFunction.INTENSIFIER}:
                     mapping = self.functional_config.get(raw_lemma, {})
                     translated_word = ""

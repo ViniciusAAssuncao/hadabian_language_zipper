@@ -184,8 +184,10 @@ class WordOrderMapper:
     def _legacy_reorder(self, chunks, target_order, adjunct_position, adjunct_chunks, core_chunks, modifier_chunks):
         final_closers = []
         clean_chunks = []
-        for c in chunks:
-            if c.function == SyntacticFunction.PUNCT and c.words[0][0] in {'.', '!', '?'}:
+        last_chunk_idx = len(chunks) - 1
+
+        for i, c in enumerate(chunks):
+            if c.function == SyntacticFunction.PUNCT and c.words[0][0] in {'.', '!', '?'} and i == last_chunk_idx:
                 final_closers.append(c)
 
         ordered_chunks = []
