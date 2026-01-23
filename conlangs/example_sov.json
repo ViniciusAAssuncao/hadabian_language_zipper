@@ -582,6 +582,23 @@
     "ignore_digits": true
   },
   "style": {
-    "capitalization": true
+    "capitalization": true,
+    "punctuation_map": {
+      ".": ".",
+      "!": "!",
+      "?": "?",
+      ",": ",",
+      ";": ";",
+      ":": ":"
+    },
+    "sentence_terminators": [
+      ".",
+      "!",
+      "?"
+    ],
+    "secondary_terminators": [
+      ":",
+      ";"
+    ]
   }
 }

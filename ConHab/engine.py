@@ -954,7 +954,16 @@ class OriginalLanguageEngine:
         ignore_digits = self.profile.get(
             'numeric_handling', {}).get('ignore_digits', True)
 
-        for sent_data in functions_info:
+        capitalization_enabled = self.profile.get(
+            'style', {}).get('capitalization', False)
+        punctuation_map = self.profile.get(
+            'style', {}).get('punctuation_map', {})
+        all_terminators = set(self.profile.get('style', {}).get(
+            'sentence_terminators', ['.', '!', '?']))
+        all_terminators.update(self.profile.get('style', {}).get(
+            'secondary_terminators', [':', ';']))
+
+        for sent_idx, sent_data in enumerate(functions_info):
             ordered_functions = sent_data['functions']
             translated_words = []
             last_func = None
@@ -962,6 +971,9 @@ class OriginalLanguageEngine:
                 ordered_functions)
             topic_idx = self.topicalization_handler.identify_topic(
                 ordered_functions)
+
+            sentence_terminator = None
+
             for func in ordered_functions:
                 orig_word = func.get("word", "")
                 lemma = func.get("lemma", "")
@@ -975,8 +987,13 @@ class OriginalLanguageEngine:
                 clean_word_lower = self._clean_word(orig_word).lower()
                 raw_lemma = lemma if lemma else clean_word_lower
                 raw_lemma = raw_lemma.lower()
+
                 if pos == 'PUNCT':
-                    translated_words.append(orig_word)
+                    mapped_punct = punctuation_map.get(orig_word, orig_word)
+                    if orig_word in all_terminators:
+                        sentence_terminator = mapped_punct
+                        continue
+                    translated_words.append(mapped_punct)
                     last_func = func
                     continue
 
@@ -1120,12 +1137,34 @@ class OriginalLanguageEngine:
                     current_form = current_form.capitalize()
                 translated_words.append(current_form)
                 last_func = func
+
+            if sentence_terminator:
+                translated_words.append(sentence_terminator)
+
+            if capitalization_enabled and translated_words:
+                force_capitalization = True
+
+                for idx, word in enumerate(translated_words):
+                    clean_w = word.strip()
+                    if not clean_w:
+                        continue
+
+                    if force_capitalization:
+                        if len(word) > 0 and not word[0].isupper():
+                            translated_words[idx] = word[0].upper() + word[1:]
+                        force_capitalization = False
+                    if any(clean_w.endswith(t) for t in all_terminators):
+                        force_capitalization = True
+                    else:
+                        force_capitalization = False
+
             final_sentence_tokens = self.syntax_engine._glue_tokens(
                 translated_words, ordered_functions)
             if final_sentence_tokens:
-                first = final_sentence_tokens[0]
-                if first:
-                    final_sentence_tokens[0] = first[0].upper() + first[1:]
+                if capitalization_enabled:
+                    first = final_sentence_tokens[0]
+                    if first:
+                        final_sentence_tokens[0] = first[0].upper() + first[1:]
             final_sentences.append(' '.join(final_sentence_tokens))
         self.save_word_cache()
         return ' '.join(final_sentences)
