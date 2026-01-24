@@ -454,6 +454,10 @@ class AffixHandler:
             'agglutination_strength', 1.0)
         self.seed = profile.get('global_seed', 12345)
 
+        self.morph_config = profile.get('morphological_derivation', {})
+        self.morph_derivation_enabled = self.morph_config.get('enabled', False)
+        self.source_suffixes = self.affix_system.get('source_suffixes', [])
+
     def get_derivation_rule(self, from_pos: str, to_pos: str) -> Optional[Dict]:
         if not self.enabled:
             return None
@@ -484,6 +488,41 @@ class AffixHandler:
             mid = len(word) // 2
             return f"{word[:mid]}{affix}{word[mid:]}"
         return word
+
+    def try_derive_from_source(self, lemma: str, pos: Optional[str], engine_ref) -> Optional[str]:
+        if not self.morph_derivation_enabled:
+            return None
+
+        for rule in self.source_suffixes:
+            suf = rule.get('suffix', '')
+            input_pos = rule.get('input_pos')
+
+            if pos and input_pos and pos != input_pos:
+                continue
+
+            if lemma.endswith(suf):
+                replacement = rule.get('replacement', '')
+                base_source_lemma = lemma[:-len(suf)] + replacement
+
+                if base_source_lemma == lemma:
+                    continue
+
+                target_pos = rule.get('target_pos', 'NOUN')
+
+                base_conlang_word = engine_ref._get_word_form(
+                    base_source_lemma, tags=None, pos=target_pos)
+
+                effective_to_pos = input_pos if input_pos else pos
+                if not effective_to_pos:
+                    continue
+
+                derivation_rule = self.get_derivation_rule(
+                    from_pos=target_pos, to_pos=effective_to_pos)
+
+                if derivation_rule:
+                    return self.apply_affix(base_conlang_word, derivation_rule)
+
+        return None
 
 
 class DegreeHandler:
@@ -903,7 +942,7 @@ class OriginalLanguageEngine:
         self.save_word_cache()
         return entry
 
-    def _get_word_form(self, lemma: str, tags: List[str] = None, force_word: str = None, meta: Dict = None) -> str:
+    def _get_word_form(self, lemma: str, tags: List[str] = None, force_word: str = None, meta: Dict = None, pos: str = None) -> str:
         entry = self.word_cache.get(lemma)
 
         if not entry and force_word:
@@ -935,6 +974,19 @@ class OriginalLanguageEngine:
         if concept_result:
             word, c_type, c_meta = concept_result
             return self._get_word_form(lemma, tags=['concept'], force_word=word, meta=c_meta)
+
+        if self.affix_handler.morph_derivation_enabled:
+            derived_word = self.affix_handler.try_derive_from_source(
+                lemma, pos, self)
+            if derived_word:
+                entry = {
+                    "lemma": lemma,
+                    "default": derived_word,
+                    "synsets": [{"word": derived_word, "tags": ["derived", "morphology"], "affinity": 1.0}],
+                    "origin": "derived"
+                }
+                self.word_cache[lemma] = entry
+                return derived_word
 
         return self._generate_deterministic_word(lemma)
 
@@ -1036,26 +1088,7 @@ class OriginalLanguageEngine:
                         base_lemma_for_translation, func)
                 target_lemma = base_lemma_for_translation
                 current_pos = pos
-                applied_derivation_rule = None
 
-                if self.affix_handler.enabled and not degree_type:
-                    source_suffixes = self.profile.get(
-                        'affix_system', {}).get('source_suffixes', [])
-                    for suffix_rule in source_suffixes:
-                        suf_str = suffix_rule.get('suffix', '')
-                        input_pos = suffix_rule.get('input_pos', 'NOUN')
-                        if current_pos == input_pos and base_lemma_for_translation.endswith(suf_str):
-                            replacement = suffix_rule.get('replacement', '')
-                            possible_stem = base_lemma_for_translation[:-len(
-                                suf_str)] + replacement
-                            target_pos_req = suffix_rule.get(
-                                'target_pos', 'VERB')
-                            target_lemma = possible_stem
-                            lemma_pos = self.syntax_engine.estimate_lemma_pos(
-                                target_lemma)
-                            applied_derivation_rule = self.affix_handler.get_derivation_rule(
-                                lemma_pos, current_pos)
-                            break
                 translated_root = None
                 context_tags = []
                 if self.lexical_registers.get('enabled', False):
@@ -1065,12 +1098,9 @@ class OriginalLanguageEngine:
                     pass
 
                 translated_root = self._get_word_form(
-                    target_lemma, context_tags)
+                    target_lemma, context_tags, pos=current_pos)
                 current_form = translated_root
 
-                if applied_derivation_rule:
-                    current_form = self.affix_handler.apply_affix(
-                        current_form, applied_derivation_rule)
                 if degree_type:
                     current_form = self.degree_handler.apply_degree(
                         current_form, degree_type)

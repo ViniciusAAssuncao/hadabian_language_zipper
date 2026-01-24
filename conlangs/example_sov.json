@@ -477,9 +477,24 @@
       }
     }
   },
+  "morphological_derivation": {
+    "enabled": true
+  },
   "affix_system": {
     "enabled": true,
     "source_suffixes": [
+      {
+        "input_pos": "ADJ",
+        "suffix": "ático",
+        "replacement": "a",
+        "target_pos": "NOUN"
+      },
+      {
+        "input_pos": "ADJ",
+        "suffix": "ico",
+        "replacement": "o",
+        "target_pos": "NOUN"
+      },
       {
         "input_pos": "NOUN",
         "suffix": "dor",
@@ -497,9 +512,33 @@
         "suffix": "mente",
         "replacement": "x",
         "target_pos": "ADJ"
+      },
+      {
+        "input_pos": "ADJ",
+        "suffix": "izado",
+        "replacement": "",
+        "target_pos": "NOUN"
+      },
+      {
+        "input_pos": "VERB",
+        "suffix": "ante",
+        "replacement": "",
+        "target_pos": "NOUN"
+      },
+      {
+        "input_pos": "NOUN",
+        "suffix": "al",
+        "replacement": "e",
+        "target_pos": "ADJ"
       }
     ],
     "derivation_rules": [
+      {
+        "from_pos": "NOUN",
+        "to_pos": "ADJ",
+        "affix": "ka",
+        "position": "suffix"
+      },
       {
         "from_pos": "VERB",
         "to_pos": "NOUN",
