@@ -1,6 +1,6 @@
 {
   "id": "example_sov",
-  "name": "Exemplo SOV com Casos, Harmonia, Mutação e Gênero",
+  "name": "Exemplo SOV com Casos, Harmonia, Mutação e Gênero (Atualizado)",
   "description": "Língua exemplo com ordem SVO na principal e SOV na subordinada, sistema de casos, harmonização vocálica, mutação consonantal e gênero gramatical.",
   "word_order": "SVO",
   "subordinate_word_order": "SOV",
@@ -478,7 +478,13 @@
     }
   },
   "morphological_derivation": {
-    "enabled": true
+    "enabled": true,
+    "max_depth": 3,
+    "exceptions": [
+      "amor",
+      "dor",
+      "sol"
+    ]
   },
   "affix_system": {
     "enabled": true,
@@ -487,49 +493,65 @@
         "input_pos": "ADJ",
         "suffix": "ático",
         "replacement": "a",
-        "target_pos": "NOUN"
+        "target_pos": "NOUN",
+        "priority": 0
       },
       {
         "input_pos": "ADJ",
         "suffix": "ico",
         "replacement": "o",
-        "target_pos": "NOUN"
+        "target_pos": "NOUN",
+        "priority": 0
       },
       {
         "input_pos": "NOUN",
         "suffix": "dor",
         "replacement": "r",
-        "target_pos": "VERB"
+        "target_pos": "VERB",
+        "priority": 0
       },
       {
         "input_pos": "NOUN",
         "suffix": "ção",
         "replacement": "r",
-        "target_pos": "VERB"
+        "target_pos": "VERB",
+        "priority": 0
       },
       {
         "input_pos": "ADV",
         "suffix": "mente",
         "replacement": "x",
-        "target_pos": "ADJ"
+        "target_pos": "ADJ",
+        "priority": 1
       },
       {
         "input_pos": "ADJ",
         "suffix": "izado",
         "replacement": "",
-        "target_pos": "NOUN"
+        "target_pos": "NOUN",
+        "priority": 0
       },
       {
         "input_pos": "VERB",
         "suffix": "ante",
         "replacement": "",
-        "target_pos": "NOUN"
+        "target_pos": "NOUN",
+        "priority": 0
       },
       {
         "input_pos": "NOUN",
         "suffix": "al",
         "replacement": "e",
-        "target_pos": "ADJ"
+        "target_pos": "ADJ",
+        "priority": 0
+      },
+      {
+        "input_pos": "NOUN",
+        "suffix": "o",
+        "replacement": "",
+        "target_pos": "VERB",
+        "min_word_length": 5,
+        "priority": 0
       }
     ],
     "derivation_rules": [

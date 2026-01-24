@@ -456,7 +456,15 @@ class AffixHandler:
 
         self.morph_config = profile.get('morphological_derivation', {})
         self.morph_derivation_enabled = self.morph_config.get('enabled', False)
-        self.source_suffixes = self.affix_system.get('source_suffixes', [])
+        self.max_derivation_depth = self.morph_config.get('max_depth', 3)
+        self.exceptions = set(self.morph_config.get('exceptions', []))
+
+        raw_source_suffixes = self.affix_system.get('source_suffixes', [])
+        self.source_suffixes = sorted(
+            raw_source_suffixes,
+            key=lambda x: x.get('priority', 0),
+            reverse=True
+        )
 
     def get_derivation_rule(self, from_pos: str, to_pos: str) -> Optional[Dict]:
         if not self.enabled:
@@ -489,13 +497,23 @@ class AffixHandler:
             return f"{word[:mid]}{affix}{word[mid:]}"
         return word
 
-    def try_derive_from_source(self, lemma: str, pos: Optional[str], engine_ref) -> Optional[str]:
+    def try_derive_from_source(self, lemma: str, pos: Optional[str], engine_ref, current_depth: int = 0) -> Optional[str]:
         if not self.morph_derivation_enabled:
+            return None
+
+        if current_depth >= self.max_derivation_depth:
+            return None
+
+        if lemma in self.exceptions:
             return None
 
         for rule in self.source_suffixes:
             suf = rule.get('suffix', '')
             input_pos = rule.get('input_pos')
+            min_len = rule.get('min_word_length', 0)
+
+            if len(lemma) < min_len:
+                continue
 
             if pos and input_pos and pos != input_pos:
                 continue
@@ -510,7 +528,7 @@ class AffixHandler:
                 target_pos = rule.get('target_pos', 'NOUN')
 
                 base_conlang_word = engine_ref._get_word_form(
-                    base_source_lemma, tags=None, pos=target_pos)
+                    base_source_lemma, tags=None, pos=target_pos, derivation_depth=current_depth + 1)
 
                 effective_to_pos = input_pos if input_pos else pos
                 if not effective_to_pos:
@@ -942,7 +960,7 @@ class OriginalLanguageEngine:
         self.save_word_cache()
         return entry
 
-    def _get_word_form(self, lemma: str, tags: List[str] = None, force_word: str = None, meta: Dict = None, pos: str = None) -> str:
+    def _get_word_form(self, lemma: str, tags: List[str] = None, force_word: str = None, meta: Dict = None, pos: str = None, derivation_depth: int = 0) -> str:
         entry = self.word_cache.get(lemma)
 
         if not entry and force_word:
@@ -977,7 +995,7 @@ class OriginalLanguageEngine:
 
         if self.affix_handler.morph_derivation_enabled:
             derived_word = self.affix_handler.try_derive_from_source(
-                lemma, pos, self)
+                lemma, pos, self, current_depth=derivation_depth)
             if derived_word:
                 entry = {
                     "lemma": lemma,
