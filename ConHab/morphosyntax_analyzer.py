@@ -53,6 +53,46 @@ class VowelHarmonyHandler:
         return harmonized_suffix
 
 
+class PharyngealizationHandler:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.config = profile.get('pharyngealization', {})
+        self.enabled = self.config.get('enabled', False)
+        self.triggers = set(self.config.get('triggers', []))
+        self.affected_vowels = set(self.config.get('affected_vowels', []))
+        self.lowering_effect = self.config.get('lowering_effect', False)
+        self.mapping = {
+            'i': 'e', 'u': 'o', 'a': 'ɑ',
+            'I': 'E', 'U': 'O', 'A': 'Ɑ',
+            'í': 'é', 'ú': 'ó', 'á': 'ɑ́'
+        }
+
+    def apply_effect(self, word: str) -> str:
+        if not self.enabled or not self.lowering_effect or not word:
+            return word
+
+        word_list = list(word)
+        length = len(word_list)
+
+        for i, char in enumerate(word_list):
+            if char.lower() in self.affected_vowels:
+                triggered = False
+                if i > 0:
+                    prev_char = word_list[i-1].lower()
+                    if prev_char in self.triggers:
+                        triggered = True
+
+                if not triggered and i < length - 1:
+                    next_char = word_list[i+1].lower()
+                    if next_char in self.triggers:
+                        triggered = True
+
+                if triggered:
+                    word_list[i] = self.mapping.get(char, char)
+
+        return "".join(word_list)
+
+
 class ConsonantMutationHandler:
     def __init__(self, profile: Dict):
         self.profile = profile
@@ -63,26 +103,26 @@ class ConsonantMutationHandler:
     def apply_mutation(self, current_word: str, previous_word: Optional[str], previous_func: Optional[Dict]) -> str:
         if not self.enabled or not current_word:
             return current_word
-        
+
         if not previous_word and not previous_func:
             return current_word
 
         processed_word = current_word
-        
+
         for rule in self.rules:
             triggers = rule.get('triggers', {})
             mutations = rule.get('mutations', {})
             triggered = False
-            
+
             trigger_words = set(w.lower() for w in triggers.get('words', []))
             if previous_word and previous_word.lower() in trigger_words:
                 triggered = True
-            
+
             if not triggered and previous_func:
                 trigger_pos = set(triggers.get('pos', []))
                 if previous_func.get('pos') in trigger_pos:
                     triggered = True
-            
+
             if not triggered and previous_word:
                 trigger_ending_chars = triggers.get('ending_chars', [])
                 if trigger_ending_chars:
@@ -90,14 +130,14 @@ class ConsonantMutationHandler:
                         if previous_word.lower().endswith(char):
                             triggered = True
                             break
-            
+
             if triggered:
                 first_char = processed_word[0]
                 rest = processed_word[1:]
-                
+
                 is_upper = first_char.isupper()
                 lower_char = first_char.lower()
-                
+
                 if lower_char in mutations:
                     new_char = mutations[lower_char]
                     if is_upper:
@@ -167,19 +207,19 @@ class GenderHandler:
     def infer_gender(self, word: str) -> str:
         if not self.enabled or not word:
             return self.default_gender
-        
+
         word_lower = word.lower()
         for rule in self.inference_rules:
             suffix = rule.get('suffix', '')
             if suffix and word_lower.endswith(suffix):
                 return rule.get('gender', self.default_gender)
-        
+
         return self.default_gender
 
     def apply_agreement(self, word: str, target_gender: str, pos: str) -> str:
         if not self.enabled or not target_gender:
             return word
-        
+
         marker_config = self.markers.get(target_gender)
         if not marker_config:
             return word
@@ -201,7 +241,7 @@ class GenderHandler:
             return word + marker
         elif position == 'prefix':
             return marker + word
-        
+
         return word
 
 

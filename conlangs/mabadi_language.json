@@ -150,6 +150,26 @@
             }
         ]
     },
+    "pharyngealization": {
+        "enabled": true,
+        "triggers": [
+            "ṣ",
+            "ṭ",
+            "ḍ",
+            "ʕ",
+            "ħ",
+            "q"
+        ],
+        "affected_vowels": [
+            "a",
+            "i",
+            "u",
+            "í",
+            "ú",
+            "á"
+        ],
+        "lowering_effect": true
+    },
     "consonant_mutation": {
         "enabled": true,
         "rules": [
@@ -1185,32 +1205,32 @@
     "conjunction_system": {
         "enabled": true,
         "coordinating": {
-            "u": "e",
-            "jew": "ou",
-            "iżda": "mas",
-            "imma": "porém",
-            "għax": "porque"
+            "wa": "e",
+            "ʔaw": "ou",
+            "lākin": "mas",
+            "ʔammā": "porém",
+            "fa": "porque"
         },
         "subordinating": {
-            "li": "que",
-            "meta": "quando",
-            "jekk": "se",
-            "għalkemm": "embora",
-            "sakemm": "até que",
-            "billi": "visto que",
-            "ladarba": "uma vez que"
+            "ʔan": "que",
+            "ḥīna": "quando",
+            "law": "se",
+            "waʔin": "embora",
+            "ḥattā": "até que",
+            "liʔan": "visto que",
+            "baʕdam": "uma vez que"
         }
     },
     "copula_system": {
         "enabled": true,
         "copulas": [
             {
-                "form": "kien",
+                "form": "taq",
                 "type": "past_existential",
                 "conjugates": true
             },
             {
-                "form": "hu",
+                "form": "zu",
                 "type": "present_pronominal",
                 "conjugates": true,
                 "usage": "identificational"
@@ -1272,88 +1292,7 @@
             "semantic_extension": 0.2
         },
         "calque_connector": "ta",
-        "adaptation_strictness": "medium",
-        "source_languages": [
-            {
-                "language": "italian",
-                "domains": [
-                    "maritime",
-                    "trade",
-                    "food",
-                    "administration"
-                ],
-                "influence_strength": 0.7
-            },
-            {
-                "language": "english",
-                "domains": [
-                    "technology",
-                    "science",
-                    "modern_life"
-                ],
-                "influence_strength": 0.5
-            },
-            {
-                "language": "arabic",
-                "domains": [
-                    "religion",
-                    "law",
-                    "literature"
-                ],
-                "influence_strength": 0.9
-            },
-            {
-                "language": "french",
-                "domains": [
-                    "culture",
-                    "cuisine",
-                    "fashion"
-                ],
-                "influence_strength": 0.3
-            }
-        ],
-        "phonological_adaptations": [
-            {
-                "source_pattern": "p",
-                "target_pattern": "p",
-                "description": "Manutenção de /p/ do romance",
-                "examples": [
-                    "pizza > pizza",
-                    "pasta > pasta"
-                ]
-            },
-            {
-                "source_pattern": "v",
-                "target_pattern": "v",
-                "description": "Manutenção de /v/ do romance",
-                "examples": [
-                    "vino > vinu",
-                    "verde > verdi"
-                ]
-            },
-            {
-                "source_pattern": "tio",
-                "target_pattern": "zjo",
-                "description": "Palatalização italiano",
-                "examples": [
-                    "stazione > stazzjon"
-                ]
-            },
-            {
-                "source_pattern": "C$",
-                "target_pattern": "C",
-                "description": "Manutenção de consoantes finais do romance"
-            },
-            {
-                "source_pattern": "CC",
-                "target_pattern": "CiC",
-                "description": "Epêntese em clusters não permitidos",
-                "examples": [
-                    "sport > sport",
-                    "tren > tren"
-                ]
-            }
-        ]
+        "adaptation_strictness": "medium"
     },
     "style": {
         "capitalization": true,
@@ -1390,7 +1329,8 @@
             "jesus": "N_JESUS",
             "cristo": "N_CRISTO",
             "hadab": "C_HADAB",
-            "amém": "C_AMEM"
+            "amém": "C_AMEM",
+            "direção": "qibla"
         },
         "definitions": {
             "N_JESUS": {
@@ -1426,189 +1366,12 @@
         "jesus": "N_JESUS",
         "cristo": "N_CRISTO",
         "hadab": "C_HADAB",
-        "amém": "C_AMEM"
-    },
-    "dialectal_features": {
-        "enabled": true,
-        "major_dialects": [
-            {
-                "name": "mabadi_standard",
-                "description": "Dialeto padrão urbano baseado na capital",
-                "features": {
-                    "qaf_realization": "ʔ",
-                    "jim_realization": "ġ",
-                    "hamza_retention": "high",
-                    "vowel_reduction": "moderate"
-                }
-            },
-            {
-                "name": "mabadi_northern",
-                "description": "Dialeto setentrional conservador",
-                "features": {
-                    "qaf_realization": "q",
-                    "jim_realization": "ġ",
-                    "hamza_retention": "very_high",
-                    "vowel_reduction": "low",
-                    "pharyngeal_retention": "high"
-                }
-            },
-            {
-                "name": "mabadi_southern",
-                "description": "Dialeto meridional inovador",
-                "features": {
-                    "qaf_realization": "g",
-                    "jim_realization": "j",
-                    "hamza_retention": "low",
-                    "vowel_reduction": "high",
-                    "pharyngeal_merger": "frequent"
-                }
-            },
-            {
-                "name": "mabadi_rural",
-                "description": "Dialeto rural tradicional",
-                "features": {
-                    "qaf_realization": "q",
-                    "jim_realization": "ġ",
-                    "construct_state_frequent": true,
-                    "broken_plurals_productive": true,
-                    "romance_loanwords": "low"
-                }
-            }
-        ]
+        "amém": "C_AMEM",
+        "direção": "qibla"
     },
     "pragmatic_markers": {
         "enabled": true,
-        "discourse_particles": {
-            "hawn": "olha, veja",
-            "mela": "então, portanto",
-            "ara": "veja, escute",
-            "ejja": "vamos, venha",
-            "forsi": "talvez",
-            "vera": "realmente, de verdade",
-            "ma": "vamos!, ora!"
-        },
-        "interjections": {
-            "iva": "sim",
-            "le": "não",
-            "tajjeb": "ok, bom",
-            "kemm": "quanto!",
-            "xi": "que!",
-            "ħaj": "vivo! (juramento)"
-        }
-    },
-    "idiomatic_constructions": {
-        "enabled": true,
-        "constructions": [
-            {
-                "pattern": "għandu + NOUN",
-                "meaning": "ter (posse inalienável)",
-                "example": "għandu dar (ele tem casa)"
-            },
-            {
-                "pattern": "qed + VERB",
-                "meaning": "estar fazendo (progressivo)",
-                "example": "qed jaħdem (está trabalhando)"
-            },
-            {
-                "pattern": "se + VERB",
-                "meaning": "futuro",
-                "example": "se jmur (irá)"
-            },
-            {
-                "pattern": "kien + qed + VERB",
-                "meaning": "passado progressivo",
-                "example": "kien qed jaħdem (estava trabalhando)"
-            }
-        ]
-    },
-    "writing_system": {
-        "script": "latin",
-        "additional_letters": [
-            "ċ",
-            "ġ",
-            "ħ",
-            "ż"
-        ],
-        "digraphs": [
-            "għ",
-            "ie"
-        ],
-        "orthographic_rules": [
-            {
-                "rule": "għ representa /ʕ/ ou vogal longa",
-                "examples": [
-                    "għ = /ʕ/ em għaref",
-                    "għ = /aː/ em raġel > raġel għaref"
-                ]
-            },
-            {
-                "rule": "ie representa /iː/ ou /ɛː/",
-                "examples": [
-                    "ie = /iː/ em niexef",
-                    "ie = /ɛː/ em tifel"
-                ]
-            },
-            {
-                "rule": "ċ = /tʃ/, ġ = /dʒ/",
-                "examples": [
-                    "ċavetta (chave)",
-                    "ġurnata (dia)"
-                ]
-            },
-            {
-                "rule": "ħ = /ħ/ (fricativa faringal surda)",
-                "examples": [
-                    "ħobż (pão)",
-                    "ħabib (amigo)"
-                ]
-            },
-            {
-                "rule": "ż = /z/, z = /ts/ em palavras italianas",
-                "examples": [
-                    "żmien (tempo)",
-                    "ziju (tio)"
-                ]
-            }
-        ]
-    },
-    "cultural_notes": {
-        "honorifics": {
-            "Sinjur": "Senhor (Mr.)",
-            "Sinjura": "Senhora (Mrs.)",
-            "Patri": "Padre",
-            "Ħaġġ": "Peregrino (título honorífico islâmico)",
-            "Sheikh": "Xeque (líder religioso/tribal)"
-        },
-        "kinship_terminology": {
-            "missier": "pai",
-            "omm": "mãe",
-            "iben": "filho",
-            "bint": "filha",
-            "ħu": "irmão",
-            "oħt": "irmã",
-            "nanna": "avó",
-            "nannu": "avô",
-            "ziju": "tio",
-            "zija": "tia"
-        },
-        "color_terms": {
-            "abjad": "branco",
-            "iswed": "preto",
-            "aħmar": "vermelho",
-            "blu": "azul",
-            "aħdar": "verde",
-            "isfar": "amarelo",
-            "griż": "cinza",
-            "kannella": "marrom"
-        },
-        "time_expressions": {
-            "illum": "hoje",
-            "ilbieraħ": "ontem",
-            "għada": "amanhã",
-            "filgħodu": "de manhã",
-            "nofsinhar": "meio-dia",
-            "filgħaxija": "à tarde/noite",
-            "billejl": "à noite"
-        }
+        "discourse_particles": {},
+        "interjections": {}
     }
 }

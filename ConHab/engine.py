@@ -11,7 +11,7 @@ from morphosyntax_analyzer import (
     AgreementChecker, SyntacticComplexityAnalyzer,
     TopicalizationHandler, FocusStructureHandler, TAMHandler,
     VowelHarmonyHandler, TransitivityAnalyzer, ConsonantMutationHandler,
-    GenderHandler
+    GenderHandler, PharyngealizationHandler
 )
 
 
@@ -1043,6 +1043,7 @@ class OriginalLanguageEngine:
         self.stress_handler = StressHandler(self.profile)
         self.transitivity_analyzer = TransitivityAnalyzer()
         self.mutation_handler = ConsonantMutationHandler(self.profile)
+        self.pharyngealization_handler = PharyngealizationHandler(self.profile)
         self.gender_handler = GenderHandler(self.profile)
         self.synonym_handler = SynonymHandler(self.profile)
         self.loanword_handler = LoanwordHandler(
@@ -1437,6 +1438,10 @@ class OriginalLanguageEngine:
                     current_form = self.stress_handler.apply_stress(
                         current_form)
 
+                if self.pharyngealization_handler.enabled:
+                    current_form = self.pharyngealization_handler.apply_effect(
+                        current_form)
+
                 if self.mutation_handler.enabled:
                     prev_word = translated_words[-1] if translated_words else None
                     current_form = self.mutation_handler.apply_mutation(
@@ -1448,12 +1453,15 @@ class OriginalLanguageEngine:
                 if orig_word[0].isupper() and pos == 'PROPN':
                     current_form = current_form.capitalize()
 
-                if self.sun_letter_handler.enabled and translated_words and last_func:
+                translated_words.append(current_form)
+                last_func = func
+
+                if self.sun_letter_handler.enabled and len(translated_words) > 1 and last_func:
                     if last_func.get('pos') == 'DET':
-                        prev_word = translated_words[-1]
+                        prev_word = translated_words[-2]
                         assimilated_prev = self.sun_letter_handler.assimilate(
                             prev_word, current_form)
-                        translated_words[-1] = assimilated_prev
+                        translated_words[-2] = assimilated_prev
 
             if sentence_terminator:
                 translated_words.append(sentence_terminator)
