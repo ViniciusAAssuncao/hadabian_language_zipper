@@ -1502,7 +1502,7 @@ class OriginalLanguageEngine:
 
                 if reg_rng.random() < chance:
                     variant_word = base_word
-                    for _ in range(mutation_factor):
+                    for _ in range(int(mutation_factor)):
                         mutation_seed = reg_rng.randint(0, 999999)
                         variant_word = self._mutate_word(
                             variant_word, mutation_seed)

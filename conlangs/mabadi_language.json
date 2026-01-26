@@ -1,0 +1,1681 @@
+{
+    "id": "mabadi",
+    "name": "Mabádi (Ta-Mabádi)",
+    "description": "Língua mabádi, membro do ramo mabádico das línguas levínicas ocidentais. Inspirada fortemente no árabe clássico e moderno com influências do maltês. Sistema fonológico simplificado em relação ao proto-levínico mas mantendo características semíticas. Rico sistema de raízes triconsonantais, morfologia derivacional complexa, e sintaxe VSO com tendências SVO. Possui um artigo definido distinto 'Ta-' e sufixos de abstração únicos '-ijjie'.",
+    "linguistic_family": "linguistic_trunk_ordo_enkian.json",
+    "family_node": "mabadic",
+    "branch_id": "mabadic",
+    "parent_language": "western-levinic",
+    "shared_base_strength": 0.75,
+    "agglutination_strength": 0.65,
+    "cultural_purism": 0.4,
+    "dialect_of": null,
+    "pidgin_with": null,
+    "word_order": "VSO",
+    "subordinate_word_order": "SVO",
+    "source_language_order": "SVO",
+    "drop_articles": false,
+    "pro_drop": {
+        "enabled": true,
+        "conditions": [
+            "verb_agreement",
+            "context_clear"
+        ]
+    },
+    "alignment": "nominative-accusative",
+    "global_seed": 87425,
+    "phonotactics": {
+        "vowels": "aeiou",
+        "consonants": "bdfgħhjklmnpqrstvwxzʔ",
+        "active_style": "mabadi_standard",
+        "inventory_styles": {
+            "mabadi_standard": {
+                "consonants": "bdfgħhjklmnpqrstvwxzʔ",
+                "vowels": "aeiou",
+                "description": "Inventário padrão mabádi com consoantes semíticas e romance"
+            },
+            "mabadi_conservative": {
+                "consonants": "bdfgħhjklmnqrsṣštṭvwxzʔʕ",
+                "vowels": "aeiouāēīōū",
+                "description": "Variante conservadora mantendo mais consoantes enfáticas"
+            },
+            "mabadi_colloquial": {
+                "consonants": "bdfghjklmnprstvwxz",
+                "vowels": "aeiou",
+                "description": "Variante coloquial com simplificação de faringais"
+            }
+        },
+        "syllable_templates": [
+            "CV",
+            "CVC",
+            "CCV",
+            "CCVC",
+            "CVCC",
+            "V",
+            "VC"
+        ],
+        "min_syllables": 1,
+        "max_syllables": 4,
+        "max_consonant_cluster": 2,
+        "max_vowel_cluster": 1,
+        "forbidden_initial_clusters": [
+            "bd",
+            "tṭ",
+            "nm",
+            "lr",
+            "ħʔ",
+            "qʔ",
+            "mn",
+            "nb",
+            "kg"
+        ],
+        "forbidden_final_consonants": [
+            "ʔ",
+            "q",
+            "v"
+        ],
+        "epenthesis_vowel": "i",
+        "diphthongs": [
+            "aj",
+            "aw",
+            "ej",
+            "ew",
+            "oj",
+            "ow"
+        ],
+        "sonority_hierarchy": {
+            "enabled": true,
+            "scale": {
+                "b": 1,
+                "d": 1,
+                "g": 1,
+                "p": 0,
+                "t": 0,
+                "k": 0,
+                "q": 0,
+                "ʔ": 0,
+                "f": 2,
+                "v": 2,
+                "s": 2,
+                "z": 2,
+                "x": 2,
+                "ħ": 2,
+                "h": 2,
+                "j": 3,
+                "w": 3,
+                "m": 4,
+                "n": 4,
+                "l": 5,
+                "r": 5
+            },
+            "onset_rules": {
+                "min_distance": 1,
+                "allow_plateau": false,
+                "allow_reversal": false
+            },
+            "coda_rules": {
+                "min_distance": 0,
+                "allow_plateau": true,
+                "allow_reversal": true
+            }
+        },
+        "phonological_rules": [
+            {
+                "name": "hamza_elision_colloquial",
+                "description": "Elisão de hamza intervocálica no registro coloquial",
+                "input": "VʔV",
+                "output": "VV",
+                "register": "colloquial"
+            },
+            {
+                "name": "h_weakening",
+                "description": "Enfraquecimento de /ħ/ para /h/ em posição final",
+                "input": "ħ$",
+                "output": "h",
+                "register": "colloquial"
+            },
+            {
+                "name": "short_vowel_reduction",
+                "description": "Redução de vogais curtas átonas",
+                "input": "[aiu]",
+                "output": "ə",
+                "condition": "unstressed_nonfinal"
+            },
+            {
+                "name": "geminate_simplification",
+                "description": "Simplificação de geminadas em final de palavra no coloquial",
+                "input": "CC$",
+                "output": "C",
+                "register": "colloquial"
+            }
+        ]
+    },
+    "consonant_mutation": {
+        "enabled": true,
+        "rules": [
+            {
+                "name": "sun_letter_assimilation",
+                "description": "Assimilação do artigo definido antes de 'letras solares'",
+                "triggers": {
+                    "words": [
+                        "ta",
+                        "t"
+                    ]
+                },
+                "mutations": {
+                    "t": "tt",
+                    "d": "dd",
+                    "r": "rr",
+                    "z": "zz",
+                    "s": "ss",
+                    "n": "nn",
+                    "l": "ll",
+                    "ċ": "ċċ",
+                    "x": "xx",
+                    "ż": "żż"
+                }
+            },
+            {
+                "name": "intervocalic_spirantization",
+                "description": "Espirantização de oclusivas sonoras intervocálicas",
+                "triggers": {
+                    "context": "intervocalic"
+                },
+                "mutations": {
+                    "b": "v",
+                    "d": "ð",
+                    "g": "ɣ"
+                },
+                "register": "colloquial"
+            },
+            {
+                "name": "construct_state_lenition",
+                "description": "Lenição em estado construto",
+                "triggers": {
+                    "pos": [
+                        "NOUN"
+                    ]
+                },
+                "mutations": {
+                    "k": "g",
+                    "t": "d",
+                    "p": "b"
+                }
+            }
+        ]
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "weight",
+        "position": "penultimate",
+        "graphic_accent": false,
+        "weight_rules": {
+            "heavy_syllables": [
+                "CVV",
+                "CVC",
+                "CVCC"
+            ],
+            "superheavy_syllables": [
+                "CVVC",
+                "CVCC"
+            ],
+            "stress_superheavy": true,
+            "stress_antepenultimate_if_light": true
+        }
+    },
+    "semantic_fields": {
+        "enabled": true,
+        "auto_detect": true,
+        "use_nltk": true,
+        "threshold": 0.35,
+        "manual_groups": {
+            "mar": "água",
+            "rio": "água",
+            "chuva": "água",
+            "fonte": "água",
+            "poço": "água",
+            "sol": "calor",
+            "fogo": "calor",
+            "deserto": "calor",
+            "verão": "calor",
+            "pai": "família",
+            "mãe": "família",
+            "filho": "família",
+            "irmão": "família",
+            "casa": "moradia",
+            "tenda": "moradia",
+            "palácio": "moradia",
+            "mesquita": "religião",
+            "igreja": "religião",
+            "templo": "religião",
+            "oração": "religião",
+            "pão": "comida",
+            "carne": "comida",
+            "fruta": "comida",
+            "leite": "comida"
+        },
+        "semantic_domains": {
+            "religion": {
+                "root_preference": "triconsonantal",
+                "formality": "high",
+                "register": "classical"
+            },
+            "family": {
+                "root_preference": "basic",
+                "formality": "medium",
+                "register": "common"
+            },
+            "nature": {
+                "root_preference": "descriptive",
+                "formality": "medium",
+                "register": "common"
+            }
+        }
+    },
+    "polysemy_rules": {
+        "enabled": true,
+        "merges": {
+            "azul": "céu",
+            "mar": "azul",
+            "verde": "vida",
+            "prata": "lua",
+            "ouro": "sol"
+        },
+        "splits": {
+            "ser": [
+                {
+                    "target_suffix": "_permanente",
+                    "rules": {
+                        "feats": [
+                            "Mood=Ind",
+                            "Tense=Pres"
+                        ]
+                    }
+                },
+                {
+                    "target_suffix": "_temporário",
+                    "rules": {
+                        "feats": [
+                            "Mood=Sub"
+                        ]
+                    }
+                }
+            ],
+            "ter": [
+                {
+                    "target_suffix": "_posse",
+                    "rules": {
+                        "deprel": [
+                            "obj"
+                        ]
+                    }
+                },
+                {
+                    "target_suffix": "_obrigação",
+                    "rules": {
+                        "deprel": [
+                            "xcomp"
+                        ]
+                    }
+                }
+            ]
+        }
+    },
+    "false_cognates": {
+        "enabled": true,
+        "natural_confusion_chance": 0.15,
+        "manual_pairs": {
+            "mas": "filho",
+            "livre": "livro",
+            "tarde": "manhã"
+        }
+    },
+    "vowel_harmony": {
+        "enabled": true,
+        "groups": {
+            "front": "ei",
+            "back": "aou",
+            "high": "iu",
+            "low": "ae"
+        },
+        "rules": [
+            {
+                "input": "a",
+                "map": {
+                    "front": "e",
+                    "back": "a",
+                    "high": "i",
+                    "low": "a"
+                }
+            },
+            {
+                "input": "i",
+                "map": {
+                    "front": "i",
+                    "back": "u",
+                    "high": "i",
+                    "low": "e"
+                }
+            },
+            {
+                "input": "u",
+                "map": {
+                    "front": "i",
+                    "back": "u",
+                    "high": "u",
+                    "low": "o"
+                }
+            }
+        ],
+        "domain": "suffix",
+        "exceptions": [
+            "definite_article",
+            "prepositions"
+        ]
+    },
+    "case_system": {
+        "enabled": true,
+        "preposition_handling": "coexist",
+        "markers": {
+            "nominative": {
+                "marker": "",
+                "type": "suffix",
+                "description": "Caso nominativo não marcado"
+            },
+            "accusative": {
+                "marker": "a",
+                "type": "particle_before",
+                "description": "Marcador acusativo para objetos definidos animados"
+            },
+            "genitive": {
+                "marker": "ta",
+                "type": "particle_before",
+                "description": "Partícula genitiva, alternativa ao estado construto"
+            },
+            "dative": {
+                "marker": "lil",
+                "type": "particle_before",
+                "description": "Marcador dativo"
+            },
+            "locative": {
+                "marker": "fi",
+                "type": "particle_before",
+                "description": "Marcador locativo"
+            },
+            "instrumental": {
+                "marker": "bi",
+                "type": "particle_before",
+                "description": "Marcador instrumental/comitativo"
+            }
+        },
+        "marker_position": "particle_before",
+        "construct_state": {
+            "enabled": true,
+            "replaces_genitive": true,
+            "head_position": "initial",
+            "phonological_changes": [
+                {
+                    "pattern": "a$",
+                    "replacement": "at",
+                    "condition": "feminine"
+                },
+                {
+                    "pattern": "i$",
+                    "replacement": "",
+                    "condition": "short_vowel"
+                }
+            ]
+        }
+    },
+    "tam_system": {
+        "enabled": true,
+        "infer_imperative_from_context": true,
+        "aspect_primary": true,
+        "rules": [
+            {
+                "features": [
+                    "VerbForm=Inf"
+                ],
+                "marker": "",
+                "type": "prefix",
+                "description": "Infinitivo sem marcação especial, usa forma base"
+            },
+            {
+                "features": [
+                    "VerbForm=Ger"
+                ],
+                "marker": "qed",
+                "type": "particle_before",
+                "description": "Gerúndio marcado com partícula progressiva"
+            },
+            {
+                "features": [
+                    "Tense=Past",
+                    "Aspect=Perf"
+                ],
+                "marker": "",
+                "type": "suffix",
+                "description": "Perfectivo passado, forma base + sufixos pessoais"
+            },
+            {
+                "features": [
+                    "Tense=Pres",
+                    "Aspect=Imp"
+                ],
+                "marker": "n",
+                "type": "prefix",
+                "description": "Imperfectivo presente com prefixo"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "se",
+                "type": "particle_before",
+                "description": "Futuro com partícula"
+            },
+            {
+                "features": [
+                    "Mood=Imp"
+                ],
+                "marker": "",
+                "type": "stem",
+                "description": "Imperativo usa radical verbal puro"
+            },
+            {
+                "features": [
+                    "Mood=Sub"
+                ],
+                "marker": "li",
+                "type": "particle_before",
+                "description": "Subjuntivo com partícula"
+            },
+            {
+                "features": [
+                    "Mood=Cnd"
+                ],
+                "marker": "kien",
+                "type": "particle_before",
+                "description": "Condicional com auxiliar"
+            },
+            {
+                "features": [
+                    "Aspect=Prog"
+                ],
+                "marker": "qed",
+                "type": "particle_before",
+                "description": "Progressivo"
+            },
+            {
+                "features": [
+                    "Aspect=Perf"
+                ],
+                "marker": "qad",
+                "type": "particle_before",
+                "description": "Perfectivo enfático"
+            }
+        ],
+        "person_marking": {
+            "enabled": true,
+            "prefixes": {
+                "1sg": "n",
+                "2sg": "t",
+                "3sg_m": "j",
+                "3sg_f": "t",
+                "1pl": "n",
+                "2pl": "t",
+                "3pl": "j"
+            },
+            "suffixes": {
+                "1sg": "t",
+                "2sg": "t",
+                "3sg_m": "",
+                "3sg_f": "et",
+                "1pl": "na",
+                "2pl": "tu",
+                "3pl": "u"
+            }
+        }
+    },
+    "agreement_rules": {
+        "gender_agreement": true,
+        "number_agreement": true,
+        "person_agreement": true,
+        "adjective_noun_agreement": true,
+        "verb_subject_agreement": true
+    },
+    "gender_system": {
+        "enabled": true,
+        "default": "masculine",
+        "genders": [
+            "masculine",
+            "feminine"
+        ],
+        "inference": [
+            {
+                "suffix": "a",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "at",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "et",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "i",
+                "gender": "masculine"
+            },
+            {
+                "suffix": "u",
+                "gender": "masculine"
+            },
+            {
+                "suffix": "ijjie",
+                "gender": "feminine"
+            }
+        ],
+        "markers": {
+            "masculine": {
+                "targets": [
+                    "ADJ",
+                    "DET",
+                    "VERB"
+                ],
+                "marker": "",
+                "position": "suffix",
+                "description": "Masculino não marcado ou com sufixo zero"
+            },
+            "feminine": {
+                "targets": [
+                    "ADJ",
+                    "DET",
+                    "VERB",
+                    "NOUN"
+                ],
+                "marker": "a",
+                "position": "suffix",
+                "description": "Feminino marcado com -a"
+            }
+        },
+        "plural_gender_resolution": "default_masculine",
+        "broken_plural_override": true
+    },
+    "number_system": {
+        "enabled": true,
+        "numbers": [
+            "singular",
+            "plural"
+        ],
+        "dual_optional": false,
+        "markers": {
+            "singular": {
+                "marker": "",
+                "type": "zero"
+            },
+            "plural": {
+                "marker": "in",
+                "type": "suffix",
+                "alternatives": [
+                    "iet",
+                    "a",
+                    "i"
+                ]
+            }
+        },
+        "broken_plurals": {
+            "enabled": true,
+            "patterns": [
+                {
+                    "singular_pattern": "CaCaC",
+                    "plural_pattern": "CoCo",
+                    "description": "Padrão CaCaC > CoCo"
+                },
+                {
+                    "singular_pattern": "CaCC",
+                    "plural_pattern": "CuCuC",
+                    "description": "Padrão CaCC > CuCuC"
+                },
+                {
+                    "singular_pattern": "CeCeC",
+                    "plural_pattern": "CeCi",
+                    "description": "Padrão CeCeC > CeCi"
+                },
+                {
+                    "singular_pattern": "CiCeC",
+                    "plural_pattern": "CiCCa",
+                    "description": "Padrão CiCeC > CiCCa"
+                }
+            ]
+        }
+    },
+    "topicalization": {
+        "enabled": true,
+        "position": "initial",
+        "topic_marker": "huwa",
+        "reintroduce_articles": true,
+        "resumptive_pronoun": true
+    },
+    "focus_structure": {
+        "enabled": true,
+        "object_focus_marker": "hija",
+        "verb_focus_marker": "qed",
+        "suppress_case": false,
+        "focus_particle_position": "pre_focal"
+    },
+    "functional_particles": {
+        "muito": {
+            "mabadi_form": "ħafna",
+            "noun_position": "post_nominal",
+            "adj_position": "post_nominal",
+            "verb_position": "post_verbal"
+        },
+        "sempre": {
+            "mabadi_form": "dejjem",
+            "verb_position": "pre_verbal"
+        },
+        "nunca": {
+            "mabadi_form": "qatt",
+            "verb_position": "post_verbal",
+            "requires_negation": true
+        },
+        "já": {
+            "mabadi_form": "diġà",
+            "verb_position": "pre_verbal"
+        },
+        "ainda": {
+            "mabadi_form": "għad",
+            "verb_position": "pre_verbal"
+        }
+    },
+    "degree_system": {
+        "enabled": true,
+        "source_rules": [
+            {
+                "type": "diminutive",
+                "suffix": "zinho",
+                "replacement": ""
+            },
+            {
+                "type": "diminutive",
+                "suffix": "inho",
+                "replacement": "o"
+            },
+            {
+                "type": "augmentative",
+                "suffix": "zão",
+                "replacement": ""
+            },
+            {
+                "type": "augmentative",
+                "suffix": "ão",
+                "replacement": "o"
+            },
+            {
+                "type": "superlative",
+                "suffix": "íssimo",
+                "replacement": "o"
+            }
+        ],
+        "rules": {
+            "diminutive": {
+                "affix": "ina",
+                "position": "suffix",
+                "alternative": "żgħir",
+                "description": "Diminutivo com sufixo ou adjetivo"
+            },
+            "augmentative": {
+                "affix": "oni",
+                "position": "suffix",
+                "alternative": "kbir",
+                "description": "Aumentativo"
+            },
+            "superlative": {
+                "affix": "issmu",
+                "position": "suffix",
+                "alternative": "l-aktar",
+                "description": "Superlativo absoluto"
+            },
+            "comparative": {
+                "affix": "aktar",
+                "position": "prefix",
+                "description": "Comparativo de superioridade"
+            }
+        }
+    },
+    "morphological_derivation": {
+        "enabled": true,
+        "max_depth": 4,
+        "exceptions": [
+            "alla",
+            "muhammad",
+            "jiena",
+            "int"
+        ],
+        "root_based": true,
+        "binyanim": [
+            {
+                "form": "I",
+                "pattern": "CeCe",
+                "meaning": "basic_action",
+                "example": "kiteb (escrever)"
+            },
+            {
+                "form": "II",
+                "pattern": "CeCCe",
+                "meaning": "intensive_causative",
+                "example": "kisseb (ensinar a escrever)"
+            },
+            {
+                "form": "III",
+                "pattern": "CieCe",
+                "meaning": "reciprocal",
+                "example": "kieteb (corresponder-se)"
+            },
+            {
+                "form": "V",
+                "pattern": "tCeCCe",
+                "meaning": "reflexive_intensive",
+                "example": "tkisseb (instruir-se)"
+            },
+            {
+                "form": "VI",
+                "pattern": "tCieCe",
+                "meaning": "reciprocal_reflexive",
+                "example": "tkieteb (escrever-se mutuamente)"
+            },
+            {
+                "form": "VII",
+                "pattern": "nCeCe",
+                "meaning": "passive_reflexive",
+                "example": "nkiteb (ser escrito)"
+            },
+            {
+                "form": "VIII",
+                "pattern": "CteCe",
+                "meaning": "reflexive",
+                "example": "ktiteb (inscrever-se)"
+            },
+            {
+                "form": "X",
+                "pattern": "steCCe",
+                "meaning": "requestive_reflexive",
+                "example": "stkiteb (solicitar por escrito)"
+            }
+        ]
+    },
+    "affix_system": {
+        "enabled": true,
+        "source_suffixes": [
+            {
+                "input_pos": "VERB",
+                "suffix": "ação",
+                "replacement": "r",
+                "target_pos": "NOUN",
+                "priority": 1
+            },
+            {
+                "input_pos": "VERB",
+                "suffix": "mento",
+                "replacement": "r",
+                "target_pos": "NOUN",
+                "priority": 1
+            },
+            {
+                "input_pos": "NOUN",
+                "suffix": "dade",
+                "replacement": "ijjie",
+                "target_pos": "NOUN",
+                "priority": 0
+            },
+            {
+                "input_pos": "NOUN",
+                "suffix": "ia",
+                "replacement": "ijjie",
+                "target_pos": "NOUN",
+                "priority": 0
+            },
+            {
+                "input_pos": "NOUN",
+                "suffix": "ismo",
+                "replacement": "ijjie",
+                "target_pos": "NOUN",
+                "priority": 0
+            },
+            {
+                "input_pos": "ADJ",
+                "suffix": "mente",
+                "replacement": "x",
+                "target_pos": "ADV",
+                "priority": 2
+            },
+            {
+                "input_pos": "NOUN",
+                "suffix": "dor",
+                "replacement": "r",
+                "target_pos": "VERB",
+                "priority": 0
+            }
+        ],
+        "derivation_rules": [
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "verbal_noun",
+                "affix": "ien",
+                "position": "suffix",
+                "description": "Substantivo verbal (masdar)"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "agent",
+                "affix": "ier",
+                "position": "suffix",
+                "description": "Agente"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "place",
+                "affix": "m",
+                "position": "prefix",
+                "description": "Nome de lugar"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "affix": "i",
+                "position": "suffix",
+                "description": "Adjetivo relacional (nisba)"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "NOUN",
+                "affix": "ijjie",
+                "position": "suffix",
+                "description": "Substantivo abstrato (adaptação de -iyya/-ezza)"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "ADV",
+                "affix": "ment",
+                "position": "suffix",
+                "description": "Advérbio de modo"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "ADJ",
+                "type": "active_participle",
+                "affix": "enti",
+                "position": "suffix",
+                "description": "Particípio ativo"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "ADJ",
+                "type": "passive_participle",
+                "affix": "ut",
+                "position": "suffix",
+                "description": "Particípio passivo"
+            }
+        ]
+    },
+    "reduplication": {
+        "enabled": true,
+        "epenthesis_vowel": "i",
+        "rules": [
+            {
+                "features": [
+                    "Number=Plur"
+                ],
+                "pos": [
+                    "NOUN"
+                ],
+                "method": "first_syllable",
+                "separator": "",
+                "description": "Pluralização por reduplicação (raro)"
+            },
+            {
+                "features": [
+                    "Aspect=Iter"
+                ],
+                "pos": [
+                    "VERB"
+                ],
+                "method": "whole_word",
+                "separator": "-",
+                "description": "Aspecto iterativo"
+            },
+            {
+                "features": [
+                    "Pragmatic=Emp"
+                ],
+                "method": "first_syllable",
+                "separator": "-",
+                "description": "Ênfase pragmática"
+            }
+        ]
+    },
+    "numeric_handling": {
+        "ignore_digits": true,
+        "number_system": "decimal",
+        "native_numbers": {
+            "1": "wieħed",
+            "2": "tnejn",
+            "3": "tlieta",
+            "4": "erbgħa",
+            "5": "ħamsa",
+            "6": "sitta",
+            "7": "sebgħa",
+            "8": "tmienja",
+            "9": "disgħa",
+            "10": "għaxra",
+            "100": "mija",
+            "1000": "elf"
+        }
+    },
+    "negation_system": {
+        "enabled": true,
+        "strategies": [
+            {
+                "type": "verbal_negation",
+                "marker": "ma",
+                "position": "pre_verbal",
+                "suffix": "x",
+                "description": "Negação verbal descontínua ma...x"
+            },
+            {
+                "type": "nominal_negation",
+                "marker": "mhux",
+                "position": "pre_nominal",
+                "description": "Negação nominal"
+            },
+            {
+                "type": "emphatic_negation",
+                "marker": "qatt",
+                "position": "post_verbal",
+                "requires": "ma_prefix",
+                "description": "Negação enfática 'nunca'"
+            }
+        ]
+    },
+    "interrogative_system": {
+        "enabled": true,
+        "question_particles": [
+            {
+                "particle": "x",
+                "type": "yes_no",
+                "position": "sentence_initial",
+                "description": "Partícula interrogativa polar"
+            },
+            {
+                "particle": "xi",
+                "type": "yes_no_alternative",
+                "position": "sentence_initial",
+                "description": "Partícula interrogativa alternativa"
+            }
+        ],
+        "wh_words": {
+            "who": "min",
+            "what": "xiex",
+            "where": "fejn",
+            "when": "meta",
+            "why": "għaliex",
+            "how": "kif",
+            "which": "liema"
+        }
+    },
+    "determiner_system": {
+        "enabled": true,
+        "definite_article": {
+            "form": "ta",
+            "variants": [
+                "t",
+                "ta"
+            ],
+            "sun_letter_assimilation": true,
+            "sun_letters": [
+                "d",
+                "n",
+                "r",
+                "s",
+                "t",
+                "x",
+                "z",
+                "ċ",
+                "ż",
+                "l"
+            ],
+            "procliticizes": true
+        },
+        "indefinite_article": {
+            "form": "",
+            "description": "Sem artigo indefinido, usa numeral 'wieħed' quando necessário"
+        },
+        "demonstratives": {
+            "proximal": {
+                "sg_m": "dan",
+                "sg_f": "din",
+                "pl": "dawn"
+            },
+            "distal": {
+                "sg_m": "dak",
+                "sg_f": "dik",
+                "pl": "dawk"
+            }
+        },
+        "possessives": {
+            "pronominal_suffixes": true,
+            "independent_forms": false,
+            "suffixes": {
+                "1sg": "i",
+                "2sg": "ek",
+                "3sg_m": "u",
+                "3sg_f": "ha",
+                "1pl": "na",
+                "2pl": "kom",
+                "3pl": "hom"
+            }
+        }
+    },
+    "pronominal_system": {
+        "enabled": true,
+        "independent_pronouns": {
+            "1sg": "jiena",
+            "2sg": "int",
+            "3sg_m": "huwa",
+            "3sg_f": "hija",
+            "1pl": "aħna",
+            "2pl": "intom",
+            "3pl": "huma"
+        },
+        "object_pronouns": {
+            "direct": {
+                "1sg": "ni",
+                "2sg": "k",
+                "3sg_m": "h",
+                "3sg_f": "ha",
+                "1pl": "na",
+                "2pl": "kom",
+                "3pl": "hom"
+            },
+            "indirect": {
+                "1sg": "li",
+                "2sg": "lek",
+                "3sg_m": "lu",
+                "3sg_f": "ilha",
+                "1pl": "lilna",
+                "2pl": "lilkom",
+                "3pl": "lilhom"
+            }
+        },
+        "clitic_ordering": {
+            "enabled": true,
+            "order": [
+                "neg",
+                "obj_indirect",
+                "obj_direct",
+                "verb"
+            ],
+            "procliticizes": false,
+            "encliticizes": true
+        }
+    },
+    "adposition_system": {
+        "enabled": true,
+        "type": "prepositions",
+        "core_prepositions": {
+            "fi": "em, dentro de",
+            "fuq": "sobre, em cima de",
+            "taħt": "sob, embaixo de",
+            "ma": "com (instrumental)",
+            "bi": "com, por meio de",
+            "għal": "para, a",
+            "minn": "de, desde",
+            "ta": "de (posse/genitivo)",
+            "bejn": "entre",
+            "qabel": "antes de",
+            "wara": "depois de, atrás de",
+            "ħdejn": "perto de",
+            "kontra": "contra"
+        },
+        "inflected_prepositions": {
+            "enabled": true,
+            "pattern": "preposition + pronominal_suffix",
+            "example": {
+                "fi": {
+                    "1sg": "fija",
+                    "2sg": "fik",
+                    "3sg_m": "fih",
+                    "3sg_f": "fiha"
+                }
+            }
+        }
+    },
+    "conjunction_system": {
+        "enabled": true,
+        "coordinating": {
+            "u": "e",
+            "jew": "ou",
+            "iżda": "mas",
+            "imma": "porém",
+            "għax": "porque"
+        },
+        "subordinating": {
+            "li": "que",
+            "meta": "quando",
+            "jekk": "se",
+            "għalkemm": "embora",
+            "sakemm": "até que",
+            "billi": "visto que",
+            "ladarba": "uma vez que"
+        }
+    },
+    "copula_system": {
+        "enabled": true,
+        "copulas": [
+            {
+                "form": "kien",
+                "type": "past_existential",
+                "conjugates": true
+            },
+            {
+                "form": "hu",
+                "type": "present_pronominal",
+                "conjugates": true,
+                "usage": "identificational"
+            },
+            {
+                "form": "zero",
+                "type": "present_default",
+                "usage": "predicational_present"
+            }
+        ]
+    },
+    "lexical_registers": {
+        "enabled": true,
+        "default_fallback": "common",
+        "registers": [
+            {
+                "name": "classical",
+                "chance": 0.12,
+                "mutation_factor": 0.3,
+                "description": "Registro clássico com léxico árabe puro"
+            },
+            {
+                "name": "formal",
+                "chance": 0.25,
+                "mutation_factor": 1,
+                "description": "Registro formal padrão"
+            },
+            {
+                "name": "common",
+                "chance": 0.4,
+                "mutation_factor": 1.5,
+                "description": "Registro comum cotidiano"
+            },
+            {
+                "name": "colloquial",
+                "chance": 0.15,
+                "mutation_factor": 2.5,
+                "description": "Registro coloquial urbano"
+            },
+            {
+                "name": "vulgar",
+                "chance": 0.03,
+                "mutation_factor": 3.5,
+                "description": "Registro vulgar"
+            },
+            {
+                "name": "poetic",
+                "chance": 0.05,
+                "mutation_factor": 0.5,
+                "description": "Registro poético arcaizante"
+            }
+        ]
+    },
+    "loanword_policy": {
+        "enabled": true,
+        "modes": {
+            "phonetic_adaptation": 0.55,
+            "calque": 0.25,
+            "semantic_extension": 0.2
+        },
+        "calque_connector": "ta",
+        "adaptation_strictness": "medium",
+        "source_languages": [
+            {
+                "language": "italian",
+                "domains": [
+                    "maritime",
+                    "trade",
+                    "food",
+                    "administration"
+                ],
+                "influence_strength": 0.7
+            },
+            {
+                "language": "english",
+                "domains": [
+                    "technology",
+                    "science",
+                    "modern_life"
+                ],
+                "influence_strength": 0.5
+            },
+            {
+                "language": "arabic",
+                "domains": [
+                    "religion",
+                    "law",
+                    "literature"
+                ],
+                "influence_strength": 0.9
+            },
+            {
+                "language": "french",
+                "domains": [
+                    "culture",
+                    "cuisine",
+                    "fashion"
+                ],
+                "influence_strength": 0.3
+            }
+        ],
+        "phonological_adaptations": [
+            {
+                "source_pattern": "p",
+                "target_pattern": "p",
+                "description": "Manutenção de /p/ do romance",
+                "examples": [
+                    "pizza > pizza",
+                    "pasta > pasta"
+                ]
+            },
+            {
+                "source_pattern": "v",
+                "target_pattern": "v",
+                "description": "Manutenção de /v/ do romance",
+                "examples": [
+                    "vino > vinu",
+                    "verde > verdi"
+                ]
+            },
+            {
+                "source_pattern": "tio",
+                "target_pattern": "zjo",
+                "description": "Palatalização italiano",
+                "examples": [
+                    "stazione > stazzjon"
+                ]
+            },
+            {
+                "source_pattern": "C$",
+                "target_pattern": "C",
+                "description": "Manutenção de consoantes finais do romance"
+            },
+            {
+                "source_pattern": "CC",
+                "target_pattern": "CiC",
+                "description": "Epêntese em clusters não permitidos",
+                "examples": [
+                    "sport > sport",
+                    "tren > tren"
+                ]
+            }
+        ]
+    },
+    "style": {
+        "capitalization": true,
+        "punctuation_map": {
+            ".": ".",
+            "!": "!",
+            "?": "?",
+            ",": ",",
+            ";": ";",
+            ":": ":"
+        },
+        "sentence_terminators": [
+            ".",
+            "!",
+            "?"
+        ],
+        "secondary_terminators": [
+            ":",
+            ";"
+        ]
+    },
+    "abstract_concepts": {
+        "enabled": true,
+        "mappings": {
+            "democracia": "C_DEMOCRACY",
+            "liberdade": "C_FREEDOM",
+            "justiça": "C_JUSTICE",
+            "paz": "C_PEACE",
+            "guerra": "C_WAR",
+            "amor": "C_LOVE",
+            "ódio": "C_HATE",
+            "felicidade": "C_HAPPINESS",
+            "tristeza": "C_SADNESS",
+            "esperança": "C_HOPE",
+            "medo": "C_FEAR",
+            "coragem": "C_COURAGE",
+            "sabedoria": "C_WISDOM",
+            "conhecimento": "C_KNOWLEDGE",
+            "verdade": "C_TRUTH",
+            "mentira": "C_LIE",
+            "beleza": "C_BEAUTY",
+            "feiúra": "C_UGLINESS"
+        },
+        "definitions": {
+            "C_DEMOCRACY": {
+                "type": "calque",
+                "components": [
+                    "povo",
+                    "poder"
+                ],
+                "connector": "ta",
+                "description": "Governo do povo"
+            },
+            "C_FREEDOM": {
+                "type": "adaptation",
+                "source_word": "ħelsien",
+                "root": "ħ-l-s",
+                "description": "Liberdade, soltara"
+            },
+            "C_JUSTICE": {
+                "type": "adaptation",
+                "source_word": "ġustizzja",
+                "root": "ġ-s-t",
+                "description": "Justiça"
+            },
+            "C_PEACE": {
+                "type": "adaptation",
+                "source_word": "paċi",
+                "root": "p-ċ-ħ",
+                "description": "Paz"
+            },
+            "C_WAR": {
+                "type": "adaptation",
+                "source_word": "gwerra",
+                "root": "g-r-r",
+                "description": "Guerra"
+            },
+            "C_LOVE": {
+                "type": "adaptation",
+                "source_word": "imħabba",
+                "root": "ħ-b-b",
+                "description": "Amor"
+            },
+            "C_HATE": {
+                "type": "adaptation",
+                "source_word": "mibegħda",
+                "root": "b-għ-d",
+                "description": "Ódio"
+            },
+            "C_HAPPINESS": {
+                "type": "adaptation",
+                "source_word": "hena",
+                "root": "h-n-ʔ",
+                "description": "Felicidade"
+            },
+            "C_SADNESS": {
+                "type": "adaptation",
+                "source_word": "diqa",
+                "root": "d-j-q",
+                "description": "Tristeza"
+            },
+            "C_HOPE": {
+                "type": "adaptation",
+                "source_word": "tama",
+                "root": "t-m-ʕ",
+                "description": "Esperança"
+            },
+            "C_FEAR": {
+                "type": "adaptation",
+                "source_word": "biża",
+                "root": "b-z-ʕ",
+                "description": "Medo"
+            },
+            "C_COURAGE": {
+                "type": "adaptation",
+                "source_word": "kuraġġ",
+                "root": "k-r-ġ",
+                "description": "Coragem"
+            },
+            "C_WISDOM": {
+                "type": "adaptation",
+                "source_word": "għerf",
+                "root": "ʕ-r-f",
+                "description": "Sabedoria"
+            },
+            "C_KNOWLEDGE": {
+                "type": "adaptation",
+                "source_word": "għarfien",
+                "root": "ʕ-r-f",
+                "description": "Conhecimento"
+            },
+            "C_TRUTH": {
+                "type": "adaptation",
+                "source_word": "verità",
+                "description": "Verdade"
+            },
+            "C_LIE": {
+                "type": "adaptation",
+                "source_word": "gidba",
+                "root": "g-d-b",
+                "description": "Mentira"
+            },
+            "C_BEAUTY": {
+                "type": "adaptation",
+                "source_word": "sbuħija",
+                "root": "s-b-ħ",
+                "description": "Beleza"
+            },
+            "C_UGLINESS": {
+                "type": "adaptation",
+                "source_word": "għawġa",
+                "root": "ʕ-w-ġ",
+                "description": "Feiúra"
+            }
+        }
+    },
+    "mappings": {
+        "de": "ta",
+        "deus": "C_DEUS",
+        "jesus": "N_JESUS",
+        "cristo": "N_CRISTO",
+        "democracia": "C_DEMOCRACY",
+        "liberdade": "C_FREEDOM",
+        "justiça": "C_JUSTICE",
+        "paz": "C_PEACE",
+        "guerra": "C_WAR",
+        "amor": "C_LOVE"
+    },
+    "dialectal_features": {
+        "enabled": true,
+        "major_dialects": [
+            {
+                "name": "mabadi_standard",
+                "description": "Dialeto padrão urbano baseado na capital",
+                "features": {
+                    "qaf_realization": "ʔ",
+                    "jim_realization": "ġ",
+                    "hamza_retention": "high",
+                    "vowel_reduction": "moderate"
+                }
+            },
+            {
+                "name": "mabadi_northern",
+                "description": "Dialeto setentrional conservador",
+                "features": {
+                    "qaf_realization": "q",
+                    "jim_realization": "ġ",
+                    "hamza_retention": "very_high",
+                    "vowel_reduction": "low",
+                    "pharyngeal_retention": "high"
+                }
+            },
+            {
+                "name": "mabadi_southern",
+                "description": "Dialeto meridional inovador",
+                "features": {
+                    "qaf_realization": "g",
+                    "jim_realization": "j",
+                    "hamza_retention": "low",
+                    "vowel_reduction": "high",
+                    "pharyngeal_merger": "frequent"
+                }
+            },
+            {
+                "name": "mabadi_rural",
+                "description": "Dialeto rural tradicional",
+                "features": {
+                    "qaf_realization": "q",
+                    "jim_realization": "ġ",
+                    "construct_state_frequent": true,
+                    "broken_plurals_productive": true,
+                    "romance_loanwords": "low"
+                }
+            }
+        ]
+    },
+    "pragmatic_markers": {
+        "enabled": true,
+        "discourse_particles": {
+            "hawn": "olha, veja",
+            "mela": "então, portanto",
+            "ara": "veja, escute",
+            "ejja": "vamos, venha",
+            "forsi": "talvez",
+            "vera": "realmente, de verdade",
+            "ma": "vamos!, ora!"
+        },
+        "interjections": {
+            "iva": "sim",
+            "le": "não",
+            "tajjeb": "ok, bom",
+            "kemm": "quanto!",
+            "xi": "que!",
+            "ħaj": "vivo! (juramento)"
+        }
+    },
+    "idiomatic_constructions": {
+        "enabled": true,
+        "constructions": [
+            {
+                "pattern": "għandu + NOUN",
+                "meaning": "ter (posse inalienável)",
+                "example": "għandu dar (ele tem casa)"
+            },
+            {
+                "pattern": "qed + VERB",
+                "meaning": "estar fazendo (progressivo)",
+                "example": "qed jaħdem (está trabalhando)"
+            },
+            {
+                "pattern": "se + VERB",
+                "meaning": "futuro",
+                "example": "se jmur (irá)"
+            },
+            {
+                "pattern": "kien + qed + VERB",
+                "meaning": "passado progressivo",
+                "example": "kien qed jaħdem (estava trabalhando)"
+            }
+        ]
+    },
+    "writing_system": {
+        "script": "latin",
+        "additional_letters": [
+            "ċ",
+            "ġ",
+            "ħ",
+            "ż"
+        ],
+        "digraphs": [
+            "għ",
+            "ie"
+        ],
+        "orthographic_rules": [
+            {
+                "rule": "għ representa /ʕ/ ou vogal longa",
+                "examples": [
+                    "għ = /ʕ/ em għaref",
+                    "għ = /aː/ em raġel > raġel għaref"
+                ]
+            },
+            {
+                "rule": "ie representa /iː/ ou /ɛː/",
+                "examples": [
+                    "ie = /iː/ em niexef",
+                    "ie = /ɛː/ em tifel"
+                ]
+            },
+            {
+                "rule": "ċ = /tʃ/, ġ = /dʒ/",
+                "examples": [
+                    "ċavetta (chave)",
+                    "ġurnata (dia)"
+                ]
+            },
+            {
+                "rule": "ħ = /ħ/ (fricativa faringal surda)",
+                "examples": [
+                    "ħobż (pão)",
+                    "ħabib (amigo)"
+                ]
+            },
+            {
+                "rule": "ż = /z/, z = /ts/ em palavras italianas",
+                "examples": [
+                    "żmien (tempo)",
+                    "ziju (tio)"
+                ]
+            }
+        ]
+    },
+    "cultural_notes": {
+        "honorifics": {
+            "Sinjur": "Senhor (Mr.)",
+            "Sinjura": "Senhora (Mrs.)",
+            "Patri": "Padre",
+            "Ħaġġ": "Peregrino (título honorífico islâmico)",
+            "Sheikh": "Xeque (líder religioso/tribal)"
+        },
+        "kinship_terminology": {
+            "missier": "pai",
+            "omm": "mãe",
+            "iben": "filho",
+            "bint": "filha",
+            "ħu": "irmão",
+            "oħt": "irmã",
+            "nanna": "avó",
+            "nannu": "avô",
+            "ziju": "tio",
+            "zija": "tia"
+        },
+        "color_terms": {
+            "abjad": "branco",
+            "iswed": "preto",
+            "aħmar": "vermelho",
+            "blu": "azul",
+            "aħdar": "verde",
+            "isfar": "amarelo",
+            "griż": "cinza",
+            "kannella": "marrom"
+        },
+        "time_expressions": {
+            "illum": "hoje",
+            "ilbieraħ": "ontem",
+            "għada": "amanhã",
+            "filgħodu": "de manhã",
+            "nofsinhar": "meio-dia",
+            "filgħaxija": "à tarde/noite",
+            "billejl": "à noite"
+        }
+    }
+}

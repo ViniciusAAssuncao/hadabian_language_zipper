@@ -1,0 +1,529 @@
+{
+  "family_id": "ordo-enkian",
+  "description": "Tronco das línguas ordo-enkianas, com raízes proto-semíticas adaptadas para o mundo de Hadab. Inclui o ramo levínico e outros sub-ramos com características fonológicas, morfológicas e sintáticas complexas.",
+  "proto_languages": [
+    {
+      "id": "proto-ordo-enkian",
+      "level": 0,
+      "description": "Língua ancestral proto-ordo-enkiana, raiz de todas as línguas do tronco. Sistema consonantal rico com ênfase em fricativas, oclusivas e faringais. Sistema vocálico tripartite com distinção de quantidade.",
+      "shared_phonotactics": {
+        "vowels": "aiuāīū",
+        "consonants": "ʔbdḍfgħhjklmnqrsṣštṭwxyzʕ",
+        "syllable_templates": ["CV", "CVC", "CVCC", "V", "VC"],
+        "forbidden_initial_clusters": ["bd", "tṭ", "ṣs", "nm", "lr"],
+        "forbidden_final_consonants": ["ʔ", "ħ", "ʕ"],
+        "max_consonant_cluster": 2,
+        "diphthongs": ["aj", "aw", "ij", "uw"]
+      },
+      "shared_lexicon_strength": 0.25,
+      "agglutination_strength": 0.95,
+      "gender_system": {
+        "enabled": true,
+        "genders": ["masculine", "feminine", "collective"],
+        "default": "masculine",
+        "inference": [
+          {"suffix": "at", "gender": "feminine"},
+          {"suffix": "ah", "gender": "feminine"},
+          {"suffix": "īn", "gender": "collective"},
+          {"suffix": "ūn", "gender": "masculine"}
+        ]
+      },
+      "root_system": {
+        "enabled": true,
+        "type": "triconsonantal",
+        "patterns": ["CaCaC", "CaCīC", "CūCaC", "CaCCaC", "CaCāC"],
+        "binyanim": [
+          {"name": "qal", "pattern": "CaCaC", "meaning": "basic_active"},
+          {"name": "nifal", "pattern": "nCaCaC", "meaning": "passive_reflexive"},
+          {"name": "piel", "pattern": "CiCCeC", "meaning": "intensive"},
+          {"name": "pual", "pattern": "CuCCaC", "meaning": "intensive_passive"},
+          {"name": "hifil", "pattern": "hiCCīC", "meaning": "causative"},
+          {"name": "hofal", "pattern": "huCCaC", "meaning": "causative_passive"},
+          {"name": "hitpael", "pattern": "hitCaCCaC", "meaning": "reflexive_intensive"}
+        ]
+      },
+      "case_system_proto": {
+        "cases": ["nominative", "accusative", "genitive"],
+        "markers": {
+          "nominative": "u",
+          "accusative": "a",
+          "genitive": "i"
+        },
+        "dual_markers": {
+          "nominative": "āni",
+          "accusative": "ajni",
+          "genitive": "ajni"
+        }
+      },
+      "verbal_system_proto": {
+        "aspects": ["perfective", "imperfective"],
+        "moods": ["indicative", "subjunctive", "jussive", "imperative"],
+        "tenses_derived": ["past", "present", "future"],
+        "person_markers": {
+          "1sg": {"perfective_suffix": "tu", "imperfective_prefix": "ʔa"},
+          "2sg_m": {"perfective_suffix": "ta", "imperfective_prefix": "ta"},
+          "2sg_f": {"perfective_suffix": "ti", "imperfective_prefix": "ta"},
+          "3sg_m": {"perfective_suffix": "a", "imperfective_prefix": "ja"},
+          "3sg_f": {"perfective_suffix": "at", "imperfective_prefix": "ta"},
+          "1pl": {"perfective_suffix": "nā", "imperfective_prefix": "na"},
+          "2pl_m": {"perfective_suffix": "tum", "imperfective_prefix": "ta"},
+          "2pl_f": {"perfective_suffix": "tunna", "imperfective_prefix": "ta"},
+          "3pl_m": {"perfective_suffix": "ū", "imperfective_prefix": "ja"},
+          "3pl_f": {"perfective_suffix": "na", "imperfective_prefix": "ja"}
+        }
+      },
+      "nominal_patterns": [
+        {"pattern": "CaCaC", "type": "basic_noun"},
+        {"pattern": "CaCīC", "type": "active_participle"},
+        {"pattern": "maCCaC", "type": "place_instrument"},
+        {"pattern": "CāCiC", "type": "agent_doer"},
+        {"pattern": "maCCūC", "type": "passive_participle"},
+        {"pattern": "CiCāC", "type": "verbal_noun"},
+        {"pattern": "taCCīC", "type": "abstract_noun"}
+      ],
+      "construct_state": {
+        "enabled": true,
+        "head_initial": true,
+        "phonological_changes": [
+          {"from": "at$", "to": "at", "condition": "word_final"},
+          {"from": "ā$", "to": "ā", "condition": "word_final"},
+          {"from": "u$", "to": "", "condition": "short_vowel_final"}
+        ]
+      },
+      "emphatic_consonants": ["ṣ", "ṭ", "ḍ", "ẓ"],
+      "pharyngealization": {
+        "enabled": true,
+        "triggers": ["ṣ", "ṭ", "ḍ", "ʕ", "ħ", "q"],
+        "affected_vowels": ["a", "i", "u"],
+        "lowering_effect": true
+      },
+      "stress_system_proto": {
+        "type": "weight_sensitive",
+        "preference": "penultimate_heavy",
+        "superheavy_attracts": true
+      }
+    },
+    {
+      "id": "proto-levinic",
+      "parent_id": "proto-ordo-enkian",
+      "level": 1,
+      "description": "Proto-Levínico, ramo principal derivado do proto-ordo-enkiano. Simplificação parcial do sistema consonantal com manutenção das raízes triconsonantais. Desenvolvimento de artigo definido e sistema de estados mais elaborado.",
+      "shared_phonotactics": {
+        "vowels": "aeiouāēīōū",
+        "consonants": "ʔbdḍfgħhjklmnqrsṣštṭwxyzʕ",
+        "syllable_templates": ["CV", "CVC", "CVCC", "CCV", "V"],
+        "forbidden_initial_clusters": ["bd", "tṭ", "ṣs", "nm", "ħʕ"],
+        "forbidden_final_consonants": ["ʔ"],
+        "max_consonant_cluster": 2,
+        "diphthongs": ["aj", "aw", "ej", "ow", "uj"]
+      },
+      "shared_lexicon_strength": 0.5,
+      "agglutination_strength": 0.85,
+      "innovations": [
+        "definite_article_development",
+        "case_reduction_to_two",
+        "aspect_prominence_over_tense",
+        "construct_state_elaboration",
+        "vowel_lengthening_morphological"
+      ],
+      "definite_article": {
+        "form": "al",
+        "assimilation_rule": "sun_moon_letters",
+        "sun_letters": ["t", "ṭ", "d", "ḍ", "r", "z", "s", "ṣ", "š", "n", "l"],
+        "moon_letters": ["ʔ", "b", "j", "ħ", "x", "ʕ", "g", "f", "q", "k", "m", "h", "w", "j"]
+      },
+      "case_reduction": {
+        "remaining_cases": ["nominative", "oblique"],
+        "nominative_marker": "u",
+        "oblique_marker": "a",
+        "genitive_absorbed_into": "oblique"
+      },
+      "verbal_innovations": {
+        "aspect_primary": true,
+        "perfective_marker": "qad",
+        "imperfective_marker": "ja",
+        "future_particle": "sa",
+        "continuous_particle": "kāna_ja"
+      },
+      "broken_plurals": {
+        "enabled": true,
+        "patterns": [
+          {"singular": "CaCaC", "plural": "CuCūC"},
+          {"singular": "CaCīC", "plural": "CuCCāC"},
+          {"singular": "CāCiC", "plural": "CuCCāC"},
+          {"singular": "maCCaC", "plural": "maCāCiC"},
+          {"singular": "CiCāC", "plural": "CiCāCāt"},
+          {"singular": "CuCūC", "plural": "CuCuCāt"}
+        ]
+      },
+      "sound_changes_from_parent": [
+        {"from": "ā", "to": "ā", "condition": "stressed"},
+        {"from": "ā", "to": "a", "condition": "unstressed_final"},
+        {"from": "aj", "to": "ē", "condition": "word_final"},
+        {"from": "aw", "to": "ō", "condition": "word_final"}
+      ]
+    },
+    {
+      "id": "central-levinic",
+      "parent_id": "proto-levinic",
+      "level": 2,
+      "description": "Levínico Central, sub-ramo com características mais conservadoras. Mantém sistema consonantal complexo e distinções fonológicas do proto-levínico.",
+      "shared_phonotactics": {
+        "vowels": "aeiouāēīōū",
+        "consonants": "ʔbdḍfgħhjklmnqrsṣštṭwxyzʕ",
+        "syllable_templates": ["CV", "CVC", "CVCC", "CCV"],
+        "forbidden_initial_clusters": ["bd", "tṭ", "nm"],
+        "forbidden_final_consonants": ["ʔ", "ħ"],
+        "diphthongs": ["aj", "aw", "ej", "ow"]
+      },
+      "shared_lexicon_strength": 0.7,
+      "agglutination_strength": 0.8,
+      "conservative_features": [
+        "pharyngeal_preservation",
+        "emphatic_consonant_maintenance",
+        "case_marker_retention",
+        "dual_number_preservation"
+      ],
+      "dialectal_variation": {
+        "enabled": true,
+        "variation_axes": ["urban_rural", "coastal_inland", "conservative_innovative"],
+        "phonological_variables": [
+          {"variable": "q_realization", "variants": ["q", "ʔ", "g", "k"]},
+          {"variable": "ʕ_realization", "variants": ["ʕ", "ʔ", "∅"]},
+          {"variable": "interdental_shift", "variants": ["θ→t", "θ→s", "θ_maintained"]}
+        ]
+      }
+    },
+    {
+      "id": "western-levinic",
+      "parent_id": "proto-levinic",
+      "level": 2,
+      "description": "Levínico Ocidental, sub-ramo inovador com simplificações fonológicas e influências de contato linguístico. Base para línguas como o mabádi.",
+      "shared_phonotactics": {
+        "vowels": "aeiouāēīōū",
+        "consonants": "bdfgħhjklmnpqrstvwxzʔ",
+        "syllable_templates": ["CV", "CVC", "CCV", "CCVC", "V"],
+        "forbidden_initial_clusters": ["bd", "nm", "lr"],
+        "forbidden_final_consonants": ["ħ"],
+        "diphthongs": ["aj", "aw", "ej", "ie", "uo"]
+      },
+      "shared_lexicon_strength": 0.65,
+      "agglutination_strength": 0.7,
+      "innovations_western": [
+        "pharyngeal_merger",
+        "emphatic_reduction",
+        "Romance_loanword_adaptation",
+        "consonant_cluster_simplification",
+        "vowel_harmony_development"
+      ],
+      "sound_changes_western": [
+        {"from": "ʕ", "to": "ʔ", "condition": "all_positions"},
+        {"from": "ħ", "to": "h", "condition": "all_positions"},
+        {"from": "q", "to": "ʔ", "condition": "all_positions"},
+        {"from": "ṣ", "to": "s", "condition": "unstressed"},
+        {"from": "ṭ", "to": "t", "condition": "word_final"},
+        {"from": "ḍ", "to": "d", "condition": "intervocalic"}
+      ],
+      "romance_influence": {
+        "enabled": true,
+        "source_languages": ["latin", "romance_proto"],
+        "phonological_adaptation": [
+          {"Romance_p": "b", "environment": "word_initial"},
+          {"Romance_v": "w", "environment": "all"},
+          {"Romance_clusters": "simplify", "epenthesis": "i"}
+        ],
+        "lexical_domains": [
+          "administration",
+          "technology",
+          "maritime",
+          "agriculture",
+          "religious_overlay"
+        ]
+      }
+    },
+    {
+      "id": "eastern-levinic",
+      "parent_id": "proto-levinic",
+      "level": 2,
+      "description": "Levínico Oriental, ramo com características arcaizantes e desenvolvimentos únicos em morfologia verbal.",
+      "shared_phonotactics": {
+        "vowels": "aiuāīū",
+        "consonants": "ʔbdḍfgħhjklmnqrsṣštṭwxyzʕ",
+        "syllable_templates": ["CV", "CVC", "CVCC"],
+        "forbidden_initial_clusters": ["bd", "tṭ", "ṣs"],
+        "forbidden_final_consonants": ["ʔ", "ʕ"],
+        "diphthongs": ["aj", "aw"]
+      },
+      "shared_lexicon_strength": 0.75,
+      "agglutination_strength": 0.9,
+      "archaic_features": [
+        "case_system_three_way",
+        "dual_number_mandatory",
+        "mood_distinctions_preserved",
+        "vowel_quantity_phonemic"
+      ]
+    }
+  ],
+  "branches": [
+    {
+      "id": "mabadic",
+      "parent_id": "western-levinic",
+      "description": "Ramo mabádico, línguas do grupo ocidental com forte simplificação fonológica e influência de contato. Inclui mabádi e dialetos relacionados.",
+      "shared_lexicon_strength": 0.8,
+      "agglutination_strength": 0.65,
+      "distinctive_features": [
+        "five_vowel_system",
+        "consonant_gemination_phonemic",
+        "stress_penultimate_default",
+        "Romance_superstrate_lexicon",
+        "VSO_to_SVO_shift",
+        "analytical_tendency"
+      ],
+      "phonological_profile": {
+        "vowel_reduction": "unstressed_to_schwa",
+        "consonant_lenition": "intervocalic_spirantization",
+        "final_vowel_apocope": "common",
+        "metathesis_frequent": true
+      }
+    },
+    {
+      "id": "northern-central",
+      "parent_id": "central-levinic",
+      "description": "Ramo centro-setentrional, línguas conservadoras com manutenção de características arcaicas.",
+      "shared_lexicon_strength": 0.85,
+      "agglutination_strength": 0.85,
+      "distinctive_features": [
+        "pharyngeal_contrast_maintained",
+        "case_system_partial",
+        "VSO_order_rigid",
+        "construct_state_productive"
+      ]
+    },
+    {
+      "id": "southern-central",
+      "parent_id": "central-levinic",
+      "description": "Ramo centro-meridional, equilíbrio entre inovação e conservação.",
+      "shared_lexicon_strength": 0.8,
+      "agglutination_strength": 0.75,
+      "distinctive_features": [
+        "dual_optional",
+        "case_markers_reduced",
+        "word_order_flexible"
+      ]
+    },
+    {
+      "id": "highland-eastern",
+      "parent_id": "eastern-levinic",
+      "description": "Ramo oriental montanhoso, línguas com sistemas verbais complexos.",
+      "shared_lexicon_strength": 0.8,
+      "agglutination_strength": 0.95,
+      "distinctive_features": [
+        "verbal_aspect_elaborated",
+        "evidentiality_markers",
+        "ergativity_split"
+      ]
+    },
+    {
+      "id": "lowland-eastern",
+      "parent_id": "eastern-levinic",
+      "description": "Ramo oriental de planície, características mais analíticas.",
+      "shared_lexicon_strength": 0.75,
+      "agglutination_strength": 0.7,
+      "distinctive_features": [
+        "preposition_development",
+        "particle_rich",
+        "tone_incipient"
+      ]
+    }
+  ],
+  "intelligibility": {
+    "central-levinic:western-levinic": 0.45,
+    "central-levinic:eastern-levinic": 0.5,
+    "western-levinic:eastern-levinic": 0.3,
+    "mabadic:northern-central": 0.35,
+    "mabadic:southern-central": 0.4,
+    "northern-central:southern-central": 0.7,
+    "highland-eastern:lowland-eastern": 0.65
+  },
+  "pidgin_rules": {
+    "enabled": true,
+    "simplification": 0.5,
+    "contact_scenarios": [
+      {
+        "languages": ["mabadic", "romance_superstrate"],
+        "resulting_features": [
+          "simplified_morphology",
+          "mixed_lexicon",
+          "SVO_order_fixed",
+          "analytical_grammar"
+        ]
+      }
+    ]
+  },
+  "dialect_variation": {
+    "enabled": true,
+    "variation_strength": 0.25,
+    "isoglosses": [
+      {
+        "feature": "qaf_pronunciation",
+        "variants": {
+          "conservative": "q",
+          "urban": "ʔ",
+          "bedouin": "g",
+          "coastal": "k"
+        }
+      },
+      {
+        "feature": "jim_pronunciation",
+        "variants": {
+          "conservative": "j",
+          "egyptian_type": "g",
+          "levantine_type": "ž",
+          "maghrebi_type": "ž"
+        }
+      }
+    ]
+  },
+  "diachronic_settings": {
+    "default_divergence_factor": 0.15,
+    "max_synonym_variants": 4,
+    "semantic_drift_rate": 0.2,
+    "grammaticalization_paths": [
+      {"lexical": "verb_want", "grammatical": "future_marker"},
+      {"lexical": "verb_finish", "grammatical": "perfective_marker"},
+      {"lexical": "preposition_to", "grammatical": "dative_marker"},
+      {"lexical": "demonstrative", "grammatical": "definite_article"}
+    ]
+  },
+  "lexical_registers_defaults": {
+    "enabled": true,
+    "registers": [
+      {
+        "name": "classical",
+        "chance": 0.15,
+        "mutation_factor": 0.5,
+        "description": "Registro clássico literário com formas arcaicas"
+      },
+      {
+        "name": "formal",
+        "chance": 0.25,
+        "mutation_factor": 1,
+        "description": "Registro formal padrão para contextos oficiais"
+      },
+      {
+        "name": "colloquial",
+        "chance": 0.35,
+        "mutation_factor": 2,
+        "description": "Registro coloquial cotidiano"
+      },
+      {
+        "name": "vulgar",
+        "chance": 0.1,
+        "mutation_factor": 3,
+        "description": "Registro vulgar informal"
+      },
+      {
+        "name": "poetic",
+        "chance": 0.08,
+        "mutation_factor": 4,
+        "description": "Registro poético com licenças arcaizantes"
+      },
+      {
+        "name": "religious",
+        "chance": 0.07,
+        "mutation_factor": 0.3,
+        "description": "Registro religioso conservador"
+      }
+    ]
+  },
+  "loanword_policy_defaults": {
+    "enabled": true,
+    "modes": {
+      "phonetic_adaptation": 0.5,
+      "calque": 0.3,
+      "semantic_extension": 0.2
+    },
+    "calque_connector": "",
+    "adaptation_rules": [
+      {
+        "source_phoneme": "p",
+        "target_phoneme": "b",
+        "environment": "word_initial"
+      },
+      {
+        "source_phoneme": "v",
+        "target_phoneme": "w",
+        "environment": "all"
+      },
+      {
+        "source_phoneme": "o",
+        "target_phoneme": "u",
+        "environment": "closed_syllable"
+      },
+      {
+        "source_cluster": "CC",
+        "resolution": "epenthesis",
+        "epenthetic_vowel": "i"
+      }
+    ]
+  },
+  "morphophonological_processes": {
+    "assimilation": {
+      "enabled": true,
+      "types": [
+        {
+          "name": "sun_letter_assimilation",
+          "trigger": "definite_article",
+          "target": "following_consonant",
+          "result": "gemination"
+        },
+        {
+          "name": "nasal_place_assimilation",
+          "trigger": "n",
+          "target": "following_stop",
+          "result": "place_match"
+        }
+      ]
+    },
+    "deletion": {
+      "enabled": true,
+      "rules": [
+        {
+          "target": "short_vowel",
+          "environment": "unstressed_open_syllable",
+          "condition": "not_word_final"
+        },
+        {
+          "target": "hamza",
+          "environment": "intervocalic",
+          "condition": "colloquial_register"
+        }
+      ]
+    },
+    "epenthesis": {
+      "enabled": true,
+      "vowel": "i",
+      "triggers": [
+        "forbidden_cluster",
+        "three_consonant_sequence",
+        "word_final_cluster"
+      ]
+    }
+  },
+  "sociolinguistic_dimensions": {
+    "diglossia": {
+      "enabled": true,
+      "high_variety": "classical_standard",
+      "low_variety": "vernacular_dialects",
+      "domains": {
+        "high": ["literature", "religion", "formal_education", "media"],
+        "low": ["conversation", "family", "informal_settings"]
+      }
+    },
+    "code_switching": {
+      "enabled": true,
+      "frequency": 0.2,
+      "triggers": ["topic_shift", "emphasis", "quotation"]
+    }
+  }
+}
