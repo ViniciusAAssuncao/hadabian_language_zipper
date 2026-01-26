@@ -600,6 +600,74 @@ class AffixHandler:
         return None
 
 
+class BrokenPluralHandler:
+    def __init__(self, profile: Dict, phonology_handler: PhonologyHandler):
+        self.profile = profile
+        self.phonology = phonology_handler
+        self.config = profile.get(
+            'number_system', {}).get('broken_plurals', {})
+        self.enabled = self.config.get('enabled', False)
+        self.patterns = self.config.get('patterns', [])
+        self.number_system = profile.get('number_system', {})
+        self.plural_markers = self.number_system.get(
+            'markers', {}).get('plural', {})
+        self.consonants = set(phonology_handler.consonants)
+
+    def apply_plural(self, word: str, feats_str: str, pos: str) -> str:
+        if not word:
+            return word
+        if not feats_str or 'Number=Plur' not in feats_str:
+            return word
+
+        if self.enabled and pos == 'NOUN':
+            word_lower = word.lower()
+            for pat in self.patterns:
+                s_pat = pat.get('singular_pattern', '')
+                p_pat = pat.get('plural_pattern', '')
+                if not s_pat or not p_pat:
+                    continue
+
+                regex_pattern = "^"
+                for char in s_pat:
+                    if char == 'C':
+                        regex_pattern += "([{}]+)".format("".join(self.consonants))
+                    else:
+                        regex_pattern += re.escape(char)
+                regex_pattern += "$"
+
+                match = re.match(regex_pattern, word_lower)
+                if match:
+                    radicals = match.groups()
+                    plural_word = ""
+                    rad_idx = 0
+                    possible = True
+                    for char in p_pat:
+                        if char == 'C':
+                            if rad_idx < len(radicals):
+                                plural_word += radicals[rad_idx]
+                                rad_idx += 1
+                            else:
+                                possible = False
+                                break
+                        else:
+                            plural_word += char
+
+                    if possible:
+                        if word[0].isupper():
+                            return plural_word.capitalize()
+                        return plural_word
+
+        marker = self.plural_markers.get('marker', '')
+        if marker:
+            return word + marker
+
+        alts = self.plural_markers.get('alternatives', [])
+        if alts:
+            return word + alts[0]
+
+        return word
+
+
 class DegreeHandler:
     def __init__(self, profile: Dict, harmony_handler: Optional[VowelHarmonyHandler] = None):
         self.profile = profile
@@ -885,6 +953,8 @@ class OriginalLanguageEngine:
             self.profile, self.phonology_handler)
         self.concept_handler = ConceptHandler(self.profile)
         self.root_handler = RootSystemHandler(
+            self.profile, self.phonology_handler)
+        self.broken_plural_handler = BrokenPluralHandler(
             self.profile, self.phonology_handler)
         self.functional_config = self.profile.get('functional_particles', {})
         self.lexical_registers = self.profile.get('lexical_registers', {})
@@ -1189,6 +1259,12 @@ class OriginalLanguageEngine:
                                     head_conlang_word)
                                 current_form = self.gender_handler.apply_agreement(
                                     current_form, head_gender, pos)
+
+                if self.broken_plural_handler.enabled:
+                    current_form = self.broken_plural_handler.apply_plural(
+                        current_form, feats, current_pos
+                    )
+
                 is_topic = False
                 if topic_enabled and topic_idx is not None:
                     if func['index'] == topic_idx:
