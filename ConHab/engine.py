@@ -159,6 +159,92 @@ class PhonologyHandler:
         return result
 
 
+class RootSystemHandler:
+    def __init__(self, profile: Dict, phonology_handler: PhonologyHandler):
+        self.profile = profile
+        self.phonology_handler = phonology_handler
+        self.morph_config = profile.get('morphological_derivation', {})
+        self.root_config = profile.get('root_system', {})
+        self.enabled = self.morph_config.get(
+            'root_based', False) or self.root_config.get('enabled', False)
+        self.binyanim = self.morph_config.get('binyanim', [])
+        if not self.binyanim and 'binyanim' in self.root_config:
+            self.binyanim = self.root_config['binyanim']
+        self.root_registry = self.morph_config.get('root_registry', {})
+        self.seed = profile.get('global_seed', 12345)
+        self.consonants = self.phonology_handler.consonants
+
+    def generate_root(self, lemma: str) -> List[str]:
+        lemma_lower = lemma.lower()
+        if lemma_lower in self.root_registry:
+            root_str = self.root_registry[lemma_lower]
+            if isinstance(root_str, str):
+                return list(root_str.replace("-", ""))
+            return root_str
+
+        normalized = self.phonology_handler.normalize_char(lemma_lower)
+        candidates = [c for c in normalized if c in self.consonants]
+
+        if len(candidates) >= 3:
+            return candidates[:3]
+
+        rng = random.Random(self.seed + sum(ord(c) for c in lemma))
+        padding_needed = 3 - len(candidates)
+        candidates.extend(rng.sample(list(self.consonants), padding_needed))
+
+        return candidates[:3]
+
+    def apply_pattern(self, root: List[str], pattern_def: Union[str, Dict]) -> str:
+        if not root or len(root) < 3:
+            return "".join(root)
+
+        pattern = ""
+        if isinstance(pattern_def, dict):
+            pattern = pattern_def.get('pattern', '1e2e3')
+        else:
+            pattern = pattern_def
+
+        result = []
+        i = 0
+        while i < len(pattern):
+            char = pattern[i]
+            if char == '1':
+                result.append(root[0])
+            elif char == '2':
+                result.append(root[1])
+            elif char == '3':
+                result.append(root[2])
+            elif char == 'C':
+                c_count = 0
+                for prev in pattern[:i]:
+                    if prev == 'C':
+                        c_count += 1
+                if c_count < 3:
+                    result.append(root[c_count])
+                else:
+                    result.append(char)
+            else:
+                result.append(char)
+            i += 1
+
+        word = "".join(result)
+        return self.phonology_handler.nativize_word(word)
+
+    def get_binyan_by_meaning(self, meaning_tag: str) -> Optional[Dict]:
+        if not self.binyanim:
+            return None
+
+        matches = [
+            b for b in self.binyanim if meaning_tag in b.get('meaning', '')]
+        if matches:
+            return matches[0]
+
+        if meaning_tag == 'basic':
+            return next((b for b in self.binyanim if b.get('form') == 'I'), self.binyanim[0])
+
+        return None
+
+
 class ConceptHandler:
     def __init__(self, profile: Dict):
         self.profile = profile
@@ -736,7 +822,7 @@ class LoanwordHandler:
             sample_keys = list(engine_ref.word_cache.keys())
             if sample_keys:
                 rng = random.Random(self.seed + sum(ord(c)
-                                    for c in foreign_word))
+                                                    for c in foreign_word))
                 candidates.append(rng.choice(sample_keys))
         if candidates:
             chosen_lemma = candidates[0]
@@ -798,6 +884,8 @@ class OriginalLanguageEngine:
         self.loanword_handler = LoanwordHandler(
             self.profile, self.phonology_handler)
         self.concept_handler = ConceptHandler(self.profile)
+        self.root_handler = RootSystemHandler(
+            self.profile, self.phonology_handler)
         self.functional_config = self.profile.get('functional_particles', {})
         self.lexical_registers = self.profile.get('lexical_registers', {})
         if not self.lexical_registers and 'lexical_registers_defaults' in self.profile:
@@ -815,6 +903,15 @@ class OriginalLanguageEngine:
             self.family_id = family_data['family_id']
         if 'diachronic_settings' in family_data:
             self.profile['diachronic_settings'] = family_data['diachronic_settings']
+
+        if 'root_system' not in self.profile:
+            family_roots = None
+            for p in family_data.get('proto_languages', []):
+                if 'root_system' in p:
+                    family_roots = p['root_system']
+            if family_roots:
+                self.profile['root_system'] = family_roots
+
         target_node_id = self.profile.get('family_node')
         if not target_node_id:
             return
@@ -931,6 +1028,32 @@ class OriginalLanguageEngine:
         if concept_result:
             word, c_type, c_meta = concept_result
             return self._get_word_form(lemma, tags=['concept'], force_word=word, meta=c_meta)
+
+        if self.root_handler.enabled and (pos == 'VERB' or pos == 'NOUN'):
+            root = self.root_handler.generate_root(lemma)
+            pattern_def = self.root_handler.get_binyan_by_meaning('basic')
+
+            if tags:
+                for tag in tags:
+                    derived_binyan = self.root_handler.get_binyan_by_meaning(
+                        tag)
+                    if derived_binyan:
+                        pattern_def = derived_binyan
+                        break
+
+            if pattern_def:
+                generated_word = self.root_handler.apply_pattern(
+                    root, pattern_def)
+                entry = {
+                    "lemma": lemma,
+                    "default": generated_word,
+                    "synsets": [{"word": generated_word, "tags": ["root_derived"], "affinity": 1.0}],
+                    "origin": "triconsonantal_system",
+                    "root": "".join(root)
+                }
+                self.word_cache[lemma] = entry
+                return generated_word
+
         if self.affix_handler.morph_derivation_enabled:
             derived_word = self.affix_handler.try_derive_from_source(
                 lemma, pos, self, current_depth=derivation_depth)

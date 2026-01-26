@@ -763,53 +763,64 @@
         "binyanim": [
             {
                 "form": "I",
-                "pattern": "CeCe",
+                "pattern": "1e2e3",
                 "meaning": "basic_action",
                 "example": "kiteb (escrever)"
             },
             {
                 "form": "II",
-                "pattern": "CeCCe",
+                "pattern": "1e22e3",
                 "meaning": "intensive_causative",
                 "example": "kisseb (ensinar a escrever)"
             },
             {
                 "form": "III",
-                "pattern": "CieCe",
+                "pattern": "1ie2e3",
                 "meaning": "reciprocal",
                 "example": "kieteb (corresponder-se)"
             },
             {
                 "form": "V",
-                "pattern": "tCeCCe",
+                "pattern": "t1e22e3",
                 "meaning": "reflexive_intensive",
                 "example": "tkisseb (instruir-se)"
             },
             {
                 "form": "VI",
-                "pattern": "tCieCe",
+                "pattern": "t1ie2e3",
                 "meaning": "reciprocal_reflexive",
                 "example": "tkieteb (escrever-se mutuamente)"
             },
             {
                 "form": "VII",
-                "pattern": "nCeCe",
+                "pattern": "n1e2e3",
                 "meaning": "passive_reflexive",
                 "example": "nkiteb (ser escrito)"
             },
             {
                 "form": "VIII",
-                "pattern": "CteCe",
+                "pattern": "1te2e3",
                 "meaning": "reflexive",
                 "example": "ktiteb (inscrever-se)"
             },
             {
                 "form": "X",
-                "pattern": "steCCe",
+                "pattern": "ste12e3",
                 "meaning": "requestive_reflexive",
                 "example": "stkiteb (solicitar por escrito)"
             }
-        ]
+        ],
+        "root_registry": {
+            "escrever": "ktb",
+            "ler": "qrʔ",
+            "falar": "kll",
+            "comer": "kll",
+            "beber": "šrb",
+            "entrar": "dxl",
+            "sair": "xrġ",
+            "saber": "ʕlm",
+            "trabalhar": "ħdm"
+        }
     },
     "affix_system": {
         "enabled": true,
