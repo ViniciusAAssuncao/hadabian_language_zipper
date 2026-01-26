@@ -15,6 +15,53 @@ from morphosyntax_analyzer import (
 )
 
 
+class SunLetterHandler:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.config = profile.get('determiner_system', {}).get(
+            'definite_article', {})
+        self.enabled = self.config.get('sun_letter_assimilation', False)
+        self.sun_letters = set(self.config.get('sun_letters', []))
+        self.forms = set()
+        if self.config.get('form'):
+            self.forms.add(self.config.get('form').lower())
+        if self.config.get('variants'):
+            self.forms.update([v.lower()
+                              for v in self.config.get('variants', [])])
+
+    def assimilate(self, article: str, next_word: str) -> str:
+        if not self.enabled or not article or not next_word:
+            return article
+
+        clean_next = "".join(filter(str.isalpha, next_word)).lower()
+        if not clean_next:
+            return article
+
+        first_char = clean_next[0]
+        if first_char not in self.sun_letters:
+            return article
+
+        match = re.search(r'([bcdfghjklmnpqrstvwxz])(\W*)$',
+                          article, re.IGNORECASE)
+        if match:
+            consonant = match.group(1)
+            separator = match.group(2)
+            base = article[:match.start(1)]
+            new_consonant = first_char
+            if consonant.isupper():
+                new_consonant = new_consonant.upper()
+            return f"{base}{new_consonant}{separator}"
+
+        match_vowel = re.search(r'([aeiou])(\W*)$', article, re.IGNORECASE)
+        if match_vowel:
+            separator = match_vowel.group(2)
+            base = article[:match_vowel.end(1)]
+            gemination = first_char
+            return f"{base}{gemination}{separator}"
+
+        return article
+
+
 class ConstructStateHandler:
     def __init__(self, profile: Dict, gender_handler: GenderHandler):
         self.profile = profile
@@ -1007,6 +1054,7 @@ class OriginalLanguageEngine:
             self.profile, self.phonology_handler)
         self.construct_state_handler = ConstructStateHandler(
             self.profile, self.gender_handler)
+        self.sun_letter_handler = SunLetterHandler(self.profile)
         self.functional_config = self.profile.get('functional_particles', {})
         self.lexical_registers = self.profile.get('lexical_registers', {})
         if not self.lexical_registers and 'lexical_registers_defaults' in self.profile:
@@ -1400,8 +1448,12 @@ class OriginalLanguageEngine:
                 if orig_word[0].isupper() and pos == 'PROPN':
                     current_form = current_form.capitalize()
 
-                translated_words.append(current_form)
-                last_func = func
+                if self.sun_letter_handler.enabled and translated_words and last_func:
+                    if last_func.get('pos') == 'DET':
+                        prev_word = translated_words[-1]
+                        assimilated_prev = self.sun_letter_handler.assimilate(
+                            prev_word, current_form)
+                        translated_words[-1] = assimilated_prev
 
             if sentence_terminator:
                 translated_words.append(sentence_terminator)

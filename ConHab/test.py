@@ -1,16 +1,33 @@
-from engine import OriginalLanguageEngine
+import json
+from engine import SunLetterHandler
 
-
-engine = OriginalLanguageEngine('./conlangs/mabadi_language.json')
-
-engine.word_cache['livro'] = {
-    "lemma": "livro",
-    "default": "banal",
-    "synsets": [{"word": "banal", "tags": ["common"], "affinity": 1.0}]
+# Perfil de teste simplificado baseado no Mabádi
+test_profile = {
+    "determiner_system": {
+        "definite_article": {
+            "form": "ta",
+            "variants": ["il"],
+            "sun_letter_assimilation": True,
+            "sun_letters": ["d", "n", "r", "s", "t", "x", "z"]
+        }
+    }
 }
 
-plural_form = engine.broken_plural_handler.apply_plural("banal", "Number=Plur", "NOUN")
-print(f"Singular: banal -> Plural: {plural_form}")
+handler = SunLetterHandler(test_profile)
 
-plural_form_reg = engine.broken_plural_handler.apply_plural("ba", "Number=Plur", "NOUN")
-print(f"Singular: ba -> Plural: {plural_form_reg}")
+# Casos de Teste
+tests = [
+    ("il-", "dar", "id-"),      # Esperado: id- (assimilação de consoante)
+    ("il", "xemx", "ix"),       # Esperado: ix (assimilação sem hífen)
+    ("ta", "dar", "tad"),       # Esperado: tad (geminação após vogal)
+    ("ta-", "tifel", "tat-"),   # Esperado: tat- (geminação com hífen)
+    ("il-", "qamar", "il-"),    # Esperado: il- (letra lunar, sem mudança)
+]
+
+print("--- Iniciando Testes de Assimilação ---")
+for article, noun, expected in tests:
+    result = handler.assimilate(article, noun)
+    status = "PASS" if result == expected else f"FAIL (Got: {result})"
+    print(f"Artigo: '{article}' + Nome: '{noun}' -> Resultado: '{result}' | Esperado: '{expected}' [{status}]")
+
+print("--- Fim dos Testes ---")
