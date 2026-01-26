@@ -746,8 +746,12 @@ class SyntaxEngine:
         particles = self.profile.get('functional_particles', {})
         det_config = self.profile.get(
             'determiner_system', {}).get('definite_article', {})
-        det_forms = {det_config.get('form')}
-        det_forms.update(det_config.get('variants', []))
+        det_forms = set()
+        if det_config.get('form'):
+            det_forms.add(det_config.get('form').lower())
+        if det_config.get('variants'):
+            det_forms.update([v.lower()
+                             for v in det_config.get('variants', [])])
 
         for f in functions:
             lemma = f['lemma'].lower()
@@ -758,10 +762,11 @@ class SyntaxEngine:
                 if head_idx != -1 and head_idx < len(functions):
                     head = next(
                         (h for h in functions if h['index'] == head_idx), None)
-                    if head and head['pos'] == 'NOUN':
+                    if head and head['pos'] in {'NOUN', 'PROPN'}:
                         f['pos'] = 'DET'
-                        if 'feats' in f:
-                            f['feats'] += '|PronType=Art'
+                        if 'feats' in f and f['feats'] != '_':
+                            if 'PronType=Art' not in f['feats']:
+                                f['feats'] += '|PronType=Art'
                         else:
                             f['feats'] = 'PronType=Art'
 
@@ -815,11 +820,13 @@ class SyntaxEngine:
                     if last_token.endswith('-'):
                         last_token = last_token[:-1]
                     final_tokens.append(last_token)
-                    final_tokens.append(word)
+                    skip_next_space = False
                 else:
                     final_tokens.append(last_token + word)
-                skip_next_space = False
-            elif not final_tokens:
+                    skip_next_space = False
+                    continue
+
+            if not final_tokens:
                 final_tokens.append(word)
             else:
                 last_token = final_tokens[-1]

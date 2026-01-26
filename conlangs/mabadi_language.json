@@ -961,6 +961,242 @@
             }
         ]
     },
+    "numeric_handling": {
+        "ignore_digits": true,
+        "number_system": "decimal",
+        "native_numbers": {
+            "1": "wieħed",
+            "2": "tnejn",
+            "3": "tlieta",
+            "4": "erbgħa",
+            "5": "ħamsa",
+            "6": "sitta",
+            "7": "sebgħa",
+            "8": "tmienja",
+            "9": "disgħa",
+            "10": "għaxra",
+            "100": "mija",
+            "1000": "elf"
+        }
+    },
+    "negation_system": {
+        "enabled": true,
+        "strategies": [
+            {
+                "type": "verbal_negation",
+                "marker": "ma",
+                "position": "pre_verbal",
+                "suffix": "x",
+                "description": "Negação verbal descontínua ma...x"
+            },
+            {
+                "type": "nominal_negation",
+                "marker": "mhux",
+                "position": "pre_nominal",
+                "description": "Negação nominal"
+            },
+            {
+                "type": "emphatic_negation",
+                "marker": "qatt",
+                "position": "post_verbal",
+                "requires": "ma_prefix",
+                "description": "Negação enfática 'nunca'"
+            }
+        ]
+    },
+    "interrogative_system": {
+        "enabled": true,
+        "question_particles": [
+            {
+                "particle": "x",
+                "type": "yes_no",
+                "position": "sentence_initial",
+                "description": "Partícula interrogativa polar"
+            },
+            {
+                "particle": "xi",
+                "type": "yes_no_alternative",
+                "position": "sentence_initial",
+                "description": "Partícula interrogativa alternativa"
+            }
+        ],
+        "wh_words": {
+            "who": "min",
+            "what": "xiex",
+            "where": "fejn",
+            "when": "meta",
+            "why": "għaliex",
+            "how": "kif",
+            "which": "liema"
+        }
+    },
+    "determiner_system": {
+        "enabled": true,
+        "definite_article": {
+            "form": "ta",
+            "variants": [
+                "t",
+                "ta"
+            ],
+            "sun_letter_assimilation": true,
+            "sun_letters": [
+                "d",
+                "n",
+                "r",
+                "s",
+                "t",
+                "x",
+                "z",
+                "ċ",
+                "ż",
+                "l"
+            ],
+            "procliticizes": true
+        },
+        "indefinite_article": {
+            "form": "",
+            "description": "Sem artigo indefinido, usa numeral 'wieħed' quando necessário"
+        },
+        "demonstratives": {
+            "proximal": {
+                "sg_m": "dan",
+                "sg_f": "din",
+                "pl": "dawn"
+            },
+            "distal": {
+                "sg_m": "dak",
+                "sg_f": "dik",
+                "pl": "dawk"
+            }
+        },
+        "possessives": {
+            "pronominal_suffixes": true,
+            "independent_forms": false,
+            "suffixes": {
+                "1sg": "i",
+                "2sg": "ek",
+                "3sg_m": "u",
+                "3sg_f": "ha",
+                "1pl": "na",
+                "2pl": "kom",
+                "3pl": "hom"
+            }
+        }
+    },
+    "pronominal_system": {
+        "enabled": true,
+        "independent_pronouns": {
+            "1sg": "jiena",
+            "2sg": "int",
+            "3sg_m": "huwa",
+            "3sg_f": "hija",
+            "1pl": "aħna",
+            "2pl": "intom",
+            "3pl": "huma"
+        },
+        "object_pronouns": {
+            "direct": {
+                "1sg": "ni",
+                "2sg": "k",
+                "3sg_m": "h",
+                "3sg_f": "ha",
+                "1pl": "na",
+                "2pl": "kom",
+                "3pl": "hom"
+            },
+            "indirect": {
+                "1sg": "li",
+                "2sg": "lek",
+                "3sg_m": "lu",
+                "3sg_f": "ilha",
+                "1pl": "lilna",
+                "2pl": "lilkom",
+                "3pl": "lilhom"
+            }
+        },
+        "clitic_ordering": {
+            "enabled": true,
+            "order": [
+                "neg",
+                "obj_indirect",
+                "obj_direct",
+                "verb"
+            ],
+            "procliticizes": false,
+            "encliticizes": true
+        }
+    },
+    "adposition_system": {
+        "enabled": true,
+        "type": "prepositions",
+        "core_prepositions": {
+            "fi": "em, dentro de",
+            "fuq": "sobre, em cima de",
+            "taħt": "sob, embaixo de",
+            "ma": "com (instrumental)",
+            "bi": "com, por meio de",
+            "għal": "para, a",
+            "minn": "de, desde",
+            "ta": "de (posse/genitivo)",
+            "bejn": "entre",
+            "qabel": "antes de",
+            "wara": "depois de, atrás de",
+            "ħdejn": "perto de",
+            "kontra": "contra"
+        },
+        "inflected_prepositions": {
+            "enabled": true,
+            "pattern": "preposition + pronominal_suffix",
+            "example": {
+                "fi": {
+                    "1sg": "fija",
+                    "2sg": "fik",
+                    "3sg_m": "fih",
+                    "3sg_f": "fiha"
+                }
+            }
+        }
+    },
+    "conjunction_system": {
+        "enabled": true,
+        "coordinating": {
+            "u": "e",
+            "jew": "ou",
+            "iżda": "mas",
+            "imma": "porém",
+            "għax": "porque"
+        },
+        "subordinating": {
+            "li": "que",
+            "meta": "quando",
+            "jekk": "se",
+            "għalkemm": "embora",
+            "sakemm": "até que",
+            "billi": "visto que",
+            "ladarba": "uma vez que"
+        }
+    },
+    "copula_system": {
+        "enabled": true,
+        "copulas": [
+            {
+                "form": "kien",
+                "type": "past_existential",
+                "conjugates": true
+            },
+            {
+                "form": "hu",
+                "type": "present_pronominal",
+                "conjugates": true,
+                "usage": "identificational"
+            },
+            {
+                "form": "zero",
+                "type": "present_default",
+                "usage": "predicational_present"
+            }
+        ]
+    },
     "lexical_registers": {
         "enabled": true,
         "default_fallback": "common",
@@ -1000,6 +1236,97 @@
                 "chance": 0.05,
                 "mutation_factor": 0.5,
                 "description": "Registro poético arcaizante"
+            }
+        ]
+    },
+    "loanword_policy": {
+        "enabled": true,
+        "modes": {
+            "phonetic_adaptation": 0.55,
+            "calque": 0.25,
+            "semantic_extension": 0.2
+        },
+        "calque_connector": "ta",
+        "adaptation_strictness": "medium",
+        "source_languages": [
+            {
+                "language": "italian",
+                "domains": [
+                    "maritime",
+                    "trade",
+                    "food",
+                    "administration"
+                ],
+                "influence_strength": 0.7
+            },
+            {
+                "language": "english",
+                "domains": [
+                    "technology",
+                    "science",
+                    "modern_life"
+                ],
+                "influence_strength": 0.5
+            },
+            {
+                "language": "arabic",
+                "domains": [
+                    "religion",
+                    "law",
+                    "literature"
+                ],
+                "influence_strength": 0.9
+            },
+            {
+                "language": "french",
+                "domains": [
+                    "culture",
+                    "cuisine",
+                    "fashion"
+                ],
+                "influence_strength": 0.3
+            }
+        ],
+        "phonological_adaptations": [
+            {
+                "source_pattern": "p",
+                "target_pattern": "p",
+                "description": "Manutenção de /p/ do romance",
+                "examples": [
+                    "pizza > pizza",
+                    "pasta > pasta"
+                ]
+            },
+            {
+                "source_pattern": "v",
+                "target_pattern": "v",
+                "description": "Manutenção de /v/ do romance",
+                "examples": [
+                    "vino > vinu",
+                    "verde > verdi"
+                ]
+            },
+            {
+                "source_pattern": "tio",
+                "target_pattern": "zjo",
+                "description": "Palatalização italiano",
+                "examples": [
+                    "stazione > stazzjon"
+                ]
+            },
+            {
+                "source_pattern": "C$",
+                "target_pattern": "C",
+                "description": "Manutenção de consoantes finais do romance"
+            },
+            {
+                "source_pattern": "CC",
+                "target_pattern": "CiC",
+                "description": "Epêntese em clusters não permitidos",
+                "examples": [
+                    "sport > sport",
+                    "tren > tren"
+                ]
             }
         ]
     },
@@ -1045,5 +1372,188 @@
         "a": "ta",
         "os": "ta",
         "as": "ta"
+    },
+    "dialectal_features": {
+        "enabled": true,
+        "major_dialects": [
+            {
+                "name": "mabadi_standard",
+                "description": "Dialeto padrão urbano baseado na capital",
+                "features": {
+                    "qaf_realization": "ʔ",
+                    "jim_realization": "ġ",
+                    "hamza_retention": "high",
+                    "vowel_reduction": "moderate"
+                }
+            },
+            {
+                "name": "mabadi_northern",
+                "description": "Dialeto setentrional conservador",
+                "features": {
+                    "qaf_realization": "q",
+                    "jim_realization": "ġ",
+                    "hamza_retention": "very_high",
+                    "vowel_reduction": "low",
+                    "pharyngeal_retention": "high"
+                }
+            },
+            {
+                "name": "mabadi_southern",
+                "description": "Dialeto meridional inovador",
+                "features": {
+                    "qaf_realization": "g",
+                    "jim_realization": "j",
+                    "hamza_retention": "low",
+                    "vowel_reduction": "high",
+                    "pharyngeal_merger": "frequent"
+                }
+            },
+            {
+                "name": "mabadi_rural",
+                "description": "Dialeto rural tradicional",
+                "features": {
+                    "qaf_realization": "q",
+                    "jim_realization": "ġ",
+                    "construct_state_frequent": true,
+                    "broken_plurals_productive": true,
+                    "romance_loanwords": "low"
+                }
+            }
+        ]
+    },
+    "pragmatic_markers": {
+        "enabled": true,
+        "discourse_particles": {
+            "hawn": "olha, veja",
+            "mela": "então, portanto",
+            "ara": "veja, escute",
+            "ejja": "vamos, venha",
+            "forsi": "talvez",
+            "vera": "realmente, de verdade",
+            "ma": "vamos!, ora!"
+        },
+        "interjections": {
+            "iva": "sim",
+            "le": "não",
+            "tajjeb": "ok, bom",
+            "kemm": "quanto!",
+            "xi": "que!",
+            "ħaj": "vivo! (juramento)"
+        }
+    },
+    "idiomatic_constructions": {
+        "enabled": true,
+        "constructions": [
+            {
+                "pattern": "għandu + NOUN",
+                "meaning": "ter (posse inalienável)",
+                "example": "għandu dar (ele tem casa)"
+            },
+            {
+                "pattern": "qed + VERB",
+                "meaning": "estar fazendo (progressivo)",
+                "example": "qed jaħdem (está trabalhando)"
+            },
+            {
+                "pattern": "se + VERB",
+                "meaning": "futuro",
+                "example": "se jmur (irá)"
+            },
+            {
+                "pattern": "kien + qed + VERB",
+                "meaning": "passado progressivo",
+                "example": "kien qed jaħdem (estava trabalhando)"
+            }
+        ]
+    },
+    "writing_system": {
+        "script": "latin",
+        "additional_letters": [
+            "ċ",
+            "ġ",
+            "ħ",
+            "ż"
+        ],
+        "digraphs": [
+            "għ",
+            "ie"
+        ],
+        "orthographic_rules": [
+            {
+                "rule": "għ representa /ʕ/ ou vogal longa",
+                "examples": [
+                    "għ = /ʕ/ em għaref",
+                    "għ = /aː/ em raġel > raġel għaref"
+                ]
+            },
+            {
+                "rule": "ie representa /iː/ ou /ɛː/",
+                "examples": [
+                    "ie = /iː/ em niexef",
+                    "ie = /ɛː/ em tifel"
+                ]
+            },
+            {
+                "rule": "ċ = /tʃ/, ġ = /dʒ/",
+                "examples": [
+                    "ċavetta (chave)",
+                    "ġurnata (dia)"
+                ]
+            },
+            {
+                "rule": "ħ = /ħ/ (fricativa faringal surda)",
+                "examples": [
+                    "ħobż (pão)",
+                    "ħabib (amigo)"
+                ]
+            },
+            {
+                "rule": "ż = /z/, z = /ts/ em palavras italianas",
+                "examples": [
+                    "żmien (tempo)",
+                    "ziju (tio)"
+                ]
+            }
+        ]
+    },
+    "cultural_notes": {
+        "honorifics": {
+            "Sinjur": "Senhor (Mr.)",
+            "Sinjura": "Senhora (Mrs.)",
+            "Patri": "Padre",
+            "Ħaġġ": "Peregrino (título honorífico islâmico)",
+            "Sheikh": "Xeque (líder religioso/tribal)"
+        },
+        "kinship_terminology": {
+            "missier": "pai",
+            "omm": "mãe",
+            "iben": "filho",
+            "bint": "filha",
+            "ħu": "irmão",
+            "oħt": "irmã",
+            "nanna": "avó",
+            "nannu": "avô",
+            "ziju": "tio",
+            "zija": "tia"
+        },
+        "color_terms": {
+            "abjad": "branco",
+            "iswed": "preto",
+            "aħmar": "vermelho",
+            "blu": "azul",
+            "aħdar": "verde",
+            "isfar": "amarelo",
+            "griż": "cinza",
+            "kannella": "marrom"
+        },
+        "time_expressions": {
+            "illum": "hoje",
+            "ilbieraħ": "ontem",
+            "għada": "amanhã",
+            "filgħodu": "de manhã",
+            "nofsinhar": "meio-dia",
+            "filgħaxija": "à tarde/noite",
+            "billejl": "à noite"
+        }
     }
 }
