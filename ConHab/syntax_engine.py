@@ -744,8 +744,27 @@ class SyntaxEngine:
 
     def _refine_functions(self, functions: List[Dict]):
         particles = self.profile.get('functional_particles', {})
+        det_config = self.profile.get(
+            'determiner_system', {}).get('definite_article', {})
+        det_forms = {det_config.get('form')}
+        det_forms.update(det_config.get('variants', []))
+
         for f in functions:
             lemma = f['lemma'].lower()
+            word = f['word'].lower()
+
+            if word in det_forms or lemma in det_forms:
+                head_idx = f['dependencies'][0] if f['dependencies'] else -1
+                if head_idx != -1 and head_idx < len(functions):
+                    head = next(
+                        (h for h in functions if h['index'] == head_idx), None)
+                    if head and head['pos'] == 'NOUN':
+                        f['pos'] = 'DET'
+                        if 'feats' in f:
+                            f['feats'] += '|PronType=Art'
+                        else:
+                            f['feats'] = 'PronType=Art'
+
             if lemma in particles:
                 head_idx = f['dependencies'][0] if f['dependencies'] else -1
                 if head_idx != -1 and head_idx < len(functions):
@@ -783,22 +802,46 @@ class SyntaxEngine:
             {mapped_comma, '...', '…', ')', ']', '}', '”', '"', "'", '%'})
         punct_prefix = {'(', '[', '{', '«', '“', '¿', '¡'}
 
+        det_config = self.profile.get(
+            'determiner_system', {}).get('definite_article', {})
+        article_procliticizes = det_config.get('procliticizes', False)
+
+        skip_next_space = False
+
         for i, word in enumerate(words):
-            if not final_tokens:
+            if skip_next_space:
+                last_token = final_tokens.pop()
+                if word in punct_suffix:
+                    if last_token.endswith('-'):
+                        last_token = last_token[:-1]
+                    final_tokens.append(last_token)
+                    final_tokens.append(word)
+                else:
+                    final_tokens.append(last_token + word)
+                skip_next_space = False
+            elif not final_tokens:
                 final_tokens.append(word)
-                continue
-            last_token = final_tokens[-1]
-            if word in punct_suffix:
-                if word in conlang_terminators:
-                    strip_chars = [mapped_comma] + list(secondary_terminators)
-                    for sc in strip_chars:
-                        if last_token.endswith(sc):
-                            last_token = last_token[:-len(sc)]
-                final_tokens[-1] = last_token + word
-            elif any(last_token.startswith(p) for p in punct_prefix) and last_token in punct_prefix:
-                final_tokens[-1] = last_token + word
             else:
-                final_tokens.append(word)
+                last_token = final_tokens[-1]
+                if word in punct_suffix:
+                    if word in conlang_terminators:
+                        strip_chars = [mapped_comma] + \
+                            list(secondary_terminators)
+                        for sc in strip_chars:
+                            if last_token.endswith(sc):
+                                last_token = last_token[:-len(sc)]
+                    final_tokens[-1] = last_token + word
+                elif any(last_token.startswith(p) for p in punct_prefix) and last_token in punct_prefix:
+                    final_tokens[-1] = last_token + word
+                else:
+                    final_tokens.append(word)
+
+            func = function_objs[i]
+            if article_procliticizes and func['pos'] == 'DET' and 'PronType=Art' in func.get('feats', ''):
+                if final_tokens:
+                    final_tokens[-1] = final_tokens[-1] + "-"
+                    skip_next_space = True
+
         return final_tokens
 
     def process_text(self, text: str) -> Tuple[str, List[Dict]]:

@@ -270,6 +270,9 @@ class ConceptHandler:
                 'concept_id': concept_id
             }
 
+        if concept_id and isinstance(concept_id, str):
+            return concept_id, 'direct_mapping', {'origin': 'mapping_table'}
+
         return None
 
 
@@ -511,6 +514,7 @@ class AffixHandler:
             suf = rule.get('suffix', '')
             input_pos = rule.get('input_pos')
             min_len = rule.get('min_word_length', 0)
+            mode = rule.get('mode', 'derive')
 
             if len(lemma) < min_len:
                 continue
@@ -524,6 +528,11 @@ class AffixHandler:
 
                 if base_source_lemma == lemma:
                     continue
+
+                if mode == 'adapt':
+                    nativized = engine_ref.phonology_handler.nativize_word(
+                        base_source_lemma)
+                    return nativized
 
                 target_pos = rule.get('target_pos', 'NOUN')
 
