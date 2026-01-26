@@ -463,6 +463,7 @@ class RootSystemHandler:
         self.binyanim = self.morph_config.get('binyanim', [])
         if not self.binyanim and 'binyanim' in self.root_config:
             self.binyanim = self.root_config['binyanim']
+        self.nominal_patterns = self.morph_config.get('nominal_patterns', [])
         self.root_registry = self.morph_config.get('root_registry', {})
         self.seed = profile.get('global_seed', 12345)
         self.consonants = self.phonology_handler.consonants
@@ -535,6 +536,12 @@ class RootSystemHandler:
         if meaning_tag == 'basic':
             return next((b for b in self.binyanim if b.get('form') == 'I'), self.binyanim[0])
 
+        return None
+
+    def get_pattern_by_type(self, type_tag: str) -> Optional[Dict]:
+        for p in self.nominal_patterns:
+            if p.get('type') == type_tag:
+                return p
         return None
 
 
@@ -818,12 +825,16 @@ class AffixHandler:
         self.source_suffixes = sorted(
             raw_source_suffixes, key=lambda x: x.get('priority', 0), reverse=True)
 
-    def get_derivation_rule(self, from_pos: str, to_pos: str) -> Optional[Dict]:
+    def get_derivation_rule(self, from_pos: str, to_pos: str, derivation_type: str = None) -> Optional[Dict]:
         if not self.enabled:
             return None
         for rule in self.derivation_rules:
             if rule['from_pos'] == from_pos and rule['to_pos'] == to_pos:
-                return rule
+                if derivation_type:
+                    if rule.get('type') == derivation_type:
+                        return rule
+                else:
+                    return rule
         return None
 
     def apply_affix(self, word: str, rule: Dict) -> str:
@@ -862,6 +873,7 @@ class AffixHandler:
             input_pos = rule.get('input_pos')
             min_len = rule.get('min_word_length', 0)
             mode = rule.get('mode', 'derive')
+            derivation_type = rule.get('derivation_type')
             if len(lemma) < min_len:
                 continue
             if pos and input_pos and pos != input_pos:
@@ -882,8 +894,17 @@ class AffixHandler:
                 derivation_rule = None
                 if effective_to_pos:
                     derivation_rule = self.get_derivation_rule(
-                        from_pos=target_pos, to_pos=effective_to_pos)
+                        from_pos=target_pos, to_pos=effective_to_pos, derivation_type=derivation_type)
                     if derivation_rule:
+                        if engine_ref.root_handler.enabled:
+                            d_type = derivation_rule.get('type')
+                            if d_type:
+                                pat_def = engine_ref.root_handler.get_pattern_by_type(
+                                    d_type)
+                                if pat_def:
+                                    root = engine_ref.root_handler.generate_root(
+                                        base_source_lemma)
+                                    return engine_ref.root_handler.apply_pattern(root, pat_def)
                         return self.apply_affix(base_conlang_word, derivation_rule)
                 if replacement and not derivation_rule:
                     source_stem = lemma[:-len(suf)]

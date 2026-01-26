@@ -807,6 +807,28 @@
             "int"
         ],
         "root_based": true,
+        "nominal_patterns": [
+            {
+                "pattern": "CaCīC",
+                "type": "active_participle"
+            },
+            {
+                "pattern": "maCCaC",
+                "type": "place"
+            },
+            {
+                "pattern": "taCCīC",
+                "type": "verbal_noun"
+            },
+            {
+                "pattern": "muCCaC",
+                "type": "passive_participle"
+            },
+            {
+                "pattern": "CaCCaC",
+                "type": "agent"
+            }
+        ],
         "binyanim": [
             {
                 "form": "I",
@@ -877,6 +899,7 @@
                 "suffix": "ação",
                 "replacement": "r",
                 "target_pos": "NOUN",
+                "derivation_type": "verbal_noun",
                 "priority": 1
             },
             {
@@ -884,6 +907,7 @@
                 "suffix": "mento",
                 "replacement": "r",
                 "target_pos": "NOUN",
+                "derivation_type": "verbal_noun",
                 "priority": 1
             },
             {
@@ -919,6 +943,7 @@
                 "suffix": "dor",
                 "replacement": "r",
                 "target_pos": "VERB",
+                "derivation_type": "agent",
                 "priority": 0
             }
         ],
