@@ -1205,7 +1205,6 @@
                 "obj_direct",
                 "verb"
             ],
-            "procliticizes": false,
             "encliticizes": true
         }
     },

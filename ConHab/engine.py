@@ -15,6 +15,125 @@ from morphosyntax_analyzer import (
 )
 
 
+class CliticHandler:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.config = profile.get(
+            'pronominal_system', {}).get('clitic_ordering', {})
+        self.enabled = self.config.get('enabled', False)
+        self.order = self.config.get(
+            'order', ['verb', 'obj_direct', 'obj_indirect'])
+        self.encliticizes = self.config.get('encliticizes', False)
+        self.procliticizes = self.config.get('procliticizes', False)
+        self.pronouns = profile.get(
+            'pronominal_system', {}).get('object_pronouns', {})
+
+    def _get_person_key(self, feats: str) -> Optional[str]:
+        if not feats or feats == '_':
+            return None
+        feat_map = {}
+        for f in feats.split('|'):
+            if '=' in f:
+                k, v = f.split('=', 1)
+                feat_map[k] = v
+        person = feat_map.get('Person')
+        number = feat_map.get('Number')
+        gender = feat_map.get('Gender')
+        if not person or not number:
+            return None
+        num_map = {'Sing': 'sg', 'Plur': 'pl', 'Dual': 'du'}
+        num_code = num_map.get(number, 'sg')
+        base_key = f"{person}{num_code}"
+        if gender:
+            gen_map = {'Masc': 'm', 'Fem': 'f', 'Neut': 'n'}
+            gen_code = gen_map.get(gender, '')
+            if gen_code:
+                return f"{base_key}_{gen_code}"
+        return base_key
+
+    def get_pronoun_form(self, func: Dict, p_type: str) -> str:
+        key = self._get_person_key(func.get('feats', ''))
+        if not key:
+            return ""
+        forms = self.pronouns.get(p_type, {})
+        if key in forms:
+            return forms[key]
+        base_key = key.split('_')[0]
+        return forms.get(base_key, "")
+
+    def analyze_clitics(self, functions: List[Dict], negation_handler) -> Tuple[Dict[int, Dict], Set[int]]:
+        if not self.enabled:
+            return {}, set()
+
+        clitic_map = {}
+        absorbed_indices = set()
+        negation_in_order = 'neg' in self.order
+
+        for func in functions:
+            if func['pos'] in {'VERB', 'AUX'}:
+                verb_idx = func['index']
+                clitic_data = {
+                    'verb': '',
+                    'neg': '',
+                    'obj_direct': '',
+                    'obj_indirect': ''
+                }
+                has_clitics = False
+
+                if negation_in_order:
+                    is_negated, trig_idx, strategy = negation_handler.detect_negation(
+                        func, functions)
+                    if is_negated and trig_idx is not None:
+                        marker = strategy.get('marker', '')
+                        clitic_data['neg'] = marker
+                        absorbed_indices.add(trig_idx)
+                        has_clitics = True
+
+                dependents = [
+                    f for f in functions if verb_idx in f.get('dependencies', [])]
+                for dep in dependents:
+                    if dep['pos'] == 'PRON':
+                        deprel = dep.get('deprel', '')
+                        form = ""
+                        if 'obj' in deprel or 'dobj' in deprel:
+                            form = self.get_pronoun_form(dep, 'direct')
+                            if form:
+                                clitic_data['obj_direct'] = form
+                                absorbed_indices.add(dep['index'])
+                                has_clitics = True
+                        elif 'iobj' in deprel or 'obl' in deprel:
+                            form = self.get_pronoun_form(dep, 'indirect')
+                            if form:
+                                clitic_data['obj_indirect'] = form
+                                absorbed_indices.add(dep['index'])
+                                has_clitics = True
+
+                if has_clitics:
+                    clitic_map[verb_idx] = clitic_data
+
+        return clitic_map, absorbed_indices
+
+    def apply_clitics(self, verb_word: str, verb_idx: int, clitic_map: Dict[int, Dict]) -> str:
+        if verb_idx not in clitic_map:
+            return verb_word
+
+        data = clitic_map[verb_idx]
+        data['verb'] = verb_word
+        parts = []
+
+        for element in self.order:
+            val = data.get(element, '')
+            if val:
+                parts.append(val)
+
+        if self.encliticizes:
+            return "".join(parts)
+        elif self.procliticizes:
+            return "".join(parts)
+
+        return " ".join(parts)
+
+
 class PossessiveHandler:
     def __init__(self, profile: Dict):
         self.profile = profile
@@ -1136,6 +1255,7 @@ class OriginalLanguageEngine:
         self.sun_letter_handler = SunLetterHandler(self.profile)
         self.negation_handler = NegationHandler(self.profile)
         self.possessive_handler = PossessiveHandler(self.profile)
+        self.clitic_handler = CliticHandler(self.profile)
         self.functional_config = self.profile.get('functional_particles', {})
         self.lexical_registers = self.profile.get('lexical_registers', {})
         if not self.lexical_registers and 'lexical_registers_defaults' in self.profile:
@@ -1361,8 +1481,16 @@ class OriginalLanguageEngine:
 
             absorbed_indices = set()
 
+            clitic_map = {}
+            if self.clitic_handler.enabled:
+                clitic_map, clitic_absorbed = self.clitic_handler.analyze_clitics(
+                    ordered_functions, self.negation_handler)
+                absorbed_indices.update(clitic_absorbed)
+
             if self.negation_handler.enabled:
                 for func in ordered_functions:
+                    if func['index'] in absorbed_indices:
+                        continue
                     is_negated, trigger_idx, neg_strategy = self.negation_handler.detect_negation(
                         func, ordered_functions)
                     if is_negated and trigger_idx is not None:
@@ -1541,9 +1669,19 @@ class OriginalLanguageEngine:
 
                 is_negated, trigger_idx, neg_strategy = self.negation_handler.detect_negation(
                     func, ordered_functions)
-                if is_negated:
+
+                clitic_handled_neg = False
+                if self.clitic_handler.enabled and func['index'] in clitic_map:
+                    if 'neg' in self.clitic_handler.order and clitic_map[func['index']].get('neg'):
+                        clitic_handled_neg = True
+
+                if is_negated and not clitic_handled_neg:
                     current_form = self.negation_handler.apply_negation(
                         current_form, neg_strategy)
+
+                if self.clitic_handler.enabled and func['index'] in clitic_map:
+                    current_form = self.clitic_handler.apply_clitics(
+                        current_form, func['index'], clitic_map)
 
                 if self.reduplication_handler.enabled:
                     current_form = self.reduplication_handler.apply_reduplication(
