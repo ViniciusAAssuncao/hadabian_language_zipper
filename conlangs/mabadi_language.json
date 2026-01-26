@@ -471,6 +471,22 @@
                 ],
                 "marker": "",
                 "type": "prefix",
+                "description": "Infinitivo"
+            },
+            {
+                "features": [
+                    "Tense=Past"
+                ],
+                "marker": "",
+                "type": "suffix",
+                "description": "Passado base (sem sufixo de tempo extra, apenas pessoa)"
+            },
+            {
+                "features": [
+                    "VerbForm=Inf"
+                ],
+                "marker": "",
+                "type": "prefix",
                 "description": "Infinitivo sem marcação especial, usa forma base"
             },
             {

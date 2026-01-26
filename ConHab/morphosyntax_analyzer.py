@@ -156,11 +156,42 @@ class TAMHandler:
         self.harmony_handler = VowelHarmonyHandler(profile)
         self.infer_imperative = self.config.get(
             'infer_imperative_from_context', False)
+        self.person_config = self.config.get('person_marking', {})
+        self.person_prefixes = self.person_config.get('prefixes', {})
+        self.person_suffixes = self.person_config.get('suffixes', {})
+        self.person_marking_enabled = self.person_config.get('enabled', False)
+
+    def _get_person_key(self, feats: Set[str]) -> str:
+        person = next((f.split('=')[1]
+                      for f in feats if f.startswith('Person=')), None)
+        number = next((f.split('=')[1]
+                      for f in feats if f.startswith('Number=')), None)
+        gender = next((f.split('=')[1]
+                      for f in feats if f.startswith('Gender=')), None)
+
+        if not person or not number:
+            return None
+
+        num_map = {'Sing': 'sg', 'Plur': 'pl', 'Dual': 'du'}
+        num_code = num_map.get(number, 'sg')
+
+        base_key = f"{person}{num_code}"
+
+        if gender:
+            gen_map = {'Masc': 'm', 'Fem': 'f', 'Neut': 'n'}
+            gen_code = gen_map.get(gender, '')
+            if gen_code:
+                complex_key = f"{base_key}_{gen_code}"
+                if complex_key in self.person_prefixes or complex_key in self.person_suffixes:
+                    return complex_key
+
+        return base_key
 
     def apply_tam(self, word: str, feats_str: str, func: Optional[Dict] = None, all_functions: Optional[List[Dict]] = None) -> str:
         if not self.enabled or not feats_str or feats_str == '_':
             return word
         feats = set(f.strip() for f in feats_str.split('|') if f.strip())
+
         if self.infer_imperative and func and all_functions:
             deprel = func.get('deprel', '')
             is_clause_head = deprel in {'root', 'parataxis', 'conj', 'ccomp'}
@@ -175,6 +206,7 @@ class TAMHandler:
                     break
             if is_clause_head and (not has_subject or subject_is_after):
                 feats.add('Mood=Imp')
+
         result = word
         for rule in self.rules:
             rule_feats = set(rule.get('features', []))
@@ -183,6 +215,7 @@ class TAMHandler:
                 m_type = rule.get('type', 'suffix')
                 if self.harmony_handler.enabled and m_type == 'suffix':
                     marker = self.harmony_handler.apply_harmony(result, marker)
+
                 if m_type == 'suffix':
                     result = result + marker
                 elif m_type == 'prefix':
@@ -191,6 +224,20 @@ class TAMHandler:
                     result = marker + ' ' + result
                 elif m_type == 'particle_after':
                     result = result + ' ' + marker
+
+        if self.person_marking_enabled:
+            key = self._get_person_key(feats)
+            if key:
+                prefix = self.person_prefixes.get(key, "")
+                suffix = self.person_suffixes.get(key, "")
+
+                if self.harmony_handler.enabled:
+                    if suffix:
+                        suffix = self.harmony_handler.apply_harmony(
+                            result, suffix)
+
+                result = f"{prefix}{result}{suffix}"
+
         return result
 
 
