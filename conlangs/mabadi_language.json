@@ -1141,6 +1141,28 @@
                 "1pl": "na",
                 "2pl": "kom",
                 "3pl": "hom"
+            },
+            "possessive_lemmas": {
+                "meu": "1",
+                "minha": "1",
+                "meus": "1",
+                "minhas": "1",
+                "teu": "2",
+                "tua": "2",
+                "teus": "2",
+                "tuas": "2",
+                "seu": "3",
+                "sua": "3",
+                "seus": "3",
+                "suas": "3",
+                "nosso": "1",
+                "nossa": "1",
+                "nossos": "1",
+                "nossas": "1",
+                "vosso": "2",
+                "vossa": "2",
+                "vossos": "2",
+                "vossas": "2"
             }
         }
     },

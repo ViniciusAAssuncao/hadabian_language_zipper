@@ -15,6 +15,84 @@ from morphosyntax_analyzer import (
 )
 
 
+class PossessiveHandler:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.config = profile.get(
+            'determiner_system', {}).get('possessives', {})
+        self.enabled = self.config.get('pronominal_suffixes', False)
+        self.suffixes = self.config.get('suffixes', {})
+        self.possessive_map = self.config.get('possessive_lemmas', {
+            'meu': '1', 'minha': '1', 'meus': '1', 'minhas': '1',
+            'teu': '2', 'tua': '2', 'teus': '2', 'tuas': '2',
+            'seu': '3', 'sua': '3', 'seus': '3', 'suas': '3',
+            'nosso': '1', 'nossa': '1', 'nossos': '1', 'nossas': '1',
+            'vosso': '2', 'vossa': '2', 'vossos': '2', 'vossas': '2'
+        })
+
+    def get_suffix(self, feats_str: str, lemma: str = '') -> str:
+        if not feats_str or feats_str == '_':
+            return ""
+
+        feats = {}
+        for f in feats_str.split('|'):
+            if '=' in f:
+                k, v = f.split('=', 1)
+                feats[k] = v
+
+        person = feats.get('Person')
+        number = feats.get('Number')
+        gender = feats.get('Gender')
+
+        if not person and lemma:
+            person = self.possessive_map.get(lemma.lower())
+
+        if not person or not number:
+            return ""
+
+        key_num = 'sg' if number == 'Sing' else 'pl'
+        base_key = f"{person}{key_num}"
+
+        if gender:
+            key_gen = 'm' if gender == 'Masc' else 'f'
+            full_key = f"{base_key}_{key_gen}"
+            if full_key in self.suffixes:
+                return self.suffixes[full_key]
+
+        if base_key in self.suffixes:
+            return self.suffixes[base_key]
+
+        return ""
+
+    def analyze_possessives(self, functions: List[Dict]) -> Tuple[Dict[int, str], Set[int]]:
+        if not self.enabled:
+            return {}, set()
+
+        suffix_map = {}
+        absorbed_indices = set()
+
+        for f in functions:
+            deprel = f.get('deprel', '')
+            if 'nmod:poss' in deprel or ('det' in deprel and f.get('pos') == 'DET'):
+                head_idx = f['dependencies'][0] if f['dependencies'] else -1
+                if head_idx == -1:
+                    continue
+
+                head_func = next(
+                    (h for h in functions if h['index'] == head_idx), None)
+                if not head_func or head_func['pos'] not in {'NOUN', 'PROPN'}:
+                    continue
+
+                if f.get('pos') in {'PRON', 'DET'}:
+                    suffix = self.get_suffix(
+                        f.get('feats', ''), lemma=f.get('lemma', ''))
+                    if suffix:
+                        suffix_map[head_idx] = suffix
+                        absorbed_indices.add(f['index'])
+
+        return suffix_map, absorbed_indices
+
+
 class SunLetterHandler:
     def __init__(self, profile: Dict):
         self.profile = profile
@@ -27,7 +105,7 @@ class SunLetterHandler:
             self.forms.add(self.config.get('form').lower())
         if self.config.get('variants'):
             self.forms.update([v.lower()
-                              for v in self.config.get('variants', [])])
+                               for v in self.config.get('variants', [])])
 
     def assimilate(self, article: str, next_word: str) -> str:
         if not self.enabled or not article or not next_word:
@@ -1057,6 +1135,7 @@ class OriginalLanguageEngine:
             self.profile, self.gender_handler)
         self.sun_letter_handler = SunLetterHandler(self.profile)
         self.negation_handler = NegationHandler(self.profile)
+        self.possessive_handler = PossessiveHandler(self.profile)
         self.functional_config = self.profile.get('functional_particles', {})
         self.lexical_registers = self.profile.get('lexical_registers', {})
         if not self.lexical_registers and 'lexical_registers_defaults' in self.profile:
@@ -1296,6 +1375,12 @@ class OriginalLanguageEngine:
                         if should_absorb:
                             absorbed_indices.add(trigger_idx)
 
+            possessive_suffixes_map = {}
+            if self.possessive_handler.enabled:
+                possessive_suffixes_map, possessive_indices = self.possessive_handler.analyze_possessives(
+                    ordered_functions)
+                absorbed_indices.update(possessive_indices)
+
             for func in ordered_functions:
                 if func['index'] in absorbed_indices:
                     continue
@@ -1415,6 +1500,10 @@ class OriginalLanguageEngine:
                 if self.construct_state_handler.enabled and func['index'] in construct_heads_indices:
                     current_form = self.construct_state_handler.apply_construct_morphology(
                         current_form, func)
+
+                if func['index'] in possessive_suffixes_map:
+                    suffix = possessive_suffixes_map[func['index']]
+                    current_form = f"{current_form}{suffix}"
 
                 is_topic = False
                 if topic_enabled and topic_idx is not None:
