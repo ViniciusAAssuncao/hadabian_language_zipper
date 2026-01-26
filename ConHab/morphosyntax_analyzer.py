@@ -147,6 +147,67 @@ class ConsonantMutationHandler:
         return processed_word
 
 
+class NegationHandler:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.config = profile.get('negation_system', {})
+        self.enabled = self.config.get('enabled', False)
+        self.strategies = self.config.get('strategies', [])
+        self.negation_triggers = {'não', 'nao', 'nem', 'jamais'}
+
+    def detect_negation(self, func: Dict, all_functions: List[Dict]) -> Tuple[bool, Optional[int], Optional[Dict]]:
+        if not self.enabled:
+            return False, None, None
+
+        my_index = func['index']
+        trigger_idx = None
+
+        for f in all_functions:
+            deps = f.get('dependencies', [])
+            if my_index in deps:
+                lemma = f.get('lemma', '').lower()
+                deprel = f.get('deprel', '').lower()
+                word = f.get('word', '').lower()
+
+                if lemma in self.negation_triggers or (deprel == 'advmod' and word in self.negation_triggers):
+                    trigger_idx = f['index']
+                    break
+
+        if trigger_idx is not None:
+            pos = func['pos']
+            for strategy in self.strategies:
+                stype = strategy.get('type')
+
+                if pos in {'VERB', 'AUX'} and stype == 'verbal_negation':
+                    return True, trigger_idx, strategy
+
+                if pos in {'NOUN', 'ADJ', 'PRON'} and stype == 'nominal_negation':
+                    return True, trigger_idx, strategy
+
+                if stype == 'emphatic_negation':
+                    trigger_word = next(
+                        (x['word'].lower() for x in all_functions if x['index'] == trigger_idx), '')
+                    if trigger_word in {'nunca', 'jamais', 'qatt'}:
+                        return True, trigger_idx, strategy
+
+        return False, None, None
+
+    def apply_negation(self, word: str, strategy: Dict) -> str:
+        marker = strategy.get('marker', '')
+        suffix = strategy.get('suffix', '')
+
+        res = word
+        if marker:
+            if suffix:
+                res = f"{marker}{res}{suffix}"
+            else:
+                res = f"{marker} {res}"
+        elif suffix:
+            res = f"{res}{suffix}"
+
+        return res
+
+
 class TAMHandler:
     def __init__(self, profile: Dict):
         self.profile = profile
@@ -163,11 +224,11 @@ class TAMHandler:
 
     def _get_person_key(self, feats: Set[str]) -> str:
         person = next((f.split('=')[1]
-                      for f in feats if f.startswith('Person=')), None)
+                       for f in feats if f.startswith('Person=')), None)
         number = next((f.split('=')[1]
-                      for f in feats if f.startswith('Number=')), None)
+                       for f in feats if f.startswith('Number=')), None)
         gender = next((f.split('=')[1]
-                      for f in feats if f.startswith('Gender=')), None)
+                       for f in feats if f.startswith('Gender=')), None)
 
         if not person or not number:
             return None

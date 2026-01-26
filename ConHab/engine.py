@@ -11,7 +11,7 @@ from morphosyntax_analyzer import (
     AgreementChecker, SyntacticComplexityAnalyzer,
     TopicalizationHandler, FocusStructureHandler, TAMHandler,
     VowelHarmonyHandler, TransitivityAnalyzer, ConsonantMutationHandler,
-    GenderHandler, PharyngealizationHandler
+    GenderHandler, PharyngealizationHandler, NegationHandler
 )
 
 
@@ -1056,6 +1056,7 @@ class OriginalLanguageEngine:
         self.construct_state_handler = ConstructStateHandler(
             self.profile, self.gender_handler)
         self.sun_letter_handler = SunLetterHandler(self.profile)
+        self.negation_handler = NegationHandler(self.profile)
         self.functional_config = self.profile.get('functional_particles', {})
         self.lexical_registers = self.profile.get('lexical_registers', {})
         if not self.lexical_registers and 'lexical_registers_defaults' in self.profile:
@@ -1279,7 +1280,26 @@ class OriginalLanguageEngine:
                         if self.construct_state_handler.is_construct_head(func, ordered_functions):
                             construct_heads_indices.add(func['index'])
 
+            absorbed_indices = set()
+
+            if self.negation_handler.enabled:
+                for func in ordered_functions:
+                    is_negated, trigger_idx, neg_strategy = self.negation_handler.detect_negation(
+                        func, ordered_functions)
+                    if is_negated and trigger_idx is not None:
+                        should_absorb = True
+                        trigger_word = next(
+                            (f['word'].lower() for f in ordered_functions if f['index'] == trigger_idx), '')
+                        if neg_strategy.get('type') == 'emphatic_negation':
+                            if trigger_word not in {'não', 'nao', 'not'}:
+                                should_absorb = False
+                        if should_absorb:
+                            absorbed_indices.add(trigger_idx)
+
             for func in ordered_functions:
+                if func['index'] in absorbed_indices:
+                    continue
+
                 orig_word = func.get("word", "")
                 lemma = func.get("lemma", "")
                 pos = func.get("pos", "")
@@ -1429,6 +1449,12 @@ class OriginalLanguageEngine:
                     tam_feats = effective_feats
                     current_form = self.tam_handler.apply_tam(
                         current_form, tam_feats, func, ordered_functions)
+
+                is_negated, trigger_idx, neg_strategy = self.negation_handler.detect_negation(
+                    func, ordered_functions)
+                if is_negated:
+                    current_form = self.negation_handler.apply_negation(
+                        current_form, neg_strategy)
 
                 if self.reduplication_handler.enabled:
                     current_form = self.reduplication_handler.apply_reduplication(
