@@ -577,6 +577,10 @@
             {
                 "suffix": "ijjie",
                 "gender": "feminine"
+            },
+            {
+                "suffix": "ujjue",
+                "gender": "feminine"
             }
         ],
         "markers": {
@@ -593,7 +597,6 @@
             "feminine": {
                 "targets": [
                     "ADJ",
-                    "DET",
                     "VERB",
                     "NOUN"
                 ],

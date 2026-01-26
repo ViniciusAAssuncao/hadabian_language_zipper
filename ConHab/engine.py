@@ -127,35 +127,28 @@ class PhonologyHandler:
         char = char.lower()
         if char in self.vowels or char in self.consonants:
             return char
-
         normalized = self.normalize_char(char)
         if normalized in self.vowels or normalized in self.consonants:
             return normalized
-
         target_pool = self.vowels if char in 'aeiouyäëïöü' else self.consonants
         if not target_pool:
             target_pool = self.vowels + self.consonants
-
         char_hash = int(hashlib.sha256(char.encode()).hexdigest(), 16)
         return target_pool[char_hash % len(target_pool)]
 
     def nativize_word(self, word: str) -> str:
         if not word:
             return word
-
         nativized = []
         for char in word:
             nativized.append(self.get_closest_phoneme(char))
-
         result = "".join(nativized)
-
         if result and not self.is_valid_final(result[-1]):
             valid_finals = [c for c in self.consonants if self.is_valid_final(
                 c)] + list(self.vowels)
             if valid_finals:
                 seed_val = sum(ord(c) for c in result)
                 rng = random.Random(seed_val)
-
                 strategy = rng.choice(['drop', 'change', 'add_vowel'])
                 if strategy == 'drop':
                     result = result[:-1]
@@ -163,7 +156,6 @@ class PhonologyHandler:
                     result = result[:-1] + rng.choice(valid_finals)
                 elif strategy == 'add_vowel' and self.vowels:
                     result = result + rng.choice(list(self.vowels))
-
         return result
 
 
@@ -173,13 +165,11 @@ class ConceptHandler:
         self.config = profile.get('abstract_concepts', {})
         self.enabled = self.config.get('enabled', False)
         self.mappings = self.config.get('mappings', {}).copy()
-
         root_mappings = profile.get('mappings', {})
         if root_mappings:
             for k, v in root_mappings.items():
                 if k not in self.mappings:
                     self.mappings[k] = v
-
         self.local_overrides = self.config.get('local_overrides', {})
         self.definitions = self.config.get('definitions', {})
         self.purism_level = profile.get('cultural_purism', 0.0)
@@ -191,7 +181,6 @@ class ConceptHandler:
             Path('../conlangs/reserved_universal.json'),
             Path('./conlangs/reserved_universal.json')
         ]
-
         for p in paths_to_try:
             if p.exists():
                 try:
@@ -204,25 +193,19 @@ class ConceptHandler:
     def resolve_concept(self, lemma: str, engine_instance) -> Optional[Tuple[str, str, Dict]]:
         if not self.enabled:
             return None
-
         clean_lemma = lemma.lower().strip()
-
         concept_id = self.mappings.get(clean_lemma)
         if not concept_id:
             concept_id = self.universal_registry.get(
                 'mappings_ln', {}).get(clean_lemma)
-
         if not concept_id:
             return None
-
         if concept_id in self.local_overrides:
             word = self.local_overrides[concept_id]
             return word, 'override', {'origin': 'local_override', 'concept_id': concept_id}
-
         if concept_id in self.definitions:
             definition = self.definitions[concept_id]
             concept_type = definition.get('type', 'unique')
-
             if concept_type == 'composition':
                 components = definition.get('components', [])
                 connector = definition.get('connector', '')
@@ -232,7 +215,6 @@ class ConceptHandler:
                     composed_parts.append(translated_part)
                 final_word = connector.join(composed_parts)
                 return final_word, 'composition', {}
-
             elif concept_type == 'adaptation':
                 source = definition.get('source_word', lemma)
                 if not source:
@@ -241,7 +223,6 @@ class ConceptHandler:
                     source)
                 explanation = definition.get('description', 'Adapted concept.')
                 return nativized, 'adaptation', {'description': explanation, 'source_word': source}
-
             elif concept_type == 'unique':
                 explanation = definition.get(
                     'description', 'Concept unique to this conlang.')
@@ -253,26 +234,20 @@ class ConceptHandler:
                 generated_word = engine_instance._generate_deterministic_word(
                     concept_id)
                 return generated_word, 'unique', {'description': explanation}
-
         if concept_id in self.universal_registry.get('concepts', {}):
             if self.purism_level >= 0.8:
                 return None
-
             global_entry = self.universal_registry['concepts'][concept_id]
             base_word = global_entry['word']
-
             nativized_word = engine_instance.loanword_handler.nativize_reserved_term(
                 base_word)
-
             return nativized_word, 'reserved_global', {
                 'description': global_entry.get('description', ''),
                 'original_term': base_word,
                 'concept_id': concept_id
             }
-
         if concept_id and isinstance(concept_id, str):
             return concept_id, 'direct_mapping', {'origin': 'mapping_table'}
-
         return None
 
 
@@ -456,18 +431,13 @@ class AffixHandler:
         self.agglutination_strength = profile.get(
             'agglutination_strength', 1.0)
         self.seed = profile.get('global_seed', 12345)
-
         self.morph_config = profile.get('morphological_derivation', {})
         self.morph_derivation_enabled = self.morph_config.get('enabled', False)
         self.max_derivation_depth = self.morph_config.get('max_depth', 3)
         self.exceptions = set(self.morph_config.get('exceptions', []))
-
         raw_source_suffixes = self.affix_system.get('source_suffixes', [])
         self.source_suffixes = sorted(
-            raw_source_suffixes,
-            key=lambda x: x.get('priority', 0),
-            reverse=True
-        )
+            raw_source_suffixes, key=lambda x: x.get('priority', 0), reverse=True)
 
     def get_derivation_rule(self, from_pos: str, to_pos: str) -> Optional[Dict]:
         if not self.enabled:
@@ -480,9 +450,10 @@ class AffixHandler:
     def apply_affix(self, word: str, rule: Dict) -> str:
         affix = rule.get('affix', '')
         position = rule.get('position', 'suffix')
+        force = rule.get('force', False)
         if not affix:
             return word
-        if self.agglutination_strength < 1.0:
+        if not force and self.agglutination_strength < 1.0:
             input_str = f"{word}_{affix}_{self.seed}_agglutination"
             hash_obj = hashlib.sha256(input_str.encode())
             hash_val = int(hash_obj.hexdigest(), 16)
@@ -503,52 +474,43 @@ class AffixHandler:
     def try_derive_from_source(self, lemma: str, pos: Optional[str], engine_ref, current_depth: int = 0) -> Optional[str]:
         if not self.morph_derivation_enabled:
             return None
-
         if current_depth >= self.max_derivation_depth:
             return None
-
         if lemma in self.exceptions:
             return None
-
         for rule in self.source_suffixes:
             suf = rule.get('suffix', '')
             input_pos = rule.get('input_pos')
             min_len = rule.get('min_word_length', 0)
             mode = rule.get('mode', 'derive')
-
             if len(lemma) < min_len:
                 continue
-
             if pos and input_pos and pos != input_pos:
                 continue
-
             if lemma.endswith(suf):
                 replacement = rule.get('replacement', '')
                 base_source_lemma = lemma[:-len(suf)] + replacement
-
                 if base_source_lemma == lemma:
                     continue
-
                 if mode == 'adapt':
                     nativized = engine_ref.phonology_handler.nativize_word(
                         base_source_lemma)
                     return nativized
-
                 target_pos = rule.get('target_pos', 'NOUN')
-
+                effective_to_pos = input_pos if input_pos else pos
                 base_conlang_word = engine_ref._get_word_form(
                     base_source_lemma, tags=None, pos=target_pos, derivation_depth=current_depth + 1)
-
-                effective_to_pos = input_pos if input_pos else pos
-                if not effective_to_pos:
-                    continue
-
-                derivation_rule = self.get_derivation_rule(
-                    from_pos=target_pos, to_pos=effective_to_pos)
-
-                if derivation_rule:
-                    return self.apply_affix(base_conlang_word, derivation_rule)
-
+                derivation_rule = None
+                if effective_to_pos:
+                    derivation_rule = self.get_derivation_rule(
+                        from_pos=target_pos, to_pos=effective_to_pos)
+                    if derivation_rule:
+                        return self.apply_affix(base_conlang_word, derivation_rule)
+                if replacement and not derivation_rule:
+                    source_stem = lemma[:-len(suf)]
+                    base_stem_word = engine_ref._get_word_form(
+                        source_stem, tags=['stem'], pos=target_pos, derivation_depth=current_depth + 1)
+                    return self.apply_affix(base_stem_word, {'affix': replacement, 'position': 'suffix', 'force': True})
         return None
 
 
@@ -656,7 +618,6 @@ class ReduplicationHandler:
                 method = rule.get('method', 'whole_word')
                 separator = rule.get('separator', '')
                 reduplicated_part = ""
-                remainder = word
                 if method == 'whole_word':
                     reduplicated_part = word
                 elif method == 'first_syllable':
@@ -693,7 +654,6 @@ class SynonymHandler:
         self.profile = profile
         self.seed = profile.get('global_seed', 12345)
         self.divergence_factor = profile.get('divergence_factor', 0.0)
-
         self.diachronic_settings = profile.get('diachronic_settings', {})
         if not self.diachronic_settings:
             linguistic_family_path = profile.get('linguistic_family')
@@ -701,26 +661,22 @@ class SynonymHandler:
                 pass
             self.diachronic_settings = {
                 'default_divergence_factor': 0.1, 'max_synonym_variants': 3}
-
         self.max_variants = self.diachronic_settings.get(
             'max_synonym_variants', 3)
 
     def get_divergent_variant_suffix(self, lemma: str) -> str:
         if self.divergence_factor <= 0:
             return ""
-
         input_str = f"{lemma}_divergence_check_{self.seed}"
         hash_obj = hashlib.sha256(input_str.encode())
         hash_val = int(hash_obj.hexdigest(), 16)
         probability = (hash_val % 1000) / 1000.0
-
         if probability < self.divergence_factor:
             variant_seed_str = f"{lemma}_variant_select_{self.seed}"
             var_hash = int(hashlib.sha256(
                 variant_seed_str.encode()).hexdigest(), 16)
             variant_idx = (var_hash % (self.max_variants - 1)) + 1
             return f"_var{variant_idx}"
-
         return ""
 
 
@@ -729,11 +685,8 @@ class LoanwordHandler:
         self.profile = profile
         self.config = profile.get('loanword_policy', {})
         self.enabled = self.config.get('enabled', False)
-        self.modes = self.config.get('modes', {
-            'phonetic_adaptation': 0.8,
-            'calque': 0.15,
-            'semantic_extension': 0.05
-        })
+        self.modes = self.config.get(
+            'modes', {'phonetic_adaptation': 0.8, 'calque': 0.15, 'semantic_extension': 0.05})
         self.calque_connector = self.config.get('calque_connector', '')
         self.phonology_handler = phonology_handler
         self.seed = profile.get('global_seed', 12345)
@@ -744,14 +697,11 @@ class LoanwordHandler:
     def process_loanword(self, foreign_word: str, components: List[str] = None, semantic_tags: List[str] = None, engine_ref=None) -> Tuple[str, str]:
         if not self.enabled:
             return self.phonology_handler.nativize_word(foreign_word), "simple_adapt"
-
         rng_input = f"{foreign_word}_mode_select_{self.seed}"
         rng_val = int(hashlib.sha256(rng_input.encode()).hexdigest(), 16)
         val = (rng_val % 1000) / 1000.0
-
         p_adapt = self.modes.get('phonetic_adaptation', 0.8)
         p_calque = self.modes.get('calque', 0.15)
-
         mode = "phonetic_adaptation"
         if val < p_adapt:
             mode = "phonetic_adaptation"
@@ -759,16 +709,13 @@ class LoanwordHandler:
             mode = "calque"
         else:
             mode = "semantic_extension"
-
         if mode == "calque" and components and engine_ref:
             return self._create_calque(components, engine_ref), "calque"
-
         if mode == "semantic_extension" and engine_ref:
             extended_word = self._apply_semantic_extension(
                 foreign_word, semantic_tags, engine_ref)
             if extended_word:
                 return extended_word, "semantic_extension"
-
         return self.phonology_handler.nativize_word(foreign_word), "phonetic_adaptation"
 
     def _create_calque(self, parts: List[str], engine_ref) -> str:
@@ -785,14 +732,12 @@ class LoanwordHandler:
                 related = engine_ref.semantic_handler.get_semantic_root(tag)
                 if related:
                     candidates.append(related)
-
         if not candidates:
             sample_keys = list(engine_ref.word_cache.keys())
             if sample_keys:
                 rng = random.Random(self.seed + sum(ord(c)
-                                                    for c in foreign_word))
+                                    for c in foreign_word))
                 candidates.append(rng.choice(sample_keys))
-
         if candidates:
             chosen_lemma = candidates[0]
             if chosen_lemma in engine_ref.word_cache:
@@ -801,7 +746,6 @@ class LoanwordHandler:
                     return entry.get("default", "")
                 return entry
             return engine_ref._get_word_form(chosen_lemma)
-
         return None
 
 
@@ -869,10 +813,8 @@ class OriginalLanguageEngine:
             return
         if 'family_id' in family_data:
             self.family_id = family_data['family_id']
-
         if 'diachronic_settings' in family_data:
             self.profile['diachronic_settings'] = family_data['diachronic_settings']
-
         target_node_id = self.profile.get('family_node')
         if not target_node_id:
             return
@@ -948,30 +890,20 @@ class OriginalLanguageEngine:
 
     def absorb_term(self, foreign_term: str, components: List[str] = None, semantic_tags: List[str] = None) -> Dict:
         result_word, mode = self.loanword_handler.process_loanword(
-            foreign_term, components, semantic_tags, self
-        )
-
+            foreign_term, components, semantic_tags, self)
         entry = {
             "lemma": foreign_term,
             "default": result_word,
-            "synsets": [
-                {
-                    "word": result_word,
-                    "tags": ["loanword", mode],
-                    "affinity": 1.0
-                }
-            ],
+            "synsets": [{"word": result_word, "tags": ["loanword", mode], "affinity": 1.0}],
             "origin": "loanword",
             "absorption_mode": mode
         }
-
         self.word_cache[foreign_term] = entry
         self.save_word_cache()
         return entry
 
     def _get_word_form(self, lemma: str, tags: List[str] = None, force_word: str = None, meta: Dict = None, pos: str = None, derivation_depth: int = 0) -> str:
         entry = self.word_cache.get(lemma)
-
         if not entry and force_word:
             entry = {
                 "lemma": lemma,
@@ -982,7 +914,6 @@ class OriginalLanguageEngine:
                 entry.update(meta)
             self.word_cache[lemma] = entry
             return force_word
-
         if entry:
             if isinstance(entry, str):
                 return entry
@@ -996,12 +927,10 @@ class OriginalLanguageEngine:
                                 return syn.get('word', entry.get('default'))
                 return entry.get('default')
             return str(entry)
-
         concept_result = self.concept_handler.resolve_concept(lemma, self)
         if concept_result:
             word, c_type, c_meta = concept_result
             return self._get_word_form(lemma, tags=['concept'], force_word=word, meta=c_meta)
-
         if self.affix_handler.morph_derivation_enabled:
             derived_word = self.affix_handler.try_derive_from_source(
                 lemma, pos, self, current_depth=derivation_depth)
@@ -1014,7 +943,6 @@ class OriginalLanguageEngine:
                 }
                 self.word_cache[lemma] = entry
                 return derived_word
-
         return self._generate_deterministic_word(lemma)
 
     def process_text(self, text: str) -> str:
@@ -1032,7 +960,6 @@ class OriginalLanguageEngine:
         suppress_case_on_focus = focus_config.get('suppress_case', False)
         ignore_digits = self.profile.get(
             'numeric_handling', {}).get('ignore_digits', True)
-
         capitalization_enabled = self.profile.get(
             'style', {}).get('capitalization', False)
         punctuation_map = self.profile.get(
@@ -1041,7 +968,6 @@ class OriginalLanguageEngine:
             'sentence_terminators', ['.', '!', '?']))
         all_terminators.update(self.profile.get('style', {}).get(
             'secondary_terminators', [':', ';']))
-
         for sent_idx, sent_data in enumerate(functions_info):
             ordered_functions = sent_data['functions']
             translated_words = []
@@ -1050,9 +976,7 @@ class OriginalLanguageEngine:
                 ordered_functions)
             topic_idx = self.topicalization_handler.identify_topic(
                 ordered_functions)
-
             sentence_terminator = None
-
             for func in ordered_functions:
                 orig_word = func.get("word", "")
                 lemma = func.get("lemma", "")
@@ -1066,7 +990,6 @@ class OriginalLanguageEngine:
                 clean_word_lower = self._clean_word(orig_word).lower()
                 raw_lemma = lemma if lemma else clean_word_lower
                 raw_lemma = raw_lemma.lower()
-
                 if pos == 'PUNCT':
                     mapped_punct = punctuation_map.get(orig_word, orig_word)
                     if orig_word in all_terminators:
@@ -1075,13 +998,11 @@ class OriginalLanguageEngine:
                     translated_words.append(mapped_punct)
                     last_func = func
                     continue
-
                 if ignore_digits and pos == 'NUM':
                     if re.search(r'\d', orig_word):
                         translated_words.append(orig_word)
                         last_func = func
                         continue
-
                 if syntactic_func in {SyntacticFunction.QUANTIFIER, SyntacticFunction.VERB_PARTICLE, SyntacticFunction.INTENSIFIER}:
                     mapping = self.functional_config.get(raw_lemma, {})
                     translated_word = ""
@@ -1115,19 +1036,15 @@ class OriginalLanguageEngine:
                         base_lemma_for_translation, func)
                 target_lemma = base_lemma_for_translation
                 current_pos = pos
-
                 translated_root = None
                 context_tags = []
                 if self.lexical_registers.get('enabled', False):
                     pass
-
                 if target_lemma not in self.word_cache:
                     pass
-
                 translated_root = self._get_word_form(
                     target_lemma, context_tags, pos=current_pos)
                 current_form = translated_root
-
                 if degree_type:
                     current_form = self.degree_handler.apply_degree(
                         current_form, degree_type)
@@ -1143,9 +1060,7 @@ class OriginalLanguageEngine:
                             if self.polysemy_handler.enabled:
                                 head_lemma = self.polysemy_handler.resolve_lemma(
                                     head_lemma, head_func)
-
                             head_conlang_word = self._get_word_form(head_lemma)
-
                             if head_conlang_word:
                                 head_gender = self.gender_handler.infer_gender(
                                     head_conlang_word)
@@ -1165,8 +1080,7 @@ class OriginalLanguageEngine:
                 if apply_case:
                     is_transitive = transitivity_map.get(func['index'], False)
                     current_form = self.syntax_engine.case_morphology.apply_case(
-                        current_form, syntactic_func, self.syntax_engine.word_order, deprel, clause_transitivity=is_transitive
-                    )
+                        current_form, syntactic_func, self.syntax_engine.word_order, deprel, clause_transitivity=is_transitive)
                 if is_topic and topic_marker:
                     current_form = f"{current_form} {topic_marker}"
                 if is_focus and object_focus_marker:
@@ -1194,18 +1108,14 @@ class OriginalLanguageEngine:
                     current_form = current_form.capitalize()
                 translated_words.append(current_form)
                 last_func = func
-
             if sentence_terminator:
                 translated_words.append(sentence_terminator)
-
             if capitalization_enabled and translated_words:
                 force_capitalization = True
-
                 for idx, word in enumerate(translated_words):
                     clean_w = word.strip()
                     if not clean_w:
                         continue
-
                     if force_capitalization:
                         if len(word) > 0 and not word[0].isupper():
                             translated_words[idx] = word[0].upper() + word[1:]
@@ -1214,7 +1124,6 @@ class OriginalLanguageEngine:
                         force_capitalization = True
                     else:
                         force_capitalization = False
-
             final_sentence_tokens = self.syntax_engine._glue_tokens(
                 translated_words, ordered_functions)
             if final_sentence_tokens:
@@ -1328,11 +1237,8 @@ class OriginalLanguageEngine:
                     in_onset = False
                     prev_consonant = None
             return generated_word
-
-        num_syllables = random.randint(
-            self.phonotactics.get('min_syllables', 1),
-            self.phonotactics.get('max_syllables', 3)
-        )
+        num_syllables = random.randint(self.phonotactics.get(
+            'min_syllables', 1), self.phonotactics.get('max_syllables', 3))
         generated_word = ""
         for _ in range(num_syllables):
             template = random.choice(self.templates)
@@ -1382,21 +1288,17 @@ class OriginalLanguageEngine:
         clean_word = "".join(filter(str.isalpha, word.lower()))
         if not clean_word:
             return word
-
         entry = {
             "lemma": clean_word,
             "default": "",
             "synsets": []
         }
-
         manual_target = self.false_cognate_handler.get_manual_target(
             clean_word)
         collision_bucket = self.false_cognate_handler.should_collide_naturally(
             clean_word, self.global_seed)
-
         base_word = ""
         is_manual = False
-
         if manual_target:
             if manual_target in self.word_cache:
                 target_entry = self.word_cache[manual_target]
@@ -1411,12 +1313,10 @@ class OriginalLanguageEngine:
                     base_word = target_entry.get("default", "")
                 else:
                     base_word = target_entry
-
             mutation_seed = int(hashlib.sha256(
                 f"{clean_word}_manual_mut_{self.global_seed}".encode()).hexdigest(), 16)
             base_word = self._mutate_word(base_word, mutation_seed)
             is_manual = True
-
         elif collision_bucket is not None:
             phantom_base_key = f"PHANTOM_BUCKET_{collision_bucket}"
             if phantom_base_key in self.word_cache:
@@ -1433,18 +1333,15 @@ class OriginalLanguageEngine:
                         base_word = phantom_entry.get("default", "")
                     else:
                         base_word = phantom_entry
-
             mutation_seed = int(hashlib.sha256(
                 f"{clean_word}_nat_mut_{self.global_seed}".encode()).hexdigest(), 16)
             base_word = self._mutate_word(base_word, mutation_seed)
             is_manual = True
-
         if not is_manual:
             root_semantic = self.semantic_handler.get_semantic_root(clean_word)
             base_word_str = clean_word
             is_derived = False
             base_conlang_word = ""
-
             if root_semantic and root_semantic != clean_word:
                 if root_semantic in self.word_cache:
                     root_entry = self.word_cache[root_semantic]
@@ -1460,29 +1357,22 @@ class OriginalLanguageEngine:
                             base_conlang_word = root_entry.get("default", "")
                         else:
                             base_conlang_word = root_entry
-
                 base_word_str = base_conlang_word
                 is_derived = True
-
             divergent_suffix = self.synonym_handler.get_divergent_variant_suffix(
                 base_word_str)
             base_word_str += divergent_suffix
-
             input_str = f"{base_word_str}_{self.global_seed}_{self.profile_id}"
             using_family_base = False
-
             if self.shared_base_strength > 0 and self.family_id and not is_derived and not divergent_suffix:
                 input_str = f"{clean_word}_{self.family_id}"
                 using_family_base = True
             elif not is_derived:
                 input_str = f"{clean_word}{divergent_suffix}_{self.global_seed}_{self.profile_id}"
-
             hash_obj = hashlib.sha256(input_str.encode())
             hash_int = int(hash_obj.hexdigest(), 16)
-
             base_word = self._generate_word_from_seed(
                 clean_word, hash_int, is_derived, base_conlang_word)
-
             if using_family_base:
                 mutation_chance = 1.0 - self.shared_base_strength
                 mutation_seed_base = f"{clean_word}_{self.global_seed}_mutation"
@@ -1491,38 +1381,32 @@ class OriginalLanguageEngine:
                 rng_mut = random.Random(mut_hash)
                 if rng_mut.random() < mutation_chance:
                     base_word = self._mutate_word(base_word, mut_hash)
-
         base_word = base_word if base_word else word
         entry["default"] = base_word
         entry["synsets"].append(
             {"word": base_word, "tags": ["common", "neutral"], "affinity": 1.0})
-
         if self.lexical_registers.get('enabled', False):
             registers = self.lexical_registers.get('registers', [])
             for reg in registers:
                 name = reg.get('name')
                 chance = reg.get('chance', 0.0)
                 mutation_factor = reg.get('mutation_factor', 1)
-
                 reg_seed_str = f"{clean_word}_{name}_{self.global_seed}"
                 reg_hash = int(hashlib.sha256(
                     reg_seed_str.encode()).hexdigest(), 16)
                 reg_rng = random.Random(reg_hash)
-
                 if reg_rng.random() < chance:
                     variant_word = base_word
                     for _ in range(int(mutation_factor)):
                         mutation_seed = reg_rng.randint(0, 999999)
                         variant_word = self._mutate_word(
                             variant_word, mutation_seed)
-
                     if variant_word != base_word:
                         entry["synsets"].append({
                             "word": variant_word,
                             "tags": [name],
                             "affinity": 0.9 - (mutation_factor * 0.1)
                         })
-
         self.word_cache[clean_word] = entry
         return base_word
 
