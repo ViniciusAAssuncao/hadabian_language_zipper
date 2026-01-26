@@ -15,6 +15,55 @@ from morphosyntax_analyzer import (
 )
 
 
+class ConstructStateHandler:
+    def __init__(self, profile: Dict, gender_handler: GenderHandler):
+        self.profile = profile
+        self.config = profile.get('case_system', {}).get('construct_state', {})
+        self.enabled = self.config.get('enabled', False)
+        self.triggers = set(self.config.get(
+            'trigger_dependencies', ['nmod', 'nmod:poss']))
+        self.suppress_article = self.config.get(
+            'suppress_article_on_head', True)
+        self.changes = self.config.get('phonological_changes', [])
+        self.gender_handler = gender_handler
+
+    def is_construct_head(self, func: Dict, all_functions: List[Dict]) -> bool:
+        if not self.enabled:
+            return False
+
+        my_index = func['index']
+        for f in all_functions:
+            deps = f.get('dependencies', [])
+            if my_index in deps:
+                deprel = f.get('deprel', '')
+                if deprel in self.triggers:
+                    if f['pos'] in {'NOUN', 'PROPN'}:
+                        return True
+        return False
+
+    def apply_construct_morphology(self, word: str, func: Dict) -> str:
+        if not self.changes:
+            return word
+
+        gender = self.gender_handler.infer_gender(word)
+
+        current_word = word
+        for change in self.changes:
+            pattern = change['pattern']
+            replacement = change['replacement']
+            condition = change.get('condition')
+
+            if condition == 'feminine' and gender != 'feminine':
+                continue
+
+            match = re.search(pattern, current_word)
+            if match:
+                current_word = re.sub(pattern, replacement, current_word)
+                break
+
+        return current_word
+
+
 class PhonologyHandler:
     def __init__(self, profile: Dict):
         self.profile = profile
@@ -956,6 +1005,8 @@ class OriginalLanguageEngine:
             self.profile, self.phonology_handler)
         self.broken_plural_handler = BrokenPluralHandler(
             self.profile, self.phonology_handler)
+        self.construct_state_handler = ConstructStateHandler(
+            self.profile, self.gender_handler)
         self.functional_config = self.profile.get('functional_particles', {})
         self.lexical_registers = self.profile.get('lexical_registers', {})
         if not self.lexical_registers and 'lexical_registers_defaults' in self.profile:
@@ -1161,6 +1212,7 @@ class OriginalLanguageEngine:
             'sentence_terminators', ['.', '!', '?']))
         all_terminators.update(self.profile.get('style', {}).get(
             'secondary_terminators', [':', ';']))
+
         for sent_idx, sent_data in enumerate(functions_info):
             ordered_functions = sent_data['functions']
             translated_words = []
@@ -1170,6 +1222,14 @@ class OriginalLanguageEngine:
             topic_idx = self.topicalization_handler.identify_topic(
                 ordered_functions)
             sentence_terminator = None
+
+            construct_heads_indices = set()
+            if self.construct_state_handler.enabled:
+                for func in ordered_functions:
+                    if func['pos'] in {'NOUN', 'PROPN'}:
+                        if self.construct_state_handler.is_construct_head(func, ordered_functions):
+                            construct_heads_indices.add(func['index'])
+
             for func in ordered_functions:
                 orig_word = func.get("word", "")
                 lemma = func.get("lemma", "")
@@ -1178,11 +1238,14 @@ class OriginalLanguageEngine:
                 syntactic_func = func.get("function", "")
                 deprel = func.get("deprel", "")
                 is_named_entity = func.get("named_entity", False)
+
                 if preposition_handling == 'replace' and pos == 'ADP':
                     continue
+
                 clean_word_lower = self._clean_word(orig_word).lower()
                 raw_lemma = lemma if lemma else clean_word_lower
                 raw_lemma = raw_lemma.lower()
+
                 if pos == 'PUNCT':
                     mapped_punct = punctuation_map.get(orig_word, orig_word)
                     if orig_word in all_terminators:
@@ -1191,11 +1254,13 @@ class OriginalLanguageEngine:
                     translated_words.append(mapped_punct)
                     last_func = func
                     continue
+
                 if ignore_digits and pos == 'NUM':
                     if re.search(r'\d', orig_word):
                         translated_words.append(orig_word)
                         last_func = func
                         continue
+
                 if syntactic_func in {SyntacticFunction.QUANTIFIER, SyntacticFunction.VERB_PARTICLE, SyntacticFunction.INTENSIFIER}:
                     mapping = self.functional_config.get(raw_lemma, {})
                     translated_word = ""
@@ -1208,6 +1273,7 @@ class OriginalLanguageEngine:
                     elif syntactic_func == SyntacticFunction.INTENSIFIER:
                         translated_word = mapping.get(
                             'adj_word', self._get_word_form(f'{raw_lemma}_intens'))
+
                     if translated_word:
                         if self.mutation_handler.enabled:
                             prev_word = translated_words[-1] if translated_words else None
@@ -1216,31 +1282,43 @@ class OriginalLanguageEngine:
                         translated_words.append(translated_word)
                         last_func = func
                         continue
+
+                if pos == 'DET' and self.construct_state_handler.enabled and self.construct_state_handler.suppress_article:
+                    head_idx = func.get('dependencies', [-1])[0]
+                    if head_idx in construct_heads_indices:
+                        continue
+
                 degree_type = None
                 if self.degree_handler.enabled:
                     degree_type = self.degree_handler.detect_degree(
                         clean_word_lower, raw_lemma, feats)
+
                 base_lemma_for_translation = raw_lemma
                 if degree_type:
                     base_lemma_for_translation = self.degree_handler.get_base_lemma(
                         clean_word_lower, raw_lemma, degree_type, feats)
+
                 if self.polysemy_handler.enabled:
                     base_lemma_for_translation = self.polysemy_handler.resolve_lemma(
                         base_lemma_for_translation, func)
+
                 target_lemma = base_lemma_for_translation
                 current_pos = pos
                 translated_root = None
                 context_tags = []
+
                 if self.lexical_registers.get('enabled', False):
                     pass
-                if target_lemma not in self.word_cache:
-                    pass
+
                 translated_root = self._get_word_form(
                     target_lemma, context_tags, pos=current_pos)
+
                 current_form = translated_root
+
                 if degree_type:
                     current_form = self.degree_handler.apply_degree(
                         current_form, degree_type)
+
                 if self.gender_handler.enabled and (pos in {'ADJ', 'DET', 'VERB'} or syntactic_func in {SyntacticFunction.MODIFIER, SyntacticFunction.COMPLEMENT}):
                     deps = func.get('dependencies', [])
                     head_idx = deps[0] if deps else -1
@@ -1265,50 +1343,69 @@ class OriginalLanguageEngine:
                         current_form, feats, current_pos
                     )
 
+                if self.construct_state_handler.enabled and func['index'] in construct_heads_indices:
+                    current_form = self.construct_state_handler.apply_construct_morphology(
+                        current_form, func)
+
                 is_topic = False
                 if topic_enabled and topic_idx is not None:
                     if func['index'] == topic_idx:
                         is_topic = True
+
                 is_focus = False
                 if focus_enabled:
                     if syntactic_func == SyntacticFunction.OBJECT:
                         is_focus = True
+
                 apply_case = True
                 if is_focus and suppress_case_on_focus:
                     apply_case = False
+
                 if apply_case:
                     is_transitive = transitivity_map.get(func['index'], False)
                     current_form = self.syntax_engine.case_morphology.apply_case(
                         current_form, syntactic_func, self.syntax_engine.word_order, deprel, clause_transitivity=is_transitive)
+
                 if is_topic and topic_marker:
                     current_form = f"{current_form} {topic_marker}"
+
                 if is_focus and object_focus_marker:
                     current_form = f"{current_form} {object_focus_marker}"
+
                 effective_feats = feats
                 if is_focus:
                     effective_feats = f"{effective_feats}|Focus=Yes"
+
                 if self.tam_handler.enabled and (pos in {'VERB', 'AUX'} or 'Tense=' in feats or 'Mood=' in feats or 'Aspect=' in feats or 'VerbForm=' in feats):
                     tam_feats = effective_feats
                     current_form = self.tam_handler.apply_tam(
                         current_form, tam_feats, func, ordered_functions)
+
                 if self.reduplication_handler.enabled:
                     current_form = self.reduplication_handler.apply_reduplication(
                         current_form, effective_feats, pos=current_pos)
+
                 if self.stress_handler.enabled:
                     current_form = self.stress_handler.apply_stress(
                         current_form)
+
                 if self.mutation_handler.enabled:
                     prev_word = translated_words[-1] if translated_words else None
                     current_form = self.mutation_handler.apply_mutation(
                         current_form, prev_word, last_func)
+
                 if is_named_entity:
                     current_form = current_form.capitalize()
+
                 if orig_word[0].isupper() and pos == 'PROPN':
                     current_form = current_form.capitalize()
+
                 translated_words.append(current_form)
                 last_func = func
+
             if sentence_terminator:
                 translated_words.append(sentence_terminator)
+
             if capitalization_enabled and translated_words:
                 force_capitalization = True
                 for idx, word in enumerate(translated_words):
@@ -1319,18 +1416,23 @@ class OriginalLanguageEngine:
                         if len(word) > 0 and not word[0].isupper():
                             translated_words[idx] = word[0].upper() + word[1:]
                         force_capitalization = False
+
                     if any(clean_w.endswith(t) for t in all_terminators):
                         force_capitalization = True
                     else:
                         force_capitalization = False
+
             final_sentence_tokens = self.syntax_engine._glue_tokens(
                 translated_words, ordered_functions)
+
             if final_sentence_tokens:
                 if capitalization_enabled:
                     first = final_sentence_tokens[0]
                     if first:
                         final_sentence_tokens[0] = first[0].upper() + first[1:]
+
             final_sentences.append(' '.join(final_sentence_tokens))
+
         self.save_word_cache()
         return ' '.join(final_sentences)
 

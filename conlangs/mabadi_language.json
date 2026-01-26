@@ -415,6 +415,12 @@
             "enabled": true,
             "replaces_genitive": true,
             "head_position": "initial",
+            "trigger_dependencies": [
+                "nmod",
+                "nmod:poss",
+                "compound"
+            ],
+            "suppress_article_on_head": true,
             "phonological_changes": [
                 {
                     "pattern": "a$",
@@ -422,9 +428,14 @@
                     "condition": "feminine"
                 },
                 {
+                    "pattern": "ie$",
+                    "replacement": "iet",
+                    "condition": "feminine"
+                },
+                {
                     "pattern": "i$",
-                    "replacement": "",
-                    "condition": "short_vowel"
+                    "replacement": "ij",
+                    "condition": "vowel_clash"
                 }
             ]
         }
@@ -1375,7 +1386,33 @@
             "o": "ta",
             "a": "ta",
             "os": "ta",
-            "as": "ta"
+            "as": "ta",
+            "jesus": "N_JESUS",
+            "cristo": "N_CRISTO",
+            "hadab": "C_HADAB",
+            "amém": "C_AMEM"
+        },
+        "definitions": {
+            "N_JESUS": {
+                "type": "adaptation",
+                "source_word": "Jesus",
+                "description": "Nome próprio histórico adaptado."
+            },
+            "N_CRISTO": {
+                "type": "adaptation",
+                "source_word": "Cristo",
+                "description": "Título religioso histórico adaptado."
+            },
+            "C_HADAB": {
+                "type": "adaptation",
+                "source_word": "Hadab",
+                "description": "Nome do planeta e civilização de origem."
+            },
+            "C_AMEM": {
+                "type": "adaptation",
+                "source_word": "Amém",
+                "description": "Expressão de concordância religiosa adaptada."
+            }
         }
     },
     "mappings": {
@@ -1385,7 +1422,11 @@
         "o": "ta",
         "a": "ta",
         "os": "ta",
-        "as": "ta"
+        "as": "ta",
+        "jesus": "N_JESUS",
+        "cristo": "N_CRISTO",
+        "hadab": "C_HADAB",
+        "amém": "C_AMEM"
     },
     "dialectal_features": {
         "enabled": true,
