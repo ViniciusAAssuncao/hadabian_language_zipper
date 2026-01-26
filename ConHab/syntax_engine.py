@@ -183,8 +183,9 @@ class WordOrderMapper:
 
     def _legacy_reorder(self, chunks, target_order, adjunct_position, adjunct_chunks, core_chunks, modifier_chunks):
         final_closers = []
-        clean_chunks = []
-        for c in chunks:
+        last_chunk_idx = len(chunks) - 1
+
+        for i, c in enumerate(chunks):
             if c.function == SyntacticFunction.PUNCT and c.words[0][0] in {'.', '!', '?'}:
                 final_closers.append(c)
 
@@ -216,7 +217,9 @@ class WordOrderMapper:
         if adjunct_position != 'before_subject':
             ordered_chunks.extend(adjunct_chunks)
 
-        ordered_chunks.extend(final_closers)
+        for closer in final_closers:
+            if closer not in ordered_chunks:
+                ordered_chunks.append(closer)
 
         result_indices = []
         seen = set()
@@ -769,15 +772,28 @@ class SyntaxEngine:
 
     def _glue_tokens(self, words: List[str], function_objs: List[Dict]) -> List[str]:
         final_tokens = []
-        punct_suffix = {'.', ',', '!', '?', ';', ':', '...',
-                        '…', ')', ']', '}', '...', '”', '"', "'", '%'}
+        conlang_terminators = set(self.profile.get('style', {}).get(
+            'sentence_terminators', ['.', '!', '?']))
+        secondary_terminators = set(self.profile.get(
+            'style', {}).get('secondary_terminators', [':', ';']))
+        punct_map = self.profile.get('style', {}).get('punctuation_map', {})
+        mapped_comma = punct_map.get(',', ',')
+
+        punct_suffix = conlang_terminators.union(secondary_terminators).union(
+            {mapped_comma, '...', '…', ')', ']', '}', '”', '"', "'", '%'})
         punct_prefix = {'(', '[', '{', '«', '“', '¿', '¡'}
+
         for i, word in enumerate(words):
             if not final_tokens:
                 final_tokens.append(word)
                 continue
             last_token = final_tokens[-1]
             if word in punct_suffix:
+                if word in conlang_terminators:
+                    strip_chars = [mapped_comma] + list(secondary_terminators)
+                    for sc in strip_chars:
+                        if last_token.endswith(sc):
+                            last_token = last_token[:-len(sc)]
                 final_tokens[-1] = last_token + word
             elif any(last_token.startswith(p) for p in punct_prefix) and last_token in punct_prefix:
                 final_tokens[-1] = last_token + word
@@ -805,20 +821,25 @@ class SyntaxEngine:
         return ' '.join(reordered_sentences), all_functions
 
     def _split_sentences(self, text: str) -> List[str]:
-        import re
-        sentences = re.split(r'([.!?]+\s*)', text)
-        result = []
+        pattern = r'([.!?]+(?:\s+|$))'
+        chunks = re.split(pattern, text)
+
+        sentences = []
         i = 0
-        while i < len(sentences):
-            if i + 1 < len(sentences) and sentences[i+1].strip():
-                result.append(sentences[i] + sentences[i+1])
+        while i < len(chunks):
+            chunk = chunks[i]
+            if i + 1 < len(chunks):
+                delimiter = chunks[i+1]
+                full_sentence = chunk + delimiter
+                if full_sentence.strip():
+                    sentences.append(full_sentence)
                 i += 2
-            elif sentences[i].strip():
-                result.append(sentences[i])
-                i += 1
             else:
+                if chunk.strip():
+                    sentences.append(chunk)
                 i += 1
-        return result
+
+        return sentences
 
     def _get_cache_key(self, sentence: str) -> str:
         config_str = json.dumps(self.profile.get(
