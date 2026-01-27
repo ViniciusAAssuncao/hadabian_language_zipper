@@ -12,7 +12,8 @@ from morphosyntax_analyzer import (
     AgreementChecker, SyntacticComplexityAnalyzer,
     TopicalizationHandler, FocusStructureHandler, TAMHandler,
     VowelHarmonyHandler, TransitivityAnalyzer, ConsonantMutationHandler,
-    GenderHandler, PharyngealizationHandler, NegationHandler
+    GenderHandler, PharyngealizationHandler, NegationHandler,
+    InterrogativeHandler
 )
 
 
@@ -1476,6 +1477,7 @@ class OriginalLanguageEngine:
         self.negation_handler = NegationHandler(self.profile)
         self.possessive_handler = PossessiveHandler(self.profile)
         self.clitic_handler = CliticHandler(self.profile)
+        self.interrogative_handler = InterrogativeHandler(self.profile)
         self.functional_config = self.profile.get('functional_particles', {})
         self.lexical_registers = self.profile.get('lexical_registers', {})
         if not self.lexical_registers and 'lexical_registers_defaults' in self.profile:
@@ -1692,6 +1694,9 @@ class OriginalLanguageEngine:
             topic_idx = self.topicalization_handler.identify_topic(
                 ordered_functions)
             sentence_terminator = None
+
+            is_question, q_type = self.interrogative_handler.is_yes_no_question(
+                sent_data['original'])
 
             construct_heads_indices = set()
             if self.construct_state_handler.enabled:
@@ -1954,6 +1959,22 @@ class OriginalLanguageEngine:
 
             if sentence_terminator:
                 translated_words.append(sentence_terminator)
+
+            if is_question and self.interrogative_handler.enabled:
+                particle = self.interrogative_handler.get_particle(q_type)
+                
+                if particle:
+                    translated_words.insert(0, particle)
+                    particle_meta = {
+                        'word': particle,
+                        'lemma': particle,
+                        'pos': 'PART',
+                        'function': 'INT',
+                        'index': -1,
+                        'deprel': 'discourse',
+                        'dependencies': []
+                    }
+                    ordered_functions.insert(0, particle_meta)
 
             if capitalization_enabled and translated_words:
                 force_capitalization = True

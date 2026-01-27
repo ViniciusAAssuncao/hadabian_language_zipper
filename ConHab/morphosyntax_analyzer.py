@@ -1,6 +1,8 @@
 from typing import List, Dict, Optional, Tuple, Set
 from collections import defaultdict
 import re
+
+
 class VowelHarmonyHandler:
     def __init__(self, profile: Dict):
         self.profile = profile
@@ -905,3 +907,62 @@ class CaseMorphology:
             return f"{word} {marker_text}"
 
         return word + marker_text
+
+
+class InterrogativeHandler:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.config = profile.get('interrogative_system', {})
+        self.enabled = self.config.get('enabled', False)
+        self.particles = self.config.get('question_particles', [])
+        self.detection_rules = self.config.get('detection_rules', {})
+
+    def is_yes_no_question(self, text: str) -> Tuple[bool, Optional[str]]:
+        if not self.enabled or not text:
+            return False, None
+
+        clean_text = text.strip()
+        if not clean_text.endswith('?'):
+            return False, None
+
+        wh_words = self.detection_rules.get('wh_words', [])
+        alternative_indicators = self.detection_rules.get(
+            'alternative_indicators', [])
+
+        lower_text = clean_text.lower()
+
+        for wh in wh_words:
+            if lower_text.startswith(wh):
+                return False, None
+
+        is_alternative = any(
+            ind in lower_text for ind in alternative_indicators)
+
+        if is_alternative:
+            return True, 'yes_no_alternative'
+
+        return True, 'yes_no'
+
+    def get_particle(self, q_type: str) -> str:
+        for p in self.particles:
+            if p.get('type') == q_type:
+                return p.get('particle', '')
+        if q_type == 'yes_no_alternative':
+            for p in self.particles:
+                if p.get('type') == 'yes_no':
+                    return p.get('particle', '')
+        return ""
+
+    def apply_particle(self, words: List[str], q_type: str) -> List[str]:
+        if not self.enabled:
+            return words
+
+        particle = self.get_particle(q_type)
+        if not particle:
+            return words
+
+        result = words.copy()
+        if result:
+            result.insert(0, particle)
+
+        return result

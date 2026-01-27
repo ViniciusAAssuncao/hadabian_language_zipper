@@ -1144,6 +1144,26 @@
     },
     "interrogative_system": {
         "enabled": true,
+        "detection_rules": {
+            "wh_words": [
+                "quem",
+                "o que",
+                "que",
+                "onde",
+                "quando",
+                "como",
+                "por que",
+                "porque",
+                "qual",
+                "quais",
+                "quanto",
+                "quantos",
+                "quantas"
+            ],
+            "alternative_indicators": [
+                " ou "
+            ]
+        },
         "question_particles": [
             {
                 "particle": "x",
@@ -1157,16 +1177,7 @@
                 "position": "sentence_initial",
                 "description": "Partícula interrogativa alternativa"
             }
-        ],
-        "wh_words": {
-            "who": "min",
-            "what": "xiex",
-            "where": "fejn",
-            "when": "meta",
-            "why": "għaliex",
-            "how": "kif",
-            "which": "liema"
-        }
+        ]
     },
     "determiner_system": {
         "enabled": true,
