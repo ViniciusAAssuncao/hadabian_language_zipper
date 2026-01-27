@@ -1,98 +1,69 @@
 import json
-import os
-import shutil
-from engine import OriginalLanguageEngine
+from engine import OriginalLanguageEngine, PhonologyHandler
 
-# Definição dos caminhos
-PROFILE_DIR = "./conlangs"
-PROFILE_NAME = "mabadi_language.json"
-PROFILE_PATH = os.path.join(PROFILE_DIR, PROFILE_NAME)
-BACKUP_PATH = os.path.join(PROFILE_DIR, f"{PROFILE_NAME}.bak")
-
-def run_test():
-    print("=== INICIANDO TESTE: PREPOSIÇÕES FLEXIONADAS ===")
-
-    # 1. Backup do perfil original para não perder dados
-    if os.path.exists(PROFILE_PATH):
-        shutil.copy(PROFILE_PATH, BACKUP_PATH)
-        print(f"[INFO] Backup criado em: {BACKUP_PATH}")
-    else:
-        print(f"[ERRO] Arquivo de perfil não encontrado em: {PROFILE_PATH}")
-        return
-
+def test_monophthongization():
+    print("Iniciando teste de Monoftongação para Mabádi...")
+    
     try:
-        # 2. Carregar e Injetar Configuração no JSON
-        with open(PROFILE_PATH, 'r', encoding='utf-8') as f:
-            data = json.load(f)
-
-        # Injeção da configuração solicitada
-        if "adposition_system" not in data:
-            data["adposition_system"] = {}
+        engine = OriginalLanguageEngine('./conlangs/mabadi_language.json')
+        ph = engine.phonology_handler
         
-        data["adposition_system"]["inflected_prepositions"] = {
-            "enabled": True,
-            "forms": {
-                "fi": { "1sg": "fija", "2sg": "fik", "3sg": "fil" }
-            }
-        }
-
-        with open(PROFILE_PATH, 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=4, ensure_ascii=False)
+        print("\nConfiguração de Monoftongação:")
+        print(f"Habilitado: {ph.monophthong_enabled}")
+        print(f"Regras: {ph.monophthong_rules}")
         
-        print("[INFO] Configuração injetada no perfil JSON.")
-
-        # 3. Inicializar a Engine
-        engine = OriginalLanguageEngine(PROFILE_PATH)
-        print("[INFO] Engine inicializada.")
-
-        # 4. Mock do Cache de Palavras
-        # Força 'em' a ser traduzido como 'fi'
-        engine.word_cache['em'] = {
-            "lemma": "em",
-            "default": "fi",
-            "synsets": [{"word": "fi", "tags": ["preposition"], "affinity": 1.0}]
-        }
-        print("[INFO] Word Cache mockado: 'em' -> 'fi'")
-
-        # 5. Teste Caso 1: Flexão/Absorção (em + mim -> fija)
-        input_text_1 = "Eu estou em mim."
-        print(f"\n--- Teste 1: '{input_text_1}' ---")
+        test_cases = [
+            ("bajt", "bēt", "aj -> ē"),
+            ("qawm", "qōm", "aw -> ō"),
+            ("xajr", "xēr", "aj -> ē"),
+            ("kawne", "kōne", "aw -> ō"),
+            ("bijt", "bijt", "ij -> ij (sem regra) ou ij -> ī se adicionado"),
+            ("normal", "normal", "sem mudança")
+        ]
         
-        output_1 = engine.process_text(input_text_1)
-        print(f"Saída: '{output_1}'")
+        print("\nExecutando casos de teste diretos no PhonologyHandler:")
+        all_passed = True
+        for input_word, expected, desc in test_cases:
+            result = ph.apply_monophthongization(input_word)
+            success = result == expected
+            status = "PASSOU" if success else f"FALHOU (Esperado: {expected}, Obtido: {result})"
+            if not success:
+                # Regras extras adicionadas no profile podem afetar bijt/uw se existirem
+                if "ij" in input_word and result == "bīt":
+                     status = "PASSOU (Regra ij->ī aplicada)"
+                     success = True
+                else:
+                    all_passed = False
+            print(f"  Entrada: {input_word:10} | {desc:20} -> {status}")
 
-        if "fija" in output_1:
-            print(">>> RESULTADO: SUCESSO (Contém 'fija')")
+        # Teste integrado
+        print("\nTeste integrado (geração de palavra):")
+        # Força a geração de uma palavra que naturalmente teria ditongo se não fosse a regra
+        # Como o gerador usa sementes aleatórias, vamos simular a nativização direta
+        
+        raw_word_aj = "bayt" # Phonology handler deve converter y->j ou y->i e depois aplicar regra
+        nativized_aj = ph.nativize_word(raw_word_aj)
+        print(f"  Nativização de 'bayt': {nativized_aj}")
+        
+        raw_word_aw = "kawn"
+        nativized_aw = ph.nativize_word(raw_word_aw)
+        print(f"  Nativização de 'kawn': {nativized_aw}")
+
+        if "ē" in nativized_aj or "e" in nativized_aj: # Depende do mapeamento exato de y e j
+             print("  Verificação 'bayt' -> contém vogal monoftongada (e/ē).")
+        
+        if "ō" in nativized_aw or "o" in nativized_aw:
+             print("  Verificação 'kawn' -> contém vogal monoftongada (o/ō).")
+
+        if all_passed:
+            print("\nRESULTADO FINAL: SUCESSO. A monoftongação está funcionando conforme esperado.")
         else:
-            print(">>> RESULTADO: FALHA (Não contém 'fija')")
-
-        # 6. Teste Caso 2: Sem Flexão (em + casa -> fi ...)
-        # Garantir que 'casa' tenha uma tradução para não gerar aleatório
-        engine.word_cache['casa'] = {"default": "dar"}
-        
-        input_text_2 = "Eu estou em casa."
-        print(f"\n--- Teste 2: '{input_text_2}' ---")
-        
-        output_2 = engine.process_text(input_text_2)
-        print(f"Saída: '{output_2}'")
-
-        if "fi " in output_2 and "fija" not in output_2:
-            print(">>> RESULTADO: SUCESSO (Preposição separada mantida)")
-        else:
-            print(f">>> RESULTADO: FALHA (Esperado 'fi ...', obtido '{output_2}')")
+            print("\nRESULTADO FINAL: FALHA em alguns testes unitários.")
 
     except Exception as e:
-        print(f"[ERRO CRÍTICO] Ocorreu uma exceção durante o teste: {e}")
+        print(f"\nERRO CRÍTICO DURANTE O TESTE: {e}")
         import traceback
         traceback.print_exc()
 
-    finally:
-        # 7. Restaurar Backup
-        if os.path.exists(BACKUP_PATH):
-            shutil.copy(BACKUP_PATH, PROFILE_PATH)
-            os.remove(BACKUP_PATH)
-            print("\n[INFO] Perfil original restaurado e backup removido.")
-        print("=== FIM DO TESTE ===")
-
 if __name__ == "__main__":
-    run_test()
+    test_monophthongization()

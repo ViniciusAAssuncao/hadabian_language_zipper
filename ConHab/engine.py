@@ -400,6 +400,11 @@ class PhonologyHandler:
         self.phonological_rules = self.phonotactics.get(
             'phonological_rules', [])
         self.compiled_rules = self._compile_all_rules()
+        self.monophthong_config = self.phonotactics.get(
+            'monophthongization', {})
+        self.monophthong_enabled = self.monophthong_config.get(
+            'enabled', False)
+        self.monophthong_rules = self.monophthong_config.get('rules', [])
 
     def _compile_all_rules(self):
         compiled = []
@@ -474,6 +479,22 @@ class PhonologyHandler:
             i += 1
 
         return input_regex, "".join(replacement_parts)
+
+    def apply_monophthongization(self, word: str) -> str:
+        if not self.monophthong_enabled or not word:
+            return word
+
+        current_word = word
+        sorted_rules = sorted(self.monophthong_rules,
+                              key=lambda x: x.get('priority', 0), reverse=True)
+
+        for rule in sorted_rules:
+            inp = rule.get('input')
+            out = rule.get('output')
+            if inp and out:
+                current_word = current_word.replace(inp, out)
+
+        return current_word
 
     def apply_rules(self, word: str, register: str) -> str:
         if not word:
@@ -587,6 +608,9 @@ class PhonologyHandler:
         for char in word:
             nativized.append(self.get_closest_phoneme(char))
         result = "".join(nativized)
+
+        result = self.apply_monophthongization(result)
+
         if result and not self.is_valid_final(result[-1]):
             valid_finals = [c for c in self.consonants if self.is_valid_final(
                 c)] + list(self.vowels)
@@ -2212,6 +2236,9 @@ class OriginalLanguageEngine:
                 if rng_mut.random() < mutation_chance:
                     base_word = self._mutate_word(base_word, mut_hash)
         base_word = base_word if base_word else word
+
+        base_word = self.phonology_handler.apply_monophthongization(base_word)
+
         entry["default"] = base_word
         entry["synsets"].append(
             {"word": base_word, "tags": ["common", "neutral"], "affinity": 1.0})

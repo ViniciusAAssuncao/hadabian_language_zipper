@@ -83,6 +83,31 @@
             "oj",
             "ow"
         ],
+        "monophthongization": {
+            "enabled": true,
+            "rules": [
+                {
+                    "input": "aj",
+                    "output": "ē",
+                    "priority": 1
+                },
+                {
+                    "input": "aw",
+                    "output": "ō",
+                    "priority": 1
+                },
+                {
+                    "input": "ij",
+                    "output": "ī",
+                    "priority": 2
+                },
+                {
+                    "input": "uw",
+                    "output": "ū",
+                    "priority": 2
+                }
+            ]
+        },
         "sandhi": {
             "enabled": true,
             "rules": [
