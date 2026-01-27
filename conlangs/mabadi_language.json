@@ -1261,32 +1261,17 @@
         }
     },
     "adposition_system": {
-        "enabled": true,
-        "type": "prepositions",
-        "core_prepositions": {
-            "fi": "em, dentro de",
-            "fuq": "sobre, em cima de",
-            "taħt": "sob, embaixo de",
-            "ma": "com (instrumental)",
-            "bi": "com, por meio de",
-            "għal": "para, a",
-            "minn": "de, desde",
-            "ta": "de (posse/genitivo)",
-            "bejn": "entre",
-            "qabel": "antes de",
-            "wara": "depois de, atrás de",
-            "ħdejn": "perto de",
-            "kontra": "contra"
-        },
         "inflected_prepositions": {
             "enabled": true,
-            "pattern": "preposition + pronominal_suffix",
-            "example": {
-                "fi": {
-                    "1sg": "fija",
-                    "2sg": "fik",
-                    "3sg_m": "fih",
-                    "3sg_f": "fiha"
+            "forms": {
+                "wur": {
+                    "1sg": "yyia",
+                    "2sg": "kek",
+                    "3sg_m": "hu",
+                    "3sg_f": "ha",
+                    "1pl": "na",
+                    "2pl": "kom",
+                    "3pl": "hom"
                 }
             }
         }

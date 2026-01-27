@@ -1,8 +1,6 @@
 from typing import List, Dict, Optional, Tuple, Set
 from collections import defaultdict
 import re
-
-
 class VowelHarmonyHandler:
     def __init__(self, profile: Dict):
         self.profile = profile

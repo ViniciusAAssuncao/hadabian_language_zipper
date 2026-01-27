@@ -1,3 +1,6 @@
+
+from collections import defaultdict
+from typing import List, Dict, Optional, Tuple, Set
 import json
 import hashlib
 from pathlib import Path
@@ -13,6 +16,70 @@ from morphosyntax_analyzer import (
     VowelHarmonyHandler, TransitivityAnalyzer, ConsonantMutationHandler,
     GenderHandler, PharyngealizationHandler, NegationHandler
 )
+
+
+class PrepositionHandler:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.config = profile.get('adposition_system', {}).get(
+            'inflected_prepositions', {})
+        self.enabled = self.config.get('enabled', False)
+        self.forms = self.config.get('forms', {})
+
+    def _get_person_key(self, feats: str) -> Optional[str]:
+        if not feats or feats == '_':
+            return None
+        feat_map = {}
+        for f in feats.split('|'):
+            if '=' in f:
+                k, v = f.split('=', 1)
+                feat_map[k] = v
+        person = feat_map.get('Person')
+        number = feat_map.get('Number')
+        if not person or not number:
+            return None
+        num_map = {'Sing': 'sg', 'Plur': 'pl', 'Dual': 'du'}
+        base_key = f"{person}{num_map.get(number, 'sg')}"
+        gender = feat_map.get('Gender')
+        if gender:
+            gen_map = {'Masc': 'm', 'Fem': 'f', 'Neut': 'n'}
+            gen_code = gen_map.get(gender, '')
+            if gen_code:
+                return f"{base_key}_{gen_code}"
+        return base_key
+
+    def analyze_inflections(self, functions: List[Dict], engine) -> Tuple[Dict[int, str], Set[int]]:
+        if not self.enabled:
+            return {}, set()
+        inflection_map = {}
+        absorbed_indices = set()
+        for f in functions:
+            if f['pos'] == 'ADP':
+                prep_lemma = f['lemma'].lower()
+                conlang_prep = engine._get_word_form(prep_lemma)
+                if conlang_prep not in self.forms:
+                    continue
+                prep_idx = f['index']
+                target_pronoun = None
+                for obj in functions:
+                    if obj['pos'] == 'PRON':
+                        if prep_idx in obj.get('dependencies', []) or obj['index'] in f.get('dependencies', []):
+                            target_pronoun = obj
+                            break
+                if target_pronoun:
+                    person_key = self._get_person_key(
+                        target_pronoun.get('feats', ''))
+                    if person_key:
+                        inflected_form = self.forms[conlang_prep].get(
+                            person_key)
+                        if not inflected_form and '_' in person_key:
+                            base_key = person_key.split('_')[0]
+                            inflected_form = self.forms[conlang_prep].get(
+                                base_key)
+                        if inflected_form:
+                            inflection_map[prep_idx] = inflected_form
+                            absorbed_indices.add(target_pronoun['index'])
+        return inflection_map, absorbed_indices
 
 
 class CliticHandler:
@@ -1361,6 +1428,7 @@ class OriginalLanguageEngine:
         if not self.lexical_registers and 'lexical_registers_defaults' in self.profile:
             self.lexical_registers = self.profile['lexical_registers_defaults']
         self.word_cache: Dict[str, Union[str, Dict]] = {}
+        self.preposition_handler = PrepositionHandler(self.profile)
         self.load_word_cache()
 
     def _load_and_merge_family(self, family_path: Path):
@@ -1609,6 +1677,12 @@ class OriginalLanguageEngine:
                     ordered_functions)
                 absorbed_indices.update(possessive_indices)
 
+            inflected_preps_map = {}
+            if self.preposition_handler.enabled:
+                inflected_preps_map, prep_absorbed = self.preposition_handler.analyze_inflections(
+                    ordered_functions, self)
+                absorbed_indices.update(prep_absorbed)
+
             for func in ordered_functions:
                 if func['index'] in absorbed_indices:
                     continue
@@ -1810,6 +1884,10 @@ class OriginalLanguageEngine:
 
                 if orig_word[0].isupper() and pos == 'PROPN':
                     current_form = current_form.capitalize()
+
+                if func['index'] in inflected_preps_map:
+                    translated_root = inflected_preps_map[func['index']]
+                    current_form = translated_root
 
                 translated_words.append(current_form)
                 last_func = func
