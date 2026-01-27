@@ -1,13 +1,11 @@
-
 from collections import defaultdict
-from typing import List, Dict, Optional, Tuple, Set
+from typing import List, Dict, Optional, Tuple, Set, Union
 import json
 import hashlib
 from pathlib import Path
 import re
 import random
 import unicodedata
-from typing import List, Dict, Optional, Tuple, Set, Union
 from syntax_engine import SyntaxEngine, SyntacticFunction
 from morphosyntax_analyzer import (
     DependencyParser, ConstituentAnalyzer, ClauseSegmenter,
@@ -131,11 +129,9 @@ class CliticHandler:
     def analyze_clitics(self, functions: List[Dict], negation_handler) -> Tuple[Dict[int, Dict], Set[int]]:
         if not self.enabled:
             return {}, set()
-
         clitic_map = {}
         absorbed_indices = set()
         negation_in_order = 'neg' in self.order
-
         for func in functions:
             if func['pos'] in {'VERB', 'AUX'}:
                 verb_idx = func['index']
@@ -146,7 +142,6 @@ class CliticHandler:
                     'obj_indirect': ''
                 }
                 has_clitics = False
-
                 if negation_in_order:
                     is_negated, trig_idx, strategy = negation_handler.detect_negation(
                         func, functions)
@@ -155,7 +150,6 @@ class CliticHandler:
                         clitic_data['neg'] = marker
                         absorbed_indices.add(trig_idx)
                         has_clitics = True
-
                 dependents = [
                     f for f in functions if verb_idx in f.get('dependencies', [])]
                 for dep in dependents:
@@ -174,30 +168,24 @@ class CliticHandler:
                                 clitic_data['obj_indirect'] = form
                                 absorbed_indices.add(dep['index'])
                                 has_clitics = True
-
                 if has_clitics:
                     clitic_map[verb_idx] = clitic_data
-
         return clitic_map, absorbed_indices
 
     def apply_clitics(self, verb_word: str, verb_idx: int, clitic_map: Dict[int, Dict]) -> str:
         if verb_idx not in clitic_map:
             return verb_word
-
         data = clitic_map[verb_idx]
         data['verb'] = verb_word
         parts = []
-
         for element in self.order:
             val = data.get(element, '')
             if val:
                 parts.append(val)
-
         if self.encliticizes:
             return "".join(parts)
         elif self.procliticizes:
             return "".join(parts)
-
         return " ".join(parts)
 
 
@@ -219,63 +207,50 @@ class PossessiveHandler:
     def get_suffix(self, feats_str: str, lemma: str = '') -> str:
         if not feats_str or feats_str == '_':
             return ""
-
         feats = {}
         for f in feats_str.split('|'):
             if '=' in f:
                 k, v = f.split('=', 1)
                 feats[k] = v
-
         person = feats.get('Person')
         number = feats.get('Number')
         gender = feats.get('Gender')
-
         if not person and lemma:
             person = self.possessive_map.get(lemma.lower())
-
         if not person or not number:
             return ""
-
         key_num = 'sg' if number == 'Sing' else 'pl'
         base_key = f"{person}{key_num}"
-
         if gender:
             key_gen = 'm' if gender == 'Masc' else 'f'
             full_key = f"{base_key}_{key_gen}"
             if full_key in self.suffixes:
                 return self.suffixes[full_key]
-
         if base_key in self.suffixes:
             return self.suffixes[base_key]
-
         return ""
 
     def analyze_possessives(self, functions: List[Dict]) -> Tuple[Dict[int, str], Set[int]]:
         if not self.enabled:
             return {}, set()
-
         suffix_map = {}
         absorbed_indices = set()
-
         for f in functions:
             deprel = f.get('deprel', '')
             if 'nmod:poss' in deprel or ('det' in deprel and f.get('pos') == 'DET'):
                 head_idx = f['dependencies'][0] if f['dependencies'] else -1
                 if head_idx == -1:
                     continue
-
                 head_func = next(
                     (h for h in functions if h['index'] == head_idx), None)
                 if not head_func or head_func['pos'] not in {'NOUN', 'PROPN'}:
                     continue
-
                 if f.get('pos') in {'PRON', 'DET'}:
                     suffix = self.get_suffix(
                         f.get('feats', ''), lemma=f.get('lemma', ''))
                     if suffix:
                         suffix_map[head_idx] = suffix
                         absorbed_indices.add(f['index'])
-
         return suffix_map, absorbed_indices
 
 
@@ -296,33 +271,25 @@ class SunLetterHandler:
     def assimilate(self, article: str, next_word: str) -> str:
         if not self.enabled or not article or not next_word:
             return article
-
         clean_next = "".join(filter(str.isalpha, next_word)).lower()
         if not clean_next:
             return article
-
         first_char = clean_next[0]
         if first_char not in self.sun_letters:
             return article
-
         active_form = None
         article_lower = article.lower().strip()
-
         base_article = article_lower.split(
         )[-1] if ' ' in article_lower else article_lower
-
         if base_article in self.forms:
             active_form = base_article
-
         if not active_form:
             for f in self.forms:
                 if article_lower.endswith(f):
                     active_form = f
                     break
-
         if not active_form:
             return article
-
         match = re.search(r'([bcdfghjklmnpqrstvwxz])(\W*)$',
                           article, re.IGNORECASE)
         if match:
@@ -333,7 +300,6 @@ class SunLetterHandler:
             if consonant.isupper():
                 new_consonant = new_consonant.upper()
             return f"{base}{new_consonant}{separator}"
-
         return article
 
 
@@ -374,7 +340,6 @@ class ConstructStateHandler:
     def is_construct_head(self, func: Dict, all_functions: List[Dict]) -> bool:
         if not self.enabled:
             return False
-
         my_index = func['index']
         for f in all_functions:
             deps = f.get('dependencies', [])
@@ -388,23 +353,18 @@ class ConstructStateHandler:
     def apply_construct_morphology(self, word: str, func: Dict) -> str:
         if not self.changes:
             return word
-
         gender = self.gender_handler.infer_gender(word)
-
         current_word = word
         for change in self.changes:
             pattern = change['pattern']
             replacement = change['replacement']
             condition = change.get('condition')
-
             if condition == 'feminine' and gender != 'feminine':
                 continue
-
             match = re.search(pattern, current_word)
             if match:
                 current_word = re.sub(pattern, replacement, current_word)
                 break
-
         return current_word
 
 
@@ -437,6 +397,97 @@ class PhonologyHandler:
             self.phonotactics.get('forbidden_initial_clusters', []))
         self.forbidden_final = set(self.phonotactics.get(
             'forbidden_final_consonants', []))
+        self.phonological_rules = self.phonotactics.get(
+            'phonological_rules', [])
+        self.compiled_rules = self._compile_all_rules()
+
+    def _compile_all_rules(self):
+        compiled = []
+        for rule in self.phonological_rules:
+            input_pat = rule.get('input')
+            output_pat = rule.get('output')
+            register = rule.get('register')
+            if input_pat and output_pat is not None:
+                regex, repl = self._compile_rule_regex(input_pat, output_pat)
+                compiled.append({
+                    'regex': regex,
+                    'replacement': repl,
+                    'register': register
+                })
+        return compiled
+
+    def _compile_rule_regex(self, input_pat: str, output_pat: str) -> Tuple[str, str]:
+        c_set = "".join(
+            self.consonants) if self.consonants else "bcdfghjklmnpqrstvwxz"
+        v_set = "".join(self.vowels) if self.vowels else "aeiou"
+
+        regex_parts = []
+        input_map = []
+
+        i = 0
+        group_idx = 1
+        while i < len(input_pat):
+            char = input_pat[i]
+            if char == 'C':
+                regex_parts.append(f"([{c_set}])")
+                input_map.append({'type': 'C', 'group': group_idx})
+                group_idx += 1
+            elif char == 'V':
+                regex_parts.append(f"([{v_set}])")
+                input_map.append({'type': 'V', 'group': group_idx})
+                group_idx += 1
+            elif char == '$':
+                regex_parts.append("$")
+            elif char == '^':
+                regex_parts.append("^")
+            else:
+                regex_parts.append(re.escape(char))
+            i += 1
+
+        input_regex = "".join(regex_parts)
+
+        replacement_parts = []
+        c_counter = 0
+        v_counter = 0
+        input_cs = [x for x in input_map if x['type'] == 'C']
+        input_vs = [x for x in input_map if x['type'] == 'V']
+
+        i = 0
+        while i < len(output_pat):
+            char = output_pat[i]
+            if char == 'C':
+                if c_counter < len(input_cs):
+                    g = input_cs[c_counter]['group']
+                    replacement_parts.append(f"\\g<{g}>")
+                    c_counter += 1
+                else:
+                    replacement_parts.append("C")
+            elif char == 'V':
+                if v_counter < len(input_vs):
+                    g = input_vs[v_counter]['group']
+                    replacement_parts.append(f"\\g<{g}>")
+                    v_counter += 1
+                else:
+                    replacement_parts.append("V")
+            else:
+                replacement_parts.append(char)
+            i += 1
+
+        return input_regex, "".join(replacement_parts)
+
+    def apply_rules(self, word: str, register: str) -> str:
+        if not word:
+            return word
+        current_word = word
+        for rule in self.compiled_rules:
+            if rule['register'] and rule['register'] != register:
+                continue
+            try:
+                current_word = re.sub(
+                    rule['regex'], rule['replacement'], current_word)
+            except:
+                continue
+        return current_word
 
     def _infer_inventory(self, type_key: str) -> str:
         rng = random.Random(self.seed + sum(ord(c) for c in type_key))
@@ -575,29 +626,23 @@ class RootSystemHandler:
             if isinstance(root_str, str):
                 return list(root_str.replace("-", ""))
             return root_str
-
         normalized = self.phonology_handler.normalize_char(lemma_lower)
         candidates = [c for c in normalized if c in self.consonants]
-
         if len(candidates) >= 3:
             return candidates[:3]
-
         rng = random.Random(self.seed + sum(ord(c) for c in lemma))
         padding_needed = 3 - len(candidates)
         candidates.extend(rng.sample(list(self.consonants), padding_needed))
-
         return candidates[:3]
 
     def apply_pattern(self, root: List[str], pattern_def: Union[str, Dict]) -> str:
         if not root or len(root) < 3:
             return "".join(root)
-
         pattern = ""
         if isinstance(pattern_def, dict):
             pattern = pattern_def.get('pattern', '1e2e3')
         else:
             pattern = pattern_def
-
         result = []
         i = 0
         while i < len(pattern):
@@ -620,22 +665,18 @@ class RootSystemHandler:
             else:
                 result.append(char)
             i += 1
-
         word = "".join(result)
         return self.phonology_handler.nativize_word(word)
 
     def get_binyan_by_meaning(self, meaning_tag: str) -> Optional[Dict]:
         if not self.binyanim:
             return None
-
         matches = [
             b for b in self.binyanim if meaning_tag in b.get('meaning', '')]
         if matches:
             return matches[0]
-
         if meaning_tag == 'basic':
             return next((b for b in self.binyanim if b.get('form') == 'I'), self.binyanim[0])
-
         return None
 
     def get_pattern_by_type(self, type_tag: str) -> Optional[Dict]:
@@ -1032,7 +1073,6 @@ class BrokenPluralHandler:
             return word
         if not feats_str or 'Number=Plur' not in feats_str:
             return word
-
         if self.enabled and pos == 'NOUN':
             word_lower = word.lower()
             for pat in self.patterns:
@@ -1040,7 +1080,6 @@ class BrokenPluralHandler:
                 p_pat = pat.get('plural_pattern', '')
                 if not s_pat or not p_pat:
                     continue
-
                 regex_pattern = "^"
                 for char in s_pat:
                     if char == 'C':
@@ -1048,7 +1087,6 @@ class BrokenPluralHandler:
                     else:
                         regex_pattern += re.escape(char)
                 regex_pattern += "$"
-
                 match = re.match(regex_pattern, word_lower)
                 if match:
                     radicals = match.groups()
@@ -1065,20 +1103,16 @@ class BrokenPluralHandler:
                                 break
                         else:
                             plural_word += char
-
                     if possible:
                         if word[0].isupper():
                             return plural_word.capitalize()
                         return plural_word
-
         marker = self.plural_markers.get('marker', '')
         if marker:
             return word + marker
-
         alts = self.plural_markers.get('alternatives', [])
         if alts:
             return word + alts[0]
-
         return word
 
 
@@ -1099,7 +1133,6 @@ class DualHandler:
             return word
         if pos not in {'NOUN', 'ADJ', 'PROPN'}:
             return word
-
         case_key = 'nominative'
         if deprel:
             if 'obj' in deprel:
@@ -1110,18 +1143,14 @@ class DualHandler:
                 case_key = 'accusative'
                 if 'genitive' in self.markers:
                     case_key = 'genitive'
-
         marker = self.markers.get(case_key, '')
-
         if not marker and case_key not in self.markers:
             if case_key != 'nominative' and 'accusative' in self.markers:
                 marker = self.markers['accusative']
             elif 'nominative' in self.markers:
                 marker = self.markers['nominative']
-
         if marker:
             return word + marker
-
         return word
 
 
@@ -2202,6 +2231,10 @@ class OriginalLanguageEngine:
                         mutation_seed = reg_rng.randint(0, 999999)
                         variant_word = self._mutate_word(
                             variant_word, mutation_seed)
+
+                    variant_word = self.phonology_handler.apply_rules(
+                        variant_word, name)
+
                     if variant_word != base_word:
                         entry["synsets"].append({
                             "word": variant_word,
