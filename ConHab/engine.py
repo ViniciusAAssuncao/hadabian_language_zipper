@@ -1098,7 +1098,10 @@ class BrokenPluralHandler:
             return word
         if not feats_str or 'Number=Plur' not in feats_str:
             return word
-        if self.enabled and pos == 'NOUN':
+        if not self.enabled:
+            return word
+
+        if pos == 'NOUN':
             word_lower = word.lower()
             for pat in self.patterns:
                 s_pat = pat.get('singular_pattern', '')
@@ -1132,12 +1135,15 @@ class BrokenPluralHandler:
                         if word[0].isupper():
                             return plural_word.capitalize()
                         return plural_word
-        marker = self.plural_markers.get('marker', '')
-        if marker:
-            return word + marker
-        alts = self.plural_markers.get('alternatives', [])
-        if alts:
-            return word + alts[0]
+
+        if pos in {'NOUN', 'ADJ', 'PROPN'}:
+            marker = self.plural_markers.get('marker', '')
+            if marker:
+                return word + marker
+            alts = self.plural_markers.get('alternatives', [])
+            if alts:
+                return word + alts[0]
+
         return word
 
 
@@ -1414,6 +1420,90 @@ class LoanwordHandler:
         return None
 
 
+class DemonstrativeHandler:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.config = profile.get(
+            'determiner_system', {}).get('demonstratives', {})
+        self.enabled = bool(self.config)
+        self.proximal = self.config.get('proximal', {})
+        self.distal = self.config.get('distal', {})
+        self.mappings = self.config.get('source_mappings', {
+            'proximal': ['este', 'esta', 'isto', 'esse', 'essa', 'isso', 'estes', 'estas', 'esses', 'essas'],
+            'distal': ['aquele', 'aquela', 'aquilo', 'aqueles', 'aquelas']
+        })
+
+    def is_demonstrative(self, func: Dict) -> bool:
+        if func['pos'] not in {'DET', 'PRON'}:
+            return False
+        lemma = func.get('lemma', '').lower()
+        word = func.get('word', '').lower()
+        if lemma in self.mappings.get('proximal', []) or word in self.mappings.get('proximal', []):
+            return True
+        if lemma in self.mappings.get('distal', []) or word in self.mappings.get('distal', []):
+            return True
+        return False
+
+    def get_form(self, func: Dict, all_functions: List[Dict], engine_ref) -> str:
+        lemma = func.get('lemma', '').lower()
+        word = func.get('word', '').lower()
+        target_type = None
+
+        if lemma in self.mappings.get('proximal', []) or word in self.mappings.get('proximal', []):
+            target_type = 'proximal'
+        elif lemma in self.mappings.get('distal', []) or word in self.mappings.get('distal', []):
+            target_type = 'distal'
+
+        if not target_type:
+            return func.get('word', '')
+
+        forms = self.proximal if target_type == 'proximal' else self.distal
+
+        head_idx = func['dependencies'][0] if func['dependencies'] else -1
+        gender = 'masculine'
+        number = 'singular'
+
+        source_gender_hint = 'masculine'
+        source_feats = func.get('feats', '')
+        if 'Gender=Fem' in source_feats:
+            source_gender_hint = 'feminine'
+
+        if head_idx != -1:
+            head = next(
+                (f for f in all_functions if f['index'] == head_idx), None)
+            if head:
+                head_lemma = head.get('lemma', head.get('word', '')).lower()
+                head_conlang_word = engine_ref._get_word_form(head_lemma)
+                gender = engine_ref.gender_handler.infer_gender(
+                    head_conlang_word)
+
+                if gender == engine_ref.gender_handler.default_gender and source_gender_hint == 'feminine':
+                    gender = 'feminine'
+
+                feats = head.get('feats', '')
+                if 'Number=Plur' in feats:
+                    number = 'plural'
+                elif 'Number=Sing' in feats:
+                    number = 'singular'
+
+        if 'Number=Plur' in source_feats:
+            number = 'plural'
+
+        new_word = ""
+        if number == 'plural':
+            new_word = forms.get('pl', '')
+        else:
+            key = 'sg_f' if gender == 'feminine' else 'sg_m'
+            new_word = forms.get(key, '')
+
+        if new_word:
+            if func.get('word', '') and func['word'][0].isupper():
+                new_word = new_word.capitalize()
+            return new_word
+
+        return func.get('word', '')
+
+
 class OriginalLanguageEngine:
     def __init__(self, profile_path: str):
         with open(profile_path, 'r', encoding='utf-8') as f:
@@ -1478,6 +1568,7 @@ class OriginalLanguageEngine:
         self.possessive_handler = PossessiveHandler(self.profile)
         self.clitic_handler = CliticHandler(self.profile)
         self.interrogative_handler = InterrogativeHandler(self.profile)
+        self.demonstrative_handler = DemonstrativeHandler(self.profile)
         self.functional_config = self.profile.get('functional_particles', {})
         self.lexical_registers = self.profile.get('lexical_registers', {})
         if not self.lexical_registers and 'lexical_registers_defaults' in self.profile:
@@ -1824,10 +1915,13 @@ class OriginalLanguageEngine:
                 if self.lexical_registers.get('enabled', False):
                     pass
 
-                translated_root = self._get_word_form(
-                    target_lemma, context_tags, pos=current_pos)
-
-                current_form = translated_root
+                if self.demonstrative_handler.enabled and self.demonstrative_handler.is_demonstrative(func):
+                    current_form = self.demonstrative_handler.get_form(
+                        func, ordered_functions, self)
+                else:
+                    translated_root = self._get_word_form(
+                        target_lemma, context_tags, pos=current_pos)
+                    current_form = translated_root
 
                 if degree_type:
                     current_form = self.degree_handler.apply_degree(
