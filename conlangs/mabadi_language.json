@@ -1213,6 +1213,7 @@
             "description": "Sem artigo indefinido, usa numeral 'wieħed' quando necessário"
         },
         "demonstratives": {
+            "gender_inheritance_heuristic": true,
             "proximal": {
                 "sg_m": "dan",
                 "sg_f": "din",

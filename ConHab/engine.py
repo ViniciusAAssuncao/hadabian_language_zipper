@@ -1101,48 +1101,49 @@ class BrokenPluralHandler:
         if not self.enabled:
             return word
 
-        if pos == 'NOUN':
-            word_lower = word.lower()
-            for pat in self.patterns:
-                s_pat = pat.get('singular_pattern', '')
-                p_pat = pat.get('plural_pattern', '')
-                if not s_pat or not p_pat:
-                    continue
-                regex_pattern = "^"
-                for char in s_pat:
-                    if char == 'C':
-                        regex_pattern += "([{}]+)".format("".join(self.consonants))
-                    else:
-                        regex_pattern += re.escape(char)
-                regex_pattern += "$"
-                match = re.match(regex_pattern, word_lower)
-                if match:
-                    radicals = match.groups()
-                    plural_word = ""
-                    rad_idx = 0
-                    possible = True
-                    for char in p_pat:
-                        if char == 'C':
-                            if rad_idx < len(radicals):
-                                plural_word += radicals[rad_idx]
-                                rad_idx += 1
-                            else:
-                                possible = False
-                                break
-                        else:
-                            plural_word += char
-                    if possible:
-                        if word[0].isupper():
-                            return plural_word.capitalize()
-                        return plural_word
+        if pos not in {'NOUN', 'ADJ', 'PROPN'}:
+            return word
 
-        if pos in {'NOUN', 'ADJ', 'PROPN'}:
-            marker = self.plural_markers.get('marker', '')
-            if marker:
-                return word + marker
-            alts = self.plural_markers.get('alternatives', [])
-            if alts:
-                return word + alts[0]
+        word_lower = word.lower()
+        for pat in self.patterns:
+            s_pat = pat.get('singular_pattern', '')
+            p_pat = pat.get('plural_pattern', '')
+            if not s_pat or not p_pat:
+                continue
+            regex_pattern = "^"
+            for char in s_pat:
+                if char == 'C':
+                    regex_pattern += "([{}]+)".format("".join(self.consonants))
+                else:
+                    regex_pattern += re.escape(char)
+            regex_pattern += "$"
+            match = re.match(regex_pattern, word_lower)
+            if match:
+                radicals = match.groups()
+                plural_word = ""
+                rad_idx = 0
+                possible = True
+                for char in p_pat:
+                    if char == 'C':
+                        if rad_idx < len(radicals):
+                            plural_word += radicals[rad_idx]
+                            rad_idx += 1
+                        else:
+                            possible = False
+                            break
+                    else:
+                        plural_word += char
+                if possible:
+                    if word[0].isupper():
+                        return plural_word.capitalize()
+                    return plural_word
+
+        marker = self.plural_markers.get('marker', '')
+        if marker:
+            return word + marker
+        alts = self.plural_markers.get('alternatives', [])
+        if alts:
+            return word + alts[0]
 
         return word
 
@@ -1432,6 +1433,8 @@ class DemonstrativeHandler:
             'proximal': ['este', 'esta', 'isto', 'esse', 'essa', 'isso', 'estes', 'estas', 'esses', 'essas'],
             'distal': ['aquele', 'aquela', 'aquilo', 'aqueles', 'aquelas']
         })
+        self.heuristic_enabled = self.config.get(
+            'gender_inheritance_heuristic', True)
 
     def is_demonstrative(self, func: Dict) -> bool:
         if func['pos'] not in {'DET', 'PRON'}:
@@ -1478,7 +1481,8 @@ class DemonstrativeHandler:
                     head_conlang_word)
 
                 if gender == engine_ref.gender_handler.default_gender and source_gender_hint == 'feminine':
-                    gender = 'feminine'
+                    if self.heuristic_enabled:
+                        gender = 'feminine'
 
                 feats = head.get('feats', '')
                 if 'Number=Plur' in feats:
