@@ -1962,18 +1962,23 @@ class OriginalLanguageEngine:
 
             if is_question and self.interrogative_handler.enabled:
                 particle = self.interrogative_handler.get_particle(q_type)
-                
+
                 if particle:
                     translated_words.insert(0, particle)
+
+                    meta_config = self.profile.get('interrogative_system', {}).get(
+                        'particle_metadata', {})
+
                     particle_meta = {
                         'word': particle,
                         'lemma': particle,
-                        'pos': 'PART',
-                        'function': 'INT',
+                        'pos': meta_config.get('pos', 'PART'),
+                        'function': meta_config.get('function', 'INT'),
+                        'deprel': meta_config.get('deprel', 'discourse'),
                         'index': -1,
-                        'deprel': 'discourse',
                         'dependencies': []
                     }
+
                     ordered_functions.insert(0, particle_meta)
 
             if capitalization_enabled and translated_words:

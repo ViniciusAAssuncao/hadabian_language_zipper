@@ -1177,7 +1177,13 @@
                 "position": "sentence_initial",
                 "description": "Partícula interrogativa alternativa"
             }
-        ]
+        ],
+        "particle_metadata": {
+            "pos": "PART",
+            "function": "INT",
+            "deprel": "discourse",
+            "is_auxiliary": false
+        }
     },
     "determiner_system": {
         "enabled": true,
