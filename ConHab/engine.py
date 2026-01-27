@@ -1721,7 +1721,7 @@ class OriginalLanguageEngine:
                 if apply_case:
                     is_transitive = transitivity_map.get(func['index'], False)
                     current_form = self.syntax_engine.case_morphology.apply_case(
-                        current_form, syntactic_func, self.syntax_engine.word_order, deprel, clause_transitivity=is_transitive)
+                        current_form, syntactic_func, self.syntax_engine.word_order, deprel, clause_transitivity=is_transitive, func_data=func)
 
                 if is_topic and topic_marker:
                     current_form = f"{current_form} {topic_marker}"

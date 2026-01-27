@@ -724,18 +724,46 @@ class CaseMorphology:
         self.harmony_enabled = self.harmony_config.get('enabled', False)
         self.vowel_harmony_handler = VowelHarmonyHandler(profile)
         self.alignment = profile.get('alignment', 'nominative-accusative')
+        self.semantic_config = profile.get('semantic_fields', {})
+        self.animate_domains = set(self.semantic_config.get(
+            'animate_domains', ['família', 'religião', 'human']))
+        self.manual_groups = self.semantic_config.get('manual_groups', {})
 
-    def _get_marker_config(self, key: str) -> Tuple[str, str]:
+    def _get_marker_config(self, key: str) -> Tuple[str, str, List[str]]:
         case_markers = self.case_system.get('markers', {})
         config = case_markers.get(key, '')
 
         default_pos = self.case_system.get('marker_position', 'suffix')
 
         if isinstance(config, dict):
-            return config.get('marker', ''), config.get('type', default_pos)
-        return config, default_pos
+            return config.get('marker', ''), config.get('type', default_pos), config.get('conditions', [])
+        return config, default_pos, []
 
-    def apply_case(self, word: str, function: str, word_order: str, deprel: str = '', clause_transitivity: bool = False) -> str:
+    def _is_animate(self, func_data: Dict) -> bool:
+        lemma = func_data.get('lemma', '').lower()
+        if lemma in self.manual_groups:
+            group = self.manual_groups[lemma]
+            if group in self.animate_domains:
+                return True
+
+        pos = func_data.get('pos', '')
+        if pos in {'PROPN', 'PRON'}:
+            return True
+
+        return False
+
+    def _is_definite(self, func_data: Dict) -> bool:
+        feats = func_data.get('feats', '')
+        if 'Definite=Def' in feats:
+            return True
+
+        pos = func_data.get('pos', '')
+        if pos in {'PROPN', 'PRON'}:
+            return True
+
+        return False
+
+    def apply_case(self, word: str, function: str, word_order: str, deprel: str = '', clause_transitivity: bool = False, func_data: Dict = None) -> str:
         if not self.enabled:
             return word
 
@@ -745,6 +773,7 @@ class CaseMorphology:
         marker_text = ''
         marker_type = 'suffix'
         target_key = ''
+        conditions = []
 
         if deprel:
             core_dep = deprel.split(':')[0]
@@ -781,7 +810,23 @@ class CaseMorphology:
                     target_key = 'dative'
 
         if target_key:
-            marker_text, marker_type = self._get_marker_config(target_key)
+            marker_text, marker_type, conditions = self._get_marker_config(
+                target_key)
+
+        if conditions and func_data:
+            conditions_met = True
+            for cond in conditions:
+                if cond == 'animate':
+                    if not self._is_animate(func_data):
+                        conditions_met = False
+                        break
+                elif cond == 'definite':
+                    if not self._is_definite(func_data):
+                        conditions_met = False
+                        break
+
+            if not conditions_met:
+                return word
 
         if not marker_text:
             return word

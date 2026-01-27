@@ -250,6 +250,11 @@
         "auto_detect": true,
         "use_nltk": true,
         "threshold": 0.35,
+        "animate_domains": [
+            "família",
+            "religião",
+            "human"
+        ],
         "manual_groups": {
             "mar": "água",
             "rio": "água",
@@ -407,7 +412,11 @@
             "accusative": {
                 "marker": "a",
                 "type": "particle_before",
-                "description": "Marcador acusativo para objetos definidos animados"
+                "description": "Marcador acusativo para objetos definidos animados (DOM)",
+                "conditions": [
+                    "animate",
+                    "definite"
+                ]
             },
             "genitive": {
                 "marker": "ta",

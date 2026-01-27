@@ -1,32 +1,51 @@
-# Exemplo de teste manual (pode ser executado em um shell Python ou script separado)
-from engine import OriginalLanguageEngine
+import json
+from syntax_engine import CaseMorphology
 
-# Inicialize a engine
-engine = OriginalLanguageEngine("./conlangs/mabadi_language.json")
+def test_mabadi_dom():
+    with open('./conlangs/mabadi_language.json', 'r', encoding='utf-8') as f:
+        profile = json.load(f)
+    
+    cm = CaseMorphology(profile)
+    
+    # Caso 1: Animado e Definido (Deve marcar com "a")
+    obj_animado = {
+        'lemma': 'pai',
+        'pos': 'NOUN',
+        'feats': 'Definite=Def',
+        'deprel': 'obj'
+    }
+    res1 = cm.apply_case("word", "OBJECT", "VSO", "obj", True, obj_animado)
+    print(f"Teste 1 (Pai definido): {res1}") # Esperado: "a word"
 
-# Simule a chamada interna da engine ou verifique a lógica do handler diretamente
-dual_handler = engine.dual_handler
+    # Caso 2: Inanimado e Definido (Não deve marcar)
+    obj_inanimado = {
+        'lemma': 'pão',
+        'pos': 'NOUN',
+        'feats': 'Definite=Def',
+        'deprel': 'obj'
+    }
+    res2 = cm.apply_case("word", "OBJECT", "VSO", "obj", True, obj_inanimado)
+    print(f"Teste 2 (Pão definido): {res2}") # Esperado: "word"
 
-# Teste 1: Dual Nominativo (Sujeito)
-# Esperado: Sufixo "āni"
-word_nom = "kitab" # livro
-feats_nom = "Number=Dual|Gender=Masc"
-deprel_nom = "nsubj"
-pos = "NOUN"
-result_nom = dual_handler.apply_dual(word_nom, feats_nom, deprel_nom, pos)
-print(f"Nominativo Dual: {result_nom}") # Deve imprimir: kitabāni
+    # Caso 3: Nome Próprio (Deve marcar por ser inerentemente animado/def)
+    obj_proprio = {
+        'lemma': 'Hadab',
+        'pos': 'PROPN',
+        'feats': '_',
+        'deprel': 'obj'
+    }
+    
+    res3 = cm.apply_case("Hadab", "OBJECT", "VSO", "obj", True, obj_proprio)
+    print(f"Teste 3 (Nome Próprio): {res3}") # Esperado: "a Hadab"
+    
+    obj_indefinido = {
+        'lemma': 'pai',
+        'pos': 'NOUN',
+        'feats': 'Definite=Ind', # Ou vazio, dependendo do seu parser
+        'deprel': 'obj'
+    }
+    res4 = cm.apply_case("pai", "OBJECT", "VSO", "obj", True, obj_indefinido)
+    print(f"Teste 4 (Pai indefinido): {res4}") # Esperado: "pai"
 
-# Teste 2: Dual Acusativo (Objeto)
-# Esperado: Sufixo "ajni"
-word_acc = "kitab"
-feats_acc = "Number=Dual|Gender=Masc"
-deprel_acc = "obj"
-result_acc = dual_handler.apply_dual(word_acc, feats_acc, deprel_acc, pos)
-print(f"Acusativo Dual: {result_acc}") # Deve imprimir: kitabajni
-
-# Teste 3: Não Dual (Singular)
-# Esperado: Sem alteração pelo DualHandler
-word_sg = "kitab"
-feats_sg = "Number=Sing"
-result_sg = dual_handler.apply_dual(word_sg, feats_sg, "nsubj", pos)
-print(f"Singular: {result_sg}") # Deve imprimir: kitab
+if __name__ == "__main__":
+    test_mabadi_dom()
