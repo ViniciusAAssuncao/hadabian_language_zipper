@@ -661,7 +661,7 @@ class SyntaxEngine:
                 function = cached['functions'][idx]['function']
                 deprel = cached['functions'][idx].get('deprel', '')
                 word_with_case = self.case_morphology.apply_case(
-                    word, function, self.word_order, deprel)
+                    word, function, self.word_order, deprel, func_data=cached['functions'][idx], all_functions=ordered_functions)
                 reordered_words.append(word_with_case)
 
             final_tokens = self._glue_tokens(
@@ -727,7 +727,7 @@ class SyntaxEngine:
             function = functions[idx]['function']
             deprel = functions[idx].get('deprel', '')
             word_with_case = self.case_morphology.apply_case(
-                word, function, self.word_order, deprel)
+                word, function, self.word_order, deprel, func_data=functions[idx], all_functions=functions)
             raw_reordered_words.append(word_with_case)
             ordered_functions.append(functions[idx])
 
@@ -767,8 +767,10 @@ class SyntaxEngine:
                         if 'feats' in f and f['feats'] != '_':
                             if 'PronType=Art' not in f['feats']:
                                 f['feats'] += '|PronType=Art'
+                            if 'Definite=Def' not in f['feats']:
+                                f['feats'] += '|Definite=Def'
                         else:
-                            f['feats'] = 'PronType=Art'
+                            f['feats'] = 'PronType=Art|Definite=Def'
 
             if lemma in particles:
                 head_idx = f['dependencies'][0] if f['dependencies'] else -1

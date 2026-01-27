@@ -83,6 +83,18 @@
             "oj",
             "ow"
         ],
+        "sandhi": {
+            "enabled": true,
+            "rules": [
+                {
+                    "name": "accusative_definite_elision",
+                    "description": "Elision of 'a' + 'ta' into 'ata'",
+                    "pattern": "a\\s+(ta[- ]?)",
+                    "replacement": "ata-",
+                    "ignore_case": true
+                }
+            ]
+        },
         "sonority_hierarchy": {
             "enabled": true,
             "scale": {
@@ -416,7 +428,8 @@
                 "conditions": [
                     "animate",
                     "definite"
-                ]
+                ],
+                "shift_to_determiner": true
             },
             "genitive": {
                 "marker": "ta",

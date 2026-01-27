@@ -238,6 +238,24 @@ class SunLetterHandler:
         if first_char not in self.sun_letters:
             return article
 
+        active_form = None
+        article_lower = article.lower().strip()
+
+        base_article = article_lower.split(
+        )[-1] if ' ' in article_lower else article_lower
+
+        if base_article in self.forms:
+            active_form = base_article
+
+        if not active_form:
+            for f in self.forms:
+                if article_lower.endswith(f):
+                    active_form = f
+                    break
+
+        if not active_form:
+            return article
+
         match = re.search(r'([bcdfghjklmnpqrstvwxz])(\W*)$',
                           article, re.IGNORECASE)
         if match:
@@ -249,14 +267,29 @@ class SunLetterHandler:
                 new_consonant = new_consonant.upper()
             return f"{base}{new_consonant}{separator}"
 
-        match_vowel = re.search(r'([aeiou])(\W*)$', article, re.IGNORECASE)
-        if match_vowel:
-            separator = match_vowel.group(2)
-            base = article[:match_vowel.end(1)]
-            gemination = first_char
-            return f"{base}{gemination}{separator}"
-
         return article
+
+
+class SandhiHandler:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.config = profile.get('phonotactics', {}).get('sandhi', {})
+        self.enabled = self.config.get('enabled', False)
+        self.rules = self.config.get('rules', [])
+
+    def apply_sandhi(self, text: str) -> str:
+        if not self.enabled or not text:
+            return text
+        processed = text
+        for rule in self.rules:
+            pattern = rule.get('pattern', '')
+            replacement = rule.get('replacement', '')
+            ignore_case = rule.get('ignore_case', False)
+            flags = re.IGNORECASE if ignore_case else 0
+            if pattern:
+                processed = re.sub(pattern, replacement,
+                                   processed, flags=flags)
+        return processed
 
 
 class ConstructStateHandler:
@@ -1319,6 +1352,7 @@ class OriginalLanguageEngine:
         self.construct_state_handler = ConstructStateHandler(
             self.profile, self.gender_handler)
         self.sun_letter_handler = SunLetterHandler(self.profile)
+        self.sandhi_handler = SandhiHandler(self.profile)
         self.negation_handler = NegationHandler(self.profile)
         self.possessive_handler = PossessiveHandler(self.profile)
         self.clitic_handler = CliticHandler(self.profile)
@@ -1721,7 +1755,7 @@ class OriginalLanguageEngine:
                 if apply_case:
                     is_transitive = transitivity_map.get(func['index'], False)
                     current_form = self.syntax_engine.case_morphology.apply_case(
-                        current_form, syntactic_func, self.syntax_engine.word_order, deprel, clause_transitivity=is_transitive, func_data=func)
+                        current_form, syntactic_func, self.syntax_engine.word_order, deprel, clause_transitivity=is_transitive, func_data=func, all_functions=ordered_functions)
 
                 if is_topic and topic_marker:
                     current_form = f"{current_form} {topic_marker}"
@@ -1815,7 +1849,11 @@ class OriginalLanguageEngine:
                     if first:
                         final_sentence_tokens[0] = first[0].upper() + first[1:]
 
-            final_sentences.append(' '.join(final_sentence_tokens))
+            final_str = ' '.join(final_sentence_tokens)
+            if self.sandhi_handler.enabled:
+                final_str = self.sandhi_handler.apply_sandhi(final_str)
+
+            final_sentences.append(final_str)
 
         self.save_word_cache()
         return ' '.join(final_sentences)

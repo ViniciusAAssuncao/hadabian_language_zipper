@@ -729,15 +729,18 @@ class CaseMorphology:
             'animate_domains', ['família', 'religião', 'human']))
         self.manual_groups = self.semantic_config.get('manual_groups', {})
 
-    def _get_marker_config(self, key: str) -> Tuple[str, str, List[str]]:
+    def _get_marker_config(self, key: str) -> Tuple[str, str, List[str], bool]:
         case_markers = self.case_system.get('markers', {})
         config = case_markers.get(key, '')
 
         default_pos = self.case_system.get('marker_position', 'suffix')
 
         if isinstance(config, dict):
-            return config.get('marker', ''), config.get('type', default_pos), config.get('conditions', [])
-        return config, default_pos, []
+            return (config.get('marker', ''),
+                    config.get('type', default_pos),
+                    config.get('conditions', []),
+                    config.get('shift_to_determiner', False))
+        return config, default_pos, [], False
 
     def _is_animate(self, func_data: Dict) -> bool:
         lemma = func_data.get('lemma', '').lower()
@@ -750,9 +753,13 @@ class CaseMorphology:
         if pos in {'PROPN', 'PRON'}:
             return True
 
+        feats = func_data.get('feats', '')
+        if 'Animacy=Anim' in feats:
+            return True
+
         return False
 
-    def _is_definite(self, func_data: Dict) -> bool:
+    def _is_definite(self, func_data: Dict, all_functions: List[Dict] = None) -> bool:
         feats = func_data.get('feats', '')
         if 'Definite=Def' in feats:
             return True
@@ -761,22 +768,43 @@ class CaseMorphology:
         if pos in {'PROPN', 'PRON'}:
             return True
 
+        my_index = func_data.get('index')
+        if all_functions:
+            for f in all_functions:
+                if my_index in f.get('dependencies', []) and f.get('pos') == 'DET':
+                    f_feats = f.get('feats', '')
+                    if 'Definite=Def' in f_feats or 'PronType=Art' in f_feats:
+                        return True
+
         return False
 
-    def apply_case(self, word: str, function: str, word_order: str, deprel: str = '', clause_transitivity: bool = False, func_data: Dict = None) -> str:
+    def apply_case(self, word: str, function: str, word_order: str, deprel: str = '', clause_transitivity: bool = False, func_data: Dict = None, all_functions: List[Dict] = None) -> str:
         if not self.enabled:
             return word
 
         if self.preposition_handling == 'none' and function not in {'SUBJECT', 'OBJECT', 'S', 'O'}:
             return word
-
-        marker_text = ''
-        marker_type = 'suffix'
         target_key = ''
-        conditions = []
+        current_deprel = deprel
+        current_function = function
+        if func_data and func_data.get('pos') == 'DET' and all_functions:
+            head_idx = func_data['dependencies'][0] if func_data['dependencies'] else -1
+            if head_idx != -1:
+                head_func = next(
+                    (f for f in all_functions if f['index'] == head_idx), None)
+                if head_func:
+                    current_deprel = head_func.get('deprel', '')
+                    current_function = head_func.get('function', '')
+                    effective_func_data = head_func
+                else:
+                    effective_func_data = func_data
+            else:
+                effective_func_data = func_data
+        else:
+            effective_func_data = func_data
 
-        if deprel:
-            core_dep = deprel.split(':')[0]
+        if current_deprel:
+            core_dep = current_deprel.split(':')[0]
             if core_dep == 'obj':
                 target_key = 'accusative'
                 if self.alignment == 'ergative-absolutive':
@@ -794,42 +822,69 @@ class CaseMorphology:
                     target_key = 'nominative'
 
         if not target_key:
-            if function == 'SUBJECT' or function == 'S':
+            if current_function in {'SUBJECT', 'S'}:
                 if self.alignment == 'ergative-absolutive':
                     target_key = 'ergative' if clause_transitivity else 'absolutive'
                 else:
                     target_key = 'nominative'
-            elif function == 'OBJECT' or function == 'O':
+            elif current_function in {'OBJECT', 'O'}:
                 if self.alignment == 'ergative-absolutive':
                     target_key = 'absolutive'
                 else:
                     target_key = 'accusative'
-            elif function == 'ADJUNCT' or function == 'ADJ':
+            elif current_function in {'ADJUNCT', 'ADJ'}:
                 target_key = 'locative'
                 if not self.case_system.get('markers', {}).get('locative'):
                     target_key = 'dative'
 
-        if target_key:
-            marker_text, marker_type, conditions = self._get_marker_config(
-                target_key)
+        if not target_key:
+            return word
 
-        if conditions and func_data:
-            conditions_met = True
-            for cond in conditions:
-                if cond == 'animate':
-                    if not self._is_animate(func_data):
-                        conditions_met = False
-                        break
-                elif cond == 'definite':
-                    if not self._is_definite(func_data):
-                        conditions_met = False
-                        break
-
-            if not conditions_met:
-                return word
+        marker_text, marker_type, conditions, shift_to_determiner = self._get_marker_config(
+            target_key)
 
         if not marker_text:
             return word
+
+        conditions_met = True
+        if conditions and effective_func_data:
+            for cond in conditions:
+                if cond == 'animate':
+                    if not self._is_animate(effective_func_data):
+                        conditions_met = False
+                        break
+                elif cond == 'definite':
+                    if not self._is_definite(effective_func_data, all_functions):
+                        conditions_met = False
+                        break
+
+        if not conditions_met:
+            return word
+
+        is_det = func_data.get('pos') == 'DET' if func_data else False
+        is_noun = func_data.get('pos') in {
+            'NOUN', 'PROPN', 'PRON'} if func_data else False
+
+        if shift_to_determiner:
+            if is_noun and all_functions:
+                has_det = False
+                my_index = func_data.get('index')
+                for f in all_functions:
+                    if my_index in f.get('dependencies', []) and f.get('pos') == 'DET':
+                        has_det = True
+                        break
+                if has_det:
+                    return word
+
+            if is_det:
+                pass
+
+            if is_noun and not has_det:
+                pass
+            elif is_det:
+                pass
+            else:
+                return word
 
         if isinstance(marker_text, str) and marker_text.startswith('-'):
             marker_text = marker_text[1:]
