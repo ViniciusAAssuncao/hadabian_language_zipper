@@ -982,6 +982,49 @@ class BrokenPluralHandler:
         return word
 
 
+class DualHandler:
+    def __init__(self, profile: Dict, phonology_handler: PhonologyHandler):
+        self.profile = profile
+        self.phonology = phonology_handler
+        self.config = profile.get('number_system', {})
+        self.enabled = 'dual' in self.config.get('numbers', [])
+        self.markers = self.config.get('dual_markers', {})
+        if not self.markers and 'dual_markers' in profile:
+            self.markers = profile['dual_markers']
+
+    def apply_dual(self, word: str, feats_str: str, deprel: str, pos: str) -> str:
+        if not self.enabled or not word:
+            return word
+        if 'Number=Dual' not in feats_str:
+            return word
+        if pos not in {'NOUN', 'ADJ', 'PROPN'}:
+            return word
+
+        case_key = 'nominative'
+        if deprel:
+            if 'obj' in deprel:
+                case_key = 'accusative'
+            elif 'nsubj' in deprel:
+                case_key = 'nominative'
+            elif 'obl' in deprel or 'iobj' in deprel:
+                case_key = 'accusative'
+                if 'genitive' in self.markers:
+                    case_key = 'genitive'
+
+        marker = self.markers.get(case_key, '')
+
+        if not marker and case_key not in self.markers:
+            if case_key != 'nominative' and 'accusative' in self.markers:
+                marker = self.markers['accusative']
+            elif 'nominative' in self.markers:
+                marker = self.markers['nominative']
+
+        if marker:
+            return word + marker
+
+        return word
+
+
 class DegreeHandler:
     def __init__(self, profile: Dict, harmony_handler: Optional[VowelHarmonyHandler] = None):
         self.profile = profile
@@ -1270,6 +1313,8 @@ class OriginalLanguageEngine:
         self.root_handler = RootSystemHandler(
             self.profile, self.phonology_handler)
         self.broken_plural_handler = BrokenPluralHandler(
+            self.profile, self.phonology_handler)
+        self.dual_handler = DualHandler(
             self.profile, self.phonology_handler)
         self.construct_state_handler = ConstructStateHandler(
             self.profile, self.gender_handler)
@@ -1644,6 +1689,11 @@ class OriginalLanguageEngine:
                 if self.broken_plural_handler.enabled:
                     current_form = self.broken_plural_handler.apply_plural(
                         current_form, feats, current_pos
+                    )
+
+                if self.dual_handler.enabled:
+                    current_form = self.dual_handler.apply_dual(
+                        current_form, feats, deprel, current_pos
                     )
 
                 if self.construct_state_handler.enabled and func['index'] in construct_heads_indices:

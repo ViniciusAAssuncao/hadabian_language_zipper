@@ -1,27 +1,32 @@
-import json
+# Exemplo de teste manual (pode ser executado em um shell Python ou script separado)
 from engine import OriginalLanguageEngine
 
-# Inicializa a engine
-engine = OriginalLanguageEngine("../conlangs/mabadi_language.json")
+# Inicialize a engine
+engine = OriginalLanguageEngine("./conlangs/mabadi_language.json")
 
-# Simula uma palavra (verbo 'escrever' -> raiz 'ktb' -> 'kiteb' ou similar)
-# E simula features que ativariam o 1sg (n-PREFIXO ... t-SUFIXO)
-lemma = "escrever"
-word_base = engine._get_word_form(lemma) # Deve gerar algo como 'kiteb' ou raiz triconsonantal
+# Simule a chamada interna da engine ou verifique a lógica do handler diretamente
+dual_handler = engine.dual_handler
 
-# Features para Eu (1ª Pessoa Singular)
-features = "VerbForm=Fin|Person=1|Number=Sing|Tense=Past"
+# Teste 1: Dual Nominativo (Sujeito)
+# Esperado: Sufixo "āni"
+word_nom = "kitab" # livro
+feats_nom = "Number=Dual|Gender=Masc"
+deprel_nom = "nsubj"
+pos = "NOUN"
+result_nom = dual_handler.apply_dual(word_nom, feats_nom, deprel_nom, pos)
+print(f"Nominativo Dual: {result_nom}") # Deve imprimir: kitabāni
 
-# Aplica TAM manualmente para teste unitário
-result = engine.tam_handler.apply_tam(word_base, features)
+# Teste 2: Dual Acusativo (Objeto)
+# Esperado: Sufixo "ajni"
+word_acc = "kitab"
+feats_acc = "Number=Dual|Gender=Masc"
+deprel_acc = "obj"
+result_acc = dual_handler.apply_dual(word_acc, feats_acc, deprel_acc, pos)
+print(f"Acusativo Dual: {result_acc}") # Deve imprimir: kitabajni
 
-print(f"Lemma: {lemma}")
-print(f"Base: {word_base}")
-print(f"Features: {features}")
-print(f"Resultado Final: {result}")
-
-# Esperado: n{base}t (ex: nkitebt ou nktebt)
-if result.startswith("n") and result.endswith("t"):
-    print("SUCESSO: Marcação descontínua aplicada!")
-else:
-    print("FALHA: Marcação incorreta.")
+# Teste 3: Não Dual (Singular)
+# Esperado: Sem alteração pelo DualHandler
+word_sg = "kitab"
+feats_sg = "Number=Sing"
+result_sg = dual_handler.apply_dual(word_sg, feats_sg, "nsubj", pos)
+print(f"Singular: {result_sg}") # Deve imprimir: kitab

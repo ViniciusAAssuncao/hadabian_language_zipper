@@ -659,6 +659,7 @@
         "enabled": true,
         "numbers": [
             "singular",
+            "dual",
             "plural"
         ],
         "dual_optional": false,
@@ -676,6 +677,10 @@
                     "i"
                 ]
             }
+        },
+        "dual_markers": {
+            "nominative": "āni",
+            "accusative": "ajni"
         },
         "broken_plurals": {
             "enabled": true,
@@ -1391,8 +1396,7 @@
             "jesus": "N_JESUS",
             "cristo": "N_CRISTO",
             "hadab": "C_HADAB",
-            "amém": "C_AMEM",
-            "direção": "qibla"
+            "amém": "C_AMEM"
         },
         "definitions": {
             "N_JESUS": {
@@ -1428,8 +1432,7 @@
         "jesus": "N_JESUS",
         "cristo": "N_CRISTO",
         "hadab": "C_HADAB",
-        "amém": "C_AMEM",
-        "direção": "qibla"
+        "amém": "C_AMEM"
     },
     "pragmatic_markers": {
         "enabled": true,
