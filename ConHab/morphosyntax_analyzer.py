@@ -353,6 +353,101 @@ class GenderHandler:
         return word
 
 
+class CopulaHandler:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.config = profile.get('copula_system', {})
+        self.enabled = self.config.get('enabled', False)
+        self.copulas = self.config.get('copulas', [])
+        self.pronominal_forms = profile.get(
+            'pronominal_system', {}).get('independent_pronouns', {})
+
+    def get_copula_form(self, func: Dict, all_functions: List[Dict], engine_ref=None) -> Optional[str]:
+        if not self.enabled:
+            return func.get('word')
+
+        feats = func.get('feats', '')
+        tense = 'Pres'
+        if 'Tense=Past' in feats or 'Tense=Imp' in feats:
+            tense = 'Past'
+        elif 'Tense=Fut' in feats:
+            tense = 'Fut'
+
+        subject_type = 'Noun'
+        subject_person = '3sg_m'
+
+        my_index = func['index']
+        for f in all_functions:
+            if my_index in f.get('dependencies', []) and 'nsubj' in f.get('deprel', ''):
+                if f.get('pos') == 'PRON':
+                    subject_type = 'Pronoun'
+
+                s_feats = f.get('feats', '')
+                person = next(
+                    (x.split('=')[1] for x in s_feats.split('|') if 'Person=' in x), '3')
+                number = next((x.split('=')[1] for x in s_feats.split(
+                    '|') if 'Number=' in x), 'Sing')
+                gender = next((x.split('=')[1] for x in s_feats.split(
+                    '|') if 'Gender=' in x), 'Masc')
+
+                num_map = {'Sing': 'sg', 'Plur': 'pl'}
+                gen_map = {'Masc': 'm', 'Fem': 'f'}
+
+                n_code = num_map.get(number, 'sg')
+                g_code = gen_map.get(gender, 'm')
+                subject_person = f"{person}{n_code}"
+                if n_code == 'sg' or person == '3':
+                    subject_person = f"{subject_person}_{g_code}"
+
+                if subject_person.endswith('_'):
+                    subject_person = subject_person[:-1]
+
+                break
+
+        selected_copula = None
+
+        for cop in self.copulas:
+            conditions = cop.get('conditions', [])
+            score = 0
+            required_score = len(conditions)
+
+            for cond in conditions:
+                if cond.startswith('Tense='):
+                    req_tense = cond.split('=')[1]
+                    if req_tense == tense:
+                        score += 1
+                elif cond.startswith('SubjectType='):
+                    req_type = cond.split('=')[1]
+                    if req_type == subject_type:
+                        score += 1
+
+            if score >= required_score:
+                selected_copula = cop
+                break
+
+        if not selected_copula:
+            default_cop = next((c for c in self.copulas if c.get(
+                'type') == 'present_default'), None)
+            selected_copula = default_cop
+
+        if not selected_copula:
+            return None
+
+        form = selected_copula.get('form', '')
+        if form == 'zero':
+            return None
+
+        if selected_copula.get('conjugates', False):
+            if selected_copula.get('type') == 'present_pronominal':
+                if subject_person in self.pronominal_forms:
+                    return self.pronominal_forms[subject_person]
+
+            if engine_ref and engine_ref.tam_handler:
+                form = engine_ref.tam_handler.apply_tam(form, feats)
+
+        return form
+
+
 class DependencyParser:
     def __init__(self):
         self.dependency_patterns = self._initialize_patterns()

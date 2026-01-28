@@ -13,7 +13,7 @@ from morphosyntax_analyzer import (
     TopicalizationHandler, FocusStructureHandler, TAMHandler,
     VowelHarmonyHandler, TransitivityAnalyzer, ConsonantMutationHandler,
     GenderHandler, PharyngealizationHandler, NegationHandler,
-    InterrogativeHandler
+    InterrogativeHandler, CopulaHandler
 )
 
 
@@ -1573,6 +1573,7 @@ class OriginalLanguageEngine:
         self.clitic_handler = CliticHandler(self.profile)
         self.interrogative_handler = InterrogativeHandler(self.profile)
         self.demonstrative_handler = DemonstrativeHandler(self.profile)
+        self.copula_handler = CopulaHandler(self.profile)
         self.functional_config = self.profile.get('functional_particles', {})
         self.lexical_registers = self.profile.get('lexical_registers', {})
         if not self.lexical_registers and 'lexical_registers_defaults' in self.profile:
@@ -1869,6 +1870,21 @@ class OriginalLanguageEngine:
                         translated_words.append(orig_word)
                         last_func = func
                         continue
+
+                if self.copula_handler.enabled and deprel == 'cop':
+                    copula_form = self.copula_handler.get_copula_form(
+                        func, ordered_functions, self)
+                    if copula_form is None:
+                        continue
+
+                    if self.mutation_handler.enabled:
+                        prev_word = translated_words[-1] if translated_words else None
+                        copula_form = self.mutation_handler.apply_mutation(
+                            copula_form, prev_word, last_func)
+
+                    translated_words.append(copula_form)
+                    last_func = func
+                    continue
 
                 if syntactic_func in {SyntacticFunction.QUANTIFIER, SyntacticFunction.VERB_PARTICLE, SyntacticFunction.INTENSIFIER}:
                     mapping = self.functional_config.get(raw_lemma, {})

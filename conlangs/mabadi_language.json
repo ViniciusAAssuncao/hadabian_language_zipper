@@ -530,14 +530,6 @@
             },
             {
                 "features": [
-                    "VerbForm=Inf"
-                ],
-                "marker": "",
-                "type": "prefix",
-                "description": "Infinitivo sem marcação especial, usa forma base"
-            },
-            {
-                "features": [
                     "VerbForm=Ger"
                 ],
                 "marker": "qed",
@@ -1363,20 +1355,31 @@
         "enabled": true,
         "copulas": [
             {
-                "form": "taq",
+                "form": "kien",
                 "type": "past_existential",
+                "conditions": [
+                    "Tense=Past"
+                ],
                 "conjugates": true
             },
             {
-                "form": "zu",
+                "form": "hu",
                 "type": "present_pronominal",
+                "conditions": [
+                    "Tense=Pres",
+                    "SubjectType=Pronoun"
+                ],
                 "conjugates": true,
                 "usage": "identificational"
             },
             {
                 "form": "zero",
                 "type": "present_default",
-                "usage": "predicational_present"
+                "conditions": [
+                    "Tense=Pres"
+                ],
+                "conjugates": false,
+                "usage": "predicational"
             }
         ]
     },
