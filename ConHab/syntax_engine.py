@@ -183,11 +183,12 @@ class WordOrderMapper:
 
     def _legacy_reorder(self, chunks, target_order, adjunct_position, adjunct_chunks, core_chunks, modifier_chunks):
         final_closers = []
-        last_chunk_idx = len(chunks) - 1
 
         for i, c in enumerate(chunks):
-            if c.function == SyntacticFunction.PUNCT and c.words[0][0] in {'.', '!', '?'}:
-                final_closers.append(c)
+            if c.function == SyntacticFunction.PUNCT:
+                words = c.words
+                if words and words[0][0] in {'.', '!', '?'}:
+                    final_closers.append(c)
 
         ordered_chunks = []
 
@@ -651,10 +652,9 @@ class SyntaxEngine:
 
         if use_cache:
             cached = self.sentence_cache[cache_key]
-            reordered_words = []
-
             ordered_functions = [cached['functions'][i]
                                  for i in cached['indices']]
+            reordered_words = []
 
             for idx in cached['indices']:
                 word = cached['words'][idx]
@@ -806,7 +806,7 @@ class SyntaxEngine:
         mapped_comma = punct_map.get(',', ',')
 
         punct_suffix = conlang_terminators.union(secondary_terminators).union(
-            {mapped_comma, '...', '…', ')', ']', '}', '”', '"', "'", '%'})
+            {mapped_comma, '...', '…', ')', ']', '}', '”', '"', "'", '%', '?', '!', '.', ';', ':'})
         punct_prefix = {'(', '[', '{', '«', '“', '¿', '¡'}
 
         det_config = self.profile.get(
@@ -816,16 +816,29 @@ class SyntaxEngine:
         skip_next_space = False
 
         for i, word in enumerate(words):
+            if not word:
+                continue
+
             if skip_next_space:
                 last_token = final_tokens.pop()
                 if word in punct_suffix:
-                    if last_token.endswith('-'):
-                        last_token = last_token[:-1]
                     final_tokens.append(last_token)
+                    if word in conlang_terminators:
+                        strip_chars = [mapped_comma] + \
+                            list(secondary_terminators)
+                        for sc in strip_chars:
+                            if final_tokens[-1].endswith(sc):
+                                final_tokens[-1] = final_tokens[-1][:-len(sc)]
+                        final_tokens[-1] = final_tokens[-1] + word
+                    else:
+                        final_tokens[-1] = final_tokens[-1] + word
                     skip_next_space = False
                 else:
                     final_tokens.append(last_token + word)
                     skip_next_space = False
+
+                    if word.endswith('-'):
+                        skip_next_space = True
                     continue
 
             if not final_tokens:
@@ -839,17 +852,31 @@ class SyntaxEngine:
                         for sc in strip_chars:
                             if last_token.endswith(sc):
                                 last_token = last_token[:-len(sc)]
-                    final_tokens[-1] = last_token + word
+                        final_tokens[-1] = last_token + word
+                    else:
+                        final_tokens[-1] = last_token + word
+
+                    skip_next_space = False
                 elif any(last_token.startswith(p) for p in punct_prefix) and last_token in punct_prefix:
                     final_tokens[-1] = last_token + word
                 else:
                     final_tokens.append(word)
 
-            func = function_objs[i]
-            if article_procliticizes and func['pos'] == 'DET' and 'PronType=Art' in func.get('feats', ''):
-                if final_tokens:
-                    final_tokens[-1] = final_tokens[-1] + "-"
-                    skip_next_space = True
+            if word.endswith('-'):
+                skip_next_space = True
+
+            if i < len(function_objs):
+                func = function_objs[i]
+                if article_procliticizes and func['pos'] == 'DET' and 'PronType=Art' in func.get('feats', ''):
+                    if final_tokens:
+                        last_t = final_tokens[-1]
+                        is_punctuation_end = any(
+                            last_t.endswith(p) for p in punct_suffix)
+
+                        if not is_punctuation_end:
+                            if not last_t.endswith('-'):
+                                final_tokens[-1] = last_t + "-"
+                            skip_next_space = True
 
         return final_tokens
 
