@@ -10,7 +10,7 @@
     "word_order": "VSO",
     "subordinate_word_order": "SVO",
     "alignment": "nominative-accusative",
-    "agglutination_strength": 0.3,
+    "agglutination_strength": 0.65,
     "divergence_factor": 0.18,
     "cultural_purism": 0.45,
     "phonotactics": {
@@ -42,7 +42,7 @@
             "VC"
         ],
         "min_syllables": 1,
-        "max_syllables": 4,
+        "max_syllables": 3,
         "forbidden_initial_clusters": [
             "bd",
             "nm",
@@ -57,7 +57,7 @@
             "ħ",
             "q"
         ],
-        "max_consonant_cluster": 2,
+        "max_consonant_cluster": 1,
         "diphthongs": [
             "aj",
             "aw",
@@ -208,6 +208,46 @@
                 "output": "CiCV",
                 "register": "formal",
                 "description": "Epêntese vocálica em clusters proibidos"
+            }
+        ]
+    },
+    "allomorphy": {
+        "enabled": true,
+        "feature_definitions": {
+            "labial": [
+                "b",
+                "p",
+                "f",
+                "v",
+                "m",
+                "w"
+            ],
+            "palatal": [
+                "j",
+                "š",
+                "ž",
+                "y",
+                "č",
+                "ğ"
+            ]
+        },
+        "rules": [
+            {
+                "target_word": "ta",
+                "environment": "before_vowel",
+                "replacement": "t-"
+            },
+            {
+                "target_word": "ta",
+                "environment": "before_feature",
+                "feature": "palatal",
+                "replacement": "ti-"
+            },
+            {
+                "target_word": "ta",
+                "environment": "before_feature",
+                "feature": "labial",
+                "replacement": "tu-"
             }
         ]
     },
@@ -1400,14 +1440,14 @@
         "enabled": true,
         "mappings": {
             "de": "ta",
-            "do": "ta",
-            "da": "ta",
-            "dos": "ta",
-            "das": "ta",
-            "o": "ta",
-            "a": "ta",
-            "os": "ta",
-            "as": "ta",
+            "do": "lil",
+            "da": "lil",
+            "dos": "aÿn",
+            "das": "aÿn",
+            "o": "il",
+            "a": "il",
+            "os": "iln",
+            "as": "iln",
             "jesus": "N_JESUS",
             "cristo": "N_CRISTO",
             "hadab": "C_HADAB",
@@ -1574,12 +1614,14 @@
     },
     "mappings": {
         "de": "ta",
-        "do": "ta",
-        "da": "ta",
-        "o": "ta",
-        "a": "ta",
-        "os": "ta",
-        "as": "ta",
+        "do": "lil",
+        "da": "lil",
+        "dos": "aÿn",
+        "das": "aÿn",
+        "o": "il",
+        "a": "il",
+        "os": "iln",
+        "as": "iln",
         "jesus": "N_JESUS",
         "cristo": "N_CRISTO",
         "hadab": "C_HADAB",

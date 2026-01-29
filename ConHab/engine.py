@@ -17,6 +17,70 @@ from morphosyntax_analyzer import (
 )
 
 
+class AllomorphyHandler:
+    def __init__(self, profile: Dict, phonology_handler):
+        self.profile = profile
+        self.config = profile.get('allomorphy', {})
+        self.enabled = self.config.get('enabled', False)
+        self.rules = self.config.get('rules', [])
+        self.feature_defs = self.config.get('feature_definitions', {})
+        self.phonology_handler = phonology_handler
+
+    def apply_allomorphy(self, words: List[str]) -> List[str]:
+        if not self.enabled or not words:
+            return words
+
+        result = list(words)
+
+        for i in range(len(result) - 1):
+            current_word = result[i]
+            next_word_raw = result[i+1]
+
+            clean_current = "".join(x for x in current_word if x.isalpha())
+            if not clean_current:
+                continue
+
+            applicable_rules = [
+                r for r in self.rules if r['target_word'] == clean_current.lower()]
+            if not applicable_rules:
+                continue
+
+            next_start_char = self._get_start_char(next_word_raw)
+            if not next_start_char:
+                continue
+
+            for rule in applicable_rules:
+                env = rule.get('environment')
+                replacement = rule.get('replacement')
+
+                match = False
+                if env == 'before_vowel':
+                    if next_start_char in self.phonology_handler.vowels:
+                        match = True
+                elif env == 'before_consonant':
+                    if next_start_char in self.phonology_handler.consonants:
+                        match = True
+                elif env == 'before_feature':
+                    feat = rule.get('feature')
+                    chars = self.feature_defs.get(feat, [])
+                    if next_start_char in chars:
+                        match = True
+
+                if match:
+                    if current_word[0].isupper() and replacement:
+                        replacement = replacement[0].upper() + replacement[1:]
+                    result[i] = replacement
+                    break
+
+        return result
+
+    def _get_start_char(self, text: str) -> Optional[str]:
+        clean = "".join(x for x in text if x.isalpha())
+        if not clean:
+            return None
+        return clean[0].lower()
+
+
 class PrepositionHandler:
     def __init__(self, profile: Dict):
         self.profile = profile
@@ -327,7 +391,7 @@ class SandhiHandler:
 
 
 class ConstructStateHandler:
-    def __init__(self, profile: Dict, gender_handler: GenderHandler):
+    def __init__(self, profile: Dict, gender_handler):
         self.profile = profile
         self.config = profile.get('case_system', {}).get('construct_state', {})
         self.enabled = self.config.get('enabled', False)
@@ -1574,6 +1638,8 @@ class OriginalLanguageEngine:
         self.interrogative_handler = InterrogativeHandler(self.profile)
         self.demonstrative_handler = DemonstrativeHandler(self.profile)
         self.copula_handler = CopulaHandler(self.profile)
+        self.allomorphy_handler = AllomorphyHandler(
+            self.profile, self.phonology_handler)
         self.functional_config = self.profile.get('functional_particles', {})
         self.lexical_registers = self.profile.get('lexical_registers', {})
         if not self.lexical_registers and 'lexical_registers_defaults' in self.profile:
@@ -2115,6 +2181,10 @@ class OriginalLanguageEngine:
                     else:
                         force_capitalization = False
 
+            if self.allomorphy_handler.enabled:
+                translated_words = self.allomorphy_handler.apply_allomorphy(
+                    translated_words)
+
             final_sentence_tokens = self.syntax_engine._glue_tokens(
                 translated_words, ordered_functions)
 
@@ -2433,16 +2503,16 @@ class OriginalLanguageEngine:
         complexity_metrics = self.complexity_analyzer.analyze(
             functions, dependencies)
         return {
-            'original_text': text,
-            'reordered_text': reordered_text,
-            'tagged_words': tagged,
-            'dependencies': dependencies,
-            'constituents': constituents,
-            'clauses': clauses,
-            'functions': functions,
-            'agreement_violations': agreement_violations,
-            'complexity': complexity_metrics,
-            'word_order': self.syntax_engine.word_order
+            "original_text": text,
+            "reordered_text": reordered_text,
+            "tagged_words": tagged,
+            "dependencies": dependencies,
+            "constituents": constituents,
+            "clauses": clauses,
+            "functions": functions,
+            "agreement_violations": agreement_violations,
+            "complexity": complexity_metrics,
+            "word_order": self.syntax_engine.word_order
         }
 
     def get_statistics(self) -> Dict:
