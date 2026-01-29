@@ -1,7 +1,7 @@
 {
     "id": "mabadi",
     "name": "Mabádi",
-    "native_name": "il-Mabádije",
+    "native_name": "Ta-Gsunvesħɑmmabadi",
     "family_node": "western-levinic",
     "linguistic_family": "ordo_enkian_family.json",
     "shared_base_strength": 0.65,
@@ -13,6 +13,38 @@
     "agglutination_strength": 0.3,
     "divergence_factor": 0.18,
     "cultural_purism": 0.45,
+    "punctuation_profile": {
+        "enabled": true,
+        "strict_punctuation_mapping": true,
+        "attach_strategy": "contextual",
+        "spaces_around_glue": false,
+        "sentence_terminators": [
+            ".",
+            "!",
+            "?",
+            "...",
+            "…"
+        ],
+        "clause_boundaries": [
+            ";",
+            ":",
+            ","
+        ],
+        "grouping_openers": [
+            "(",
+            "[",
+            "{",
+            "“",
+            "\""
+        ],
+        "grouping_closers": [
+            ")",
+            "]",
+            "}",
+            "”",
+            "\""
+        ]
+    },
     "phonotactics": {
         "active_style": "standard",
         "inventory_styles": {
@@ -172,7 +204,7 @@
                 },
                 {
                     "pattern": "([mnl])\\s+\\1",
-                    "replacement": "\\1:\\1",
+                    "replacement": "\\1\\1",
                     "ignore_case": true,
                     "description": "Geminação de sonorantes"
                 }
@@ -1398,41 +1430,53 @@
     },
     "abstract_concepts": {
         "enabled": true,
-        "description": "Conceitos abstratos e únicos do Mabádi",
         "mappings": {
-            "saudade": "C_NEFSIJA",
-            "esperança": "C_TAMA",
-            "fé": "C_IMAN",
-            "honra": "C_KARAMA",
-            "vergonha": "C_ĦASRA"
-        },
-        "local_overrides": {
-            "C_NEFSIJA": "nefsija",
-            "C_TAMA": "tama",
-            "C_IMAN": "iman",
-            "C_KARAMA": "karama",
-            "C_ĦASRA": "ħasra"
+            "de": "ta",
+            "do": "ta",
+            "da": "ta",
+            "dos": "ta",
+            "das": "ta",
+            "o": "ta",
+            "a": "ta",
+            "os": "ta",
+            "as": "ta",
+            "jesus": "N_JESUS",
+            "cristo": "N_CRISTO",
+            "hadab": "C_HADAB",
+            "amém": "C_AMEM",
+            "mabádi": "C_MABADI",
+            "sol": "helka"
         },
         "definitions": {
-            "C_NEFSIJA": {
-                "type": "unique",
-                "description": "Sentimento de nostalgia profunda e melancolia existencial"
+            "N_JESUS": {
+                "type": "adaptation",
+                "source_word": "Jesus",
+                "description": "Nome próprio histórico adaptado."
             },
-            "C_TAMA": {
-                "type": "unique",
-                "description": "Esperança baseada em fé e determinação"
+            "N_CRISTO": {
+                "type": "adaptation",
+                "source_word": "Cristo",
+                "description": "Título religioso histórico adaptado."
             },
-            "C_IMAN": {
-                "type": "unique",
-                "description": "Fé religiosa e convicção profunda"
+            "C_HADAB": {
+                "type": "adaptation",
+                "source_word": "Hadab",
+                "description": "Nome do planeta e civilização de origem."
             },
-            "C_KARAMA": {
-                "type": "unique",
-                "description": "Honra pessoal e dignidade"
+            "C_AMEM": {
+                "type": "adaptation",
+                "source_word": "Amém",
+                "description": "Expressão de concordância religiosa adaptada."
             },
-            "C_ĦASRA": {
-                "type": "unique",
-                "description": "Vergonha e lamento por oportunidade perdida"
+            "C_MABADI": {
+                "type": "adaptation",
+                "source_word": "Mabádi",
+                "description": "Nome da língua ficcional adaptado."
+            },
+            "sol": {
+                "type": "adaptation",
+                "source_word": "Sol",
+                "description": "Corpo celeste central do sistema helkálico."
             }
         }
     },
@@ -1561,8 +1605,19 @@
         }
     },
     "mappings": {
-        "deus": "C_DEUS",
-        "allah": "C_DEUS"
+        "de": "ta",
+        "do": "ta",
+        "da": "ta",
+        "o": "ta",
+        "a": "ta",
+        "os": "ta",
+        "as": "ta",
+        "jesus": "N_JESUS",
+        "cristo": "N_CRISTO",
+        "hadab": "C_HADAB",
+        "amém": "C_AMEM",
+        "mabádi": "C_MABADI",
+        "sol": "helka"
     },
     "lexicon_samples": {
         "description": "Exemplos de vocabulário básico do Mabádi",

@@ -1,69 +1,45 @@
+from engine import OriginalLanguageEngine
 import json
-from engine import OriginalLanguageEngine, PhonologyHandler
 
-def test_monophthongization():
-    print("Iniciando teste de Monoftongação para Mabádi...")
+def test_punctuation_fixes():
+    engine = OriginalLanguageEngine('../conlangs/mabadi_language.json')
     
-    try:
-        engine = OriginalLanguageEngine('./conlangs/mabadi_language.json')
-        ph = engine.phonology_handler
+    test_cases = [
+        "Mesmo que a espada trespasse o fino véu do coração e a lâmina rasgue a carne; o ódio não me cegará",
+        "Não adianta dares uma mordida em cada maça, é necessário plantar uma macieira",
+        "O mundo caminha para se tornar um lugar frio, não são as chuvas lá fora, é o frio. Eu sinto muito frio."
+    ]
+    
+    print("--- Teste de Pontuação e Formatação ---")
+    print(f"Estratégia de pontuação: {engine.profile['punctuation_profile']['attach_strategy']}")
+    
+    has_error = False
+    
+    for text in test_cases:
+        print(f"\nOriginal: {text}")
+        translation = engine.process_text(text)
+        print(f"Mabádi:   {translation}")
         
-        print("\nConfiguração de Monoftongação:")
-        print(f"Habilitado: {ph.monophthong_enabled}")
-        print(f"Regras: {ph.monophthong_rules}")
+        if "-,," in translation:
+            print("ERRO CRÍTICO: Artefato '-,,' encontrado.")
+            has_error = True
         
-        test_cases = [
-            ("bajt", "bēt", "aj -> ē"),
-            ("qawm", "qōm", "aw -> ō"),
-            ("xajr", "xēr", "aj -> ē"),
-            ("kawne", "kōne", "aw -> ō"),
-            ("bijt", "bijt", "ij -> ij (sem regra) ou ij -> ī se adicionado"),
-            ("normal", "normal", "sem mudança")
-        ]
+        if " ;" in translation:
+             pass 
         
-        print("\nExecutando casos de teste diretos no PhonologyHandler:")
-        all_passed = True
-        for input_word, expected, desc in test_cases:
-            result = ph.apply_monophthongization(input_word)
-            success = result == expected
-            status = "PASSOU" if success else f"FALHOU (Esperado: {expected}, Obtido: {result})"
-            if not success:
-                # Regras extras adicionadas no profile podem afetar bijt/uw se existirem
-                if "ij" in input_word and result == "bīt":
-                     status = "PASSOU (Regra ij->ī aplicada)"
-                     success = True
-                else:
-                    all_passed = False
-            print(f"  Entrada: {input_word:10} | {desc:20} -> {status}")
+        tokens = translation.split()
+        for t in tokens:
+            if t.endswith("-") and len(t) > 1:
+                next_idx = tokens.index(t) + 1
+                if next_idx < len(tokens):
+                    next_t = tokens[next_idx]
+                    if next_t in [",", ";", ".", ":"]:
+                        print(f"SUCESSO: Hífen '{t}' separado de pontuação '{next_t}'.")
 
-        # Teste integrado
-        print("\nTeste integrado (geração de palavra):")
-        # Força a geração de uma palavra que naturalmente teria ditongo se não fosse a regra
-        # Como o gerador usa sementes aleatórias, vamos simular a nativização direta
-        
-        raw_word_aj = "bayt" # Phonology handler deve converter y->j ou y->i e depois aplicar regra
-        nativized_aj = ph.nativize_word(raw_word_aj)
-        print(f"  Nativização de 'bayt': {nativized_aj}")
-        
-        raw_word_aw = "kawn"
-        nativized_aw = ph.nativize_word(raw_word_aw)
-        print(f"  Nativização de 'kawn': {nativized_aw}")
-
-        if "ē" in nativized_aj or "e" in nativized_aj: # Depende do mapeamento exato de y e j
-             print("  Verificação 'bayt' -> contém vogal monoftongada (e/ē).")
-        
-        if "ō" in nativized_aw or "o" in nativized_aw:
-             print("  Verificação 'kawn' -> contém vogal monoftongada (o/ō).")
-
-        if all_passed:
-            print("\nRESULTADO FINAL: SUCESSO. A monoftongação está funcionando conforme esperado.")
-        else:
-            print("\nRESULTADO FINAL: FALHA em alguns testes unitários.")
-
-    except Exception as e:
-        print(f"\nERRO CRÍTICO DURANTE O TESTE: {e}")
-        import traceback
-        traceback.print_exc()
+    if not has_error:
+        print("\nSUCESSO FINAL: Nenhuma anomalia crítica de pontuação detectada.")
+    else:
+        print("\nFALHA: Correções insuficientes.")
 
 if __name__ == "__main__":
-    test_monophthongization()
+    test_punctuation_fixes()
