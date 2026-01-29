@@ -1820,10 +1820,12 @@ class OriginalLanguageEngine:
         all_terminators.update(self.profile.get('style', {}).get(
             'secondary_terminators', [':', ';']))
 
+        last_content_word_str = None
+        last_content_func = None
+
         for sent_idx, sent_data in enumerate(functions_info):
             ordered_functions = sent_data['functions']
             translated_words = []
-            last_func = None
             transitivity_map = self.transitivity_analyzer.analyze(
                 ordered_functions)
             topic_idx = self.topicalization_handler.identify_topic(
@@ -1891,7 +1893,8 @@ class OriginalLanguageEngine:
                                 word, _, _ = mapping
                                 translated_words.append(word)
                                 absorbed_indices.update(remaining_span)
-                                last_func = func
+                                last_content_word_str = word
+                                last_content_func = func
                                 continue
 
                 orig_word = func.get("word", "")
@@ -1915,13 +1918,13 @@ class OriginalLanguageEngine:
                         sentence_terminator = mapped_punct
                         continue
                     translated_words.append(mapped_punct)
-                    last_func = func
                     continue
 
                 if ignore_digits and pos == 'NUM':
                     if re.search(r'\d', orig_word):
                         translated_words.append(orig_word)
-                        last_func = func
+                        last_content_word_str = orig_word
+                        last_content_func = func
                         continue
 
                 if self.copula_handler.enabled and deprel == 'cop':
@@ -1930,11 +1933,12 @@ class OriginalLanguageEngine:
                     if copula_form is None:
                         continue
                     if self.mutation_handler.enabled:
-                        prev_word = translated_words[-1] if translated_words else None
+                        prev_word = last_content_word_str
                         copula_form = self.mutation_handler.apply_mutation(
-                            copula_form, prev_word, last_func)
+                            copula_form, prev_word, last_content_func)
                     translated_words.append(copula_form)
-                    last_func = func
+                    last_content_word_str = copula_form
+                    last_content_func = func
                     continue
 
                 if syntactic_func in {SyntacticFunction.QUANTIFIER, SyntacticFunction.VERB_PARTICLE, SyntacticFunction.INTENSIFIER}:
@@ -1951,11 +1955,12 @@ class OriginalLanguageEngine:
                             'adj_word', self._get_word_form(f'{raw_lemma}_intens'))
                     if translated_word:
                         if self.mutation_handler.enabled:
-                            prev_word = translated_words[-1] if translated_words else None
+                            prev_word = last_content_word_str
                             translated_word = self.mutation_handler.apply_mutation(
-                                translated_word, prev_word, last_func)
+                                translated_word, prev_word, last_content_func)
                         translated_words.append(translated_word)
-                        last_func = func
+                        last_content_word_str = translated_word
+                        last_content_func = func
                         continue
 
                 if pos == 'DET' and self.construct_state_handler.enabled and self.construct_state_handler.suppress_article:
@@ -2097,9 +2102,9 @@ class OriginalLanguageEngine:
                         current_form)
 
                 if self.mutation_handler.enabled:
-                    prev_word = translated_words[-1] if translated_words else None
+                    prev_word = last_content_word_str
                     current_form = self.mutation_handler.apply_mutation(
-                        current_form, prev_word, last_func)
+                        current_form, prev_word, last_content_func)
 
                 if is_named_entity:
                     current_form = current_form.capitalize()
@@ -2112,10 +2117,11 @@ class OriginalLanguageEngine:
                     current_form = translated_root
 
                 translated_words.append(current_form)
-                last_func = func
+                last_content_word_str = current_form
+                last_content_func = func
 
-                if self.sun_letter_handler.enabled and len(translated_words) > 1 and last_func:
-                    if last_func.get('pos') == 'DET':
+                if self.sun_letter_handler.enabled and len(translated_words) > 1 and last_content_func:
+                    if last_content_func.get('pos') == 'DET':
                         prev_word = translated_words[-2]
                         assimilated_prev = self.sun_letter_handler.assimilate(
                             prev_word, current_form)

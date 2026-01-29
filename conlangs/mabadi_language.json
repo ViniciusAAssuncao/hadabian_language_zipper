@@ -1448,44 +1448,11 @@
             "a": "il",
             "os": "iln",
             "as": "iln",
-            "jesus": "N_JESUS",
-            "cristo": "N_CRISTO",
-            "hadab": "C_HADAB",
-            "amém": "C_AMEM",
-            "mabádi": "C_MABADI",
-            "sol": "helka"
+            "e": "u",
+            "terra": "erdarar",
+            "planeta": "hadabī"
         },
         "definitions": {
-            "N_JESUS": {
-                "type": "adaptation",
-                "source_word": "Jesus",
-                "description": "Nome próprio histórico adaptado."
-            },
-            "N_CRISTO": {
-                "type": "adaptation",
-                "source_word": "Cristo",
-                "description": "Título religioso histórico adaptado."
-            },
-            "C_HADAB": {
-                "type": "adaptation",
-                "source_word": "Hadab",
-                "description": "Nome do planeta e civilização de origem."
-            },
-            "C_AMEM": {
-                "type": "adaptation",
-                "source_word": "Amém",
-                "description": "Expressão de concordância religiosa adaptada."
-            },
-            "C_MABADI": {
-                "type": "adaptation",
-                "source_word": "Mabádi",
-                "description": "Nome da língua ficcional adaptado."
-            },
-            "sol": {
-                "type": "adaptation",
-                "source_word": "Sol",
-                "description": "Corpo celeste central do sistema helkálico."
-            }
         }
     },
     "lexical_registers": {
@@ -1622,12 +1589,9 @@
         "a": "il",
         "os": "iln",
         "as": "iln",
-        "jesus": "N_JESUS",
-        "cristo": "N_CRISTO",
-        "hadab": "C_HADAB",
-        "amém": "C_AMEM",
-        "mabádi": "C_MABADI",
-        "sol": "helka"
+        "e": "u",
+        "terra": "erdarar",
+        "planeta": "hadabī"
     },
     "phonological_processes": {
         "description": "Processos fonológicos adicionais do Mabádi",
