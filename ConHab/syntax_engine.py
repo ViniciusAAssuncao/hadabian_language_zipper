@@ -107,49 +107,67 @@ class WordOrderMapper:
         current_indices = set()
 
         coordinating_conjunctions = {
-            'e', 'mas', 'porém', 'todavia', 'contudo', 'ou', 'nem', 'logo', 'portanto'}
+            'e', 'mas', 'porém', 'todavia', 'contudo', 'ou', 'nem', 'logo', 'portanto', 'entretanto'}
+
         subordinating_conjunctions = {
             'que', 'porque', 'quando', 'se', 'embora', 'enquanto', 'como', 'pois', 'caso', 'para'}
-        subject_pronouns = {'eu', 'tu', 'ele', 'ela', 'nós', 'vós',
-                            'eles', 'elas', 'você', 'vocês', 'isso', 'isto', 'aquilo'}
+
+        hard_break_punct = {';', '.', '!', '?', ':'}
 
         is_current_subordinate = False
 
         for i, f in enumerate(functions):
             word = f['word'].lower()
             pos = f['pos']
+            deprel = f.get('deprel', '')
+            lemma = f.get('lemma', '').lower()
+
             is_boundary = False
             next_is_subordinate = False
 
-            if pos == 'PUNCT' and word in {',', ';', '.', '!', '?', ':'}:
+            if pos == 'PUNCT' and word in hard_break_punct:
+                current_indices.add(f['index'])
+                partitions.append((current_indices, is_current_subordinate))
+
+                current_indices = set()
+                is_current_subordinate = False
+
                 if i + 1 < len(functions):
-                    next_f = functions[i+1]
-                    next_word = next_f['word'].lower()
+                    next_word = functions[i+1]['word'].lower()
+                    if next_word in subordinating_conjunctions:
+                        is_current_subordinate = True
+                continue
 
-                    if next_word in coordinating_conjunctions:
-                        is_boundary = True
-                        next_is_subordinate = False
-                    elif next_word in subordinating_conjunctions:
-                        is_boundary = True
-                        next_is_subordinate = True
-                    elif next_f['function'] == SyntacticFunction.SUBJECT:
-                        is_boundary = True
-                    elif next_word in subject_pronouns:
-                        is_boundary = True
-                    elif next_f['pos'] == 'VERB' and next_f['function'] == SyntacticFunction.VERB:
-                        is_boundary = True
+            elif pos == 'CCONJ' or lemma in coordinating_conjunctions:
+                if current_indices:
+                    is_boundary = True
+                    next_is_subordinate = False
 
-            elif word in subordinating_conjunctions and f['pos'] in {'SCONJ', 'ADP'}:
-                if i > 0:
+            elif pos == 'SCONJ' or lemma in subordinating_conjunctions:
+                if current_indices:
                     is_boundary = True
                     next_is_subordinate = True
 
-            current_indices.add(f['index'])
+            elif pos == 'PUNCT' and word == ',':
+                if i + 1 < len(functions):
+                    next_f = functions[i+1]
+                    next_word = next_f['word'].lower()
+                    next_pos = next_f['pos']
+
+                    if next_word in coordinating_conjunctions or next_pos == 'CCONJ':
+                        is_boundary = True
+                    elif next_word in subordinating_conjunctions or next_pos == 'SCONJ':
+                        is_boundary = True
+                        next_is_subordinate = True
+                    elif next_pos in {'VERB', 'AUX'} and next_f.get('function') == 'V':
+                        is_boundary = True
 
             if is_boundary:
                 partitions.append((current_indices, is_current_subordinate))
                 current_indices = set()
                 is_current_subordinate = next_is_subordinate
+
+            current_indices.add(f['index'])
 
         if current_indices:
             partitions.append((current_indices, is_current_subordinate))
@@ -157,6 +175,17 @@ class WordOrderMapper:
         return partitions
 
     def _map_single_clause(self, functions: List[Dict], target_order: str) -> List[int]:
+        idx_map = {func['original_index']: i for i,
+                   func in enumerate(functions)}
+
+        for f in functions:
+            original_deps = f.get('dependencies', [])
+            new_deps = []
+            for dep in original_deps:
+                if dep in idx_map:
+                    new_deps.append(idx_map[dep])
+            f['dependencies'] = new_deps
+
         chunks = self._build_chunks(functions)
         self._attach_orphaned_punctuation(chunks, functions)
 
@@ -183,14 +212,30 @@ class WordOrderMapper:
 
     def _legacy_reorder(self, chunks, target_order, adjunct_position, adjunct_chunks, core_chunks, modifier_chunks):
         final_closers = []
+        sentence_openers = []
+
+        forced_terminators = {'.', '!', '?', ';', ':'}
+
+        connectors = {'e', 'mas', 'ou', 'que',
+                      'se', 'quando', 'porque', 'pois', 'nem'}
 
         for i, c in enumerate(chunks):
+            if c.function == 'MOD' and len(c.words) == 1:
+                word = c.words[0][0].lower()
+                if word in connectors:
+                    sentence_openers.append(c)
+                    if c in modifier_chunks:
+                        modifier_chunks.remove(c)
+                    continue
+
             if c.function == SyntacticFunction.PUNCT:
                 words = c.words
-                if words and words[0][0] in {'.', '!', '?'}:
+                if words and words[0][0] in forced_terminators:
                     final_closers.append(c)
 
         ordered_chunks = []
+
+        ordered_chunks.extend(sentence_openers)
 
         if adjunct_position == 'before_subject':
             ordered_chunks.extend(adjunct_chunks)
@@ -212,6 +257,12 @@ class WordOrderMapper:
 
         for _, chunk_list in placed_core:
             ordered_chunks.extend(chunk_list)
+
+        modifier_chunks = [
+            m for m in modifier_chunks if m not in sentence_openers]
+
+        modifier_chunks = [
+            m for m in modifier_chunks if m not in final_closers]
 
         ordered_chunks.extend(modifier_chunks)
 
@@ -359,25 +410,30 @@ class WordOrderMapper:
         return chunks
 
     def _attach_orphaned_punctuation(self, chunks: List[Chunk], functions: List[Dict]):
-        index_to_chunk = {}
-        processed_indices = set()
-        for chunk in chunks:
-            for _, idx in chunk.words:
-                index_to_chunk[idx] = chunk
-                processed_indices.add(idx)
-        glue_punct = {',', ';', ':', ')', ']', '}', '...', '…', '%'}
-        for chunk in chunks:
-            if chunk.chunk_type == 'punct' and chunk.words:
-                word = chunk.words[0][0]
-                idx = chunk.words[0][1]
-                if word in glue_punct:
-                    chunk_idx = chunks.index(chunk)
-                    if chunk_idx > 0:
-                        prev_chunk = chunks[chunk_idx-1]
-                        prev_chunk.words.append((word, idx))
-                        prev_chunk.dependent_indices.add(idx)
-                        chunk.words = []
-        chunks[:] = [c for c in chunks if c.words]
+        terminators = {'.', '!', '?'}
+
+        chunks_to_remove = []
+
+        for i in range(1, len(chunks)):
+            current_chunk = chunks[i]
+            prev_chunk = chunks[i-1]
+
+            if current_chunk.function == SyntacticFunction.PUNCT:
+                if not current_chunk.words:
+                    continue
+
+                punct_char = current_chunk.words[0][0]
+                punct_idx = current_chunk.words[0][1]
+
+                if punct_char not in terminators:
+                    prev_chunk.words.append((punct_char, punct_idx))
+                    prev_chunk.dependent_indices.add(punct_idx)
+
+                    chunks_to_remove.append(current_chunk)
+
+        for c in chunks_to_remove:
+            if c in chunks:
+                chunks.remove(c)
 
     def _build_noun_phrase_chunk(self, functions: List[Dict], noun_index: int,
                                  processed_indices: Set[int]) -> Optional[Chunk]:

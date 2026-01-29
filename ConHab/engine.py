@@ -1776,19 +1776,17 @@ class OriginalLanguageEngine:
             'style', {}).get('capitalization', False)
         punctuation_map = self.profile.get(
             'style', {}).get('punctuation_map', {})
+
+        hoistable_terminators = {'.', '!', '?'}
+
         all_terminators = set(self.profile.get('style', {}).get(
             'sentence_terminators', ['.', '!', '?']))
         all_terminators.update(self.profile.get('style', {}).get(
             'secondary_terminators', [':', ';']))
 
-        punctuation_profile = self.profile.get('punctuation_profile', {})
-        strict_punct = punctuation_profile.get(
-            'strict_punctuation_mapping', False)
-
         for sent_idx, sent_data in enumerate(functions_info):
             ordered_functions = sent_data['functions']
             translated_words = []
-            aligned_funcs = []
             last_func = None
             transitivity_map = self.transitivity_analyzer.analyze(
                 ordered_functions)
@@ -1862,12 +1860,11 @@ class OriginalLanguageEngine:
                 raw_lemma = raw_lemma.lower()
 
                 if pos == 'PUNCT':
-                    if strict_punct:
-                        continue
                     mapped_punct = punctuation_map.get(orig_word, orig_word)
-                    if orig_word in all_terminators:
+                    if orig_word in hoistable_terminators:
                         sentence_terminator = mapped_punct
                         continue
+
                     translated_words.append(mapped_punct)
                     last_func = func
                     continue
@@ -1875,7 +1872,6 @@ class OriginalLanguageEngine:
                 if ignore_digits and pos == 'NUM':
                     if re.search(r'\d', orig_word):
                         translated_words.append(orig_word)
-                        aligned_funcs.append(func)
                         last_func = func
                         continue
 
@@ -1891,7 +1887,6 @@ class OriginalLanguageEngine:
                             copula_form, prev_word, last_func)
 
                     translated_words.append(copula_form)
-                    aligned_funcs.append(func)
                     last_func = func
                     continue
 
@@ -1914,7 +1909,6 @@ class OriginalLanguageEngine:
                             translated_word = self.mutation_handler.apply_mutation(
                                 translated_word, prev_word, last_func)
                         translated_words.append(translated_word)
-                        aligned_funcs.append(func)
                         last_func = func
                         continue
 
@@ -2072,7 +2066,6 @@ class OriginalLanguageEngine:
                     current_form = translated_root
 
                 translated_words.append(current_form)
-                aligned_funcs.append(func)
                 last_func = func
 
                 if self.sun_letter_handler.enabled and len(translated_words) > 1 and last_func:
@@ -2082,18 +2075,7 @@ class OriginalLanguageEngine:
                             prev_word, current_form)
                         translated_words[-2] = assimilated_prev
 
-            if strict_punct:
-                original_map = {}
-                for f in ordered_functions:
-                    original_map[f.get('original_index', f['index'])] = f
-
-                try:
-                    translated_words = self._strict_punctuation_pass(
-                        translated_words, aligned_funcs, original_map)
-                except ValueError as e:
-                    raise ValueError(str(e))
-
-            if sentence_terminator and not strict_punct:
+            if sentence_terminator:
                 translated_words.append(sentence_terminator)
 
             if is_question and self.interrogative_handler.enabled:
@@ -2150,50 +2132,6 @@ class OriginalLanguageEngine:
 
         self.save_word_cache()
         return ' '.join(final_sentences)
-
-    def _strict_punctuation_pass(self, translated_tokens: List[str], ordered_funcs: List[Dict], original_functions_map: Dict[int, Dict]) -> List[str]:
-        # if len(translated_tokens) != len(ordered_funcs):
-        # raise ValueError(
-        # "Ó, NÃO CONSEGUI, MANDEI COLOCAR O PONTO NO LUGAR CERTO, MAS ALGUÉM ESCARALHOU TUDO!")
-
-        punctuation_map = self.profile.get(
-            'style', {}).get('punctuation_map', {})
-        attached_indices = set()
-
-        for i in range(len(translated_tokens)):
-            func = ordered_funcs[i]
-            current_oid = func.get('original_index', func.get('index'))
-
-            if current_oid is None:
-                continue
-
-            check_next = True
-            offset = 1
-
-            while check_next:
-                next_oid = current_oid + offset
-                if next_oid in original_functions_map:
-                    next_func = original_functions_map[next_oid]
-                    if next_func.get('pos') == 'PUNCT':
-                        raw_punct = next_func['word']
-                        mapped_punct = punctuation_map.get(
-                            raw_punct, raw_punct)
-                        translated_tokens[i] += mapped_punct
-                        attached_indices.add(next_oid)
-                        offset += 1
-                    else:
-                        check_next = False
-                else:
-                    check_next = False
-
-        for oid, f in original_functions_map.items():
-            if f.get('pos') == 'PUNCT':
-                # if oid > 0 and oid not in attached_indices:
-                # raise ValueError(
-                # "Ó, NÃO CONSEGUI, MANDEI COLOCAR O PONTO NO LUGAR CERTO, MAS ALGUÉM ESCARALHOU TUDO!")
-                continue
-
-        return translated_tokens
 
     def process_with_analysis(self, text: str) -> Dict:
         reordered_text, functions_info = self.syntax_engine.process_text(text)
