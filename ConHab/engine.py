@@ -29,30 +29,23 @@ class AllomorphyHandler:
     def apply_allomorphy(self, words: List[str]) -> List[str]:
         if not self.enabled or not words:
             return words
-
         result = list(words)
-
         for i in range(len(result) - 1):
             current_word = result[i]
             next_word_raw = result[i+1]
-
             clean_current = "".join(x for x in current_word if x.isalpha())
             if not clean_current:
                 continue
-
             applicable_rules = [
                 r for r in self.rules if r['target_word'] == clean_current.lower()]
             if not applicable_rules:
                 continue
-
             next_start_char = self._get_start_char(next_word_raw)
             if not next_start_char:
                 continue
-
             for rule in applicable_rules:
                 env = rule.get('environment')
                 replacement = rule.get('replacement')
-
                 match = False
                 if env == 'before_vowel':
                     if next_start_char in self.phonology_handler.vowels:
@@ -65,13 +58,11 @@ class AllomorphyHandler:
                     chars = self.feature_defs.get(feat, [])
                     if next_start_char in chars:
                         match = True
-
                 if match:
                     if current_word[0].isupper() and replacement:
                         replacement = replacement[0].upper() + replacement[1:]
                     result[i] = replacement
                     break
-
         return result
 
     def _get_start_char(self, text: str) -> Optional[str]:
@@ -490,10 +481,8 @@ class PhonologyHandler:
         c_set = "".join(
             self.consonants) if self.consonants else "bcdfghjklmnpqrstvwxz"
         v_set = "".join(self.vowels) if self.vowels else "aeiou"
-
         regex_parts = []
         input_map = []
-
         i = 0
         group_idx = 1
         while i < len(input_pat):
@@ -513,15 +502,12 @@ class PhonologyHandler:
             else:
                 regex_parts.append(re.escape(char))
             i += 1
-
         input_regex = "".join(regex_parts)
-
         replacement_parts = []
         c_counter = 0
         v_counter = 0
         input_cs = [x for x in input_map if x['type'] == 'C']
         input_vs = [x for x in input_map if x['type'] == 'V']
-
         i = 0
         while i < len(output_pat):
             char = output_pat[i]
@@ -542,23 +528,19 @@ class PhonologyHandler:
             else:
                 replacement_parts.append(char)
             i += 1
-
         return input_regex, "".join(replacement_parts)
 
     def apply_monophthongization(self, word: str) -> str:
         if not self.monophthong_enabled or not word:
             return word
-
         current_word = word
         sorted_rules = sorted(self.monophthong_rules,
                               key=lambda x: x.get('priority', 0), reverse=True)
-
         for rule in sorted_rules:
             inp = rule.get('input')
             out = rule.get('output')
             if inp and out:
                 current_word = current_word.replace(inp, out)
-
         return current_word
 
     def apply_rules(self, word: str, register: str) -> str:
@@ -673,9 +655,7 @@ class PhonologyHandler:
         for char in word:
             nativized.append(self.get_closest_phoneme(char))
         result = "".join(nativized)
-
         result = self.apply_monophthongization(result)
-
         if result and not self.is_valid_final(result[-1]):
             valid_finals = [c for c in self.consonants if self.is_valid_final(
                 c)] + list(self.vowels)
@@ -806,9 +786,13 @@ class ConceptHandler:
                     continue
         return {"concepts": {}, "mappings_ln": {}}
 
-    def resolve_concept(self, lemma: str, engine_instance) -> Optional[Tuple[str, str, Dict]]:
+    def resolve_concept(self, lemma: str, engine_instance, word_form: str = None) -> Optional[Tuple[str, str, Dict]]:
         if not self.enabled:
             return None
+        if word_form:
+            clean_word = word_form.lower().strip()
+            if clean_word in self.mappings:
+                return self.mappings[clean_word], 'direct_mapping', {'origin': 'mapping_table_surface'}
         clean_lemma = lemma.lower().strip()
         concept_id = self.mappings.get(clean_lemma)
         if not concept_id:
@@ -1164,10 +1148,8 @@ class BrokenPluralHandler:
             return word
         if not self.enabled:
             return word
-
         if pos not in {'NOUN', 'ADJ', 'PROPN'}:
             return word
-
         word_lower = word.lower()
         for pat in self.patterns:
             s_pat = pat.get('singular_pattern', '')
@@ -1201,14 +1183,12 @@ class BrokenPluralHandler:
                     if word[0].isupper():
                         return plural_word.capitalize()
                     return plural_word
-
         marker = self.plural_markers.get('marker', '')
         if marker:
             return word + marker
         alts = self.plural_markers.get('alternatives', [])
         if alts:
             return word + alts[0]
-
         return word
 
 
@@ -1515,26 +1495,20 @@ class DemonstrativeHandler:
         lemma = func.get('lemma', '').lower()
         word = func.get('word', '').lower()
         target_type = None
-
         if lemma in self.mappings.get('proximal', []) or word in self.mappings.get('proximal', []):
             target_type = 'proximal'
         elif lemma in self.mappings.get('distal', []) or word in self.mappings.get('distal', []):
             target_type = 'distal'
-
         if not target_type:
             return func.get('word', '')
-
         forms = self.proximal if target_type == 'proximal' else self.distal
-
         head_idx = func['dependencies'][0] if func['dependencies'] else -1
         gender = 'masculine'
         number = 'singular'
-
         source_gender_hint = 'masculine'
         source_feats = func.get('feats', '')
         if 'Gender=Fem' in source_feats:
             source_gender_hint = 'feminine'
-
         if head_idx != -1:
             head = next(
                 (f for f in all_functions if f['index'] == head_idx), None)
@@ -1543,32 +1517,26 @@ class DemonstrativeHandler:
                 head_conlang_word = engine_ref._get_word_form(head_lemma)
                 gender = engine_ref.gender_handler.infer_gender(
                     head_conlang_word)
-
                 if gender == engine_ref.gender_handler.default_gender and source_gender_hint == 'feminine':
                     if self.heuristic_enabled:
                         gender = 'feminine'
-
                 feats = head.get('feats', '')
                 if 'Number=Plur' in feats:
                     number = 'plural'
                 elif 'Number=Sing' in feats:
                     number = 'singular'
-
         if 'Number=Plur' in source_feats:
             number = 'plural'
-
         new_word = ""
         if number == 'plural':
             new_word = forms.get('pl', '')
         else:
             key = 'sg_f' if gender == 'feminine' else 'sg_m'
             new_word = forms.get(key, '')
-
         if new_word:
             if func.get('word', '') and func['word'][0].isupper():
                 new_word = new_word.capitalize()
             return new_word
-
         return func.get('word', '')
 
 
@@ -1658,7 +1626,6 @@ class OriginalLanguageEngine:
             self.family_id = family_data['family_id']
         if 'diachronic_settings' in family_data:
             self.profile['diachronic_settings'] = family_data['diachronic_settings']
-
         if 'root_system' not in self.profile:
             family_roots = None
             for p in family_data.get('proto_languages', []):
@@ -1666,7 +1633,6 @@ class OriginalLanguageEngine:
                     family_roots = p['root_system']
             if family_roots:
                 self.profile['root_system'] = family_roots
-
         target_node_id = self.profile.get('family_node')
         if not target_node_id:
             return
@@ -1754,7 +1720,13 @@ class OriginalLanguageEngine:
         self.save_word_cache()
         return entry
 
-    def _get_word_form(self, lemma: str, tags: List[str] = None, force_word: str = None, meta: Dict = None, pos: str = None, derivation_depth: int = 0) -> str:
+    def _get_word_form(self, lemma: str, tags: List[str] = None, force_word: str = None, meta: Dict = None, pos: str = None, derivation_depth: int = 0, word_form: str = None) -> str:
+        if word_form:
+            res = self.concept_handler.resolve_concept(
+                lemma, self, word_form=word_form)
+            if res and res[2].get('origin') == 'mapping_table_surface':
+                return res[0]
+
         entry = self.word_cache.get(lemma)
         if not entry and force_word:
             entry = {
@@ -1779,7 +1751,9 @@ class OriginalLanguageEngine:
                                 return syn.get('word', entry.get('default'))
                 return entry.get('default')
             return str(entry)
-        concept_result = self.concept_handler.resolve_concept(lemma, self)
+
+        concept_result = self.concept_handler.resolve_concept(
+            lemma, self, word_form=word_form)
         if concept_result:
             word, c_type, c_meta = concept_result
             return self._get_word_form(lemma, tags=['concept'], force_word=word, meta=c_meta)
@@ -1787,7 +1761,6 @@ class OriginalLanguageEngine:
         if self.root_handler.enabled and (pos == 'VERB' or pos == 'NOUN'):
             root = self.root_handler.generate_root(lemma)
             pattern_def = self.root_handler.get_binyan_by_meaning('basic')
-
             if tags:
                 for tag in tags:
                     derived_binyan = self.root_handler.get_binyan_by_meaning(
@@ -1795,7 +1768,6 @@ class OriginalLanguageEngine:
                     if derived_binyan:
                         pattern_def = derived_binyan
                         break
-
             if pattern_def:
                 generated_word = self.root_handler.apply_pattern(
                     root, pattern_def)
@@ -1842,9 +1814,7 @@ class OriginalLanguageEngine:
             'style', {}).get('capitalization', False)
         punctuation_map = self.profile.get(
             'style', {}).get('punctuation_map', {})
-
         hoistable_terminators = {'.', '!', '?'}
-
         all_terminators = set(self.profile.get('style', {}).get(
             'sentence_terminators', ['.', '!', '?']))
         all_terminators.update(self.profile.get('style', {}).get(
@@ -1859,25 +1829,20 @@ class OriginalLanguageEngine:
             topic_idx = self.topicalization_handler.identify_topic(
                 ordered_functions)
             sentence_terminator = None
-
             is_question, q_type = self.interrogative_handler.is_yes_no_question(
                 sent_data['original'])
-
             construct_heads_indices = set()
             if self.construct_state_handler.enabled:
                 for func in ordered_functions:
                     if func['pos'] in {'NOUN', 'PROPN'}:
                         if self.construct_state_handler.is_construct_head(func, ordered_functions):
                             construct_heads_indices.add(func['index'])
-
             absorbed_indices = set()
-
             clitic_map = {}
             if self.clitic_handler.enabled:
                 clitic_map, clitic_absorbed = self.clitic_handler.analyze_clitics(
                     ordered_functions, self.negation_handler)
                 absorbed_indices.update(clitic_absorbed)
-
             if self.negation_handler.enabled:
                 for func in ordered_functions:
                     if func['index'] in absorbed_indices:
@@ -1893,22 +1858,41 @@ class OriginalLanguageEngine:
                                 should_absorb = False
                         if should_absorb:
                             absorbed_indices.add(trigger_idx)
-
             possessive_suffixes_map = {}
             if self.possessive_handler.enabled:
                 possessive_suffixes_map, possessive_indices = self.possessive_handler.analyze_possessives(
                     ordered_functions)
                 absorbed_indices.update(possessive_indices)
-
             inflected_preps_map = {}
             if self.preposition_handler.enabled:
                 inflected_preps_map, prep_absorbed = self.preposition_handler.analyze_inflections(
                     ordered_functions, self)
                 absorbed_indices.update(prep_absorbed)
 
-            for func in ordered_functions:
+            for i, func in enumerate(ordered_functions):
                 if func['index'] in absorbed_indices:
                     continue
+
+                if 'mwt' in func and self.concept_handler.enabled:
+                    mwt = func['mwt']
+                    span_indices = set(mwt['span_indices'])
+                    mapping = self.concept_handler.resolve_concept(
+                        mwt['form'], self)
+                    if mapping:
+                        if not span_indices.intersection(absorbed_indices):
+                            remaining_span = span_indices - {func['index']}
+                            found_count = 0
+                            if i + len(remaining_span) < len(ordered_functions):
+                                for k in range(1, len(remaining_span) + 1):
+                                    next_f = ordered_functions[i + k]
+                                    if next_f['index'] in remaining_span:
+                                        found_count += 1
+                            if found_count == len(remaining_span):
+                                word, _, _ = mapping
+                                translated_words.append(word)
+                                absorbed_indices.update(remaining_span)
+                                last_func = func
+                                continue
 
                 orig_word = func.get("word", "")
                 lemma = func.get("lemma", "")
@@ -1930,7 +1914,6 @@ class OriginalLanguageEngine:
                     if orig_word in hoistable_terminators:
                         sentence_terminator = mapped_punct
                         continue
-
                     translated_words.append(mapped_punct)
                     last_func = func
                     continue
@@ -1946,12 +1929,10 @@ class OriginalLanguageEngine:
                         func, ordered_functions, self)
                     if copula_form is None:
                         continue
-
                     if self.mutation_handler.enabled:
                         prev_word = translated_words[-1] if translated_words else None
                         copula_form = self.mutation_handler.apply_mutation(
                             copula_form, prev_word, last_func)
-
                     translated_words.append(copula_form)
                     last_func = func
                     continue
@@ -1968,7 +1949,6 @@ class OriginalLanguageEngine:
                     elif syntactic_func == SyntacticFunction.INTENSIFIER:
                         translated_word = mapping.get(
                             'adj_word', self._get_word_form(f'{raw_lemma}_intens'))
-
                     if translated_word:
                         if self.mutation_handler.enabled:
                             prev_word = translated_words[-1] if translated_words else None
@@ -2010,7 +1990,7 @@ class OriginalLanguageEngine:
                         func, ordered_functions, self)
                 else:
                     translated_root = self._get_word_form(
-                        target_lemma, context_tags, pos=current_pos)
+                        target_lemma, context_tags, pos=current_pos, word_form=clean_word_lower)
                     current_form = translated_root
 
                 if degree_type:
@@ -2146,13 +2126,10 @@ class OriginalLanguageEngine:
 
             if is_question and self.interrogative_handler.enabled:
                 particle = self.interrogative_handler.get_particle(q_type)
-
                 if particle:
                     translated_words.insert(0, particle)
-
                     meta_config = self.profile.get('interrogative_system', {}).get(
                         'particle_metadata', {})
-
                     particle_meta = {
                         'word': particle,
                         'lemma': particle,
@@ -2162,7 +2139,6 @@ class OriginalLanguageEngine:
                         'index': -1,
                         'dependencies': []
                     }
-
                     ordered_functions.insert(0, particle_meta)
 
             if capitalization_enabled and translated_words:
@@ -2175,7 +2151,6 @@ class OriginalLanguageEngine:
                         if len(word) > 0 and not word[0].isupper():
                             translated_words[idx] = word[0].upper() + word[1:]
                         force_capitalization = False
-
                     if any(clean_w.endswith(t) for t in all_terminators):
                         force_capitalization = True
                     else:
@@ -2450,9 +2425,7 @@ class OriginalLanguageEngine:
                 if rng_mut.random() < mutation_chance:
                     base_word = self._mutate_word(base_word, mut_hash)
         base_word = base_word if base_word else word
-
         base_word = self.phonology_handler.apply_monophthongization(base_word)
-
         entry["default"] = base_word
         entry["synsets"].append(
             {"word": base_word, "tags": ["common", "neutral"], "affinity": 1.0})
@@ -2472,10 +2445,8 @@ class OriginalLanguageEngine:
                         mutation_seed = reg_rng.randint(0, 999999)
                         variant_word = self._mutate_word(
                             variant_word, mutation_seed)
-
                     variant_word = self.phonology_handler.apply_rules(
                         variant_word, name)
-
                     if variant_word != base_word:
                         entry["synsets"].append({
                             "word": variant_word,
