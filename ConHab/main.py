@@ -1,14 +1,17 @@
 import tkinter as tk
 from tkinter import ttk, scrolledtext, messagebox
-import os
 from pathlib import Path
 import threading
+import time
+
+from ui.lexicon import LexiconTab
+from ui.spinner import LoadingOverlay
 
 
 class ConHabApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("ConHab Engine")
+        self.root.title("ConHab")
         self.root.geometry("900x750")
         self.root.minsize(800, 600)
 
@@ -17,6 +20,7 @@ class ConHabApp:
             "bg_sec": "#252526",
             "fg_primary": "#e0e0e0",
             "fg_secondary": "#aaaaaa",
+            "text": "#000000",
             "accent": "#007acc",
             "accent_hover": "#0098ff",
             "input_bg": "#2d2d2d",
@@ -27,134 +31,64 @@ class ConHabApp:
         self.engine = None
         self.setup_styles()
         self.setup_ui()
+
+        self.loading_overlay = LoadingOverlay(self.root, self.colors)
+
         self.load_conlangs()
 
     def setup_styles(self):
         self.root.configure(bg=self.colors["bg_main"])
-
         style = ttk.Style()
         style.theme_use('clam')
 
-        style.configure(".",
-                        background=self.colors["bg_main"],
-                        foreground=self.colors["fg_primary"],
-                        font=("Segoe UI", 10)
-                        )
-
+        style.configure(
+            ".", background=self.colors["bg_main"], foreground=self.colors["fg_primary"], font=("Segoe UI", 10))
         style.configure("TFrame", background=self.colors["bg_main"])
-
-        style.configure("Header.TLabel",
-                        font=("Segoe UI", 18, "bold"),
-                        foreground=self.colors["fg_primary"],
-                        background=self.colors["bg_sec"],
-                        padding=15
-                        )
-
-        style.configure("SubHeader.TLabel",
-                        font=("Segoe UI", 11, "bold"),
-                        foreground=self.colors["fg_secondary"],
-                        background=self.colors["bg_main"],
-                        padding=(0, 10, 0, 5)
-                        )
-
-        style.configure("Card.TFrame", background=self.colors["bg_sec"])
-        style.configure("CardLabel.TLabel", background=self.colors["bg_sec"])
-
-        style.configure("Accent.TButton",
-                        font=("Segoe UI", 10, "bold"),
-                        background=self.colors["accent"],
-                        foreground="white",
-                        borderwidth=0,
-                        focuscolor=self.colors["bg_main"],
-                        padding=(20, 10)
-                        )
-
-        style.map("Accent.TButton",
-                  background=[("active", self.colors["accent_hover"])],
-                  relief=[("pressed", "flat")]
-                  )
-
-        style.configure("Secondary.TButton",
-                        font=("Segoe UI", 9),
-                        background=self.colors["bg_sec"],
-                        foreground=self.colors["fg_primary"],
-                        borderwidth=1,
-                        bordercolor=self.colors["input_bg"],
-                        focuscolor=self.colors["bg_sec"],
-                        padding=(10, 5)
-                        )
-
-        style.map("Secondary.TButton",
-                  background=[("active", self.colors["input_bg"])]
-                  )
-
-        style.configure("TCombobox",
-                        fieldbackground=self.colors["input_bg"],
-                        background=self.colors["bg_sec"],
-                        foreground=self.colors["fg_primary"],
-                        arrowcolor=self.colors["fg_primary"],
-                        bordercolor=self.colors["bg_main"],
-                        padding=5
-                        )
-
-        style.map("TCombobox",
-                  fieldbackground=[("readonly", self.colors["input_bg"])],
-                  selectbackground=[("readonly", self.colors["input_bg"])],
-                  selectforeground=[("readonly", self.colors["fg_primary"])]
-                  )
-
-        style.configure("Horizontal.TProgressbar",
-                        troughcolor=self.colors["input_bg"],
-                        background=self.colors["accent"],
-                        bordercolor=self.colors["bg_main"],
-                        lightcolor=self.colors["accent"],
-                        darkcolor=self.colors["accent"]
-                        )
-
+        style.configure("Header.TLabel", font=("Segoe UI", 18, "bold"),
+                        foreground=self.colors["fg_primary"], background=self.colors["bg_sec"], padding=15)
+        style.configure("SubHeader.TLabel", font=("Segoe UI", 11, "bold"),
+                        foreground=self.colors["fg_secondary"], background=self.colors["bg_main"], padding=(0, 10, 0, 5))
+        style.configure("Accent.TButton", font=("Segoe UI", 10, "bold"),
+                        background=self.colors["accent"], foreground="white", borderwidth=0, focuscolor=self.colors["bg_main"], padding=(20, 10))
+        style.map("Accent.TButton", background=[
+                  ("active", self.colors["accent_hover"])], relief=[("pressed", "flat")])
+        style.configure("Secondary.TButton", font=("Segoe UI", 9), background=self.colors["bg_sec"], foreground=self.colors[
+                        "fg_primary"], borderwidth=1, bordercolor=self.colors["input_bg"], focuscolor=self.colors["bg_sec"], padding=(10, 5))
+        style.map("Secondary.TButton", background=[
+                  ("active", self.colors["input_bg"])])
+        style.configure("TCombobox", fieldbackground=self.colors["input_bg"], background=self.colors["bg_sec"],
+                        foreground=self.colors["fg_primary"], arrowcolor=self.colors["fg_primary"], bordercolor=self.colors["bg_main"], padding=5)
+        style.map("TCombobox", fieldbackground=[("readonly", self.colors["input_bg"])], selectbackground=[
+                  ("readonly", self.colors["input_bg"])], selectforeground=[("readonly", self.colors["fg_primary"])])
+        style.configure("Horizontal.TProgressbar", troughcolor=self.colors["input_bg"], background=self.colors["accent"],
+                        bordercolor=self.colors["bg_main"], lightcolor=self.colors["accent"], darkcolor=self.colors["accent"])
         style.configure(
             "TNotebook", background=self.colors["bg_main"], borderwidth=0)
-        style.configure("TNotebook.Tab",
-                        background=self.colors["bg_sec"],
-                        foreground=self.colors["fg_secondary"],
-                        padding=(15, 5),
-                        borderwidth=0)
-        style.map("TNotebook.Tab",
-                  background=[("selected", self.colors["accent"]),
-                              ("active", self.colors["input_bg"])],
-                  foreground=[("selected", "white"), ("active", self.colors["fg_primary"])])
-
-        style.configure("Treeview",
-                        background=self.colors["input_bg"],
-                        fieldbackground=self.colors["input_bg"],
-                        foreground=self.colors["fg_primary"],
-                        borderwidth=0,
-                        rowheight=25)
-        style.configure("Treeview.Heading",
-                        background=self.colors["bg_sec"],
-                        foreground=self.colors["fg_primary"],
-                        relief="flat",
-                        font=("Segoe UI", 10, "bold"))
+        style.configure("TNotebook.Tab", background=self.colors["bg_sec"], foreground=self.colors["fg_secondary"], padding=(
+            15, 5), borderwidth=0)
+        style.map("TNotebook.Tab", background=[("selected", self.colors["accent"]), ("active", self.colors["input_bg"])], foreground=[
+                  ("selected", "white"), ("active", self.colors["fg_primary"])])
+        style.configure("Treeview", background=self.colors["input_bg"], fieldbackground=self.colors[
+                        "input_bg"], foreground=self.colors["fg_primary"], borderwidth=0, rowheight=25)
+        style.configure("Treeview.Heading", background=self.colors["bg_sec"], foreground=self.colors["fg_primary"], relief="flat", font=(
+            "Segoe UI", 10, "bold"))
         style.map("Treeview.Heading", background=[
                   ("active", self.colors["bg_sec"])])
 
     def setup_ui(self):
         header_frame = ttk.Frame(self.root)
         header_frame.pack(fill=tk.X)
-
         header_bg = tk.Frame(header_frame, bg=self.colors["bg_sec"], height=60)
         header_bg.pack(fill=tk.BOTH, expand=True)
         header_bg.pack_propagate(False)
-
-        title_lbl = ttk.Label(
-            header_bg, text="ConHab Engine", style="Header.TLabel")
-        title_lbl.pack(side=tk.LEFT, padx=20)
+        ttk.Label(header_bg, text="ConHab",
+                  style="Header.TLabel").pack(side=tk.LEFT, padx=20)
 
         main_container = ttk.Frame(self.root, padding=30)
         main_container.pack(fill=tk.BOTH, expand=True)
 
         config_frame = ttk.Frame(main_container)
         config_frame.pack(fill=tk.X, pady=(0, 20))
-
         ttk.Label(config_frame, text="PERFIL LINGUÍSTICO",
                   style="SubHeader.TLabel").pack(anchor="w")
 
@@ -162,13 +96,12 @@ class ConHabApp:
         controls_row.pack(fill=tk.X, pady=5)
 
         self.cl_selector = ttk.Combobox(
-            controls_row, state="readonly", width=40, font=("Segoe UI", 10)
-        )
+            controls_row, state="readonly", width=40, font=("Segoe UI", 10))
         self.cl_selector.pack(side=tk.LEFT, padx=(0, 10), ipady=3)
         self.cl_selector.bind("<<ComboboxSelected>>", self.on_profile_selected)
 
-        ttk.Button(controls_row, text="↻ Recarregar Perfis", style="Secondary.TButton",
-                   command=self.load_conlangs).pack(side=tk.LEFT)
+        ttk.Button(controls_row, text="↻ Recarregar Perfis",
+                   style="Secondary.TButton", command=self.load_conlangs).pack(side=tk.LEFT)
 
         self.status_lbl = ttk.Label(
             controls_row, text="", foreground=self.colors["fg_secondary"])
@@ -181,9 +114,8 @@ class ConHabApp:
         self.notebook.add(self.tab_translation, text="Tradução")
         self.setup_translation_tab()
 
-        self.tab_lexicon = ttk.Frame(self.notebook, padding=15)
-        self.notebook.add(self.tab_lexicon, text="Léxico")
-        self.setup_lexicon_tab()
+        self.lexicon_widget = LexiconTab(self.notebook, self.colors)
+        self.notebook.add(self.lexicon_widget, text="Léxico")
 
     def setup_translation_tab(self):
         content_pane = ttk.PanedWindow(
@@ -192,7 +124,6 @@ class ConHabApp:
 
         input_frame = ttk.Frame(content_pane)
         content_pane.add(input_frame, weight=1)
-
         ttk.Label(input_frame, text="ENTRADA (Linguagem Natural)",
                   style="SubHeader.TLabel").pack(anchor="w")
 
@@ -202,62 +133,31 @@ class ConHabApp:
         action_frame = ttk.Frame(input_frame)
         action_frame.pack(fill=tk.X, pady=(0, 15))
 
-        self.btn_process = ttk.Button(
-            action_frame, text="PROCESSAR CONVERSÃO", style="Accent.TButton", cursor="hand2",
-            command=self.process_language
-        )
+        self.btn_process = ttk.Button(action_frame, text="PROCESSAR CONVERSÃO",
+                                      style="Accent.TButton", cursor="hand2", command=self.process_language)
         self.btn_process.pack(side=tk.LEFT)
 
         self.progress_bar = ttk.Progressbar(
-            action_frame, orient="horizontal", mode="determinate", style="Horizontal.TProgressbar"
-        )
+            action_frame, orient="horizontal", mode="determinate", style="Horizontal.TProgressbar")
         self.progress_bar.pack(side=tk.LEFT, fill=tk.X,
                                expand=True, padx=(20, 0))
 
         output_frame = ttk.Frame(content_pane)
         content_pane.add(output_frame, weight=1)
-
         ttk.Label(output_frame, text="SAÍDA (Conlang)",
                   style="SubHeader.TLabel").pack(anchor="w")
 
         self.cl_output = self.create_styled_text(output_frame, height=8)
         self.cl_output.pack(fill=tk.BOTH, expand=True)
 
-    def setup_lexicon_tab(self):
-        columns = ("lemma", "word", "origin", "tags")
-        self.lexicon_tree = ttk.Treeview(
-            self.tab_lexicon, columns=columns, show="headings")
-
-        self.lexicon_tree.heading("lemma", text="Lema (Origem)")
-        self.lexicon_tree.heading("word", text="Palavra (Conlang)")
-        self.lexicon_tree.heading("origin", text="Origem")
-        self.lexicon_tree.heading("tags", text="Tags")
-
-        self.lexicon_tree.column("lemma", width=150)
-        self.lexicon_tree.column("word", width=150)
-        self.lexicon_tree.column("origin", width=100)
-        self.lexicon_tree.column("tags", width=200)
-
-        scrollbar = ttk.Scrollbar(
-            self.tab_lexicon, orient=tk.VERTICAL, command=self.lexicon_tree.yview)
-        self.lexicon_tree.configure(yscroll=scrollbar.set)
-
-        self.lexicon_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
-
     def create_styled_text(self, parent, height):
-        text_widget = scrolledtext.ScrolledText(
+        return scrolledtext.ScrolledText(
             parent, height=height, wrap=tk.WORD,
-            bg=self.colors["input_bg"],
-            fg=self.colors["fg_primary"],
-            insertbackground=self.colors["accent"],
-            font=("Consolas", 11),
-            borderwidth=0,
-            highlightthickness=1,
-            highlightbackground=self.colors["bg_sec"],
-            highlightcolor=self.colors["accent"]
+            bg=self.colors["input_bg"], fg=self.colors["fg_primary"],
+            insertbackground=self.colors["accent"], font=("Consolas", 11),
+            borderwidth=0, highlightthickness=1,
+            highlightbackground=self.colors["bg_sec"], highlightcolor=self.colors["accent"]
         )
-        return text_widget
 
     def load_conlangs(self):
         path = Path("./conlangs")
@@ -276,46 +176,41 @@ class ConHabApp:
     def on_profile_selected(self, event):
         selection = self.cl_selector.get()
         if selection:
-            try:
-                from engine import OriginalLanguageEngine
-                profile_path = Path("./conlangs") / selection
-                self.engine = OriginalLanguageEngine(profile_path)
-                stats = self.engine.get_statistics()
-                self.status_lbl.config(
-                    text=f"Carregado: {stats.get('profile_id')} | Vocabulário: {stats.get('cached_words')} palavras",
-                    foreground=self.colors["success"]
-                )
-                self.refresh_lexicon()
-            except Exception as e:
-                self.status_lbl.config(
-                    text="Erro ao carregar perfil", foreground=self.colors["error"])
-                messagebox.showerror(
-                    "Erro Crítico", f"Falha ao inicializar motor: {str(e)}")
+            self.loading_overlay.show("Carregando e indexando vocabulário...")
 
-    def refresh_lexicon(self):
-        for item in self.lexicon_tree.get_children():
-            self.lexicon_tree.delete(item)
+            thread = threading.Thread(
+                target=self._async_load_engine, args=(selection,))
+            thread.daemon = True
+            thread.start()
 
-        if not self.engine or not self.engine.word_cache:
-            return
+    def _async_load_engine(self, selection):
+        try:
+            from engine import OriginalLanguageEngine
+            profile_path = Path("./conlangs") / selection
+            
+            new_engine = OriginalLanguageEngine(profile_path)
+            stats = new_engine.get_statistics()
 
-        for lemma, entry in self.engine.word_cache.items():
-            if isinstance(entry, dict):
-                word = entry.get("default", "")
-                origin = entry.get("origin", "")
-                tags = ""
-                if "synsets" in entry:
-                    all_tags = []
-                    for s in entry["synsets"]:
-                        all_tags.extend(s.get("tags", []))
-                    tags = ", ".join(set(all_tags))
-            else:
-                word = str(entry)
-                origin = "legacy/unknown"
-                tags = ""
+            self.root.after(
+                0, lambda: self._on_engine_loaded(new_engine, stats))
+        except Exception as e:
+            self.root.after(0, lambda: self._on_load_error(e))
 
-            self.lexicon_tree.insert(
-                "", tk.END, values=(lemma, word, origin, tags))
+    def _on_engine_loaded(self, engine, stats):
+        self.engine = engine
+        self.status_lbl.config(
+            text=f"Carregado: {stats.get('profile_id')} | Vocabulário: {stats.get('cached_words')} palavras",
+            foreground=self.colors["success"]
+        )
+        self.lexicon_widget.refresh(self.engine)
+        self.loading_overlay.hide()
+
+    def _on_load_error(self, error):
+        self.loading_overlay.hide()
+        self.status_lbl.config(
+            text="Erro ao carregar perfil", foreground=self.colors["error"])
+        messagebox.showerror(
+            "Erro Crítico", f"Falha ao inicializar motor: {str(error)}")
 
     def process_language(self):
         if not self.engine:
@@ -336,9 +231,7 @@ class ConHabApp:
         self.progress_bar['maximum'] = 100
         self.progress_var.set(0)
 
-        thread = threading.Thread(
-            target=self._process_async, args=(text,)
-        )
+        thread = threading.Thread(target=self._process_async, args=(text,))
         thread.daemon = True
         thread.start()
 
@@ -369,7 +262,7 @@ class ConHabApp:
         self.cl_output.insert("1.0", result)
         self.btn_process['state'] = 'normal'
         self.progress_var.set(100)
-        self.refresh_lexicon()
+        self.lexicon_widget.refresh(self.engine)
 
     def _on_processing_error(self, error):
         self.cl_output.delete("1.0", tk.END)
