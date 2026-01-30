@@ -226,11 +226,12 @@ class LexiconTab(ttk.Frame):
         if self.engine and lemma in self.engine.word_cache:
             current_data = self.engine.word_cache[lemma]
             EditWordModal(self, self.colors, lemma,
-                          current_data, self.handle_save_word)
+                          current_data, self.engine, self.handle_save_word)
 
     def handle_save_word(self, lemma, new_data):
         if self.engine:
             self.engine.word_cache[lemma] = new_data
+            self.engine.save_word_cache()
             self.refresh(self.engine)
 
             for item in self.tree.get_children():
