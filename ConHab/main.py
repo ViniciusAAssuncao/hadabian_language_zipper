@@ -5,6 +5,7 @@ import threading
 import time
 
 from ui.lexicon import LexiconTab
+from ui.profile import ProfileTab
 from ui.spinner import LoadingOverlay
 
 
@@ -117,6 +118,9 @@ class ConHabApp:
         self.lexicon_widget = LexiconTab(self.notebook, self.colors)
         self.notebook.add(self.lexicon_widget, text="Léxico")
 
+        self.profile_widget = ProfileTab(self.notebook, self.colors)
+        self.notebook.add(self.profile_widget, text="Editor JSON")
+
     def setup_translation_tab(self):
         content_pane = ttk.PanedWindow(
             self.tab_translation, orient=tk.VERTICAL)
@@ -178,6 +182,9 @@ class ConHabApp:
         if selection:
             self.loading_overlay.show("Carregando e indexando vocabulário...")
 
+            profile_path = Path("./conlangs") / selection
+            self.profile_widget.load_profile(profile_path)
+
             thread = threading.Thread(
                 target=self._async_load_engine, args=(selection,))
             thread.daemon = True
@@ -187,7 +194,7 @@ class ConHabApp:
         try:
             from engine import OriginalLanguageEngine
             profile_path = Path("./conlangs") / selection
-            
+
             new_engine = OriginalLanguageEngine(profile_path)
             stats = new_engine.get_statistics()
 
