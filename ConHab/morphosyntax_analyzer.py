@@ -53,6 +53,46 @@ class VowelHarmonyHandler:
         return harmonized_suffix
 
 
+class PharyngealizationHandler:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.config = profile.get('pharyngealization', {})
+        self.enabled = self.config.get('enabled', False)
+        self.triggers = set(self.config.get('triggers', []))
+        self.affected_vowels = set(self.config.get('affected_vowels', []))
+        self.lowering_effect = self.config.get('lowering_effect', False)
+        self.mapping = {
+            'i': 'e', 'u': 'o', 'a': 'ɑ',
+            'I': 'E', 'U': 'O', 'A': 'Ɑ',
+            'í': 'é', 'ú': 'ó', 'á': 'ɑ́'
+        }
+
+    def apply_effect(self, word: str) -> str:
+        if not self.enabled or not self.lowering_effect or not word:
+            return word
+
+        word_list = list(word)
+        length = len(word_list)
+
+        for i, char in enumerate(word_list):
+            if char.lower() in self.affected_vowels:
+                triggered = False
+                if i > 0:
+                    prev_char = word_list[i-1].lower()
+                    if prev_char in self.triggers:
+                        triggered = True
+
+                if not triggered and i < length - 1:
+                    next_char = word_list[i+1].lower()
+                    if next_char in self.triggers:
+                        triggered = True
+
+                if triggered:
+                    word_list[i] = self.mapping.get(char, char)
+
+        return "".join(word_list)
+
+
 class ConsonantMutationHandler:
     def __init__(self, profile: Dict):
         self.profile = profile
@@ -63,26 +103,26 @@ class ConsonantMutationHandler:
     def apply_mutation(self, current_word: str, previous_word: Optional[str], previous_func: Optional[Dict]) -> str:
         if not self.enabled or not current_word:
             return current_word
-        
+
         if not previous_word and not previous_func:
             return current_word
 
         processed_word = current_word
-        
+
         for rule in self.rules:
             triggers = rule.get('triggers', {})
             mutations = rule.get('mutations', {})
             triggered = False
-            
+
             trigger_words = set(w.lower() for w in triggers.get('words', []))
             if previous_word and previous_word.lower() in trigger_words:
                 triggered = True
-            
+
             if not triggered and previous_func:
                 trigger_pos = set(triggers.get('pos', []))
                 if previous_func.get('pos') in trigger_pos:
                     triggered = True
-            
+
             if not triggered and previous_word:
                 trigger_ending_chars = triggers.get('ending_chars', [])
                 if trigger_ending_chars:
@@ -90,14 +130,14 @@ class ConsonantMutationHandler:
                         if previous_word.lower().endswith(char):
                             triggered = True
                             break
-            
+
             if triggered:
                 first_char = processed_word[0]
                 rest = processed_word[1:]
-                
+
                 is_upper = first_char.isupper()
                 lower_char = first_char.lower()
-                
+
                 if lower_char in mutations:
                     new_char = mutations[lower_char]
                     if is_upper:
@@ -105,6 +145,67 @@ class ConsonantMutationHandler:
                     processed_word = new_char + rest
 
         return processed_word
+
+
+class NegationHandler:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.config = profile.get('negation_system', {})
+        self.enabled = self.config.get('enabled', False)
+        self.strategies = self.config.get('strategies', [])
+        self.negation_triggers = {'não', 'nao', 'nem', 'jamais'}
+
+    def detect_negation(self, func: Dict, all_functions: List[Dict]) -> Tuple[bool, Optional[int], Optional[Dict]]:
+        if not self.enabled:
+            return False, None, None
+
+        my_index = func['index']
+        trigger_idx = None
+
+        for f in all_functions:
+            deps = f.get('dependencies', [])
+            if my_index in deps:
+                lemma = f.get('lemma', '').lower()
+                deprel = f.get('deprel', '').lower()
+                word = f.get('word', '').lower()
+
+                if lemma in self.negation_triggers or (deprel == 'advmod' and word in self.negation_triggers):
+                    trigger_idx = f['index']
+                    break
+
+        if trigger_idx is not None:
+            pos = func['pos']
+            for strategy in self.strategies:
+                stype = strategy.get('type')
+
+                if pos in {'VERB', 'AUX'} and stype == 'verbal_negation':
+                    return True, trigger_idx, strategy
+
+                if pos in {'NOUN', 'ADJ', 'PRON'} and stype == 'nominal_negation':
+                    return True, trigger_idx, strategy
+
+                if stype == 'emphatic_negation':
+                    trigger_word = next(
+                        (x['word'].lower() for x in all_functions if x['index'] == trigger_idx), '')
+                    if trigger_word in {'nunca', 'jamais', 'qatt'}:
+                        return True, trigger_idx, strategy
+
+        return False, None, None
+
+    def apply_negation(self, word: str, strategy: Dict) -> str:
+        marker = strategy.get('marker', '')
+        suffix = strategy.get('suffix', '')
+
+        res = word
+        if marker:
+            if suffix:
+                res = f"{marker}{res}{suffix}"
+            else:
+                res = f"{marker} {res}"
+        elif suffix:
+            res = f"{res}{suffix}"
+
+        return res
 
 
 class TAMHandler:
@@ -116,11 +217,42 @@ class TAMHandler:
         self.harmony_handler = VowelHarmonyHandler(profile)
         self.infer_imperative = self.config.get(
             'infer_imperative_from_context', False)
+        self.person_config = self.config.get('person_marking', {})
+        self.person_prefixes = self.person_config.get('prefixes', {})
+        self.person_suffixes = self.person_config.get('suffixes', {})
+        self.person_marking_enabled = self.person_config.get('enabled', False)
+
+    def _get_person_key(self, feats: Set[str]) -> str:
+        person = next((f.split('=')[1]
+                       for f in feats if f.startswith('Person=')), None)
+        number = next((f.split('=')[1]
+                       for f in feats if f.startswith('Number=')), None)
+        gender = next((f.split('=')[1]
+                       for f in feats if f.startswith('Gender=')), None)
+
+        if not person or not number:
+            return None
+
+        num_map = {'Sing': 'sg', 'Plur': 'pl', 'Dual': 'du'}
+        num_code = num_map.get(number, 'sg')
+
+        base_key = f"{person}{num_code}"
+
+        if gender:
+            gen_map = {'Masc': 'm', 'Fem': 'f', 'Neut': 'n'}
+            gen_code = gen_map.get(gender, '')
+            if gen_code:
+                complex_key = f"{base_key}_{gen_code}"
+                if complex_key in self.person_prefixes or complex_key in self.person_suffixes:
+                    return complex_key
+
+        return base_key
 
     def apply_tam(self, word: str, feats_str: str, func: Optional[Dict] = None, all_functions: Optional[List[Dict]] = None) -> str:
         if not self.enabled or not feats_str or feats_str == '_':
             return word
         feats = set(f.strip() for f in feats_str.split('|') if f.strip())
+
         if self.infer_imperative and func and all_functions:
             deprel = func.get('deprel', '')
             is_clause_head = deprel in {'root', 'parataxis', 'conj', 'ccomp'}
@@ -135,6 +267,7 @@ class TAMHandler:
                     break
             if is_clause_head and (not has_subject or subject_is_after):
                 feats.add('Mood=Imp')
+
         result = word
         for rule in self.rules:
             rule_feats = set(rule.get('features', []))
@@ -143,6 +276,7 @@ class TAMHandler:
                 m_type = rule.get('type', 'suffix')
                 if self.harmony_handler.enabled and m_type == 'suffix':
                     marker = self.harmony_handler.apply_harmony(result, marker)
+
                 if m_type == 'suffix':
                     result = result + marker
                 elif m_type == 'prefix':
@@ -151,6 +285,20 @@ class TAMHandler:
                     result = marker + ' ' + result
                 elif m_type == 'particle_after':
                     result = result + ' ' + marker
+
+        if self.person_marking_enabled:
+            key = self._get_person_key(feats)
+            if key:
+                prefix = self.person_prefixes.get(key, "")
+                suffix = self.person_suffixes.get(key, "")
+
+                if self.harmony_handler.enabled:
+                    if suffix:
+                        suffix = self.harmony_handler.apply_harmony(
+                            result, suffix)
+
+                result = f"{prefix}{result}{suffix}"
+
         return result
 
 
@@ -167,19 +315,19 @@ class GenderHandler:
     def infer_gender(self, word: str) -> str:
         if not self.enabled or not word:
             return self.default_gender
-        
+
         word_lower = word.lower()
         for rule in self.inference_rules:
             suffix = rule.get('suffix', '')
             if suffix and word_lower.endswith(suffix):
                 return rule.get('gender', self.default_gender)
-        
+
         return self.default_gender
 
     def apply_agreement(self, word: str, target_gender: str, pos: str) -> str:
         if not self.enabled or not target_gender:
             return word
-        
+
         marker_config = self.markers.get(target_gender)
         if not marker_config:
             return word
@@ -201,8 +349,103 @@ class GenderHandler:
             return word + marker
         elif position == 'prefix':
             return marker + word
-        
+
         return word
+
+
+class CopulaHandler:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.config = profile.get('copula_system', {})
+        self.enabled = self.config.get('enabled', False)
+        self.copulas = self.config.get('copulas', [])
+        self.pronominal_forms = profile.get(
+            'pronominal_system', {}).get('independent_pronouns', {})
+
+    def get_copula_form(self, func: Dict, all_functions: List[Dict], engine_ref=None) -> Optional[str]:
+        if not self.enabled:
+            return func.get('word')
+
+        feats = func.get('feats', '')
+        tense = 'Pres'
+        if 'Tense=Past' in feats or 'Tense=Imp' in feats:
+            tense = 'Past'
+        elif 'Tense=Fut' in feats:
+            tense = 'Fut'
+
+        subject_type = 'Noun'
+        subject_person = '3sg_m'
+
+        my_index = func['index']
+        for f in all_functions:
+            if my_index in f.get('dependencies', []) and 'nsubj' in f.get('deprel', ''):
+                if f.get('pos') == 'PRON':
+                    subject_type = 'Pronoun'
+
+                s_feats = f.get('feats', '')
+                person = next(
+                    (x.split('=')[1] for x in s_feats.split('|') if 'Person=' in x), '3')
+                number = next((x.split('=')[1] for x in s_feats.split(
+                    '|') if 'Number=' in x), 'Sing')
+                gender = next((x.split('=')[1] for x in s_feats.split(
+                    '|') if 'Gender=' in x), 'Masc')
+
+                num_map = {'Sing': 'sg', 'Plur': 'pl'}
+                gen_map = {'Masc': 'm', 'Fem': 'f'}
+
+                n_code = num_map.get(number, 'sg')
+                g_code = gen_map.get(gender, 'm')
+                subject_person = f"{person}{n_code}"
+                if n_code == 'sg' or person == '3':
+                    subject_person = f"{subject_person}_{g_code}"
+
+                if subject_person.endswith('_'):
+                    subject_person = subject_person[:-1]
+
+                break
+
+        selected_copula = None
+
+        for cop in self.copulas:
+            conditions = cop.get('conditions', [])
+            score = 0
+            required_score = len(conditions)
+
+            for cond in conditions:
+                if cond.startswith('Tense='):
+                    req_tense = cond.split('=')[1]
+                    if req_tense == tense:
+                        score += 1
+                elif cond.startswith('SubjectType='):
+                    req_type = cond.split('=')[1]
+                    if req_type == subject_type:
+                        score += 1
+
+            if score >= required_score:
+                selected_copula = cop
+                break
+
+        if not selected_copula:
+            default_cop = next((c for c in self.copulas if c.get(
+                'type') == 'present_default'), None)
+            selected_copula = default_cop
+
+        if not selected_copula:
+            return None
+
+        form = selected_copula.get('form', '')
+        if form == 'zero':
+            return None
+
+        if selected_copula.get('conjugates', False):
+            if selected_copula.get('type') == 'present_pronominal':
+                if subject_person in self.pronominal_forms:
+                    return self.pronominal_forms[subject_person]
+
+            if engine_ref and engine_ref.tam_handler:
+                form = engine_ref.tam_handler.apply_tam(form, feats)
+
+        return form
 
 
 class DependencyParser:
@@ -576,30 +819,87 @@ class CaseMorphology:
         self.harmony_enabled = self.harmony_config.get('enabled', False)
         self.vowel_harmony_handler = VowelHarmonyHandler(profile)
         self.alignment = profile.get('alignment', 'nominative-accusative')
+        self.semantic_config = profile.get('semantic_fields', {})
+        self.animate_domains = set(self.semantic_config.get(
+            'animate_domains', ['família', 'religião', 'human']))
+        self.manual_groups = self.semantic_config.get('manual_groups', {})
 
-    def _get_marker_config(self, key: str) -> Tuple[str, str]:
+    def _get_marker_config(self, key: str) -> Tuple[str, str, List[str], bool]:
         case_markers = self.case_system.get('markers', {})
         config = case_markers.get(key, '')
 
         default_pos = self.case_system.get('marker_position', 'suffix')
 
         if isinstance(config, dict):
-            return config.get('marker', ''), config.get('type', default_pos)
-        return config, default_pos
+            return (config.get('marker', ''),
+                    config.get('type', default_pos),
+                    config.get('conditions', []),
+                    config.get('shift_to_determiner', False))
+        return config, default_pos, [], False
 
-    def apply_case(self, word: str, function: str, word_order: str, deprel: str = '', clause_transitivity: bool = False) -> str:
+    def _is_animate(self, func_data: Dict) -> bool:
+        lemma = func_data.get('lemma', '').lower()
+        if lemma in self.manual_groups:
+            group = self.manual_groups[lemma]
+            if group in self.animate_domains:
+                return True
+
+        pos = func_data.get('pos', '')
+        if pos in {'PROPN', 'PRON'}:
+            return True
+
+        feats = func_data.get('feats', '')
+        if 'Animacy=Anim' in feats:
+            return True
+
+        return False
+
+    def _is_definite(self, func_data: Dict, all_functions: List[Dict] = None) -> bool:
+        feats = func_data.get('feats', '')
+        if 'Definite=Def' in feats:
+            return True
+
+        pos = func_data.get('pos', '')
+        if pos in {'PROPN', 'PRON'}:
+            return True
+
+        my_index = func_data.get('index')
+        if all_functions:
+            for f in all_functions:
+                if my_index in f.get('dependencies', []) and f.get('pos') == 'DET':
+                    f_feats = f.get('feats', '')
+                    if 'Definite=Def' in f_feats or 'PronType=Art' in f_feats:
+                        return True
+
+        return False
+
+    def apply_case(self, word: str, function: str, word_order: str, deprel: str = '', clause_transitivity: bool = False, func_data: Dict = None, all_functions: List[Dict] = None) -> str:
         if not self.enabled:
             return word
 
         if self.preposition_handling == 'none' and function not in {'SUBJECT', 'OBJECT', 'S', 'O'}:
             return word
-
-        marker_text = ''
-        marker_type = 'suffix'
         target_key = ''
+        current_deprel = deprel
+        current_function = function
+        if func_data and func_data.get('pos') == 'DET' and all_functions:
+            head_idx = func_data['dependencies'][0] if func_data['dependencies'] else -1
+            if head_idx != -1:
+                head_func = next(
+                    (f for f in all_functions if f['index'] == head_idx), None)
+                if head_func:
+                    current_deprel = head_func.get('deprel', '')
+                    current_function = head_func.get('function', '')
+                    effective_func_data = head_func
+                else:
+                    effective_func_data = func_data
+            else:
+                effective_func_data = func_data
+        else:
+            effective_func_data = func_data
 
-        if deprel:
-            core_dep = deprel.split(':')[0]
+        if current_deprel:
+            core_dep = current_deprel.split(':')[0]
             if core_dep == 'obj':
                 target_key = 'accusative'
                 if self.alignment == 'ergative-absolutive':
@@ -617,26 +917,69 @@ class CaseMorphology:
                     target_key = 'nominative'
 
         if not target_key:
-            if function == 'SUBJECT' or function == 'S':
+            if current_function in {'SUBJECT', 'S'}:
                 if self.alignment == 'ergative-absolutive':
                     target_key = 'ergative' if clause_transitivity else 'absolutive'
                 else:
                     target_key = 'nominative'
-            elif function == 'OBJECT' or function == 'O':
+            elif current_function in {'OBJECT', 'O'}:
                 if self.alignment == 'ergative-absolutive':
                     target_key = 'absolutive'
                 else:
                     target_key = 'accusative'
-            elif function == 'ADJUNCT' or function == 'ADJ':
+            elif current_function in {'ADJUNCT', 'ADJ'}:
                 target_key = 'locative'
                 if not self.case_system.get('markers', {}).get('locative'):
                     target_key = 'dative'
 
-        if target_key:
-            marker_text, marker_type = self._get_marker_config(target_key)
+        if not target_key:
+            return word
+
+        marker_text, marker_type, conditions, shift_to_determiner = self._get_marker_config(
+            target_key)
 
         if not marker_text:
             return word
+
+        conditions_met = True
+        if conditions and effective_func_data:
+            for cond in conditions:
+                if cond == 'animate':
+                    if not self._is_animate(effective_func_data):
+                        conditions_met = False
+                        break
+                elif cond == 'definite':
+                    if not self._is_definite(effective_func_data, all_functions):
+                        conditions_met = False
+                        break
+
+        if not conditions_met:
+            return word
+
+        is_det = func_data.get('pos') == 'DET' if func_data else False
+        is_noun = func_data.get('pos') in {
+            'NOUN', 'PROPN', 'PRON'} if func_data else False
+
+        if shift_to_determiner:
+            if is_noun and all_functions:
+                has_det = False
+                my_index = func_data.get('index')
+                for f in all_functions:
+                    if my_index in f.get('dependencies', []) and f.get('pos') == 'DET':
+                        has_det = True
+                        break
+                if has_det:
+                    return word
+
+            if is_det:
+                pass
+
+            if is_noun and not has_det:
+                pass
+            elif is_det:
+                pass
+            else:
+                return word
 
         if isinstance(marker_text, str) and marker_text.startswith('-'):
             marker_text = marker_text[1:]
@@ -659,3 +1002,62 @@ class CaseMorphology:
             return f"{word} {marker_text}"
 
         return word + marker_text
+
+
+class InterrogativeHandler:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.config = profile.get('interrogative_system', {})
+        self.enabled = self.config.get('enabled', False)
+        self.particles = self.config.get('question_particles', [])
+        self.detection_rules = self.config.get('detection_rules', {})
+
+    def is_yes_no_question(self, text: str) -> Tuple[bool, Optional[str]]:
+        if not self.enabled or not text:
+            return False, None
+
+        clean_text = text.strip()
+        if not clean_text.endswith('?'):
+            return False, None
+
+        wh_words = self.detection_rules.get('wh_words', [])
+        alternative_indicators = self.detection_rules.get(
+            'alternative_indicators', [])
+
+        lower_text = clean_text.lower()
+
+        for wh in wh_words:
+            if lower_text.startswith(wh):
+                return False, None
+
+        is_alternative = any(
+            ind in lower_text for ind in alternative_indicators)
+
+        if is_alternative:
+            return True, 'yes_no_alternative'
+
+        return True, 'yes_no'
+
+    def get_particle(self, q_type: str) -> str:
+        for p in self.particles:
+            if p.get('type') == q_type:
+                return p.get('particle', '')
+        if q_type == 'yes_no_alternative':
+            for p in self.particles:
+                if p.get('type') == 'yes_no':
+                    return p.get('particle', '')
+        return ""
+
+    def apply_particle(self, words: List[str], q_type: str) -> List[str]:
+        if not self.enabled:
+            return words
+
+        particle = self.get_particle(q_type)
+        if not particle:
+            return words
+
+        result = words.copy()
+        if result:
+            result.insert(0, particle)
+
+        return result
