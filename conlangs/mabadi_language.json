@@ -320,32 +320,7 @@
                 "meaning": "reflexive_derived",
                 "description": "Reflexivo derivado com prefixo ista-"
             }
-        ],
-        "root_registry": {
-            "escrever": "ktb",
-            "falar": "klm",
-            "saber": "ʔrf",
-            "ir": "dhb",
-            "vir": "ʔtj",
-            "fazer": "ʕml",
-            "comer": "ʔkl",
-            "beber": "šrb",
-            "dormir": "nwm",
-            "ver": "rwʔ",
-            "ouvir": "smʕ",
-            "dar": "ʕṭj",
-            "tomar": "ʔxḏ",
-            "casa": "bīt",
-            "homem": "rgl",
-            "mulher": "mrʔ",
-            "água": "mwh",
-            "fogo": "nwr",
-            "terra": "ʔrḍ",
-            "céu": "smw",
-            "sol": "šms",
-            "lua": "qmr",
-            "estrela": "nğm"
-        }
+        ]
     },
     "morphological_derivation": {
         "enabled": true,
@@ -440,7 +415,7 @@
         "source_suffixes": [
             {
                 "suffix": "mente",
-                "replacement": "",
+                "replacement": "iyya",
                 "input_pos": "ADV",
                 "target_pos": "ADJ",
                 "mode": "derive",
@@ -450,7 +425,7 @@
             },
             {
                 "suffix": "ção",
-                "replacement": "",
+                "replacement": "ījja",
                 "input_pos": "NOUN",
                 "target_pos": "VERB",
                 "mode": "derive",
@@ -460,7 +435,7 @@
             },
             {
                 "suffix": "dor",
-                "replacement": "",
+                "replacement": "ūr",
                 "input_pos": "NOUN",
                 "target_pos": "VERB",
                 "mode": "derive",
@@ -470,7 +445,7 @@
             },
             {
                 "suffix": "idade",
-                "replacement": "",
+                "replacement": "ta",
                 "input_pos": "NOUN",
                 "target_pos": "ADJ",
                 "mode": "derive",
@@ -480,13 +455,42 @@
             },
             {
                 "suffix": "ismo",
-                "replacement": "",
+                "replacement": "ti",
                 "input_pos": "NOUN",
                 "target_pos": "ADJ",
                 "mode": "derive",
                 "derivation_type": "abstract_noun",
                 "min_word_length": 6,
                 "priority": 8
+            },
+            {
+                "suffix": "cracia",
+                "replacement": "crajiiyn",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "mode": "stylize",
+                "derivation_type": "abstract_noun",
+                "min_word_length": 8,
+                "priority": 100,
+                "metadata": {
+                    "prefix": "Il-",
+                    "apply_article_assimilation": true,
+                    "phonetic_class": "sun_letter"
+                }
+            },
+            {
+                "suffix": "ia",
+                "replacement": "iyya",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "mode": "stylize",
+                "derivation_type": "abstract_noun",
+                "min_word_length": 4,
+                "priority": 90,
+                "metadata": {
+                    "vowel_harmony": true,
+                    "pharyngealization": false
+                }
             }
         ]
     },
@@ -547,6 +551,272 @@
                 "position": "prefix",
                 "force": false,
                 "description": "Particípio passivo"
+            }
+        ],
+        "source_suffixes": [
+            {
+                "suffix": "cracia",
+                "replacement": "krazzija",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 50,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "logia",
+                "replacement": "loġija",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 50,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "grafia",
+                "replacement": "grafija",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 50,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "metria",
+                "replacement": "metrija",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 50,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "fonia",
+                "replacement": "fonija",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 50,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "nomia",
+                "replacement": "nomija",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 50,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "scopia",
+                "replacement": "skopija",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 50,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "patia",
+                "replacement": "patija",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 50,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "filia",
+                "replacement": "filija",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 50,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "fobia",
+                "replacement": "fobija",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 50,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "teca",
+                "replacement": "teka",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 45,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "ção",
+                "replacement": "zzjoni",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 40,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "são",
+                "replacement": "zzjoni",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 40,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "zione",
+                "replacement": "zzjoni",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 40,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "tude",
+                "replacement": "tudni",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 40,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "dade",
+                "replacement": "tā",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 40,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "ismo",
+                "replacement": "iżmu",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 35,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "ista",
+                "replacement": "ista",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 35,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "ist",
+                "replacement": "ista",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 35,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "mento",
+                "replacement": "ment",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 35,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "al",
+                "replacement": "ali",
+                "input_pos": "ADJ",
+                "target_pos": "ADJ",
+                "priority": 30,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "vel",
+                "replacement": "bbli",
+                "input_pos": "ADJ",
+                "target_pos": "ADJ",
+                "priority": 30,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "ar",
+                "replacement": "ari",
+                "input_pos": "ADJ",
+                "target_pos": "ADJ",
+                "priority": 30,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "ico",
+                "replacement": "iku",
+                "input_pos": "ADJ",
+                "target_pos": "ADJ",
+                "priority": 30,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "ivo",
+                "replacement": "iv",
+                "input_pos": "ADJ",
+                "target_pos": "ADJ",
+                "priority": 30,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "oso",
+                "replacement": "uż",
+                "input_pos": "ADJ",
+                "target_pos": "ADJ",
+                "priority": 30,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "ar",
+                "replacement": "a",
+                "input_pos": "VERB",
+                "target_pos": "VERB",
+                "priority": 20,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "er",
+                "replacement": "a",
+                "input_pos": "VERB",
+                "target_pos": "VERB",
+                "priority": 20,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "ir",
+                "replacement": "ixxi",
+                "input_pos": "VERB",
+                "target_pos": "VERB",
+                "priority": 20,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "ia",
+                "replacement": "ija",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 10,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "io",
+                "replacement": "ju",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 10,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "o",
+                "replacement": "u",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 5,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "a",
+                "replacement": "a",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 5,
+                "mode": "adapt"
             }
         ]
     },
@@ -1206,8 +1476,8 @@
                 "triggers": {
                     "words": [
                         "min",
-                        "fi",
-                        "lil"
+                        "azj",
+                        "mʕa"
                     ],
                     "pos": [
                         "ADP"
@@ -1449,11 +1719,18 @@
             "os": "iln",
             "as": "iln",
             "e": "u",
+            "que": "li",
+            "em": "txi",
+            "ser": "ikunu",
+            "fazer": "jagħmel",
             "terra": "erdarar",
-            "planeta": "hadabī"
+            "planeta": "hadabī",
+            "jesus": "īasū",
+            "cristo": "driżi",
+            "eu": "jien",
+            "sob": "fiq"
         },
-        "definitions": {
-        }
+        "definitions": {}
     },
     "lexical_registers": {
         "enabled": true,
@@ -1590,6 +1867,10 @@
         "os": "iln",
         "as": "iln",
         "e": "u",
+        "que": "li",
+        "em": "txi",
+        "ser": "ikunu",
+        "fazer": "jagħmel",
         "terra": "erdarar",
         "planeta": "hadabī"
     },
