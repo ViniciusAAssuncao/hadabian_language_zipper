@@ -17,6 +17,45 @@ from morphosyntax_analyzer import (
 )
 
 
+class LexicalConfluenceHandler:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.config = profile.get('lexical_confluence', {})
+        self.enabled = self.config.get('enabled', False)
+        self.base_stability = self.config.get('base_stability', 100)
+        self.strata = self.config.get('strata', [])
+        self.sorted_strata = sorted(
+            self.strata, key=lambda x: x.get('weight', 0), reverse=True)
+
+    def determine_stratum(self, lemma: str, global_seed: int) -> Dict:
+        if not self.enabled:
+            return {'type': 'native'}
+
+        input_str = f"{lemma}_confluence_{global_seed}"
+        hash_obj = hashlib.sha256(input_str.encode())
+        hash_val = int(hash_obj.hexdigest(), 16)
+        roll = hash_val % 100
+
+        if roll < self.base_stability:
+            return {'type': 'native'}
+
+        current_threshold = self.base_stability
+        remaining_roll = roll - self.base_stability
+        total_strata_weight = sum(s.get('weight', 0) for s in self.strata)
+
+        if total_strata_weight > 0:
+            normalized_roll = (
+                remaining_roll / (100 - self.base_stability)) * total_strata_weight
+            running_sum = 0
+            for stratum in self.sorted_strata:
+                weight = stratum.get('weight', 0)
+                running_sum += weight
+                if normalized_roll < running_sum:
+                    return stratum
+
+        return {'type': 'native'}
+
+
 class AllomorphyHandler:
     def __init__(self, profile: Dict, phonology_handler):
         self.profile = profile
@@ -1612,7 +1651,9 @@ class OriginalLanguageEngine:
         self.lexical_registers = self.profile.get('lexical_registers', {})
         if not self.lexical_registers and 'lexical_registers_defaults' in self.profile:
             self.lexical_registers = self.profile['lexical_registers_defaults']
+        self.confluence_handler = LexicalConfluenceHandler(self.profile)
         self.word_cache: Dict[str, Union[str, Dict]] = {}
+        self.source_engines: Dict[str, 'OriginalLanguageEngine'] = {}
         self.preposition_handler = PrepositionHandler(self.profile)
         self.load_word_cache()
 
@@ -2240,6 +2281,37 @@ class OriginalLanguageEngine:
                     chars[idx_to_mutate] = new_char
         return "".join(chars)
 
+    def _fetch_source_word(self, source_id: str, lemma: str) -> str:
+        if source_id in self.source_engines:
+            engine = self.source_engines[source_id]
+            return engine._get_word_form(lemma)
+
+        possible_paths = [
+            Path(f"{source_id}.json"),
+            Path(f"./conlangs/{source_id}.json"),
+            Path(f"../conlangs/{source_id}.json"),
+            Path(f"cache/{source_id}.json")
+        ]
+
+        path_to_use = None
+        for p in possible_paths:
+            if p.exists():
+                path_to_use = str(p)
+                break
+
+        if path_to_use:
+            try:
+                new_engine = OriginalLanguageEngine(path_to_use)
+                self.source_engines[source_id] = new_engine
+                return new_engine._get_word_form(lemma)
+            except Exception:
+                pass
+
+        rng = random.Random(self.global_seed + sum(ord(c) for c in lemma))
+        fallback = "".join(rng.choice(list(self.phonotactics.get(
+            'consonants', 'bcdfghjklmnpqrstvwxz'))) for _ in range(5))
+        return fallback
+
     def _generate_word_from_seed(self, clean_word: str, seed: int, is_derived: bool = False, base_conlang_word: str = "") -> str:
         random.seed(seed)
         if is_derived and base_conlang_word:
@@ -2342,6 +2414,31 @@ class OriginalLanguageEngine:
             "default": "",
             "synsets": []
         }
+
+        if self.confluence_handler.enabled:
+            stratum = self.confluence_handler.determine_stratum(
+                clean_word, self.global_seed)
+            if stratum and stratum['type'] != 'native':
+                source_id = stratum.get('source_id')
+                source_word = self._fetch_source_word(source_id, clean_word)
+                nativized = self.phonology_handler.nativize_word(source_word)
+
+                mutation_intensity = stratum.get('mutation_intensity', 0)
+                if mutation_intensity > 0:
+                    mutation_seed = int(hashlib.sha256(
+                        f"{clean_word}_mutation_{self.global_seed}".encode()).hexdigest(), 16)
+                    rng_mut = random.Random(mutation_seed)
+                    if rng_mut.random() < mutation_intensity:
+                        nativized = self._mutate_word(nativized, mutation_seed)
+
+                entry["default"] = nativized
+                entry["synsets"].append({"word": nativized, "tags": [
+                                        "loanword", f"source:{source_id}"], "affinity": 1.0})
+                entry["origin"] = f"confluence_{source_id}"
+                self.word_cache[clean_word] = entry
+                self.save_word_cache()
+                return nativized
+
         manual_target = self.false_cognate_handler.get_manual_target(
             clean_word)
         collision_bucket = self.false_cognate_handler.should_collide_naturally(
