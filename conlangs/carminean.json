@@ -1,0 +1,802 @@
+{
+    "id": "carminean",
+    "name": "Carminês",
+    "native_name": "Karminische Sprache",
+    "family_node": "carminean",
+    "linguistic_family": "garmanic_trunk.json",
+    "lexical_influence": {
+        "enabled": true,
+        "sources": [
+            {
+                "language_id": "corimean_modern",
+                "weight": 0.68,
+                "type": "inheritance",
+                "description": "Base do Alto Corimês do Norte"
+            },
+            {
+                "language_id": "aidanese",
+                "weight": 0.32,
+                "type": "contact",
+                "description": "Influência forte do Aidanês por contato e evolução paralela"
+            }
+        ]
+    },
+    "shared_base_strength": 0.85,
+    "global_seed": 8520304419281900,
+    "source_language_order": "SVO",
+    "word_order": "SVO",
+    "subordinate_word_order": "SOV",
+    "alignment": "nominative-accusative",
+    "agglutination_strength": 0.58,
+    "divergence_factor": 0.16,
+    "cultural_purism": 0.60,
+    "phonotactics": {
+        "active_style": "standard_carminean",
+        "inventory_styles": {
+            "standard_carminean": {
+                "description": "Inventário padrão Carminês - meio-termo suave",
+                "consonants": "pbtdkgfvszšhmnlrwj",
+                "vowels": "aiueoäöüə"
+            },
+            "formal_northern": {
+                "description": "Registro formal mais conservador",
+                "consonants": "pbtdkgfvszšžhmnlrwj",
+                "vowels": "aiueoäöü"
+            },
+            "colloquial_soft": {
+                "description": "Coloquial suavizado",
+                "consonants": "pbtdkgfvszšhmnlrw",
+                "vowels": "aiueoə"
+            }
+        },
+        "vowels": "aiueoäöüə",
+        "consonants": "pbtdkgfvszšhmnlrwj",
+        "syllable_templates": [
+            "CV",
+            "CVC",
+            "CVCC",
+            "CCV",
+            "V",
+            "VC"
+        ],
+        "min_syllables": 1,
+        "max_syllables": 3,
+        "forbidden_initial_clusters": [
+            "tl",
+            "sr",
+            "zr",
+            "nm",
+            "pf",
+            "kg"
+        ],
+        "forbidden_final_consonants": [],
+        "max_consonant_cluster": 2,
+        "diphthongs": [
+            "ai",
+            "au",
+            "ei",
+            "eu",
+            "äu",
+            "oi"
+        ],
+        "epenthesis_vowel": "e",
+        "sonority_hierarchy": {
+            "enabled": true,
+            "scale": {
+                "p": 1,
+                "b": 1,
+                "t": 1,
+                "d": 1,
+                "k": 1,
+                "g": 1,
+                "f": 2,
+                "v": 2,
+                "s": 2,
+                "z": 2,
+                "š": 2,
+                "h": 2,
+                "m": 3,
+                "n": 3,
+                "l": 4,
+                "r": 5,
+                "w": 6,
+                "j": 6,
+                "a": 7,
+                "e": 7,
+                "i": 7,
+                "o": 7,
+                "u": 7
+            }
+        },
+        "sandhi": {
+            "enabled": true,
+            "rules": [
+                {
+                    "pattern": "ə\\s+([aiueo])",
+                    "replacement": "\\1",
+                    "description": "Elisão de schwa"
+                }
+            ]
+        },
+        "phonological_rules": [
+            {
+                "input": "VCV",
+                "output": "VCV",
+                "register": null
+            },
+            {
+                "input": "([bdg])$",
+                "output": "([ptk])$",
+                "register": "formal",
+                "description": "Desvozeamento final no formal, variável no coloquial"
+            },
+            {
+                "input": "ə$",
+                "output": "",
+                "register": "colloquial",
+                "description": "Queda de schwa final coloquial"
+            }
+        ],
+        "softening_processes": {
+            "description": "Processos de suavização vs Corimês",
+            "spirantization": "moderate",
+            "cluster_reduction": "optional",
+            "vowel_lengthening": "in_open_syllables"
+        }
+    },
+    "allomorphy": {
+        "enabled": false
+    },
+    "root_system": {
+        "enabled": false
+    },
+    "morphological_derivation": {
+        "enabled": true,
+        "root_based": false,
+        "max_depth": 3,
+        "exceptions": [
+            "de",
+            "die",
+            "das",
+            "ein",
+            "und",
+            "ist"
+        ],
+        "source_suffixes": [
+            {
+                "suffix": "ção",
+                "replacement": "ung",
+                "input_pos": "NOUN",
+                "target_pos": "VERB",
+                "priority": 90,
+                "mode": "derive"
+            },
+            {
+                "suffix": "dor",
+                "replacement": "er",
+                "input_pos": "NOUN",
+                "target_pos": "VERB",
+                "priority": 90,
+                "mode": "derive"
+            },
+            {
+                "suffix": "idade",
+                "replacement": "heit",
+                "input_pos": "NOUN",
+                "target_pos": "ADJ",
+                "priority": 85,
+                "mode": "derive"
+            }
+        ]
+    },
+    "affix_system": {
+        "enabled": true,
+        "derivation_rules": [
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "agent_doer",
+                "affix": "-er",
+                "position": "suffix",
+                "force": false
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "verbal_noun",
+                "affix": "-ung",
+                "position": "suffix",
+                "force": false
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "NOUN",
+                "type": "abstract_noun",
+                "affix": "-heit",
+                "position": "suffix",
+                "force": false
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "ADV",
+                "type": "adverbial",
+                "affix": "-lich",
+                "position": "suffix",
+                "force": false
+            }
+        ]
+    },
+    "gender_system": {
+        "enabled": true,
+        "genders": [
+            "masculine",
+            "feminine",
+            "neuter"
+        ],
+        "default": "masculine",
+        "description": "Três gêneros PRESERVADOS NO FORMAL, mas neutro perdido no coloquial",
+        "inference": [
+            {
+                "suffix": "er",
+                "gender": "masculine"
+            },
+            {
+                "suffix": "ar",
+                "gender": "masculine"
+            },
+            {
+                "suffix": "e",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "heit",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "ung",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "en",
+                "gender": "neuter"
+            },
+            {
+                "suffix": "chen",
+                "gender": "neuter"
+            }
+        ],
+        "markers": {
+            "masculine": {
+                "marker": "",
+                "position": "suffix",
+                "targets": [
+                    "ADJ",
+                    "DET"
+                ]
+            },
+            "feminine": {
+                "marker": "e",
+                "position": "suffix",
+                "targets": [
+                    "ADJ",
+                    "DET"
+                ]
+            },
+            "neuter": {
+                "marker": "",
+                "position": "suffix",
+                "targets": [
+                    "ADJ",
+                    "DET"
+                ]
+            }
+        },
+        "neuter_situation": {
+            "formal": "preserved",
+            "colloquial": "merged_with_masculine",
+            "description": "Diglossia: neutro mantido no formal, perdido no coloquial"
+        }
+    },
+    "number_system": {
+        "numbers": [
+            "singular",
+            "plural"
+        ],
+        "default": "singular",
+        "markers": {
+            "plural": {
+                "marker": "-en",
+                "alternatives": [
+                    "-e",
+                    "-er",
+                    "-s"
+                ]
+            },
+            "singular": {
+                "marker": ""
+            }
+        },
+        "umlaut_plurals": {
+            "enabled": true,
+            "patterns": [
+                {
+                    "singular": "a",
+                    "plural": "ä"
+                },
+                {
+                    "singular": "o",
+                    "plural": "ö"
+                },
+                {
+                    "singular": "u",
+                    "plural": "ü"
+                }
+            ],
+            "productivity": "medium_high"
+        }
+    },
+    "case_system": {
+        "enabled": true,
+        "cases": [
+            "nominative",
+            "accusative",
+            "genitive",
+            "dative"
+        ],
+        "marker_position": "mixed",
+        "preposition_handling": "coexist",
+        "description": "4 casos preservados no FORMAL, 2-3 no coloquial",
+        "markers": {
+            "nominative": {
+                "marker": "",
+                "type": "suffix",
+                "shift_to_determiner": true
+            },
+            "accusative": {
+                "marker": "-(e)n",
+                "type": "suffix",
+                "conditions": [
+                    "animate",
+                    "definite"
+                ],
+                "shift_to_determiner": true
+            },
+            "genitive": {
+                "marker": "-(e)s",
+                "type": "suffix",
+                "conditions": [],
+                "shift_to_determiner": false,
+                "register": "formal"
+            },
+            "dative": {
+                "marker": "-(e)m",
+                "type": "suffix",
+                "shift_to_determiner": true
+            }
+        },
+        "article_declension": {
+            "enabled": true,
+            "definite": {
+                "nom_m": "der",
+                "acc_m": "den",
+                "gen_m": "des",
+                "dat_m": "dem",
+                "nom_f": "die",
+                "acc_f": "die",
+                "gen_f": "der",
+                "dat_f": "der",
+                "nom_n": "das",
+                "acc_n": "das",
+                "gen_n": "des",
+                "dat_n": "dem",
+                "nom_pl": "die",
+                "acc_pl": "die",
+                "gen_pl": "der",
+                "dat_pl": "den"
+            },
+            "indefinite": {
+                "nom_m": "ein",
+                "acc_m": "einen",
+                "gen_m": "eines",
+                "dat_m": "einem",
+                "nom_f": "eine",
+                "acc_f": "eine",
+                "gen_f": "einer",
+                "dat_f": "einer",
+                "nom_n": "ein",
+                "acc_n": "ein",
+                "gen_n": "eines",
+                "dat_n": "einem"
+            }
+        },
+        "register_variation": {
+            "formal": "four_cases_full",
+            "colloquial": "nominative_accusative_dative_only",
+            "genitive_replacement_colloquial": "von + dative"
+        }
+    },
+    "determiner_system": {
+        "definite_article": {
+            "form": "der",
+            "variants": [
+                "die",
+                "das"
+            ],
+            "procliticizes": false
+        },
+        "demonstratives": {
+            "gender_inheritance_heuristic": true,
+            "proximal": {
+                "sg_m": "dieser",
+                "sg_f": "diese",
+                "sg_n": "dieses",
+                "pl": "diese"
+            },
+            "distal": {
+                "sg_m": "jener",
+                "sg_f": "jene",
+                "sg_n": "jenes",
+                "pl": "jene"
+            }
+        },
+        "possessives": {
+            "pronominal_suffixes": false,
+            "suppress_article": true,
+            "independent_forms": {
+                "1sg": "mein",
+                "2sg": "dein",
+                "3sg_m": "sein",
+                "3sg_f": "ihr",
+                "3sg_n": "sein",
+                "1pl": "unser",
+                "2pl": "euer",
+                "3pl": "ihr"
+            }
+        }
+    },
+    "pronominal_system": {
+        "independent_pronouns": {
+            "1sg": "ich",
+            "2sg": "du",
+            "3sg_m": "er",
+            "3sg_f": "sie",
+            "3sg_n": "es",
+            "1pl": "wir",
+            "2pl": "ihr",
+            "3pl": "sie"
+        },
+        "object_pronouns": {
+            "accusative": {
+                "1sg": "mich",
+                "2sg": "dich",
+                "3sg_m": "ihn",
+                "3sg_f": "sie",
+                "3sg_n": "es",
+                "1pl": "uns",
+                "2pl": "euch",
+                "3pl": "sie"
+            },
+            "dative": {
+                "1sg": "mir",
+                "2sg": "dir",
+                "3sg_m": "ihm",
+                "3sg_f": "ihr",
+                "3sg_n": "ihm",
+                "1pl": "uns",
+                "2pl": "euch",
+                "3pl": "ihnen"
+            }
+        }
+    },
+    "adposition_system": {
+        "case_government": {
+            "enabled": true,
+            "prepositions": {
+                "mit": "dative",
+                "von": "dative",
+                "zu": "dative",
+                "bei": "dative",
+                "nach": "dative",
+                "aus": "dative",
+                "für": "accusative",
+                "durch": "accusative",
+                "gegen": "accusative",
+                "um": "accusative",
+                "an": "two_way",
+                "auf": "two_way",
+                "in": "two_way"
+            }
+        }
+    },
+    "tam_system": {
+        "enabled": true,
+        "infer_imperative_from_context": true,
+        "person_marking": {
+            "enabled": true,
+            "prefixes": {},
+            "suffixes": {
+                "1sg": "-e",
+                "2sg": "-st",
+                "3sg": "-t",
+                "1pl": "-en",
+                "2pl": "-t",
+                "3pl": "-en"
+            }
+        },
+        "rules": [
+            {
+                "features": [
+                    "Tense=Pres"
+                ],
+                "marker": "",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Past"
+                ],
+                "marker": "-te",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "VerbForm=Part",
+                    "Tense=Past"
+                ],
+                "marker": "ge-",
+                "type": "prefix"
+            },
+            {
+                "features": [
+                    "Mood=Imp"
+                ],
+                "marker": "",
+                "type": "suffix"
+            }
+        ],
+        "strong_verbs": {
+            "enabled": true,
+            "productivity": "medium",
+            "description": "Verbos fortes preservados melhor que Aidanês, pior que Corimês"
+        }
+    },
+    "copula_system": {
+        "enabled": true,
+        "copulas": [
+            {
+                "type": "default",
+                "form": "sein",
+                "conjugates": true
+            }
+        ]
+    },
+    "negation_system": {
+        "enabled": true,
+        "strategies": [
+            {
+                "type": "verbal_negation",
+                "marker": "nicht",
+                "suffix": ""
+            },
+            {
+                "type": "nominal_negation",
+                "marker": "kein",
+                "suffix": ""
+            }
+        ]
+    },
+    "interrogative_system": {
+        "enabled": true,
+        "v2_inversion": true
+    },
+    "vowel_harmony": {
+        "enabled": false
+    },
+    "consonant_mutation": {
+        "enabled": false
+    },
+    "pharyngealization": {
+        "enabled": false
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "fixed",
+        "position": "initial",
+        "graphic_accent": false
+    },
+    "reduplication": {
+        "enabled": false
+    },
+    "topicalization": {
+        "enabled": true,
+        "topic_marker": "",
+        "position": "initial"
+    },
+    "focus_structure": {
+        "enabled": false
+    },
+    "agreement_rules": {
+        "gender_agreement": true,
+        "number_agreement": true,
+        "person_agreement": true,
+        "adjunct_position": "auto"
+    },
+    "pro_drop": {
+        "enabled": false
+    },
+    "drop_articles": false,
+    "degree_system": {
+        "enabled": true,
+        "rules": {
+            "comparative": {
+                "affix": "-er",
+                "position": "suffix"
+            },
+            "superlative": {
+                "affix": "-st",
+                "position": "suffix"
+            },
+            "diminutive": {
+                "affix": "-chen",
+                "position": "suffix"
+            }
+        }
+    },
+    "semantic_fields": {
+        "enabled": true,
+        "use_nltk": false
+    },
+    "polysemy_rules": {
+        "enabled": false
+    },
+    "false_cognates": {
+        "enabled": false
+    },
+    "loanword_policy": {
+        "enabled": true,
+        "modes": {
+            "phonetic_adaptation": 0.52,
+            "calque": 0.32,
+            "semantic_extension": 0.16
+        },
+        "description": "Meio-termo entre purismo Corimês e receptividade Aidanês"
+    },
+    "compounding": {
+        "enabled": true,
+        "productivity": "high",
+        "description": "Composição alta, mas menos que Corimês"
+    },
+    "v2_constraint": {
+        "enabled": true,
+        "description": "V2 em orações principais, opcional em coloquial",
+        "main_clause": true,
+        "subordinate_clause": false,
+        "register_variation": {
+            "formal": "strict_v2",
+            "colloquial": "v2_or_svo"
+        }
+    },
+    "sov_retention": {
+        "enabled": true,
+        "contexts": [
+            "subordinate_formal",
+            "very_formal_main"
+        ],
+        "description": "SOV opcional em contextos formais, especialmente subordinadas"
+    },
+    "verb_cluster": {
+        "enabled": true,
+        "position": "clause_final",
+        "register": "formal"
+    },
+    "abstract_concepts": {
+        "enabled": true,
+        "mappings": {}
+    },
+    "lexical_registers": {
+        "enabled": true,
+        "registers": [
+            {
+                "name": "archaic",
+                "chance": 0.10,
+                "mutation_factor": 0.35,
+                "description": "Arcaísmos preservados como sinônimos formais"
+            },
+            {
+                "name": "formal",
+                "chance": 0.33,
+                "mutation_factor": 0.75
+            },
+            {
+                "name": "colloquial",
+                "chance": 0.40,
+                "mutation_factor": 1.45
+            },
+            {
+                "name": "vulgar",
+                "chance": 0.10,
+                "mutation_factor": 2.20
+            },
+            {
+                "name": "northern_noble",
+                "chance": 0.07,
+                "mutation_factor": 0.55,
+                "description": "Dialeto nobre da Carmina Corimêsa"
+            }
+        ]
+    },
+    "synonym_pairs": {
+        "enabled": true,
+        "description": "Muitas palavras têm pares: forma Corimês arcaica + forma Aidanês moderna",
+        "examples": [
+            {
+                "archaic_corimean": "fahren",
+                "modern_aidanese": "reisen",
+                "meaning": "viajar"
+            },
+            {
+                "archaic_corimean": "sprechen",
+                "modern_aidanese": "sagen",
+                "meaning": "falar"
+            }
+        ]
+    },
+    "functional_particles": {},
+    "numeric_handling": {
+        "ignore_digits": true
+    },
+    "style": {
+        "capitalization": true,
+        "sentence_terminators": [
+            ".",
+            "!",
+            "?"
+        ],
+        "secondary_terminators": [
+            ":",
+            ";"
+        ],
+        "punctuation_map": {
+            ",": ",",
+            ".": ".",
+            "!": "!",
+            "?": "?",
+            "\"": "„"
+        },
+        "noun_capitalization": true
+    },
+    "design_notes": {
+        "character": "Meio-termo harmonioso, ponte natural, elegância conservadora",
+        "position": "Entre Corimês (bronco/complexo) e Aidanês (suave/simples)",
+        "key_features": [
+            "Aglutinação REDUZIDA mas não eliminada (0.58 vs 0.82 Corimês, 0.0 Aidanês)",
+            "SOV opcional em contextos formais",
+            "V2 mantido mas flexível",
+            "Neutro preservado formalmente, perdido coloquialmente",
+            "4 casos em formal, 2-3 em coloquial",
+            "Verbos fortes mais comuns que Aidanês",
+            "Composição alta",
+            "Clusters simplificados vs Corimês",
+            "Sinônimos: arcaísmo Corimês + modernismo Aidanês",
+            "Pronúncia mais suave que Corimês"
+        ],
+        "intelligibility_notes": {
+            "with_corimean": "88-92% - Carminês soa como 'Corimês suavizado'",
+            "with_aidanese": "94-96% - Inteligibilidade muito alta, diferenças mínimas",
+            "aidanese_carminean_mutual": "Menos estranhamento entre si do que cada um com Corimês",
+            "perception": "Língua de ponte, dialeto nobre, elegante mas não pretensioso"
+        },
+        "sociolinguistic_situation": {
+            "official_status": "Sem padronização forte",
+            "perception": "Dialeto nobre do Corimês",
+            "speakers": "Carmina Corimêsa (norte de Aidan)",
+            "relationship_with_aidanese": "Evolução paralela, influência mútua forte",
+            "prestige": "Alto - nobreza local, classe educada"
+        },
+        "diglossia": {
+            "high": "Formal conservador com 4 casos, 3 gêneros, SOV/V2",
+            "low": "Coloquial simplificado próximo ao Aidanês",
+            "description": "Diglossia interna forte"
+        }
+    }
+}

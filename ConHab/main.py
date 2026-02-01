@@ -201,7 +201,7 @@ class ConHabApp:
             self.root.after(
                 0, lambda: self._on_engine_loaded(new_engine, stats))
         except Exception as e:
-            self.root.after(0, lambda: self._on_load_error(e))
+            self.root.after(0, self._on_load_error, e)
 
     def _on_engine_loaded(self, engine, stats):
         self.engine = engine
@@ -262,7 +262,7 @@ class ConHabApp:
             self.root.after(0, lambda: self._on_processing_done(final_result))
 
         except Exception as e:
-            self.root.after(0, lambda: self._on_processing_error(e))
+            self.root.after(0, self._on_processing_error, e)
 
     def _on_processing_done(self, result):
         self.cl_output.delete("1.0", tk.END)

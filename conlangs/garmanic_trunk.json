@@ -1,0 +1,803 @@
+{
+    "family_id": "garmanic_trunk",
+    "description": "Tronco das línguas garmânicas de Aendur Norte, família linguística germânica adaptada com mais de 3.000 anos de história documentada. Sistema de casos complexo com desenvolvimento de ordem SOV arcaica evoluindo para mista, forte aglutinação e gênero tripartite com tendências de simplificação.",
+    "proto_languages": [
+        {
+            "id": "proto-garmanic",
+            "level": 0,
+            "description": "Proto-Garmânico (aprox. 3.200 anos atrás), língua ancestral surgida nas planícies do norte de Aendur. Sistema consonantal rico com fricativas, oclusivas aspiradas e distinção fortis-lenis. Ordem SOV estrita com V2 em principais.",
+            "shared_phonotactics": {
+                "vowels": "aiueoāīūēōäöü",
+                "consonants": "pbtdkgfvszšžxhmnlrwj",
+                "syllable_templates": [
+                    "CV",
+                    "CVC",
+                    "CVCC",
+                    "CCV",
+                    "CCVC",
+                    "V",
+                    "VC"
+                ],
+                "forbidden_initial_clusters": [
+                    "tl",
+                    "dl",
+                    "sr",
+                    "zr",
+                    "nm",
+                    "lr"
+                ],
+                "forbidden_final_consonants": [
+                    "h"
+                ],
+                "max_consonant_cluster": 3,
+                "diphthongs": [
+                    "ai",
+                    "au",
+                    "ei",
+                    "eu",
+                    "oi",
+                    "ou",
+                    "äu",
+                    "öi"
+                ],
+                "triphthongs": []
+            },
+            "shared_lexicon_strength": 0.22,
+            "agglutination_strength": 0.92,
+            "gender_system": {
+                "enabled": true,
+                "genders": [
+                    "masculine",
+                    "feminine",
+                    "neuter"
+                ],
+                "default": "masculine",
+                "inference": [
+                    {
+                        "suffix": "r",
+                        "gender": "masculine"
+                    },
+                    {
+                        "suffix": "ar",
+                        "gender": "masculine"
+                    },
+                    {
+                        "suffix": "a",
+                        "gender": "feminine"
+                    },
+                    {
+                        "suffix": "e",
+                        "gender": "feminine"
+                    },
+                    {
+                        "suffix": "t",
+                        "gender": "neuter"
+                    },
+                    {
+                        "suffix": "en",
+                        "gender": "neuter"
+                    },
+                    {
+                        "suffix": "um",
+                        "gender": "neuter"
+                    }
+                ]
+            },
+            "case_system_proto": {
+                "cases": [
+                    "nominative",
+                    "accusative",
+                    "genitive",
+                    "dative"
+                ],
+                "markers": {
+                    "nominative": "",
+                    "accusative": "-(e)n",
+                    "genitive": "-(e)s",
+                    "dative": "-(e)m"
+                }
+            },
+            "verbal_system_proto": {
+                "strong_verb_classes": 7,
+                "weak_verb_classes": 3,
+                "aspects": [
+                    "perfective",
+                    "imperfective"
+                ],
+                "moods": [
+                    "indicative",
+                    "subjunctive",
+                    "imperative",
+                    "optative"
+                ],
+                "tenses_derived": [
+                    "present",
+                    "preterite",
+                    "perfect"
+                ],
+                "person_markers": {
+                    "1sg": {
+                        "suffix": "-u"
+                    },
+                    "2sg": {
+                        "suffix": "-is(t)"
+                    },
+                    "3sg": {
+                        "suffix": "-it"
+                    },
+                    "1pl": {
+                        "suffix": "-um"
+                    },
+                    "2pl": {
+                        "suffix": "-it"
+                    },
+                    "3pl": {
+                        "suffix": "-ant"
+                    }
+                }
+            },
+            "nominal_patterns": [
+                {
+                    "pattern": "CVC",
+                    "type": "strong_masculine"
+                },
+                {
+                    "pattern": "CVCa",
+                    "type": "weak_feminine"
+                },
+                {
+                    "pattern": "CVCen",
+                    "type": "weak_neuter"
+                },
+                {
+                    "pattern": "CVC-er",
+                    "type": "agent_masculine"
+                }
+            ],
+            "ablaut_system": {
+                "enabled": true,
+                "strong_verb_series": [
+                    {
+                        "class": "I",
+                        "series": [
+                            "ī",
+                            "ai",
+                            "i",
+                            "i"
+                        ]
+                    },
+                    {
+                        "class": "II",
+                        "series": [
+                            "ū",
+                            "au",
+                            "u",
+                            "u"
+                        ]
+                    },
+                    {
+                        "class": "III",
+                        "series": [
+                            "e",
+                            "a",
+                            "u",
+                            "u"
+                        ]
+                    },
+                    {
+                        "class": "IV",
+                        "series": [
+                            "e",
+                            "a",
+                            "ē",
+                            "u"
+                        ]
+                    },
+                    {
+                        "class": "V",
+                        "series": [
+                            "e",
+                            "a",
+                            "ē",
+                            "e"
+                        ]
+                    },
+                    {
+                        "class": "VI",
+                        "series": [
+                            "a",
+                            "ō",
+                            "ō",
+                            "a"
+                        ]
+                    },
+                    {
+                        "class": "VII",
+                        "series": [
+                            "reduplication"
+                        ]
+                    }
+                ]
+            },
+            "umlaut_processes": {
+                "enabled": true,
+                "i_umlaut": {
+                    "a": "ä",
+                    "o": "ö",
+                    "u": "ü",
+                    "au": "äu"
+                },
+                "triggers": [
+                    "i",
+                    "j"
+                ]
+            },
+            "stress_system_proto": {
+                "type": "fixed",
+                "position": "initial",
+                "secondary_stress": "penultimate_in_compounds"
+            },
+            "compounding": {
+                "enabled": true,
+                "productivity": "very_high",
+                "head_position": "final",
+                "linking_elements": [
+                    "s",
+                    "es",
+                    "en",
+                    "er"
+                ]
+            }
+        },
+        {
+            "id": "early-garmanic",
+            "parent_id": "proto-garmanic",
+            "level": 1,
+            "description": "Garmânico Antigo (aprox. 2.800-1.800 anos atrás). Primeira forma atestada em runas, desenvolvimento do sistema V2 em orações principais, simplificação inicial do sistema de casos.",
+            "shared_phonotactics": {
+                "vowels": "aiueoāīūēōäöü",
+                "consonants": "pbtdkgfvszšžxhmnlrwj",
+                "syllable_templates": [
+                    "CV",
+                    "CVC",
+                    "CVCC",
+                    "CCV",
+                    "CCVC",
+                    "V"
+                ],
+                "forbidden_initial_clusters": [
+                    "tl",
+                    "dl",
+                    "sr",
+                    "zr"
+                ],
+                "forbidden_final_consonants": [
+                    "h"
+                ],
+                "diphthongs": [
+                    "ai",
+                    "au",
+                    "ei",
+                    "eu",
+                    "oi",
+                    "ou"
+                ]
+            },
+            "shared_lexicon_strength": 0.70,
+            "agglutination_strength": 0.88,
+            "innovations": [
+                "v2_word_order_development",
+                "dative_genitive_merger_initial",
+                "preterite_present_verbs",
+                "definite_article_emergence",
+                "consonant_gemination_phonemic"
+            ],
+            "sound_changes_from_parent": [
+                {
+                    "from": "ā",
+                    "to": "ō",
+                    "condition": "before_nasal"
+                },
+                {
+                    "from": "ai",
+                    "to": "ē",
+                    "condition": "word_final"
+                },
+                {
+                    "from": "au",
+                    "to": "ō",
+                    "condition": "before_dental"
+                }
+            ],
+            "v2_constraint": {
+                "enabled": true,
+                "main_clauses": true,
+                "subordinate_clauses": false,
+                "verb_position": 2
+            }
+        },
+        {
+            "id": "middle-garmanic",
+            "parent_id": "early-garmanic",
+            "level": 2,
+            "description": "Garmânico Médio (aprox. 1.800-800 anos atrás). Período de grande diversificação dialetal, redução vocálica em sílabas átonas, expansão do artigo definido.",
+            "shared_phonotactics": {
+                "vowels": "aiueoäöüə",
+                "consonants": "pbtdkgfvszšžxhmnlrwj",
+                "syllable_templates": [
+                    "CV",
+                    "CVC",
+                    "CVCC",
+                    "CCV"
+                ],
+                "forbidden_initial_clusters": [
+                    "tl",
+                    "sr"
+                ],
+                "forbidden_final_consonants": [],
+                "diphthongs": [
+                    "ai",
+                    "au",
+                    "ei",
+                    "eu",
+                    "ou"
+                ]
+            },
+            "shared_lexicon_strength": 0.75,
+            "agglutination_strength": 0.80,
+            "innovations": [
+                "schwa_development_unstressed",
+                "case_syncretism_advanced",
+                "analytic_tendency_increase",
+                "definite_article_mandatory",
+                "weak_adjective_declension"
+            ],
+            "sound_changes_middle": [
+                {
+                    "from": "unstressed_vowel",
+                    "to": "ə",
+                    "condition": "non_final"
+                },
+                {
+                    "from": "final_-e",
+                    "to": "ə",
+                    "condition": "all"
+                },
+                {
+                    "from": "geminate",
+                    "to": "single",
+                    "condition": "after_long_vowel"
+                }
+            ],
+            "dialectal_variation": {
+                "enabled": true,
+                "variation_axes": [
+                    "geographical",
+                    "social",
+                    "temporal"
+                ],
+                "major_dialects": [
+                    {
+                        "name": "northern_high",
+                        "description": "Dialeto Alto do Norte, base do Alto Corimês. Conservador em fonologia.",
+                        "phonological_features": [
+                            "retention_of_long_vowels",
+                            "umlaut_productive",
+                            "final_devoicing"
+                        ]
+                    },
+                    {
+                        "name": "northern_low",
+                        "description": "Dialeto Baixo do Norte, mais inovador. Base do Baixo Corimês.",
+                        "phonological_features": [
+                            "vowel_shortening",
+                            "palatalization_advanced",
+                            "consonant_lenition"
+                        ]
+                    },
+                    {
+                        "name": "southern",
+                        "description": "Dialeto do Sul (Ágrio), com características únicas.",
+                        "phonological_features": [
+                            "monophthongization",
+                            "rhotacism",
+                            "stress_shift_variable"
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "id": "proto-corimean",
+            "parent_id": "middle-garmanic",
+            "level": 3,
+            "description": "Proto-Corimês (aprox. 800-400 anos atrás). Ancestral direto das línguas corimêsas modernas. Consolidação das características que definem o continuum corimês.",
+            "shared_phonotactics": {
+                "vowels": "aiueoäöüə",
+                "consonants": "pbtdkgfvszšžçxhmnlrwj",
+                "syllable_templates": [
+                    "CV",
+                    "CVC",
+                    "CVCC",
+                    "CCV"
+                ],
+                "forbidden_initial_clusters": [
+                    "tl"
+                ],
+                "forbidden_final_consonants": [],
+                "diphthongs": [
+                    "ai",
+                    "au",
+                    "ei",
+                    "eu",
+                    "äu"
+                ]
+            },
+            "shared_lexicon_strength": 0.82,
+            "agglutination_strength": 0.75,
+            "innovations": [
+                "three_gender_system_stable",
+                "case_four_way_maintained",
+                "sov_main_svo_subordinate_split",
+                "umlaut_morphological_marker",
+                "diminutive_augmentative_productive"
+            ],
+            "gender_neutralization_resistance": {
+                "description": "Resistência à perda do neutro, diferentemente de evoluções posteriores",
+                "neuter_stability": 0.95
+            }
+        }
+    ],
+    "branches": [
+        {
+            "id": "high-corimean-north",
+            "parent_id": "proto-corimean",
+            "description": "Ramo Alto Corimês do Norte. Conservador, base da língua padrão. Mantém maior aglutinação e características SOV.",
+            "shared_lexicon_strength": 0.88,
+            "agglutination_strength": 0.82,
+            "distinctive_features": [
+                "sov_preference_maintained",
+                "case_system_four_full",
+                "umlaut_highly_productive",
+                "compound_words_extensive",
+                "archaic_vocabulary_preserved"
+            ]
+        },
+        {
+            "id": "low-corimean-north",
+            "parent_id": "proto-corimean",
+            "description": "Ramo Baixo Corimês do Norte. Mais analítico, com tendências SVO mais fortes.",
+            "shared_lexicon_strength": 0.85,
+            "agglutination_strength": 0.70,
+            "distinctive_features": [
+                "svo_tendency_stronger",
+                "case_merger_dative_accusative",
+                "analytic_comparison",
+                "auxiliary_verb_expansion",
+                "palatalization_extensive"
+            ]
+        },
+        {
+            "id": "southern-corimean",
+            "parent_id": "proto-corimean",
+            "description": "Ramo Corimês do Sul (Dialeto Ágrio). Características únicas, falado em Harvéstia e Galécia.",
+            "shared_lexicon_strength": 0.80,
+            "agglutination_strength": 0.68,
+            "distinctive_features": [
+                "vowel_harmony_traces",
+                "rhotacism_systematic",
+                "stress_mobile",
+                "loanwords_romance_harvestan",
+                "verb_second_relaxed"
+            ]
+        },
+        {
+            "id": "transitional-stüberian",
+            "parent_id": "high-corimean-north",
+            "description": "Ramo Transicional Stüberano (Dialeto de Gönda). Ponte entre Alto Corimês e Aidanês, com características mistas de Baixo e Alto.",
+            "shared_lexicon_strength": 0.86,
+            "agglutination_strength": 0.65,
+            "distinctive_features": [
+                "mixed_high_low_features",
+                "neuter_weakening_initial",
+                "sov_svo_variation_high",
+                "simplification_morphology_moderate",
+                "loanword_receptivity_high"
+            ]
+        },
+        {
+            "id": "aidanese",
+            "parent_id": "transitional-stüberian",
+            "description": "Ramo Aidanês. Língua oficial do Império de Aidan. Altamente inteligível com Corimês Moderno mas considerada língua distinta.",
+            "shared_lexicon_strength": 0.84,
+            "agglutination_strength": 0.45,
+            "distinctive_features": [
+                "agglutination_lost_completely",
+                "sov_traces_eliminated",
+                "svo_strict_order",
+                "neuter_gender_lost",
+                "masculine_assumes_neuter_role",
+                "archaisms_eliminated",
+                "loanwords_massive_aendur_central_sul",
+                "analytic_morphology_dominant",
+                "periphrastic_constructions_expanded"
+            ]
+        },
+        {
+            "id": "carminean",
+            "parent_id": "high-corimean-north",
+            "description": "Ramo Carminês. Língua da Carmina Corimêsa, ao norte de Aidan. Evolução paralela com Aidanês mas mais conservadora.",
+            "shared_lexicon_strength": 0.85,
+            "agglutination_strength": 0.58,
+            "distinctive_features": [
+                "aidanese_lexical_influence_strong",
+                "agglutination_reduced_not_eliminated",
+                "sov_optional_formal_contexts",
+                "svo_dominant_colloquial",
+                "neuter_preserved_formal_lost_colloquial",
+                "archaism_synonym_pairs",
+                "pronunciation_softer_than_corimean",
+                "mutual_evolution_with_aidanese"
+            ]
+        }
+    ],
+    "intelligibility": {
+        "proto-garmanic:early-garmanic": 0.80,
+        "early-garmanic:middle-garmanic": 0.72,
+        "middle-garmanic:proto-corimean": 0.68,
+        "proto-corimean:high-corimean-north": 0.88,
+        "proto-corimean:low-corimean-north": 0.85,
+        "proto-corimean:southern-corimean": 0.78,
+        "high-corimean-north:low-corimean-north": 0.92,
+        "high-corimean-north:southern-corimean": 0.75,
+        "low-corimean-north:southern-corimean": 0.72,
+        "high-corimean-north:transitional-stüberian": 0.95,
+        "transitional-stüberian:aidanese": 0.88,
+        "high-corimean-north:aidanese": 0.82,
+        "low-corimean-north:aidanese": 0.85,
+        "high-corimean-north:carminean": 0.90,
+        "aidanese:carminean": 0.94,
+        "carminean:transitional-stüberian": 0.92,
+        "low-corimean-north:carminean": 0.87,
+        "southern-corimean:aidanese": 0.68,
+        "southern-corimean:carminean": 0.72
+    },
+    "intelligibility_factors": {
+        "description": "Fatores que afetam a inteligibilidade mútua no continuum garmânico",
+        "lexical_overlap_weight": 0.40,
+        "phonological_similarity_weight": 0.25,
+        "morphological_similarity_weight": 0.20,
+        "syntactic_similarity_weight": 0.15,
+        "notes": {
+            "corimean_standard_aidanese": "Alta inteligibilidade (85-90%) devido à base comum recente e evolução paralela. Falantes de Corimês Moderno entendem Aidanês facilmente, mas podem achar 'simplificado'. Aidaneses entendem Corimês mas podem se confundir com casos e SOV.",
+            "aidanese_carminean": "Inteligibilidade muito alta (94%) - mínimo estranhamento. Diferenças são mais de registro e vocabulário que estruturais.",
+            "corimean_carminean": "Alta inteligibilidade (87-90%) - Carminês soa como 'Corimês suavizado com empréstimos'. Falantes notam diferenças mas comunicação é fluida.",
+            "dialectal_continuum": "Alto Corimês Norte ↔ Baixo Corimês Norte ↔ Dialeto Stüberano ↔ Aidanês forma um continuum quase perfeito. Cada passo tem 85-95% de inteligibilidade."
+        }
+    },
+    "diachronic_settings": {
+        "default_divergence_factor": 0.18,
+        "max_synonym_variants": 5,
+        "semantic_drift_rate": 0.20,
+        "grammaticalization_paths": [
+            {
+                "lexical": "verb_become",
+                "grammatical": "passive_auxiliary"
+            },
+            {
+                "lexical": "verb_have",
+                "grammatical": "perfect_auxiliary"
+            },
+            {
+                "lexical": "verb_will",
+                "grammatical": "future_marker"
+            },
+            {
+                "lexical": "preposition_to",
+                "grammatical": "dative_marker"
+            },
+            {
+                "lexical": "preposition_of",
+                "grammatical": "genitive_marker"
+            },
+            {
+                "lexical": "demonstrative_that",
+                "grammatical": "definite_article"
+            },
+            {
+                "lexical": "demonstrative_this",
+                "grammatical": "definite_article"
+            }
+        ],
+        "sound_change_rates": {
+            "vowel_mergers": 0.12,
+            "consonant_lenition": 0.18,
+            "cluster_simplification": 0.20,
+            "umlaut_spread": 0.15,
+            "final_devoicing": 0.25
+        }
+    },
+    "lexical_registers_defaults": {
+        "enabled": true,
+        "registers": [
+            {
+                "name": "archaic",
+                "chance": 0.06,
+                "mutation_factor": 0.25,
+                "description": "Registro arcaico preservando proto-garmânico"
+            },
+            {
+                "name": "formal",
+                "chance": 0.30,
+                "mutation_factor": 0.80,
+                "description": "Registro formal padrão literário"
+            },
+            {
+                "name": "colloquial",
+                "chance": 0.40,
+                "mutation_factor": 1.60,
+                "description": "Registro coloquial cotidiano"
+            },
+            {
+                "name": "vulgar",
+                "chance": 0.08,
+                "mutation_factor": 2.40,
+                "description": "Registro vulgar popular"
+            },
+            {
+                "name": "technical",
+                "chance": 0.10,
+                "mutation_factor": 1.10,
+                "description": "Registro técnico-administrativo"
+            },
+            {
+                "name": "poetic",
+                "chance": 0.06,
+                "mutation_factor": 0.50,
+                "description": "Registro poético com arcaísmos licenciados"
+            }
+        ]
+    },
+    "loanword_policy_defaults": {
+        "enabled": true,
+        "modes": {
+            "phonetic_adaptation": 0.50,
+            "calque": 0.35,
+            "semantic_extension": 0.15
+        },
+        "calque_connector": "-",
+        "adaptation_rules": [
+            {
+                "source_phoneme": "θ",
+                "target_phoneme": "t",
+                "environment": "all"
+            },
+            {
+                "source_phoneme": "ð",
+                "target_phoneme": "d",
+                "environment": "all"
+            },
+            {
+                "source_cluster": "CCC",
+                "resolution": "epenthesis",
+                "epenthetic_vowel": "ə"
+            }
+        ],
+        "source_languages": [
+            "harvestan_romance",
+            "galecian",
+            "aendur_central_trade"
+        ]
+    },
+    "morphophonological_processes": {
+        "umlaut": {
+            "enabled": true,
+            "i_umlaut_map": {
+                "a": "ä",
+                "o": "ö",
+                "u": "ü",
+                "au": "äu"
+            },
+            "triggers": [
+                "i",
+                "j",
+                "plural_marker",
+                "diminutive"
+            ]
+        },
+        "ablaut": {
+            "enabled": true,
+            "strong_verb_patterns": true,
+            "noun_plural_patterns": true
+        },
+        "consonant_gradation": {
+            "enabled": true,
+            "types": [
+                {
+                    "name": "final_devoicing",
+                    "trigger": "word_final",
+                    "changes": {
+                        "b": "p",
+                        "d": "t",
+                        "g": "k",
+                        "v": "f",
+                        "z": "s"
+                    }
+                },
+                {
+                    "name": "spirantization",
+                    "trigger": "intervocalic",
+                    "changes": {
+                        "p": "f",
+                        "t": "s",
+                        "k": "x"
+                    }
+                }
+            ]
+        },
+        "schwa_syncope": {
+            "enabled": true,
+            "environments": [
+                "unstressed_medial",
+                "unstressed_final_after_liquid"
+            ]
+        }
+    },
+    "sociolinguistic_dimensions": {
+        "diglossia": {
+            "enabled": true,
+            "high_variety": "standard_written_corimean",
+            "low_variety": "regional_spoken_varieties",
+            "domains": {
+                "high": [
+                    "literature",
+                    "law",
+                    "formal_education",
+                    "official_documents",
+                    "religious_texts"
+                ],
+                "low": [
+                    "conversation",
+                    "family",
+                    "local_commerce",
+                    "informal_writing"
+                ]
+            }
+        },
+        "prestige_hierarchy": {
+            "alto_corimês_norte_padrão": 10,
+            "baixo_corimês_norte": 7,
+            "aidanês_imperial": 9,
+            "carminês": 8,
+            "corimês_sul_ágrio": 6,
+            "dialetos_rurais": 4
+        },
+        "language_attitudes": {
+            "corimean_toward_aidanese": "Percebido como 'simplificado mas elegante', com prestígio por ser língua imperial",
+            "aidanese_toward_corimean": "Percebido como 'arcaico mas robusto', respeitado como língua-mãe cultural",
+            "both_toward_carminean": "Percebido como 'meio-termo harmonioso', língua de ponte natural"
+        }
+    },
+    "historical_notes": {
+        "migration_waves_to_aidan": {
+            "period": "Últimos 400 anos",
+            "sources": [
+                "Aendur Central",
+                "Aendur Sul",
+                "Regiões costeiras"
+            ],
+            "linguistic_impact": "Massiva introdução de vocabulário não-garmânico, simplificação morfológica, perda de características aglutinantes"
+        },
+        "princess_eliza_stüber": {
+            "period": "Aproximadamente 250 anos atrás",
+            "description": "Falante do 'Dialeto Stüberano de Gönda', mistura de Baixo e Alto Corimês Médio",
+            "significance": "Marco linguístico da transição Corimês → Aidanês",
+            "features": "Ainda mantinha alguns arcaísmos, casos em variação livre, ordem SOV/SVO alternante"
+        },
+        "standardization_movements": {
+            "corimean_standard": "Baseado no Alto Corimês do Norte com elementos do Baixo, estabelecido há ~200 anos",
+            "aidanese_standard": "Oficializado há ~150 anos como língua imperial, codificação gramatical completa",
+            "carminean_situation": "Sem padronização oficial forte, visto como 'dialeto nobre' do Corimês"
+        }
+    }
+}

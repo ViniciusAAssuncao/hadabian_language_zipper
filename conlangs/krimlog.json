@@ -687,7 +687,12 @@
     },
     "abstract_concepts": {
         "enabled": true,
-        "mappings": {},
+        "mappings": {
+            "do": "mim",
+            "dos": "mimes",
+            "de": "mim-ha",
+            "da": "mim-hxa"
+        },
         "definitions": {}
     },
     "lexical_registers": {

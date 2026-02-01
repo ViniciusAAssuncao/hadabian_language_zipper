@@ -30,19 +30,15 @@ class LexicalConfluenceHandler:
     def determine_stratum(self, lemma: str, global_seed: int) -> Dict:
         if not self.enabled:
             return {'type': 'native'}
-
         input_str = f"{lemma}_confluence_{global_seed}"
         hash_obj = hashlib.sha256(input_str.encode())
         hash_val = int(hash_obj.hexdigest(), 16)
         roll = hash_val % 100
-
         if roll < self.base_stability:
             return {'type': 'native'}
-
         current_threshold = self.base_stability
         remaining_roll = roll - self.base_stability
         total_strata_weight = sum(s.get('weight', 0) for s in self.strata)
-
         if total_strata_weight > 0:
             normalized_roll = (
                 remaining_roll / (100 - self.base_stability)) * total_strata_weight
@@ -52,7 +48,6 @@ class LexicalConfluenceHandler:
                 running_sum += weight
                 if normalized_roll < running_sum:
                     return stratum
-
         return {'type': 'native'}
 
 
@@ -119,27 +114,44 @@ class PrepositionHandler:
         self.enabled = self.config.get('enabled', False)
         self.forms = self.config.get('forms', {})
 
-    def _get_person_key(self, feats: str) -> Optional[str]:
-        if not feats or feats == '_':
+    def _get_person_key(self, func: Dict) -> Optional[str]:
+        feats_str = func.get('feats', '')
+        pos = func.get('pos')
+        if not feats_str or feats_str == '_':
             return None
         feat_map = {}
-        for f in feats.split('|'):
+        for f in feats_str.split('|'):
             if '=' in f:
                 k, v = f.split('=', 1)
                 feat_map[k] = v
-        person = feat_map.get('Person')
-        number = feat_map.get('Number')
-        if not person or not number:
-            return None
-        num_map = {'Sing': 'sg', 'Plur': 'pl', 'Dual': 'du'}
-        base_key = f"{person}{num_map.get(number, 'sg')}"
-        gender = feat_map.get('Gender')
-        if gender:
+
+        if pos == 'PRON':
+            person = feat_map.get('Person')
+            number = feat_map.get('Number')
+            if not person or not number:
+                return None
+            num_map = {'Sing': 'sg', 'Plur': 'pl', 'Dual': 'du'}
+            base_key = f"{person}{num_map.get(number, 'sg')}"
+            gender = feat_map.get('Gender')
+            if gender:
+                gen_map = {'Masc': 'm', 'Fem': 'f', 'Neut': 'n'}
+                gen_code = gen_map.get(gender, '')
+                if gen_code:
+                    return f"{base_key}_{gen_code}"
+            return base_key
+
+        elif pos == 'DET':
+            if feat_map.get('Definite') != 'Def':
+                return None
+            gender = feat_map.get('Gender')
+            number = feat_map.get('Number')
+            if not gender or not number:
+                return None
             gen_map = {'Masc': 'm', 'Fem': 'f', 'Neut': 'n'}
-            gen_code = gen_map.get(gender, '')
-            if gen_code:
-                return f"{base_key}_{gen_code}"
-        return base_key
+            num_map = {'Sing': 'sg', 'Plur': 'pl'}
+            return f"def_{gen_map.get(gender, 'm')}_{num_map.get(number, 'sg')}"
+
+        return None
 
     def analyze_inflections(self, functions: List[Dict], engine) -> Tuple[Dict[int, str], Set[int]]:
         if not self.enabled:
@@ -153,25 +165,24 @@ class PrepositionHandler:
                 if conlang_prep not in self.forms:
                     continue
                 prep_idx = f['index']
-                target_pronoun = None
-                for obj in functions:
-                    if obj['pos'] == 'PRON':
-                        if prep_idx in obj.get('dependencies', []) or obj['index'] in f.get('dependencies', []):
-                            target_pronoun = obj
+                target_dependent = None
+                for dep in functions:
+                    if dep['pos'] in {'PRON', 'DET'}:
+                        if prep_idx in dep.get('dependencies', []) or dep['index'] in f.get('dependencies', []):
+                            target_dependent = dep
                             break
-                if target_pronoun:
-                    person_key = self._get_person_key(
-                        target_pronoun.get('feats', ''))
-                    if person_key:
+                if target_dependent:
+                    lookup_key = self._get_person_key(target_dependent)
+                    if lookup_key:
                         inflected_form = self.forms[conlang_prep].get(
-                            person_key)
-                        if not inflected_form and '_' in person_key:
-                            base_key = person_key.split('_')[0]
+                            lookup_key)
+                        if not inflected_form and '_' in lookup_key and target_dependent['pos'] == 'PRON':
+                            base_key = lookup_key.split('_')[0]
                             inflected_form = self.forms[conlang_prep].get(
                                 base_key)
                         if inflected_form:
                             inflection_map[prep_idx] = inflected_form
-                            absorbed_indices.add(target_pronoun['index'])
+                            absorbed_indices.add(target_dependent['index'])
         return inflection_map, absorbed_indices
 
 
@@ -730,51 +741,68 @@ class RootSystemHandler:
     def generate_root(self, lemma: str) -> List[str]:
         lemma_lower = lemma.lower()
         if lemma_lower in self.root_registry:
-            root_str = self.root_registry[lemma_lower]
-            if isinstance(root_str, str):
-                return list(root_str.replace("-", ""))
-            return root_str
-        normalized = self.phonology_handler.normalize_char(lemma_lower)
-        candidates = [c for c in normalized if c in self.consonants]
-        if len(candidates) >= 3:
-            return candidates[:3]
-        rng = random.Random(self.seed + sum(ord(c) for c in lemma))
-        padding_needed = 3 - len(candidates)
-        candidates.extend(rng.sample(list(self.consonants), padding_needed))
-        return candidates[:3]
+            return list(self.root_registry[lemma_lower].replace("-", ""))
+        rng = random.Random(self.seed + sum(ord(c) for c in lemma_lower))
+
+        pref_initial = self.profile.get('root_generation', {}).get(
+            'preferred_initial_clusters', ['str', 'st', 'br'])
+        pref_final = self.profile.get('root_generation', {}).get(
+            'preferred_final_clusters', ['cht', 'ft', 'nd'])
+        pref_vowels = self.profile.get('root_generation', {}).get(
+            'preferred_nuclei', ['a', 'o', 'u'])
+
+        c1 = rng.choice(pref_initial)
+        v = rng.choice(pref_vowels)
+        c2 = rng.choice(pref_final)
+
+        return [c1, v, c2]
 
     def apply_pattern(self, root: List[str], pattern_def: Union[str, Dict]) -> str:
-        if not root or len(root) < 3:
-            return "".join(root)
-        pattern = ""
-        if isinstance(pattern_def, dict):
-            pattern = pattern_def.get('pattern', '1e2e3')
+        if not root:
+            return ""
+
+        has_clusters = any(len(part) > 1 for part in root)
+
+        if has_clusters:
+            base = "".join(root)
+            if isinstance(pattern_def, dict):
+                suffix = pattern_def.get('suffix', '')
+                base += suffix
+            elif isinstance(pattern_def, str):
+                base = pattern_def.replace('R', base)
         else:
-            pattern = pattern_def
-        result = []
-        i = 0
-        while i < len(pattern):
-            char = pattern[i]
-            if char == '1':
-                result.append(root[0])
-            elif char == '2':
-                result.append(root[1])
-            elif char == '3':
-                result.append(root[2])
-            elif char == 'C':
-                c_count = 0
-                for prev in pattern[:i]:
-                    if prev == 'C':
-                        c_count += 1
-                if c_count < 3:
-                    result.append(root[c_count])
+            pattern = ""
+            if isinstance(pattern_def, dict):
+                pattern = pattern_def.get('pattern', '1e2e3')
+            else:
+                pattern = pattern_def or '1e2e3'
+
+            result = []
+            i = 0
+            c_count = 0
+            while i < len(pattern):
+                char = pattern[i]
+                if char == '1':
+                    if len(root) > 0:
+                        result.append(root[0])
+                elif char == '2':
+                    if len(root) > 1:
+                        result.append(root[1])
+                elif char == '3':
+                    if len(root) > 2:
+                        result.append(root[2])
+                elif char == 'C':
+                    if c_count < len(root):
+                        result.append(root[c_count])
+                    else:
+                        result.append(char)
+                    c_count += 1
                 else:
                     result.append(char)
-            else:
-                result.append(char)
-            i += 1
-        word = "".join(result)
-        return self.phonology_handler.nativize_word(word)
+                i += 1
+            base = "".join(result)
+
+        return self.phonology_handler.nativize_word(base)
 
     def get_binyan_by_meaning(self, meaning_tag: str) -> Optional[Dict]:
         if not self.binyanim:
@@ -844,6 +872,11 @@ class ConceptHandler:
             return word, 'override', {'origin': 'local_override', 'concept_id': concept_id}
         if concept_id in self.definitions:
             definition = self.definitions[concept_id]
+            if isinstance(definition, str):
+                generated_word = engine_instance._generate_deterministic_word(
+                    concept_id)
+                return generated_word, 'unique', {'description': definition}
+
             concept_type = definition.get('type', 'unique')
             if concept_type == 'composition':
                 components = definition.get('components', [])
@@ -2471,11 +2504,12 @@ class OriginalLanguageEngine:
             else:
                 base_word = self._generate_deterministic_word(
                     manual_target, depth + 1)
-                target_entry = self.word_cache[manual_target]
-                if isinstance(target_entry, dict):
-                    base_word = target_entry.get("default", "")
-                else:
-                    base_word = target_entry
+                if manual_target in self.word_cache:
+                    target_entry = self.word_cache[manual_target]
+                    if isinstance(target_entry, dict):
+                        base_word = target_entry.get("default", "")
+                    else:
+                        base_word = target_entry
             mutation_seed = int(hashlib.sha256(
                 f"{clean_word}_manual_mut_{self.global_seed}".encode()).hexdigest(), 16)
             base_word = self._mutate_word(base_word, mutation_seed)

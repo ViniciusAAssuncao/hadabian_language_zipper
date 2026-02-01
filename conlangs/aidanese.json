@@ -1,0 +1,768 @@
+{
+    "id": "aidanese",
+    "name": "Aidanês",
+    "native_name": "Aidanische Sprache",
+    "family_node": "aidanese",
+    "linguistic_family": "garmanic_trunk.json",
+    "lexical_influence": {
+        "enabled": true,
+        "sources": [
+            {
+                "language_id": "corimean_modern",
+                "weight": 0.75,
+                "type": "inheritance",
+                "description": "Base lexical do Alto Corimês Médio do Norte"
+            }
+        ]
+    },
+    "shared_base_strength": 0.84,
+    "global_seed": 4488203044192800,
+    "source_language_order": "SVO",
+    "word_order": "SVO",
+    "subordinate_word_order": "SVO",
+    "alignment": "nominative-accusative",
+    "agglutination_strength": 0.0,
+    "divergence_factor": 0.20,
+    "cultural_purism": 0.48,
+    "phonotactics": {
+        "active_style": "standard_aidanese",
+        "inventory_styles": {
+            "standard_aidanese": {
+                "description": "Inventário padrão do Aidanês - mais suave e fino que Corimês",
+                "consonants": "pbtdkgfvszšhmnlrwj",
+                "vowels": "aiueoäöüə"
+            },
+            "formal_imperial": {
+                "description": "Registro formal imperial com mais distinções",
+                "consonants": "pbtdkgfvszšžhmnlrwj",
+                "vowels": "aiueoäöü"
+            },
+            "colloquial_simplified": {
+                "description": "Coloquial com máxima simplificação",
+                "consonants": "pbtdkgfvszšhmnlrw",
+                "vowels": "aiueo"
+            }
+        },
+        "vowels": "aiueoäöüə",
+        "consonants": "pbtdkgfvszšhmnlrwj",
+        "syllable_templates": [
+            "CV",
+            "CVC",
+            "CCV",
+            "V",
+            "VC"
+        ],
+        "min_syllables": 1,
+        "max_syllables": 3,
+        "forbidden_initial_clusters": [
+            "tl",
+            "sr",
+            "zr",
+            "nm",
+            "pf",
+            "kg",
+            "kn",
+            "gn"
+        ],
+        "forbidden_final_consonants": [],
+        "max_consonant_cluster": 2,
+        "diphthongs": [
+            "ai",
+            "au",
+            "ei",
+            "eu",
+            "oi"
+        ],
+        "epenthesis_vowel": "e",
+        "sonority_hierarchy": {
+            "enabled": true,
+            "scale": {
+                "p": 1,
+                "b": 1,
+                "t": 1,
+                "d": 1,
+                "k": 1,
+                "g": 1,
+                "f": 2,
+                "v": 2,
+                "s": 2,
+                "z": 2,
+                "š": 2,
+                "h": 2,
+                "m": 3,
+                "n": 3,
+                "l": 4,
+                "r": 5,
+                "w": 6,
+                "j": 6,
+                "a": 7,
+                "e": 7,
+                "i": 7,
+                "o": 7,
+                "u": 7
+            },
+            "onset_rules": {
+                "min_distance": 2,
+                "allow_plateau": false,
+                "allow_reversal": false
+            },
+            "coda_rules": {
+                "min_distance": 0,
+                "allow_plateau": true,
+                "allow_reversal": true
+            }
+        },
+        "sandhi": {
+            "enabled": true,
+            "description": "Sandi suave - elisão vocálica",
+            "rules": [
+                {
+                    "pattern": "ə\\s+([aiueo])",
+                    "replacement": "\\1",
+                    "description": "Elisão de schwa antes de vogal"
+                },
+                {
+                    "pattern": "([eo])\\s+([eo])",
+                    "replacement": "\\1",
+                    "description": "Elisão de vogais idênticas"
+                }
+            ]
+        },
+        "phonological_rules": [
+            {
+                "input": "VCV",
+                "output": "VCV",
+                "register": null,
+                "description": "Regra neutra"
+            },
+            {
+                "input": "([bdg])$",
+                "output": "([ptk])$",
+                "register": "formal",
+                "description": "Desvozeamento final apenas no formal (perdido no coloquial)"
+            },
+            {
+                "input": "ə$",
+                "output": "",
+                "register": "colloquial",
+                "description": "Queda total de schwa final"
+            },
+            {
+                "input": "CCC",
+                "output": "CC",
+                "register": null,
+                "description": "Simplificação de clusters triplos"
+            }
+        ],
+        "cluster_simplification": {
+            "enabled": true,
+            "description": "Simplificação de clusters consonantais - característica chave vs Corimês",
+            "max_allowed": 2
+        }
+    },
+    "allomorphy": {
+        "enabled": false,
+        "description": "Sem alomorfia - formas fixas"
+    },
+    "root_system": {
+        "enabled": false
+    },
+    "morphological_derivation": {
+        "enabled": true,
+        "root_based": false,
+        "max_depth": 3,
+        "exceptions": [
+            "de",
+            "die",
+            "ein",
+            "und",
+            "ist",
+            "von",
+            "zu"
+        ],
+        "source_suffixes": [
+            {
+                "suffix": "ção",
+                "replacement": "zion",
+                "input_pos": "NOUN",
+                "target_pos": "VERB",
+                "priority": 90,
+                "mode": "derive"
+            },
+            {
+                "suffix": "dor",
+                "replacement": "er",
+                "input_pos": "NOUN",
+                "target_pos": "VERB",
+                "priority": 90,
+                "mode": "derive"
+            },
+            {
+                "suffix": "idade",
+                "replacement": "ität",
+                "input_pos": "NOUN",
+                "target_pos": "ADJ",
+                "priority": 85,
+                "mode": "derive"
+            },
+            {
+                "suffix": "mente",
+                "replacement": "lich",
+                "input_pos": "ADV",
+                "target_pos": "ADJ",
+                "priority": 85,
+                "mode": "derive"
+            }
+        ]
+    },
+    "affix_system": {
+        "enabled": true,
+        "description": "Afixação simplificada - menos produtiva que Corimês",
+        "derivation_rules": [
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "agent_doer",
+                "affix": "-er",
+                "position": "suffix",
+                "force": false
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "verbal_noun",
+                "affix": "-ung",
+                "position": "suffix",
+                "force": false
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "NOUN",
+                "type": "abstract_noun",
+                "affix": "-heit",
+                "position": "suffix",
+                "force": false
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "ADV",
+                "type": "adverbial",
+                "affix": "-lich",
+                "position": "suffix",
+                "force": false
+            }
+        ]
+    },
+    "gender_system": {
+        "enabled": true,
+        "genders": [
+            "masculine",
+            "feminine"
+        ],
+        "default": "masculine",
+        "description": "Sistema de dois gêneros - NEUTRO PERDIDO, masculino assume função",
+        "inference": [
+            {
+                "suffix": "er",
+                "gender": "masculine"
+            },
+            {
+                "suffix": "or",
+                "gender": "masculine"
+            },
+            {
+                "suffix": "e",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "heit",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "keit",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "ung",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "schaft",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "ität",
+                "gender": "feminine"
+            }
+        ],
+        "markers": {
+            "masculine": {
+                "marker": "",
+                "position": "suffix",
+                "targets": [
+                    "ADJ",
+                    "DET"
+                ]
+            },
+            "feminine": {
+                "marker": "e",
+                "position": "suffix",
+                "targets": [
+                    "ADJ",
+                    "DET"
+                ]
+            }
+        },
+        "neuter_merger": {
+            "description": "Neutro fundiu-se com masculino",
+            "historical_neuter_nouns": "treated_as_masculine",
+            "former_neuter_importance": "transferred_to_masculine"
+        }
+    },
+    "number_system": {
+        "numbers": [
+            "singular",
+            "plural"
+        ],
+        "default": "singular",
+        "markers": {
+            "plural": {
+                "marker": "-en",
+                "alternatives": [
+                    "-e",
+                    "-s"
+                ]
+            },
+            "singular": {
+                "marker": ""
+            }
+        },
+        "umlaut_plurals": {
+            "enabled": true,
+            "description": "Umlaut ainda produtivo mas menos que Corimês",
+            "patterns": [
+                {
+                    "singular": "a",
+                    "plural": "ä"
+                },
+                {
+                    "singular": "o",
+                    "plural": "ö"
+                },
+                {
+                    "singular": "u",
+                    "plural": "ü"
+                }
+            ],
+            "productivity": "medium"
+        }
+    },
+    "case_system": {
+        "enabled": true,
+        "cases": [
+            "nominative",
+            "accusative",
+            "dative"
+        ],
+        "marker_position": "article",
+        "preposition_handling": "replace",
+        "description": "Sistema de casos REDUZIDO - apenas 3, marcado principalmente em artigos",
+        "markers": {
+            "nominative": {
+                "marker": "",
+                "type": "suffix",
+                "shift_to_determiner": true
+            },
+            "accusative": {
+                "marker": "",
+                "type": "suffix",
+                "conditions": [
+                    "animate"
+                ],
+                "shift_to_determiner": true
+            },
+            "dative": {
+                "marker": "",
+                "type": "suffix",
+                "shift_to_determiner": true
+            }
+        },
+        "article_declension": {
+            "enabled": true,
+            "simplified": true,
+            "definite": {
+                "nom_m": "de",
+                "acc_m": "den",
+                "dat_m": "dem",
+                "nom_f": "die",
+                "acc_f": "die",
+                "dat_f": "der",
+                "nom_pl": "die",
+                "acc_pl": "die",
+                "dat_pl": "den"
+            },
+            "indefinite": {
+                "nom_m": "ein",
+                "acc_m": "einen",
+                "dat_m": "einem",
+                "nom_f": "eine",
+                "acc_f": "eine",
+                "dat_f": "einer"
+            }
+        },
+        "genitive_replacement": {
+            "description": "Genitivo eliminado - substituído por 'von + dativo'",
+            "construction": "von + dative"
+        }
+    },
+    "determiner_system": {
+        "definite_article": {
+            "form": "de",
+            "variants": [
+                "die"
+            ],
+            "procliticizes": false,
+            "description": "Artigo definido simplificado"
+        },
+        "demonstratives": {
+            "gender_inheritance_heuristic": true,
+            "proximal": {
+                "sg_m": "diese",
+                "sg_f": "diese",
+                "pl": "diese"
+            },
+            "distal": {
+                "sg_m": "jene",
+                "sg_f": "jene",
+                "pl": "jene"
+            },
+            "simplification": "gender_distinctions_reduced"
+        },
+        "possessives": {
+            "pronominal_suffixes": false,
+            "suppress_article": true,
+            "independent_forms": {
+                "1sg": "mein",
+                "2sg": "dein",
+                "3sg_m": "sein",
+                "3sg_f": "ihr",
+                "1pl": "unser",
+                "2pl": "euer",
+                "3pl": "ihr"
+            }
+        }
+    },
+    "pronominal_system": {
+        "independent_pronouns": {
+            "1sg": "ich",
+            "2sg": "du",
+            "3sg_m": "er",
+            "3sg_f": "sie",
+            "1pl": "wir",
+            "2pl": "ihr",
+            "3pl": "sie"
+        },
+        "object_pronouns": {
+            "accusative": {
+                "1sg": "mich",
+                "2sg": "dich",
+                "3sg_m": "ihn",
+                "3sg_f": "sie",
+                "1pl": "uns",
+                "2pl": "euch",
+                "3pl": "sie"
+            },
+            "dative": {
+                "1sg": "mir",
+                "2sg": "dir",
+                "3sg_m": "ihm",
+                "3sg_f": "ihr",
+                "1pl": "uns",
+                "2pl": "euch",
+                "3pl": "ihnen"
+            }
+        }
+    },
+    "adposition_system": {
+        "case_government": {
+            "enabled": true,
+            "simplified": true,
+            "prepositions": {
+                "mit": "dative",
+                "von": "dative",
+                "zu": "dative",
+                "bei": "dative",
+                "nach": "dative",
+                "für": "accusative",
+                "durch": "accusative",
+                "gegen": "accusative",
+                "um": "accusative",
+                "in": "dative",
+                "an": "dative",
+                "auf": "dative"
+            },
+            "two_way_simplification": "most_take_dative_default"
+        }
+    },
+    "tam_system": {
+        "enabled": true,
+        "description": "TAM simplificado - verbos fracos dominam",
+        "infer_imperative_from_context": true,
+        "person_marking": {
+            "enabled": true,
+            "prefixes": {},
+            "suffixes": {
+                "1sg": "-e",
+                "2sg": "-st",
+                "3sg": "-t",
+                "1pl": "-en",
+                "2pl": "-t",
+                "3pl": "-en"
+            }
+        },
+        "rules": [
+            {
+                "features": [
+                    "Tense=Pres"
+                ],
+                "marker": "",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Past"
+                ],
+                "marker": "-te",
+                "type": "suffix",
+                "description": "Pretérito predominantemente fraco"
+            },
+            {
+                "features": [
+                    "VerbForm=Part",
+                    "Tense=Past"
+                ],
+                "marker": "ge-",
+                "type": "prefix"
+            },
+            {
+                "features": [
+                    "Mood=Imp"
+                ],
+                "marker": "",
+                "type": "suffix"
+            }
+        ],
+        "strong_verbs": {
+            "enabled": true,
+            "productivity": "low",
+            "description": "Verbos fortes existem mas muitos regularizaram-se"
+        },
+        "periphrastic_constructions": {
+            "enabled": true,
+            "expanded": true,
+            "description": "Construções perifrásticas expandidas - característica analítica"
+        }
+    },
+    "copula_system": {
+        "enabled": true,
+        "copulas": [
+            {
+                "type": "default",
+                "form": "sein",
+                "conjugates": true,
+                "conditions": []
+            }
+        ]
+    },
+    "negation_system": {
+        "enabled": true,
+        "strategies": [
+            {
+                "type": "verbal_negation",
+                "marker": "nicht",
+                "suffix": ""
+            },
+            {
+                "type": "nominal_negation",
+                "marker": "kein",
+                "suffix": ""
+            }
+        ]
+    },
+    "interrogative_system": {
+        "enabled": true,
+        "v2_inversion": true
+    },
+    "vowel_harmony": {
+        "enabled": false
+    },
+    "consonant_mutation": {
+        "enabled": false
+    },
+    "pharyngealization": {
+        "enabled": false
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "fixed",
+        "position": "initial",
+        "graphic_accent": false,
+        "description": "Acento inicial herdado do Corimês",
+        "regularization": "more_predictable_than_corimean"
+    },
+    "reduplication": {
+        "enabled": false
+    },
+    "topicalization": {
+        "enabled": true,
+        "topic_marker": "",
+        "position": "initial",
+        "description": "Topicalização via V2"
+    },
+    "focus_structure": {
+        "enabled": false
+    },
+    "agreement_rules": {
+        "gender_agreement": true,
+        "number_agreement": true,
+        "person_agreement": true,
+        "adjunct_position": "auto",
+        "simplified": true
+    },
+    "pro_drop": {
+        "enabled": false
+    },
+    "drop_articles": false,
+    "degree_system": {
+        "enabled": true,
+        "rules": {
+            "comparative": {
+                "affix": "-er",
+                "position": "suffix"
+            },
+            "superlative": {
+                "affix": "-st",
+                "position": "suffix"
+            }
+        }
+    },
+    "semantic_fields": {
+        "enabled": true,
+        "use_nltk": false
+    },
+    "polysemy_rules": {
+        "enabled": false
+    },
+    "false_cognates": {
+        "enabled": false
+    },
+    "loanword_policy": {
+        "enabled": true,
+        "modes": {
+            "phonetic_adaptation": 0.65,
+            "calque": 0.20,
+            "semantic_extension": 0.15
+        },
+        "description": "Alta receptividade a empréstimos - ondas migratórias massivas"
+    },
+    "compounding": {
+        "enabled": true,
+        "productivity": "medium",
+        "description": "Composição menos produtiva que Corimês - preferência por formas analíticas"
+    },
+    "v2_constraint": {
+        "enabled": false,
+        "description": "V2 ELIMINADO - ordem SVO estrita"
+    },
+    "sov_traces": {
+        "enabled": false,
+        "description": "Traços SOV completamente eliminados"
+    },
+    "abstract_concepts": {
+        "enabled": true,
+        "mappings": {}
+    },
+    "lexical_registers": {
+        "enabled": true,
+        "registers": [
+            {
+                "name": "formal",
+                "chance": 0.35,
+                "mutation_factor": 0.70
+            },
+            {
+                "name": "colloquial",
+                "chance": 0.45,
+                "mutation_factor": 1.40
+            },
+            {
+                "name": "vulgar",
+                "chance": 0.12,
+                "mutation_factor": 2.10
+            },
+            {
+                "name": "imperial",
+                "chance": 0.08,
+                "mutation_factor": 0.50,
+                "description": "Registro da corte imperial"
+            }
+        ]
+    },
+    "functional_particles": {},
+    "numeric_handling": {
+        "ignore_digits": true
+    },
+    "style": {
+        "capitalization": true,
+        "sentence_terminators": [
+            ".",
+            "!",
+            "?"
+        ],
+        "secondary_terminators": [
+            ":",
+            ";"
+        ],
+        "punctuation_map": {
+            ",": ",",
+            ".": ".",
+            "!": "!",
+            "?": "?",
+            "\"": "„"
+        },
+        "noun_capitalization": true
+    },
+    "design_notes": {
+        "character": "Suave, fino, elegante, simplificado, moderno",
+        "key_differences_from_corimean": [
+            "Aglutinação PERDIDA COMPLETAMENTE",
+            "SOV eliminado - SVO estrito",
+            "V2 eliminado",
+            "Neutro perdido - masculino assume",
+            "Genitivo eliminado - von + dativo",
+            "Apenas 3 casos vs 4",
+            "Verbos fortes menos comuns",
+            "Composição menos produtiva",
+            "Clusters simplificados",
+            "Mais empréstimos",
+            "Construções perifrásticas dominam",
+            "Arcaísmos eliminados"
+        ],
+        "intelligibility_notes": {
+            "with_corimean": "82-88% - Corimeses entendem facilmente, acham 'simplificado mas claro'",
+            "with_carminean": "94-96% - Inteligibilidade muito alta, mínimas diferenças",
+            "perception": "Língua imperial moderna, prestigiosa, elegante",
+            "acquisition": "Mais fácil de aprender que Corimês para estrangeiros"
+        },
+        "historical_development": {
+            "base": "Alto Corimês Médio do Norte via Dialeto Stüberano",
+            "key_period": "Últimos 400 anos com aceleração nos últimos 200",
+            "drivers": [
+                "Ondas migratórias massivas de Aendur Central e Sul",
+                "Necessidade de língua franca imperial",
+                "Prestígio da simplicidade cosmopolita",
+                "Influência de línguas de contato não-garmânicas"
+            ]
+        }
+    }
+}
