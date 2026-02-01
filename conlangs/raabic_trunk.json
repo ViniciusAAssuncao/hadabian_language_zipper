@@ -1,0 +1,476 @@
+{
+  "family_id": "raabian_trunk",
+  "description": "Tronco das línguas raabianas, família linguística isolada de Hadab com mais de 82.000 anos de história documentada. Sistema triconsonantal complexo com desenvolvimento de estados, casos e aspectos elaborados.",
+  "proto_languages": [
+    {
+      "id": "proto-raabic",
+      "level": 0,
+      "description": "Proto-Raabiano (aprox. 82.303 anos atrás), língua isolada surgida no noroeste de Enki, região do lago Rahul. Sistema consonantal rico com faringais, oclusivas aspiradas e sonoridade distintiva.",
+      "shared_phonotactics": {
+        "vowels": "aiuāīūeēoō",
+        "consonants": "ʔbdgħhklmnpqrsṣštṭwxyzʕṛḷγčǧ",
+        "syllable_templates": ["CV", "CVC", "CVCC", "V", "VC", "CCV"],
+        "forbidden_initial_clusters": ["bd", "tṭ", "nm", "lr", "pw", "kg"],
+        "forbidden_final_consonants": ["ʔ", "ħ", "ʕ", "γ"],
+        "max_consonant_cluster": 2,
+        "diphthongs": ["ai", "au", "ei", "ou", "ui"],
+        "triphthongs": ["aui", "eui"]
+      },
+      "shared_lexicon_strength": 0.18,
+      "agglutination_strength": 0.88,
+      "gender_system": {
+        "enabled": true,
+        "genders": ["masculine", "feminine", "neuter", "divine"],
+        "default": "masculine",
+        "inference": [
+          {"suffix": "ul", "gender": "masculine"},
+          {"suffix": "ab", "gender": "masculine"},
+          {"suffix": "ata", "gender": "feminine"},
+          {"suffix": "ete", "gender": "feminine"},
+          {"suffix": "on", "gender": "neuter"},
+          {"suffix": "um", "gender": "neuter"},
+          {"suffix": "aab", "gender": "divine"},
+          {"suffix": "rahul", "gender": "divine"}
+        ]
+      },
+      "root_system": {
+        "enabled": true,
+        "type": "triconsonantal",
+        "patterns": ["CaCaC", "CaCīC", "CūCaC", "CeCeC", "CoCaC", "CāCūC", "CiCāC"],
+        "binyanim": [
+          {"name": "qal", "pattern": "CaCaC", "meaning": "basic_active"},
+          {"name": "hafel", "pattern": "haCCaC", "meaning": "causative"},
+          {"name": "nitqal", "pattern": "nitCaCaC", "meaning": "passive_reflexive"},
+          {"name": "pael", "pattern": "CaCCeC", "meaning": "intensive"},
+          {"name": "etpaal", "pattern": "etCaCaC", "meaning": "reflexive"},
+          {"name": "šafel", "pattern": "šaCCeC", "meaning": "factitive"},
+          {"name": "ištafel", "pattern": "ištaCCaC", "meaning": "reciprocal"},
+          {"name": "afel", "pattern": "aCCiC", "meaning": "causative_light"}
+        ]
+      },
+      "case_system_proto": {
+        "cases": ["nominative", "accusative", "genitive", "dative", "locative", "ablative", "instrumental"],
+        "markers": {
+          "nominative": "ul",
+          "accusative": "an",
+          "genitive": "ab",
+          "dative": "ūm",
+          "locative": "ē",
+          "ablative": "āt",
+          "instrumental": "īš"
+        }
+      },
+      "verbal_system_proto": {
+        "aspects": ["perfective", "imperfective", "stative", "resultative"],
+        "moods": ["indicative", "subjunctive", "optative", "jussive", "imperative", "precative"],
+        "tenses_derived": ["past", "present", "future", "aorist"],
+        "person_markers": {
+          "1sg": {"prefix": "a-", "suffix": "-ku"},
+          "2sg_m": {"prefix": "ta-", "suffix": "-ka"},
+          "2sg_f": {"prefix": "ta-", "suffix": "-ki"},
+          "3sg_m": {"prefix": "ha-", "suffix": "-Ø"},
+          "3sg_f": {"prefix": "ha-", "suffix": "-t"},
+          "1pl": {"prefix": "na-", "suffix": "-nu"},
+          "2pl": {"prefix": "ta-", "suffix": "-kum"},
+          "3pl": {"prefix": "ha-", "suffix": "-ū"}
+        }
+      },
+      "nominal_patterns": [
+        {"pattern": "CaCaC", "type": "basic_noun"},
+        {"pattern": "CaCīC", "type": "active_participle"},
+        {"pattern": "maCCaC", "type": "place"},
+        {"pattern": "CāCiC", "type": "agent"},
+        {"pattern": "CuCūC", "type": "plural_pattern"},
+        {"pattern": "taCCīC", "type": "abstract"},
+        {"pattern": "CaCCān", "type": "intensive_quality"},
+        {"pattern": "CiCāCa", "type": "verbal_noun"}
+      ],
+      "construct_state": {
+        "enabled": true,
+        "head_initial": true,
+        "phonological_changes": [
+          {"from": "ul$", "to": "u", "condition": "word_final"},
+          {"from": "ab$", "to": "a", "condition": "word_final"},
+          {"from": "ata$", "to": "at", "condition": "feminine"}
+        ]
+      },
+      "emphatic_consonants": ["ṣ", "ṭ", "ḍ", "ẓ"],
+      "pharyngealization": {
+        "enabled": true,
+        "triggers": ["ṣ", "ṭ", "ʕ", "ħ", "q"],
+        "affected_vowels": ["a", "i", "u", "e", "o"],
+        "lowering_effect": true
+      },
+      "stress_system_proto": {
+        "type": "weight_sensitive",
+        "preference": "antepenultimate_default",
+        "superheavy_attracts": true
+      },
+      "number_system": {
+        "numbers": ["singular", "dual", "plural", "collective"],
+        "dual_markers": {
+          "nominative": "-āni",
+          "accusative": "-aini",
+          "genitive": "-aini"
+        },
+        "collective_marker": "-ūt"
+      }
+    },
+    {
+      "id": "archaic-raabic",
+      "parent_id": "proto-raabic",
+      "level": 1,
+      "description": "Raabiano Arcaico (aprox. 78.000-50.000 anos atrás). Primeira forma atestada em inscrições, altamente conservadora. Desenvolveu sistema de estados mais elaborado.",
+      "shared_phonotactics": {
+        "vowels": "aiuāīūeēoōə",
+        "consonants": "ʔbdgħhklmnpqrsṣštṭwxyzʕṛγč",
+        "syllable_templates": ["CV", "CVC", "CVCC", "CCV", "V"],
+        "forbidden_initial_clusters": ["bd", "tṭ", "nm"],
+        "forbidden_final_consonants": ["ʔ", "ħ"],
+        "diphthongs": ["ai", "au", "ei", "ou"]
+      },
+      "shared_lexicon_strength": 0.65,
+      "agglutination_strength": 0.92,
+      "innovations": [
+        "state_system_development",
+        "dual_preservation",
+        "aspectual_elaboration",
+        "vowel_reduction_unstressed",
+        "definite_state_marker"
+      ],
+      "definite_state": {
+        "form": "ha",
+        "procliticizes": true,
+        "triggers_assimilation": true
+      },
+      "sound_changes_from_parent": [
+        {"from": "ā", "to": "ā", "condition": "stressed"},
+        {"from": "ā", "to": "ə", "condition": "unstressed_non_final"},
+        {"from": "ai", "to": "ē", "condition": "word_final"},
+        {"from": "au", "to": "ō", "condition": "word_final"}
+      ],
+      "state_system": {
+        "enabled": true,
+        "states": ["absolute", "construct", "emphatic", "predicative"],
+        "markers": {
+          "absolute": "-Ø",
+          "construct": "-Ø_shortened",
+          "emphatic": "-ā",
+          "predicative": "-u"
+        }
+      }
+    },
+    {
+      "id": "classical-raabic",
+      "parent_id": "archaic-raabic",
+      "level": 2,
+      "description": "Raabiano Clássico (aprox. 50.000-15.000 anos atrás). Língua de prestígio literário e religioso. Padronização gramatical e lexical. Base para dialectos modernos.",
+      "shared_phonotactics": {
+        "vowels": "aiuāīūeēoōə",
+        "consonants": "ʔbdgħhklmnpqrsṣštṭwxyzʕṛč",
+        "syllable_templates": ["CV", "CVC", "CVCC", "CCV"],
+        "forbidden_initial_clusters": ["bd", "nm", "lr"],
+        "forbidden_final_consonants": ["ʔ"],
+        "diphthongs": ["ai", "au", "ei"]
+      },
+      "shared_lexicon_strength": 0.75,
+      "agglutination_strength": 0.85,
+      "innovations": [
+        "literary_register_development",
+        "philosophical_vocabulary",
+        "mathematical_terminology",
+        "dual_becoming_optional",
+        "aspectual_particle_system"
+      ],
+      "dialectal_variation": {
+        "enabled": true,
+        "variation_axes": ["geographical", "social", "temporal"],
+        "major_dialects": [
+          {
+            "name": "amotic",
+            "description": "Dialeto Amótico, base principal do RMP. Simplificação fonológica moderada.",
+            "phonological_features": [
+              "merger_emphatic_plain",
+              "ha_from_r_initial",
+              "ul_ab_simplification"
+            ]
+          },
+          {
+            "name": "tziric",
+            "description": "Dialeto Tzíriano, conservador nas faringais.",
+            "phonological_features": [
+              "pharyngeal_preservation",
+              "vowel_length_distinctive",
+              "case_retention_fuller"
+            ]
+          },
+          {
+            "name": "noere",
+            "description": "Dialeto Nöre, inovador em morfologia verbal.",
+            "phonological_features": [
+              "verbal_prefixation_extended",
+              "case_merger_advanced",
+              "umlaut_processes"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "middle-raabic",
+      "parent_id": "classical-raabic",
+      "level": 3,
+      "description": "Raabiano Médio (aprox. 15.000-3.000 anos atrás). Período de diversificação dialetal e inovação morfossintática. Transição para formas modernas.",
+      "shared_phonotactics": {
+        "vowels": "aiueāīūēō",
+        "consonants": "bdfgħhklmnpqrsstṭwxyzʕ",
+        "syllable_templates": ["CV", "CVC", "CVCC", "CCV"],
+        "forbidden_initial_clusters": ["bd", "nm"],
+        "forbidden_final_consonants": [],
+        "diphthongs": ["ai", "au"]
+      },
+      "shared_lexicon_strength": 0.70,
+      "agglutination_strength": 0.78,
+      "innovations": [
+        "analytic_tendency_increase",
+        "preposition_development",
+        "auxiliary_verb_emergence",
+        "r_to_h_shift_systematic",
+        "vowel_harmony_traces"
+      ],
+      "sound_changes_middle": [
+        {"from": "r", "to": "h", "condition": "word_initial"},
+        {"from": "ʕ", "to": "ʔ", "condition": "all_positions"},
+        {"from": "q", "to": "ʔ", "condition": "syllable_final"},
+        {"from": "ṭ", "to": "t", "condition": "unstressed"},
+        {"from": "aab", "to": "ab", "condition": "suffix_simplification"}
+      ]
+    }
+  ],
+  "branches": [
+    {
+      "id": "modern-raabic",
+      "parent_id": "middle-raabic",
+      "description": "Ramo Raabiano Moderno, inclui RMP e outros dialectos contemporâneos. Simplificação fonológica e morfológica parcial.",
+      "shared_lexicon_strength": 0.82,
+      "agglutination_strength": 0.72,
+      "distinctive_features": [
+        "simplified_case_system",
+        "r_to_ha_complete",
+        "dual_literary_only",
+        "aspectual_prominence",
+        "loanword_integration_greek_egyptian"
+      ]
+    },
+    {
+      "id": "conservative-raabic",
+      "parent_id": "classical-raabic",
+      "description": "Ramo Conservador, mantém características arcaicas. Usado em contextos religiosos e literários.",
+      "shared_lexicon_strength": 0.88,
+      "agglutination_strength": 0.90,
+      "distinctive_features": [
+        "full_case_system",
+        "dual_mandatory",
+        "pharyngeal_contrast",
+        "construct_state_productive"
+      ]
+    },
+    {
+      "id": "neo-raabic",
+      "parent_id": "modern-raabic",
+      "description": "Ramo Neo-Raabiano, formas altamente inovadoras com influências externas massivas.",
+      "shared_lexicon_strength": 0.65,
+      "agglutination_strength": 0.60,
+      "distinctive_features": [
+        "svo_word_order_fixed",
+        "case_loss_complete",
+        "analytic_morphology",
+        "tonal_development_incipient"
+      ]
+    }
+  ],
+  "intelligibility": {
+    "archaic-raabic:classical-raabic": 0.75,
+    "classical-raabic:middle-raabic": 0.65,
+    "middle-raabic:modern-raabic": 0.70,
+    "modern-raabic:conservative-raabic": 0.55,
+    "modern-raabic:neo-raabic": 0.60,
+    "conservative-raabic:neo-raabic": 0.30
+  },
+  "diachronic_settings": {
+    "default_divergence_factor": 0.22,
+    "max_synonym_variants": 6,
+    "semantic_drift_rate": 0.25,
+    "grammaticalization_paths": [
+      {"lexical": "verb_give", "grammatical": "benefactive_marker"},
+      {"lexical": "verb_come", "grammatical": "future_marker"},
+      {"lexical": "verb_be", "grammatical": "copula_auxiliary"},
+      {"lexical": "noun_hand", "grammatical": "instrumental_preposition"},
+      {"lexical": "noun_face", "grammatical": "directional_marker"},
+      {"lexical": "demonstrative_this", "grammatical": "definite_article"}
+    ],
+    "sound_change_rates": {
+      "vowel_mergers": 0.15,
+      "consonant_lenition": 0.20,
+      "cluster_simplification": 0.25,
+      "metathesis": 0.10
+    }
+  },
+  "lexical_registers_defaults": {
+    "enabled": true,
+    "registers": [
+      {
+        "name": "archaic",
+        "chance": 0.08,
+        "mutation_factor": 0.3,
+        "description": "Registro arcaico ultra-conservador, preserva proto-raabiano"
+      },
+      {
+        "name": "classical",
+        "chance": 0.12,
+        "mutation_factor": 0.5,
+        "description": "Registro clássico literário"
+      },
+      {
+        "name": "formal",
+        "chance": 0.28,
+        "mutation_factor": 0.9,
+        "description": "Registro formal padrão"
+      },
+      {
+        "name": "colloquial",
+        "chance": 0.30,
+        "mutation_factor": 1.8,
+        "description": "Registro coloquial cotidiano"
+      },
+      {
+        "name": "vulgar",
+        "chance": 0.10,
+        "mutation_factor": 2.5,
+        "description": "Registro vulgar"
+      },
+      {
+        "name": "religious",
+        "chance": 0.07,
+        "mutation_factor": 0.2,
+        "description": "Registro religioso conservador"
+      },
+      {
+        "name": "technical",
+        "chance": 0.05,
+        "mutation_factor": 1.2,
+        "description": "Registro técnico-científico"
+      }
+    ]
+  },
+  "loanword_policy_defaults": {
+    "enabled": true,
+    "modes": {
+      "phonetic_adaptation": 0.45,
+      "calque": 0.35,
+      "semantic_extension": 0.20
+    },
+    "calque_connector": "-",
+    "adaptation_rules": [
+      {
+        "source_phoneme": "p",
+        "target_phoneme": "b",
+        "environment": "word_initial"
+      },
+      {
+        "source_phoneme": "v",
+        "target_phoneme": "w",
+        "environment": "all"
+      },
+      {
+        "source_phoneme": "θ",
+        "target_phoneme": "t",
+        "environment": "all"
+      },
+      {
+        "source_phoneme": "ð",
+        "target_phoneme": "d",
+        "environment": "all"
+      },
+      {
+        "source_cluster": "CC",
+        "resolution": "epenthesis",
+        "epenthetic_vowel": "a"
+      }
+    ],
+    "source_languages": ["greek_ancient", "egyptian_coptic", "akkadian", "sumerian"]
+  },
+  "morphophonological_processes": {
+    "assimilation": {
+      "enabled": true,
+      "types": [
+        {
+          "name": "ha_assimilation",
+          "trigger": "definite_ha",
+          "target": "following_consonant",
+          "result": "gemination_coronal"
+        },
+        {
+          "name": "nasal_assimilation",
+          "trigger": "n_m",
+          "target": "following_stop",
+          "result": "place_match"
+        },
+        {
+          "name": "emphatic_spread",
+          "trigger": "emphatic",
+          "target": "adjacent_segments",
+          "result": "pharyngealization"
+        }
+      ]
+    },
+    "deletion": {
+      "enabled": true,
+      "rules": [
+        {
+          "target": "short_vowel",
+          "environment": "unstressed_open",
+          "condition": "not_monosyllabic"
+        },
+        {
+          "target": "glottal_stop",
+          "environment": "intervocalic",
+          "condition": "colloquial"
+        }
+      ]
+    },
+    "epenthesis": {
+      "enabled": true,
+      "vowel": "a",
+      "triggers": [
+        "forbidden_cluster",
+        "three_consonant_sequence",
+        "word_initial_cluster"
+      ]
+    },
+    "metathesis": {
+      "enabled": true,
+      "patterns": [
+        {"input": "VC1C2", "output": "C1VC2", "condition": "C1_liquid_nasal"}
+      ]
+    }
+  },
+  "sociolinguistic_dimensions": {
+    "diglossia": {
+      "enabled": true,
+      "high_variety": "classical_standard",
+      "low_variety": "vernacular_dialects",
+      "domains": {
+        "high": ["literature", "religion", "academia", "formal_media", "law"],
+        "low": ["conversation", "family", "informal_media", "commerce"]
+      }
+    },
+    "prestige_hierarchy": {
+      "classical_raabic": 10,
+      "modern_standard": 8,
+      "urban_dialects": 6,
+      "rural_dialects": 4,
+      "neo_raabic": 5
+    }
+  }
+}

@@ -1,0 +1,2032 @@
+{
+    "id": "corimean_modern",
+    "name": "Corimês Moderno",
+    "native_name": "Höchkorimisc",
+    "family_node": "high-corimean-north",
+    "linguistic_family": "garmanic_trunk.json",
+    "shared_base_strength": 0.88,
+    "global_seed": 8820304419281847,
+    "source_language_order": "SVO",
+    "word_order": "SOV",
+    "subordinate_word_order": "SOV",
+    "alignment": "nominative-accusative",
+    "agglutination_strength": 0.82,
+    "divergence_factor": 0.12,
+    "cultural_purism": 0.78,
+    "phonotactics": {
+        "active_style": "standard_heavy",
+        "inventory_styles": {
+            "standard_heavy": {
+                "description": "Inventário pesado germânico - bronco, ferrugem, robusto",
+                "consonants": "pbtdkgfvszschchhmnnglrwj",
+                "vowels": "aeiouäöü",
+                "notes": "Som alemão/gótico genuíno - sem eslavismos"
+            },
+            "archaic_liturgical": {
+                "description": "Forma arcaica conservadora para textos litúrgicos",
+                "consonants": "pbtdkgfþszschchhhwmnnglrwj",
+                "vowels": "aeiouāēīōū",
+                "notes": "Preserva þ (thorn) e vogais longas marcadas"
+            },
+            "colloquial": {
+                "description": "Forma coloquial com reduções típicas",
+                "consonants": "pbtdkgfvszschchhmnlrw",
+                "vowels": "aeiouäö",
+                "notes": "Perde distinções finas, schwa-deletion"
+            }
+        },
+        "consonants": "pbtdkgfvszschchhmnnglrwj",
+        "vowels": "aeiouäöü",
+        "syllable_templates": [
+            "CV",
+            "CVC",
+            "CVCC",
+            "CCV",
+            "CCVC",
+            "CCVCC",
+            "V",
+            "VC",
+            "VCC"
+        ],
+        "min_syllables": 1,
+        "max_syllables": 4,
+        "allowed_initial_clusters": {
+            "two_consonants": [
+                "bl",
+                "br",
+                "dr",
+                "fl",
+                "fr",
+                "gl",
+                "gr",
+                "kl",
+                "kr",
+                "pl",
+                "pr",
+                "tr",
+                "schw",
+                "schr",
+                "schl",
+                "schm",
+                "schn",
+                "sp",
+                "st",
+                "sw",
+                "tw",
+                "zw",
+                "kn",
+                "gn",
+                "pf"
+            ],
+            "three_consonants": [
+                "schr",
+                "schl",
+                "schm",
+                "schn",
+                "spr",
+                "str",
+                "schw"
+            ]
+        },
+        "forbidden_initial_clusters": [
+            "tl",
+            "sr",
+            "zr",
+            "nm",
+            "kg",
+            "px",
+            "vl",
+            "dm",
+            "bm",
+            "þl",
+            "þr",
+            "þn",
+            "chw",
+            "chm",
+            "chn"
+        ],
+        "allowed_final_clusters": {
+            "two_consonants": [
+                "ft",
+                "cht",
+                "kt",
+                "xt",
+                "mpf",
+                "nk",
+                "ng",
+                "nt",
+                "nd",
+                "rt",
+                "rn",
+                "rm",
+                "rk",
+                "lt",
+                "lk",
+                "lm",
+                "lp",
+                "st",
+                "sk",
+                "pf",
+                "ts",
+                "ks"
+            ],
+            "three_consonants": [
+                "nkt",
+                "rkt",
+                "rft",
+                "rst",
+                "rcht",
+                "mpft",
+                "ngst"
+            ]
+        },
+        "forbidden_final_consonants": [
+            "h",
+            "j",
+            "w"
+        ],
+        "max_consonant_cluster": 3,
+        "diphthongs": [
+            "ai",
+            "au",
+            "ei",
+            "eu",
+            "äu",
+            "oi"
+        ],
+        "epenthesis_vowel": "e",
+        "epenthesis_visible": false,
+        "sonority_hierarchy": {
+            "enabled": true,
+            "strict": true,
+            "scale": {
+                "p": 1,
+                "b": 1,
+                "t": 1,
+                "d": 1,
+                "k": 1,
+                "g": 1,
+                "pf": 1,
+                "f": 2,
+                "v": 2,
+                "s": 2,
+                "z": 2,
+                "sch": 2,
+                "ch": 2,
+                "h": 3,
+                "m": 4,
+                "n": 4,
+                "ng": 4,
+                "l": 5,
+                "r": 6,
+                "w": 7,
+                "j": 7,
+                "a": 8,
+                "e": 8,
+                "i": 8,
+                "o": 8,
+                "u": 8,
+                "ä": 8,
+                "ö": 8,
+                "ü": 8
+            },
+            "onset_rules": {
+                "min_distance": 2,
+                "allow_plateau": false,
+                "allow_reversal": false,
+                "description": "Onset deve ter sonoridade crescente"
+            },
+            "coda_rules": {
+                "min_distance": 0,
+                "allow_plateau": true,
+                "allow_reversal": true,
+                "description": "Coda permite sonoridade decrescente ou plana"
+            }
+        },
+        "orthography": {
+            "description": "Mapeamento fonema → ortografia germânica",
+            "mappings": {
+                "sch": "sch",
+                "ch": "ch",
+                "ng": "ng",
+                "pf": "pf",
+                "ts": "z",
+                "ks": "x",
+                "kw": "qu",
+                "j": "j"
+            },
+            "notes": "Usa dígrafos germânicos padrão, não caracteres IPA"
+        },
+        "phonological_rules": [
+            {
+                "name": "auslautverhaertung",
+                "input": "([bdg])$",
+                "output": "\\1_devoiced",
+                "resolution": {
+                    "b_devoiced": "p",
+                    "d_devoiced": "t",
+                    "g_devoiced": "k"
+                },
+                "context": "word_final",
+                "obligatory": true,
+                "description": "Desvozeamento final obrigatório (Bad → Bat)"
+            },
+            {
+                "name": "schwa_syncope",
+                "input": "ə",
+                "output": "",
+                "context": "colloquial",
+                "obligatory": false,
+                "visible": false,
+                "description": "Schwa nunca é impresso - apenas notação interna"
+            },
+            {
+                "name": "velar_nasal_assimilation",
+                "input": "n([kg])",
+                "output": "ng\\1",
+                "context": "all",
+                "obligatory": true,
+                "description": "N assimila para NG antes de velares"
+            },
+            {
+                "name": "fortition_s_before_p_t_k",
+                "input": "s([ptk])",
+                "output": "sch\\1",
+                "context": "onset",
+                "obligatory": false,
+                "description": "S pode fortalecer para SCH antes de plosivas (variação estilística)"
+            }
+        ],
+        "sandhi": {
+            "enabled": true,
+            "cross_word_boundary": false,
+            "rules": [
+                {
+                    "pattern": "t\\s+d",
+                    "replacement": "td",
+                    "description": "Assimilação plosiva em compostos"
+                }
+            ]
+        }
+    },
+    "root_system": {
+        "enabled": true,
+        "description": "Sistema germânico usa raízes lineares, não triconsonantais"
+    },
+    "morphological_derivation": {
+        "enabled": true,
+        "root_based": false,
+        "strategy": "affixation_and_compounding",
+        "max_depth": 4,
+        "exceptions": [
+            "der",
+            "die",
+            "das",
+            "ein",
+            "eine",
+            "und",
+            "oder",
+            "aber",
+            "ist",
+            "sind",
+            "war",
+            "werden",
+            "in",
+            "an",
+            "auf",
+            "von",
+            "zu",
+            "mit",
+            "bei"
+        ],
+        "source_suffixes": [
+            {
+                "suffix": "ção",
+                "replacement": "ung",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 95,
+                "mode": "derive",
+                "derivation_type": "verbal_noun",
+                "gender": "feminine",
+                "examples": "tradução → Übersetzung"
+            },
+            {
+                "suffix": "mento",
+                "replacement": "ung",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 90,
+                "mode": "derive",
+                "derivation_type": "verbal_noun",
+                "gender": "feminine",
+                "examples": "movimento → Bewegung"
+            },
+            {
+                "suffix": "dade",
+                "replacement": "heit",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 90,
+                "mode": "derive",
+                "derivation_type": "abstract_noun",
+                "gender": "feminine",
+                "examples": "liberdade → Freiheit"
+            },
+            {
+                "suffix": "dor",
+                "replacement": "er",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 85,
+                "mode": "derive",
+                "derivation_type": "agent",
+                "gender": "masculine",
+                "examples": "trabalhador → Arbeiter"
+            },
+            {
+                "suffix": "dora",
+                "replacement": "erin",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 85,
+                "mode": "derive",
+                "derivation_type": "agent_feminine",
+                "gender": "feminine",
+                "examples": "trabalhadora → Arbeiterin"
+            },
+            {
+                "suffix": "vel",
+                "replacement": "bar",
+                "input_pos": "ADJ",
+                "target_pos": "ADJ",
+                "priority": 85,
+                "mode": "derive",
+                "derivation_type": "ability",
+                "examples": "possível → möglich"
+            },
+            {
+                "suffix": "mente",
+                "replacement": "lich",
+                "input_pos": "ADV",
+                "target_pos": "ADJ",
+                "priority": 90,
+                "mode": "derive",
+                "derivation_type": "adverbial",
+                "examples": "rapidamente → schnell"
+            },
+            {
+                "suffix": "ismo",
+                "replacement": "tum",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 80,
+                "mode": "adapt",
+                "gender": "neuter",
+                "examples": "cristianismo → Christentum"
+            },
+            {
+                "suffix": "al",
+                "replacement": "lich",
+                "input_pos": "ADJ",
+                "target_pos": "ADJ",
+                "priority": 75,
+                "mode": "derive",
+                "examples": "nacional → national"
+            },
+            {
+                "suffix": "oso",
+                "replacement": "ig",
+                "input_pos": "ADJ",
+                "target_pos": "ADJ",
+                "priority": 75,
+                "mode": "derive",
+                "examples": "glorioso → glorreich"
+            },
+            {
+                "suffix": "aria",
+                "replacement": "ei",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 70,
+                "mode": "derive",
+                "gender": "feminine",
+                "examples": "padaria → Bäckerei"
+            }
+        ]
+    },
+    "affix_system": {
+        "enabled": true,
+        "description": "Sistema germânico de afixação robusto e transparente",
+        "derivation_rules": [
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "agent_masculine",
+                "affix": "er",
+                "position": "suffix",
+                "force": true,
+                "gender": "masculine",
+                "examples": "lehr-en → Lehr-er"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "agent_feminine",
+                "affix": "erin",
+                "position": "suffix",
+                "force": true,
+                "gender": "feminine",
+                "examples": "lehr-en → Lehr-erin"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "verbal_noun",
+                "affix": "ung",
+                "position": "suffix",
+                "force": true,
+                "gender": "feminine",
+                "examples": "bild-en → Bild-ung"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "NOUN",
+                "type": "abstract_noun_heit",
+                "affix": "heit",
+                "position": "suffix",
+                "force": false,
+                "gender": "feminine",
+                "examples": "schön → Schön-heit"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "NOUN",
+                "type": "abstract_noun_keit",
+                "affix": "keit",
+                "position": "suffix",
+                "force": false,
+                "gender": "feminine",
+                "examples": "müde → Müdig-keit"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "ADJ",
+                "type": "ability",
+                "affix": "bar",
+                "position": "suffix",
+                "force": false,
+                "examples": "trink-en → trink-bar"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "type": "relational",
+                "affix": "isch",
+                "position": "suffix",
+                "force": false,
+                "examples": "Kind → kind-isch"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "type": "possessive",
+                "affix": "lich",
+                "position": "suffix",
+                "force": false,
+                "examples": "Mensch → mensch-lich"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "ADV",
+                "type": "manner",
+                "affix": "lich",
+                "position": "suffix",
+                "force": false,
+                "examples": "schnell → schnell-lich (ou forma igual)"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "NOUN",
+                "type": "diminutive",
+                "affix": "chen",
+                "position": "suffix",
+                "force": false,
+                "gender": "neuter",
+                "triggers_umlaut": true,
+                "examples": "Haus → Häus-chen"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "NOUN",
+                "type": "augmentative_collective",
+                "affix": "schaft",
+                "position": "suffix",
+                "force": false,
+                "gender": "feminine",
+                "examples": "Freund → Freund-schaft"
+            }
+        ]
+    },
+    "gender_system": {
+        "enabled": true,
+        "genders": [
+            "masculine",
+            "feminine",
+            "neuter"
+        ],
+        "default": "masculine",
+        "assignment": "lexical_with_rules",
+        "description": "Sistema de três gêneros gramaticais forte e conservador",
+        "inference": [
+            {
+                "suffix": "er",
+                "gender": "masculine",
+                "confidence": 0.95
+            },
+            {
+                "suffix": "en",
+                "gender": "masculine",
+                "confidence": 0.70
+            },
+            {
+                "suffix": "el",
+                "gender": "masculine",
+                "confidence": 0.75
+            },
+            {
+                "suffix": "ich",
+                "gender": "masculine",
+                "confidence": 0.80
+            },
+            {
+                "suffix": "ig",
+                "gender": "masculine",
+                "confidence": 0.65
+            },
+            {
+                "suffix": "e",
+                "gender": "feminine",
+                "confidence": 0.85
+            },
+            {
+                "suffix": "heit",
+                "gender": "feminine",
+                "confidence": 1.00
+            },
+            {
+                "suffix": "keit",
+                "gender": "feminine",
+                "confidence": 1.00
+            },
+            {
+                "suffix": "ung",
+                "gender": "feminine",
+                "confidence": 1.00
+            },
+            {
+                "suffix": "schaft",
+                "gender": "feminine",
+                "confidence": 1.00
+            },
+            {
+                "suffix": "ei",
+                "gender": "feminine",
+                "confidence": 0.95
+            },
+            {
+                "suffix": "in",
+                "gender": "feminine",
+                "confidence": 0.90
+            },
+            {
+                "suffix": "erin",
+                "gender": "feminine",
+                "confidence": 1.00
+            },
+            {
+                "suffix": "ion",
+                "gender": "feminine",
+                "confidence": 0.95
+            },
+            {
+                "suffix": "tät",
+                "gender": "feminine",
+                "confidence": 0.95
+            },
+            {
+                "suffix": "chen",
+                "gender": "neuter",
+                "confidence": 1.00
+            },
+            {
+                "suffix": "lein",
+                "gender": "neuter",
+                "confidence": 1.00
+            },
+            {
+                "suffix": "tum",
+                "gender": "neuter",
+                "confidence": 1.00
+            },
+            {
+                "suffix": "um",
+                "gender": "neuter",
+                "confidence": 0.90
+            },
+            {
+                "suffix": "ment",
+                "gender": "neuter",
+                "confidence": 0.85
+            }
+        ],
+        "semantic_rules": {
+            "male_beings": "masculine",
+            "female_beings": "feminine",
+            "young_animals": "neuter",
+            "metals": "neuter",
+            "abstract_concepts_in_ung": "feminine",
+            "tools_in_er": "masculine"
+        },
+        "markers": {
+            "masculine": {
+                "marker": "",
+                "position": "suffix",
+                "targets": [
+                    "ADJ",
+                    "DET"
+                ]
+            },
+            "feminine": {
+                "marker": "e",
+                "position": "suffix",
+                "targets": [
+                    "ADJ"
+                ],
+                "weak_declension_only": true
+            },
+            "neuter": {
+                "marker": "",
+                "position": "suffix",
+                "targets": [
+                    "ADJ",
+                    "DET"
+                ]
+            }
+        }
+    },
+    "number_system": {
+        "numbers": [
+            "singular",
+            "plural"
+        ],
+        "default": "singular",
+        "markers": {
+            "singular": {
+                "marker": ""
+            },
+            "plural": {
+                "marker": "en",
+                "alternatives": [
+                    {
+                        "marker": "e",
+                        "conditions": [
+                            "monosyllabic"
+                        ],
+                        "frequency": 0.30
+                    },
+                    {
+                        "marker": "er",
+                        "conditions": [
+                            "neuter",
+                            "monosyllabic"
+                        ],
+                        "frequency": 0.25,
+                        "triggers_umlaut": true
+                    },
+                    {
+                        "marker": "s",
+                        "conditions": [
+                            "foreign_origin"
+                        ],
+                        "frequency": 0.15
+                    },
+                    {
+                        "marker": "∅",
+                        "conditions": [
+                            "masculine",
+                            "ends_in_er_el_en"
+                        ],
+                        "frequency": 0.10
+                    }
+                ],
+                "description": "Plural diversificado com tendência forte para -en"
+            }
+        },
+        "umlaut_plurals": {
+            "enabled": true,
+            "obligatory_with": [
+                "er_plural"
+            ],
+            "optional_with": [
+                "e_plural"
+            ],
+            "description": "Metafonia produtiva em plurais (Gast → Gäste, Buch → Bücher)",
+            "patterns": [
+                {
+                    "singular": "a",
+                    "plural": "ä"
+                },
+                {
+                    "singular": "o",
+                    "plural": "ö"
+                },
+                {
+                    "singular": "u",
+                    "plural": "ü"
+                },
+                {
+                    "singular": "au",
+                    "plural": "äu"
+                }
+            ],
+            "examples": {
+                "a_to_ä": "Gast → Gäste, Wald → Wälder",
+                "o_to_ö": "Wort → Wörter, Dorf → Dörfer",
+                "u_to_ü": "Buch → Bücher, Gruß → Grüße",
+                "au_to_äu": "Haus → Häuser, Baum → Bäume"
+            }
+        }
+    },
+    "case_system": {
+        "enabled": true,
+        "cases": [
+            "nominative",
+            "accusative",
+            "genitive",
+            "dative"
+        ],
+        "marker_position": "suffix",
+        "preposition_handling": "coexist",
+        "description": "Sistema de quatro casos preservado e robusto",
+        "markers": {
+            "nominative": {
+                "marker": "",
+                "type": "suffix",
+                "conditions": [],
+                "shift_to_determiner": true,
+                "examples": "der Mann, die Frau, das Kind"
+            },
+            "accusative": {
+                "marker": "en",
+                "type": "suffix",
+                "conditions": [
+                    "masculine",
+                    "singular",
+                    "weak_noun"
+                ],
+                "shift_to_determiner": true,
+                "examples": "den Mann, die Frau, das Kind"
+            },
+            "genitive": {
+                "marker": "es",
+                "alternatives": [
+                    "s"
+                ],
+                "type": "suffix",
+                "conditions": [
+                    "masculine_or_neuter",
+                    "strong_noun"
+                ],
+                "shift_to_determiner": false,
+                "mandatory": true,
+                "examples": "des Mannes, der Frau, des Kindes"
+            },
+            "dative": {
+                "marker": "e",
+                "type": "suffix",
+                "conditions": [
+                    "archaic_or_formal"
+                ],
+                "shift_to_determiner": true,
+                "optional": true,
+                "examples": "dem Mann(e), der Frau, dem Kind(e)"
+            }
+        },
+        "article_declension": {
+            "enabled": true,
+            "description": "Declinação completa de artigos - marca principal dos casos",
+            "definite": {
+                "nom_m": "der",
+                "acc_m": "den",
+                "gen_m": "des",
+                "dat_m": "dem",
+                "nom_f": "die",
+                "acc_f": "die",
+                "gen_f": "der",
+                "dat_f": "der",
+                "nom_n": "das",
+                "acc_n": "das",
+                "gen_n": "des",
+                "dat_n": "dem",
+                "nom_pl": "die",
+                "acc_pl": "die",
+                "gen_pl": "der",
+                "dat_pl": "den"
+            },
+            "indefinite": {
+                "nom_m": "ein",
+                "acc_m": "einen",
+                "gen_m": "eines",
+                "dat_m": "einem",
+                "nom_f": "eine",
+                "acc_f": "eine",
+                "gen_f": "einer",
+                "dat_f": "einer",
+                "nom_n": "ein",
+                "acc_n": "ein",
+                "gen_n": "eines",
+                "dat_n": "einem"
+            },
+            "negative": {
+                "nom_m": "kein",
+                "acc_m": "keinen",
+                "gen_m": "keines",
+                "dat_m": "keinem",
+                "nom_f": "keine",
+                "acc_f": "keine",
+                "gen_f": "keiner",
+                "dat_f": "keiner",
+                "nom_n": "kein",
+                "acc_n": "kein",
+                "gen_n": "keines",
+                "dat_n": "keinem",
+                "nom_pl": "keine",
+                "acc_pl": "keine",
+                "gen_pl": "keiner",
+                "dat_pl": "keinen"
+            }
+        },
+        "weak_nouns": {
+            "enabled": true,
+            "description": "Substantivos fracos adicionam -(e)n em todos os casos exceto nominativo singular",
+            "pattern": "masculine_animate",
+            "examples": [
+                "Mensch → den Menschen, des Menschen, dem Menschen"
+            ],
+            "typical_endings": [
+                "e",
+                "ent",
+                "ant",
+                "ist",
+                "or"
+            ]
+        },
+        "adjective_declension": {
+            "enabled": true,
+            "types": [
+                "strong",
+                "weak",
+                "mixed"
+            ],
+            "description": "Adjetivos declinam conforme determinante",
+            "strong": {
+                "when": "no_determiner",
+                "nom_m": "er",
+                "acc_m": "en",
+                "gen_m": "en",
+                "dat_m": "em",
+                "nom_f": "e",
+                "acc_f": "e",
+                "gen_f": "er",
+                "dat_f": "er",
+                "nom_n": "es",
+                "acc_n": "es",
+                "gen_n": "en",
+                "dat_n": "em"
+            },
+            "weak": {
+                "when": "after_definite_article",
+                "all_except_nom_m_n_acc_n": "en",
+                "nom_m": "e",
+                "nom_n": "e",
+                "acc_n": "e"
+            },
+            "mixed": {
+                "when": "after_indefinite_article",
+                "follows_indefinite_endings": true
+            }
+        }
+    },
+    "determiner_system": {
+        "definite_article": {
+            "form": "der",
+            "variants": [
+                "die",
+                "das"
+            ],
+            "procliticizes": false,
+            "declines": true,
+            "description": "Artigo definido com declinação completa por caso/gênero/número"
+        },
+        "indefinite_article": {
+            "form": "ein",
+            "variants": [
+                "eine"
+            ],
+            "declines": true,
+            "no_plural": true,
+            "description": "Artigo indefinido (sem plural)"
+        },
+        "demonstratives": {
+            "gender_inheritance_heuristic": true,
+            "decline_like_definite": true,
+            "proximal": {
+                "sg_m": "tïes",
+                "sg_f": "tïe",
+                "sg_n": "tïes",
+                "pl": "tïe",
+                "description": "Este/esta/isto - próximo"
+            },
+            "distal": {
+                "sg_m": "jener",
+                "sg_f": "jene",
+                "sg_n": "jenes",
+                "pl": "jene",
+                "description": "Aquele/aquela/aquilo - distante"
+            }
+        },
+        "possessives": {
+            "pronominal_suffixes": false,
+            "suppress_article": true,
+            "decline_like_indefinite": true,
+            "independent_forms": {
+                "1sg": "mar",
+                "2sg": "dat",
+                "3sg_m": "sïnb",
+                "3sg_f": "sïne",
+                "3sg_n": "sïn",
+                "1pl": "andt",
+                "2pl": "irt",
+                "3pl": "int",
+                "formal": "Ihr"
+            }
+        }
+    },
+    "pronominal_system": {
+        "independent_pronouns": {
+            "1sg": "ich",
+            "2sg": "du",
+            "3sg_m": "er",
+            "3sg_f": "sie",
+            "3sg_n": "es",
+            "1pl": "wir",
+            "2pl": "ihr",
+            "3pl": "sie",
+            "formal": "Sie"
+        },
+        "object_pronouns": {
+            "accusative": {
+                "1sg": "mich",
+                "2sg": "dich",
+                "3sg_m": "ihn",
+                "3sg_f": "sie",
+                "3sg_n": "es",
+                "1pl": "uns",
+                "2pl": "euch",
+                "3pl": "sie",
+                "formal": "Sie"
+            },
+            "dative": {
+                "1sg": "mir",
+                "2sg": "dir",
+                "3sg_m": "ihm",
+                "3sg_f": "ihr",
+                "3sg_n": "ihm",
+                "1pl": "uns",
+                "2pl": "euch",
+                "3pl": "ihnen",
+                "formal": "Ihnen"
+            }
+        },
+        "reflexive_pronouns": {
+            "1sg": "mich/mir",
+            "2sg": "dich/dir",
+            "3sg": "sich",
+            "1pl": "uns",
+            "2pl": "euch",
+            "3pl": "sich"
+        }
+    },
+    "adposition_system": {
+        "type": "prepositions",
+        "case_government": {
+            "enabled": true,
+            "strict": true,
+            "description": "Preposições regem casos específicos",
+            "dative_only": [
+                "mit",
+                "nach",
+                "von",
+                "zu",
+                "aus",
+                "bei",
+                "seit",
+                "gegenüber"
+            ],
+            "accusative_only": [
+                "durch",
+                "für",
+                "gegen",
+                "ohne",
+                "um",
+                "bis",
+                "entlang"
+            ],
+            "two_way": {
+                "prepositions": [
+                    "an",
+                    "auf",
+                    "in",
+                    "über",
+                    "unter",
+                    "vor",
+                    "hinter",
+                    "neben",
+                    "zwischen"
+                ],
+                "accusative_when": "motion_to_location",
+                "dative_when": "static_location",
+                "description": "Acusativo para movimento direcional, dativo para localização estática"
+            },
+            "genitive": [
+                "wegen",
+                "während",
+                "trotz",
+                "statt",
+                "anstatt",
+                "außerhalb",
+                "innerhalb",
+                "oberhalb",
+                "unterhalb"
+            ]
+        },
+        "inflected_prepositions": {
+            "enabled": true,
+            "forms": {
+                "hät": {
+                    "def_m_sg": "ïn",
+                    "def_f_sg": "ïna",
+                    "def_n_sg": "ïnm"
+                }
+            }
+        }
+    },
+    "tam_system": {
+        "enabled": true,
+        "description": "Sistema TAM germânico com verbos fortes (ablaut) e fracos (dental)",
+        "person_marking": {
+            "enabled": true,
+            "position": "suffix",
+            "prefixes": {},
+            "suffixes": {
+                "1sg": "e",
+                "2sg": "st",
+                "3sg": "t",
+                "1pl": "en",
+                "2pl": "t",
+                "3pl": "en"
+            }
+        },
+        "rules": [
+            {
+                "features": [
+                    "Tense=Pres",
+                    "Mood=Ind"
+                ],
+                "marker": "",
+                "type": "suffix",
+                "person_agreement": true,
+                "description": "Presente do indicativo com sufixos pessoais"
+            },
+            {
+                "features": [
+                    "Tense=Past",
+                    "Mood=Ind",
+                    "VerbClass=Weak"
+                ],
+                "marker": "te",
+                "type": "suffix",
+                "person_agreement": true,
+                "description": "Pretérito fraco (dental suffix): mach-te, arbeit-ete"
+            },
+            {
+                "features": [
+                    "Tense=Past",
+                    "Mood=Ind",
+                    "VerbClass=Strong"
+                ],
+                "marker": "ablaut",
+                "type": "stem_change",
+                "person_agreement": true,
+                "description": "Pretérito forte (ablaut): sing → sang, gab → gab"
+            },
+            {
+                "features": [
+                    "VerbForm=Part",
+                    "Tense=Past"
+                ],
+                "prefix": "ge",
+                "suffix": "t",
+                "suffix_strong": "en",
+                "type": "circumfix",
+                "description": "Particípio passado: ge-mach-t (fraco), ge-sung-en (forte)"
+            },
+            {
+                "features": [
+                    "Mood=Sub",
+                    "Tense=Pres"
+                ],
+                "marker": "e",
+                "type": "suffix",
+                "description": "Subjuntivo I: er sag-e, sie komm-e"
+            },
+            {
+                "features": [
+                    "Mood=Sub",
+                    "Tense=Past"
+                ],
+                "marker": "te",
+                "type": "suffix",
+                "triggers_umlaut": true,
+                "description": "Subjuntivo II: er käm-e, sie würd-e"
+            },
+            {
+                "features": [
+                    "Mood=Imp",
+                    "Person=2sg"
+                ],
+                "marker": "",
+                "type": "bare_stem",
+                "description": "Imperativo 2sg: Komm! Gib!"
+            },
+            {
+                "features": [
+                    "Mood=Imp",
+                    "Person=2pl"
+                ],
+                "marker": "t",
+                "type": "suffix",
+                "description": "Imperativo 2pl: Komm-t! Geb-t!"
+            }
+        ],
+        "strong_verbs": {
+            "enabled": true,
+            "productivity": "high",
+            "description": "Verbos fortes com alternância ablaut (Umlaut)",
+            "ablaut_series": [
+                {
+                    "class": 1,
+                    "infinitive": "ei",
+                    "past_sg": "i",
+                    "past_pl": "i",
+                    "participle": "i",
+                    "examples": "bleiben → blieb → geblieben, reiten → ritt → geritten"
+                },
+                {
+                    "class": 2,
+                    "infinitive": "ie",
+                    "past_sg": "o",
+                    "past_pl": "o",
+                    "participle": "o",
+                    "examples": "biegen → bog → gebogen, fliegen → flog → geflogen"
+                },
+                {
+                    "class": 3,
+                    "infinitive": "i/e",
+                    "past_sg": "a",
+                    "past_pl": "u",
+                    "participle": "u",
+                    "examples": "binden → band → gebunden, singen → sang → gesungen"
+                },
+                {
+                    "class": 4,
+                    "infinitive": "e",
+                    "past_sg": "a",
+                    "past_pl": "a",
+                    "participle": "o",
+                    "examples": "nehmen → nahm → genommen, kommen → kam → gekommen"
+                },
+                {
+                    "class": 5,
+                    "infinitive": "e",
+                    "past_sg": "a",
+                    "past_pl": "a",
+                    "participle": "e",
+                    "examples": "geben → gab → gegeben, lesen → las → gelesen"
+                },
+                {
+                    "class": 6,
+                    "infinitive": "a",
+                    "past_sg": "u",
+                    "past_pl": "u",
+                    "participle": "a",
+                    "examples": "fahren → fuhr → gefahren, graben → grub → gegraben"
+                },
+                {
+                    "class": 7,
+                    "infinitive": "various",
+                    "past_sg": "ie",
+                    "past_pl": "ie",
+                    "participle": "various",
+                    "description": "Classe redupliactiva (vestígios)",
+                    "examples": "fallen → fiel → gefallen, halten → hielt → gehalten"
+                }
+            ]
+        },
+        "weak_verbs": {
+            "enabled": true,
+            "productivity": "very_high",
+            "description": "Verbos fracos regulares com sufixo dental -te",
+            "pattern": {
+                "past": "STEM + te + PERSON",
+                "participle": "ge + STEM + t"
+            },
+            "examples": "machen → machte → gemacht, arbeiten → arbeitete → gearbeitet"
+        },
+        "auxiliary_verbs": {
+            "haben": {
+                "form": "haben",
+                "use": "perfective_transitive",
+                "irregular": true
+            },
+            "sein": {
+                "form": "sein",
+                "use": "perfective_intransitive_motion_change",
+                "irregular": true
+            },
+            "werden": {
+                "form": "werden",
+                "use": "future_passive_voice",
+                "irregular": true
+            }
+        },
+        "modal_verbs": {
+            "können": "can/be_able",
+            "müssen": "must/have_to",
+            "dürfen": "may/be_allowed",
+            "sollen": "should/ought",
+            "wollen": "want_to",
+            "mögen": "like/may"
+        }
+    },
+    "copula_system": {
+        "enabled": true,
+        "obligatory": true,
+        "copulas": [
+            {
+                "type": "default",
+                "form": "sein",
+                "conjugates": true,
+                "irregular": true,
+                "conditions": [],
+                "description": "Cópula principal: ser/estar"
+            },
+            {
+                "type": "becoming",
+                "form": "werden",
+                "conjugates": true,
+                "irregular": true,
+                "conditions": [
+                    "change_of_state"
+                ],
+                "description": "Tornar-se, vir a ser"
+            },
+            {
+                "type": "remaining",
+                "form": "bleiben",
+                "conjugates": true,
+                "conditions": [
+                    "continuative"
+                ],
+                "description": "Permanecer, continuar sendo"
+            }
+        ]
+    },
+    "negation_system": {
+        "enabled": true,
+        "description": "Sistema de negação germânico com nicht (verbal) e kein (nominal)",
+        "strategies": [
+            {
+                "type": "verbal_negation",
+                "marker": "warum",
+                "position": "postverbal_or_clause_final",
+                "description": "Negação verbal: Er kommt nicht"
+            },
+            {
+                "type": "nominal_negation",
+                "marker": "apper",
+                "position": "replaces_indefinite_article",
+                "declines": true,
+                "description": "Negação nominal: kein Mann, keine Frau, kein Kind"
+            },
+            {
+                "type": "adverbial_negation",
+                "marker": "warum",
+                "position": "before_negated_element",
+                "description": "Negação de constituintes: nicht hier, nicht heute"
+            }
+        ],
+        "double_negation": "cancels_out",
+        "negative_concord": false
+    },
+    "interrogative_system": {
+        "enabled": true,
+        "v2_inversion": true,
+        "description": "Interrogação por inversão V2 ou partículas wh-",
+        "yes_no_questions": {
+            "strategy": "verb_fronting",
+            "verb_position": 1,
+            "description": "Kommst du? Ist er hier?"
+        },
+        "wh_questions": {
+            "wh_fronting": true,
+            "verb_position": 2,
+            "pronouns": {
+                "who": "wer",
+                "what": "was",
+                "where": "wo",
+                "when": "wann",
+                "why": "warum",
+                "how": "wie",
+                "which": "welcher"
+            },
+            "description": "Wer kommt? Was machst du?"
+        }
+    },
+    "vowel_harmony": {
+        "enabled": false,
+        "description": "Não há harmonia vocálica em germânico"
+    },
+    "consonant_mutation": {
+        "enabled": false,
+        "description": "Não há mutação consonantal inicial (tipo celta)"
+    },
+    "pharyngealization": {
+        "enabled": false
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "fixed",
+        "position": "root_initial",
+        "graphic_accent": false,
+        "description": "Acento fixo na primeira sílaba da RAIZ (não de prefixos átonos)",
+        "exceptions": {
+            "unstressed_prefixes": [
+                "be",
+                "ge",
+                "er",
+                "ver",
+                "zer",
+                "ent",
+                "emp",
+                "miss"
+            ],
+            "examples": {
+                "be-GIN-nen": "stress on root GIN",
+                "GE-ben": "stress on root GEB (ge- is past participle prefix)",
+                "ver-STE-hen": "stress on root STE",
+                "AN-fang": "stress on separable prefix AN"
+            }
+        }
+    },
+    "reduplication": {
+        "enabled": false,
+        "description": "Reduplicação não é produtiva em germânico moderno"
+    },
+    "topicalization": {
+        "enabled": true,
+        "topic_marker": "",
+        "position": "clause_initial",
+        "triggers_v2": true,
+        "description": "Topicalização via fronting + V2: Dieses Buch lese ich"
+    },
+    "focus_structure": {
+        "enabled": false,
+        "description": "Foco marcado prosodicamente, não estruturalmente"
+    },
+    "agreement_rules": {
+        "gender_agreement": true,
+        "number_agreement": true,
+        "person_agreement": true,
+        "case_agreement": true,
+        "adjunct_position": "prenominal",
+        "description": "Concordância forte em gênero, número, pessoa e caso"
+    },
+    "pro_drop": {
+        "enabled": false,
+        "description": "Pronomes sujeito são obrigatórios - não é língua pro-drop"
+    },
+    "drop_articles": false,
+    "degree_system": {
+        "enabled": true,
+        "description": "Sistema de graus germânico com sufixos e umlaut opcional",
+        "comparative": {
+            "affix": "er",
+            "position": "suffix",
+            "triggers_umlaut": "sometimes",
+            "description": "Comparativo: groß → größ-er, schnell → schnell-er"
+        },
+        "superlative": {
+            "affix": "st",
+            "position": "suffix",
+            "triggers_umlaut": "sometimes",
+            "prefix_when_predicative": "am",
+            "description": "Superlativo: der größ-te, am schnell-sten"
+        },
+        "diminutive": {
+            "affix": "chen",
+            "position": "suffix",
+            "gender": "neuter",
+            "triggers_umlaut": true,
+            "description": "Diminutivo: Haus → Häus-chen"
+        },
+        "augmentative": {
+            "strategy": "compounding",
+            "prefixes": [
+                "riesen",
+                "super",
+                "ur"
+            ],
+            "description": "Aumentativo por composição: Riesen-haus"
+        }
+    },
+    "semantic_fields": {
+        "enabled": true,
+        "use_nltk": false,
+        "animate_domains": [
+            "kinship",
+            "occupation",
+            "fauna",
+            "body_parts"
+        ],
+        "inanimate_domains": [
+            "flora",
+            "tools",
+            "buildings",
+            "abstract_concepts"
+        ]
+    },
+    "polysemy_rules": {
+        "enabled": false
+    },
+    "false_cognates": {
+        "enabled": false
+    },
+    "loanword_policy": {
+        "enabled": true,
+        "description": "Preferência forte por calques (tradução literal composta) ao invés de empréstimos diretos",
+        "modes": {
+            "calque": 0.65,
+            "phonetic_adaptation": 0.25,
+            "semantic_extension": 0.10
+        },
+        "calque_connector": "",
+        "calque_strategy": "head_final_compound",
+        "examples": {
+            "telefone": "Fernsprech-er (fern=distante + sprech=fala + er=agente)",
+            "televisão": "Fernseh-er (fern=distante + seh=ver + er=agente)",
+            "computador": "Rechen-maschine (rechen=calcular + maschine=máquina)",
+            "internet": "Weltnetz (welt=mundo + netz=rede)"
+        }
+    },
+    "compounding": {
+        "enabled": true,
+        "productivity": "very_high",
+        "max_components": 5,
+        "head_position": "final",
+        "description": "Composição nominal extremamente produtiva - característica CENTRAL do Corimês",
+        "linking_elements": {
+            "s": {
+                "after": [
+                    "ung",
+                    "heit",
+                    "keit",
+                    "schaft",
+                    "ion",
+                    "tät",
+                    "tum"
+                ],
+                "examples": "Bildung-s-system, Freiheit-s-statue"
+            },
+            "es": {
+                "after": [
+                    "tum"
+                ],
+                "examples": "Königtum-es-recht"
+            },
+            "en": {
+                "after": [
+                    "e"
+                ],
+                "examples": "Straße-n-bahn"
+            },
+            "er": {
+                "after": [
+                    "buch",
+                    "kind",
+                    "ei"
+                ],
+                "examples": "Kinder-garten, Bücher-regal"
+            },
+            "n": {
+                "after": [
+                    "e"
+                ],
+                "examples": "Kirche-n-lied"
+            }
+        },
+        "noun_noun": {
+            "productivity": "very_high",
+            "head": "final",
+            "examples": "Apfel-baum, Haus-tür, Hand-schuh, Feuer-wehr"
+        },
+        "adj_noun": {
+            "productivity": "high",
+            "examples": "Groß-vater, Hoch-schule, Rot-wein"
+        },
+        "verb_noun": {
+            "productivity": "medium",
+            "stem_form": "verbal_stem",
+            "examples": "Fahr-rad, Lese-buch, Wasch-maschine"
+        },
+        "recursive_compounding": {
+            "enabled": true,
+            "max_depth": 4,
+            "examples": "Donau-dampf-schiff-fahrt-s-gesellschaft-s-kapitän"
+        }
+    },
+    "v2_constraint": {
+        "enabled": true,
+        "description": "Restrição V2 obrigatória em orações principais",
+        "main_clause": true,
+        "subordinate_clause": false,
+        "verb_position": 2,
+        "examples": {
+            "svo": "Ich lese das Buch",
+            "fronted_object": "Das Buch lese ich",
+            "fronted_adverb": "Heute lese ich das Buch",
+            "question": "Liest du das Buch?"
+        }
+    },
+    "verb_cluster": {
+        "enabled": true,
+        "description": "Cluster verbal ao final de subordinadas",
+        "position": "clause_final",
+        "order": "auxiliary_last",
+        "examples": {
+            "subordinate": "..., dass ich das Buch gelesen habe",
+            "modal": "..., dass ich das Buch lesen kann",
+            "double_infinitive": "..., dass ich das Buch habe lesen können"
+        }
+    },
+    "separable_verbs": {
+        "enabled": true,
+        "description": "Verbos com prefixos separáveis (tônicos)",
+        "separable_prefixes": [
+            "ab",
+            "an",
+            "auf",
+            "aus",
+            "bei",
+            "ein",
+            "mit",
+            "nach",
+            "vor",
+            "zu",
+            "zurück",
+            "weg",
+            "her",
+            "hin",
+            "fort",
+            "durch"
+        ],
+        "inseparable_prefixes": [
+            "be",
+            "ge",
+            "er",
+            "ver",
+            "zer",
+            "ent",
+            "emp",
+            "miss"
+        ],
+        "separation_contexts": [
+            "finite_verb_main_clause",
+            "imperative"
+        ],
+        "no_separation": [
+            "infinitive",
+            "past_participle",
+            "subordinate_clause"
+        ],
+        "examples": {
+            "main_separated": "Ich stehe früh auf",
+            "subordinate_joined": "..., dass ich früh aufstehe",
+            "participle": "aufgestanden",
+            "infinitive_with_zu": "aufzustehen"
+        }
+    },
+    "abstract_concepts": {
+        "enabled": true,
+        "mappings": {
+            "do": "ïn"
+        },
+        "definitions": {
+            "ïn": "Ação, atividade ou processo em geral"
+        }
+    },
+    "lexical_registers": {
+        "enabled": true,
+        "description": "Registros estilísticos do Corimês com diferentes graus de arcaísmo e formalidade",
+        "registers": [
+            {
+                "name": "archaic_liturgical",
+                "chance": 0.05,
+                "mutation_factor": 0.20,
+                "phonological_profile": "conservative",
+                "description": "Registro arcaico litúrgico - preserva formas proto-garmânicas",
+                "features": [
+                    "Preserva þ (thorn)",
+                    "Vogais longas marcadas",
+                    "Dativo -e obrigatório",
+                    "Genitivo produtivo"
+                ]
+            },
+            {
+                "name": "formal_literary",
+                "chance": 0.30,
+                "mutation_factor": 0.65,
+                "phonological_profile": "standard",
+                "description": "Registro formal padrão literário/administrativo",
+                "features": [
+                    "Compostos longos",
+                    "Sintaxe complexa",
+                    "Casos preservados",
+                    "Subjuntivo produtivo"
+                ]
+            },
+            {
+                "name": "colloquial_everyday",
+                "chance": 0.45,
+                "mutation_factor": 1.20,
+                "phonological_profile": "reduced",
+                "description": "Registro coloquial cotidiano",
+                "features": [
+                    "Queda de schwa",
+                    "Genitivo raro (substituído por von + dativo)",
+                    "Compostos moderados",
+                    "Contrações comuns"
+                ]
+            },
+            {
+                "name": "vulgar_slang",
+                "chance": 0.10,
+                "mutation_factor": 1.85,
+                "phonological_profile": "heavily_reduced",
+                "description": "Registro vulgar/gíria popular",
+                "features": [
+                    "Reduções extremas",
+                    "Empréstimos diretos",
+                    "Sintaxe simplificada",
+                    "Casos reduzidos"
+                ]
+            },
+            {
+                "name": "technical_administrative",
+                "chance": 0.10,
+                "mutation_factor": 0.75,
+                "phonological_profile": "standard",
+                "description": "Registro técnico-burocrático",
+                "features": [
+                    "Compostos muito longos",
+                    "Nominalização extrema",
+                    "Passivas frequentes",
+                    "Precisão terminológica"
+                ]
+            }
+        ]
+    },
+    "functional_particles": {
+        "modal_particles": {
+            "ja": "affirmation/obviousness",
+            "doch": "contradiction/insistence",
+            "mal": "softening/politeness",
+            "eben": "resignation/inevitability",
+            "halt": "finality",
+            "wohl": "probability/assumption"
+        },
+        "discourse_particles": {
+            "also": "so/well_then",
+            "nun": "now/well",
+            "überhaupt": "at_all/anyway"
+        }
+    },
+    "numeric_handling": {
+        "ignore_digits": true,
+        "spell_out_numbers": false
+    },
+    "style": {
+        "capitalization": true,
+        "noun_capitalization": true,
+        "sentence_capitalization": true,
+        "sentence_terminators": [
+            ".",
+            "!",
+            "?"
+        ],
+        "secondary_terminators": [
+            ":",
+            ";"
+        ],
+        "punctuation_map": {
+            ",": ",",
+            ".": ".",
+            "!": "!",
+            "?": "?",
+            ":": ":",
+            ";": ";",
+            "...": "...",
+            "—": "—",
+            "(": "(",
+            ")": ")",
+            "[": "[",
+            "]": "]",
+            "\"": "„",
+            "'": "'"
+        },
+        "quotation_marks": {
+            "opening": "„",
+            "closing": "“",
+            "style": "german_low_high"
+        }
+    },
+    "mappings": {},
+    "phonological_processes": {
+        "description": "Processos fonológicos ativos do Corimês Moderno",
+        "final_devoicing": {
+            "enabled": true,
+            "obligatory": true,
+            "description": "Auslautverhärtung - desvozeamento final obrigatório",
+            "examples": "Bad [baːt], Hund [hunt], Weg [veːk]"
+        },
+        "umlaut": {
+            "enabled": true,
+            "contexts": [
+                "plural",
+                "diminutive",
+                "comparative",
+                "subjunctive_II"
+            ],
+            "productivity": "high",
+            "description": "Metafonia (Umlaut) altamente produtiva",
+            "examples": "Gast→Gäste, groß→größer, können→könnte"
+        },
+        "vowel_lengthening": {
+            "enabled": true,
+            "context": "stressed_open_syllable",
+            "not_marked_orthographically": true,
+            "description": "Alongamento vocálico em sílabas tônicas abertas"
+        },
+        "consonant_cluster_preservation": {
+            "enabled": true,
+            "description": "Preservação de clusters complexos - parte essencial da 'rugosidade'",
+            "examples": "Strumpf, Herbst, Obst"
+        },
+        "schwa_deletion": {
+            "enabled": true,
+            "context": "colloquial_register",
+            "obligatory": false,
+            "description": "Queda de schwa em fala rápida/coloquial",
+            "examples": "guten → gut'n, haben → hab'n"
+        },
+        "assimilation": {
+            "enabled": true,
+            "types": [
+                "nasal_assimilation",
+                "voice_assimilation"
+            ],
+            "description": "Assimilação consonantal em fronteiras morfológicas"
+        }
+    },
+    "root_generation": {
+        "description": "Geração de raízes com estética germânica genuína",
+        "strategy": "template_based_with_phonotactic_constraints",
+        "preferred_root_shapes": [
+            "CVC",
+            "CVCC",
+            "CCVC",
+            "CCVCC",
+            "CV",
+            "VC"
+        ],
+        "preferred_initial_consonants": [
+            "b",
+            "d",
+            "g",
+            "f",
+            "h",
+            "k",
+            "l",
+            "m",
+            "n",
+            "p",
+            "r",
+            "s",
+            "sch",
+            "t",
+            "w",
+            "z"
+        ],
+        "preferred_initial_clusters": [
+            "bl",
+            "br",
+            "dr",
+            "fl",
+            "fr",
+            "gl",
+            "gr",
+            "kl",
+            "kr",
+            "pl",
+            "pr",
+            "schl",
+            "schm",
+            "schn",
+            "schr",
+            "schw",
+            "sp",
+            "st",
+            "str",
+            "sw",
+            "tr",
+            "zw"
+        ],
+        "preferred_nuclei": [
+            "a",
+            "e",
+            "i",
+            "o",
+            "u",
+            "ä",
+            "ö",
+            "ü",
+            "ai",
+            "au",
+            "ei",
+            "eu"
+        ],
+        "preferred_final_consonants": [
+            "b",
+            "d",
+            "g",
+            "f",
+            "k",
+            "l",
+            "m",
+            "n",
+            "p",
+            "r",
+            "s",
+            "sch",
+            "t",
+            "ch",
+            "pf"
+        ],
+        "preferred_final_clusters": [
+            "ft",
+            "cht",
+            "kt",
+            "nk",
+            "ng",
+            "nt",
+            "nd",
+            "rt",
+            "rn",
+            "rm",
+            "lt",
+            "lk",
+            "st",
+            "sk",
+            "mpf",
+            "nkt"
+        ],
+        "avoid": {
+            "palatals_in_excess": [
+                "ç",
+                "ž",
+                "š more than once per word"
+            ],
+            "impossible_clusters": [
+                "žj",
+                "çz",
+                "sx",
+                "zsch"
+            ],
+            "schwa_in_output": [
+                "never print ə"
+            ],
+            "parentheses": [
+                "never print (e) or similar"
+            ]
+        }
+    },
+    "word_formation_priority": {
+        "description": "Ordem de prioridade para formação de palavras",
+        "strategies": [
+            {
+                "rank": 1,
+                "strategy": "transparent_compounding",
+                "weight": 0.50,
+                "description": "Composição transparente N+N, Adj+N (Apfelbaum style)"
+            },
+            {
+                "rank": 2,
+                "strategy": "derivation_with_productive_suffixes",
+                "weight": 0.30,
+                "description": "Derivação com -ung, -heit, -keit, -er, -bar, -lich"
+            },
+            {
+                "rank": 3,
+                "strategy": "strong_verb_ablaut",
+                "weight": 0.10,
+                "description": "Verbos fortes com alternância vocálica"
+            },
+            {
+                "rank": 4,
+                "strategy": "simple_root_generation",
+                "weight": 0.10,
+                "description": "Raízes germânicas simples CVC/CCVC quando necessário"
+            }
+        ]
+    },
+    "design_notes": {
+        "inspiration": "Alemão padrão, Gótico, Alto Alemão Médio - mas ORIGINAL e robusto",
+        "character": "Bronco, ferrugem, robusto, pesado, metálico, resiliente",
+        "key_features": [
+            "Sistema de 4 casos rigoroso (Nom/Acc/Gen/Dat)",
+            "Três gêneros gramaticais preservados (M/F/N)",
+            "Ordem SOV básica com V2 obrigatório em principais",
+            "Alta aglutinação (0.82)",
+            "Composição EXTREMAMENTE produtiva (característica central)",
+            "Acento fixo na raiz inicial",
+            "Verbos fortes com 7 classes de ablaut",
+            "Umlaut altamente produtivo (plurais, comparativos, subjuntivo)",
+            "Clusters consonantais complexos mas REGULARES",
+            "Declinação completa de artigos e adjetivos",
+            "Verbos separáveis/inseparáveis",
+            "Particípios com ge- circumfix",
+            "Desvozeamento final obrigatório (Auslautverhärtung)",
+            "Preferência forte por calques ao invés de empréstimos",
+            "Capitalização de substantivos"
+        ],
+        "aesthetic_goals": [
+            "Som PESADO e ROBUSTO - não suave",
+            "Clusters germânicos genuínos (schr-, str-, pfl-, -mpf, -nkt)",
+            "Transparência morfológica - raiz + afixos claros",
+            "Compostos longos mas LEGÍVEIS (Apfel-baum, não çolwöž)",
+            "Zero caracteres eslavos/exóticos (ç, ž em excesso)",
+            "Schwa NUNCA impresso",
+            "Parênteses NUNCA no output",
+            "Palavras que SOAM alemãs/góticas, não aleatórias"
+        ],
+        "intelligibility_notes": {
+            "with_aidanese": "82-88% - Aidaneses entendem bem mas acham morfologicamente complexo",
+            "with_carminean": "88-92% - Muito próximo, Carminês soa como 'Corimês simplificado'",
+            "with_baixo_corimean_norte": "92-97% - Continuum dialetal quase perfeito",
+            "with_sul_corimean": "68-78% - Inteligível mas com estranhamentos fonéticos (dialeto Ágrio)"
+        },
+        "example_vocabulary": {
+            "maçã": "Apfel",
+            "árvore": "Baum",
+            "macieira": "Apfelbaum",
+            "plantar": "pflanzen",
+            "morder": "beißen",
+            "necessário": "notwendig (not + wendend + ig)",
+            "não_adianta": "es_nützt_nicht",
+            "cada": "jeder/jede/jedes"
+        },
+        "sample_sentence": {
+            "input": "Não adianta dares uma mordida em cada maçã, é necessário plantar uma macieira.",
+            "expected_style": "Es nützt nicht, in jeden Apfel zu beißen, es ist notwendig, einen Apfelbaum zu pflanzen.",
+            "breakdown": {
+                "es_nützt_nicht": "não adianta (não serve/não adianta)",
+                "in_jeden_Apfel": "em cada maçã (prep + caso acusativo)",
+                "zu_beißen": "morder (infinitivo com zu)",
+                "es_ist_notwendig": "é necessário (copula + adjetivo)",
+                "einen_Apfelbaum": "uma macieira (artigo acus. + composto N+N)",
+                "zu_pflanzen": "plantar (infinitivo com zu)"
+            }
+        }
+    }
+}
