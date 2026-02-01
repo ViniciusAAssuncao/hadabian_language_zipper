@@ -380,10 +380,87 @@
         "description": "Sem casos morfológicos - ordem de palavras e preposições",
         "preposition_handling": "replace"
     },
+    "determiner_system": {
+        "definite_article": {
+            "form": "le",
+            "variants": [],
+            "procliticizes": false,
+            "sun_letter_assimilation": false,
+            "description": "Artigo definido invariável 'le'"
+        },
+        "indefinite_article": {
+            "form": "un",
+            "description": "Artigo indefinido invariável 'un'"
+        },
+        "demonstratives": {
+            "gender_inheritance_heuristic": false,
+            "proximal": {
+                "sg": "iste",
+                "pl": "istes"
+            },
+            "distal": {
+                "sg": "ake",
+                "pl": "akes"
+            }
+        },
+        "possessives": {
+            "pronominal_suffixes": false,
+            "suppress_article": false,
+            "independent_forms": {
+                "1sg": "mi",
+                "2sg": "tu",
+                "3sg": "su",
+                "1pl": "noster",
+                "2pl": "voster",
+                "3pl": "lore"
+            },
+            "possessive_lemmas": {
+                "meu": "mi",
+                "minha": "mi",
+                "teu": "tu",
+                "tua": "tu",
+                "seu": "su",
+                "sua": "su",
+                "nosso": "noster",
+                "nossa": "noster",
+                "vosso": "voster",
+                "vossa": "voster"
+            }
+        }
+    },
+    "pronominal_system": {
+        "independent_pronouns": {
+            "1sg": "me",
+            "2sg": "te",
+            "3sg": "lu",
+            "1pl": "nos",
+            "2pl": "vos",
+            "3pl": "les"
+        },
+        "object_pronouns": {
+            "same_as_subject": true,
+            "description": "Pronomes objeto idênticos aos de sujeito"
+        },
+        "clitic_ordering": {
+            "enabled": false,
+            "description": "Sem clíticos - pronomes são palavras independentes"
+        }
+    },
     "adposition_system": {
         "inflected_prepositions": {
             "enabled": false,
             "description": "Preposições invariáveis, sem flexão"
+        },
+        "basic_prepositions": {
+            "de": "de",
+            "a": "a",
+            "en": "en",
+            "kon": "kon",
+            "sin": "sin",
+            "por": "por",
+            "sobre": "sobre",
+            "ante": "ante",
+            "pos": "pos"
         }
     },
     "tam_system": {

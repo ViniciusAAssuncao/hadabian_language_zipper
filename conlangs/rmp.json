@@ -345,7 +345,6 @@
             "filho": "bnw",
             "pai": "ʔbw",
             "mãe": "ʔmm",
-            "deus": "ʔlh",
             "raab": "rʔb",
             "hadab": "hdb"
         }
@@ -1579,7 +1578,6 @@
             "irmão": "kinship",
             "profeta": "religion",
             "sacerdote": "religion",
-            "deus": "divine",
             "raab": "divine",
             "hadab": "divine"
         }

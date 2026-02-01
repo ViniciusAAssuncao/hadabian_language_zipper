@@ -2214,8 +2214,13 @@ class OriginalLanguageEngine:
                 translated_words = self.allomorphy_handler.apply_allomorphy(
                     translated_words)
 
+            functions_for_glue = []
+            for func in ordered_functions:
+                if func['index'] not in absorbed_indices:
+                    functions_for_glue.append(func)
+
             final_sentence_tokens = self.syntax_engine._glue_tokens(
-                translated_words, ordered_functions)
+                translated_words, functions_for_glue)
 
             if final_sentence_tokens:
                 if capitalization_enabled:
@@ -2418,7 +2423,7 @@ class OriginalLanguageEngine:
             return word
         if depth > 10:
             rng = random.Random(self.global_seed + sum(ord(c)
-                                for c in clean_word) + depth)
+                                                       for c in clean_word) + depth)
             return self._generate_word_from_seed(clean_word, rng.randint(0, 1000000))
         entry = {
             "lemma": clean_word,

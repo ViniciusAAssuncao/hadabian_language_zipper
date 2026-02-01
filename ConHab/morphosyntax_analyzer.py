@@ -282,9 +282,11 @@ class TAMHandler:
                 elif m_type == 'prefix':
                     result = marker + result
                 elif m_type == 'particle_before':
-                    result = marker + ' ' + result
+                    if marker:
+                        result = marker + ' ' + result
                 elif m_type == 'particle_after':
-                    result = result + ' ' + marker
+                    if marker:
+                        result = result + ' ' + marker
 
         if self.person_marking_enabled:
             key = self._get_person_key(feats)
@@ -997,9 +999,15 @@ class CaseMorphology:
                 result = result[0].upper() + result[1:]
             return result
         elif marker_type == 'particle_before':
-            return f"{marker_text} {word}"
+            if marker_text:
+                return f"{marker_text} {word}"
+            else:
+                return word
         elif marker_type == 'particle_after':
-            return f"{word} {marker_text}"
+            if marker_text:
+                return f"{word} {marker_text}"
+            else:
+                return word
 
         return word + marker_text
 
