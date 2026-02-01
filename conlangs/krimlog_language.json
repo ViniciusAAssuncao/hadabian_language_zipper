@@ -2,19 +2,19 @@
     "id": "krimlog",
     "name": "Krimlog",
     "native_name": "Krimlog",
-    "description": "Língua auxiliar planejada de Hadab (1799 AH), derivada do RMP com extrema simplificação para comunicação universal",
+    "description": "Língua auxiliar planejada de Hadab (1799 AH), derivada do RMP com simplificação para comunicação universal. Contém estratos lexicais preservados de dialetos médios.",
     "global_seed": 17991799,
     "source_language_order": "SVO",
     "word_order": "SVO",
     "subordinate_word_order": "SVO",
     "alignment": "nominative-accusative",
-    "agglutination_strength": 0.05,
-    "divergence_factor": 0.02,
-    "cultural_purism": 0.0,
+    "agglutination_strength": 0.08,
+    "divergence_factor": 0.04,
+    "cultural_purism": 0.1,
     "lexical_confluence": {
         "enabled": true,
         "base_stability": 10,
-        "description": "90% do vocabulário herdado do RMP, 10% criado independentemente para regularização",
+        "description": "90% do vocabulário herdado do RMP, 10% criado independentemente ou derivado de dialetos médios",
         "strata": [
             {
                 "source_id": "rmp",
@@ -28,20 +28,21 @@
         "active_style": "krimlog_standard",
         "inventory_styles": {
             "krimlog_standard": {
-                "description": "Inventário fonológico simplificado do Krimlog",
+                "description": "Inventário fonológico do Krimlog com vogais estendidas para nomes próprios",
                 "consonants": "bdfghklmnprstvz",
-                "vowels": "aeiou"
+                "vowels": "aeiouû"
             }
         },
-        "vowels": "aeiou",
+        "vowels": "aeiouû",
         "consonants": "bdfghklmnprstvz",
         "syllable_templates": [
             "CV",
             "CVC",
-            "V"
+            "V",
+            "VC"
         ],
         "min_syllables": 1,
-        "max_syllables": 3,
+        "max_syllables": 4,
         "forbidden_initial_clusters": [
             "bd",
             "nm",
@@ -58,7 +59,8 @@
             "ai",
             "au",
             "ei",
-            "ou"
+            "ou",
+            "ui"
         ],
         "epenthesis_vowel": "e",
         "sonority_hierarchy": {
@@ -83,7 +85,8 @@
                 "e": 7,
                 "i": 7,
                 "o": 7,
-                "u": 7
+                "u": 7,
+                "û": 7
             },
             "onset_rules": {
                 "min_distance": 2,
@@ -194,7 +197,7 @@
     "morphological_derivation": {
         "enabled": true,
         "root_based": false,
-        "max_depth": 2,
+        "max_depth": 3,
         "exceptions": [
             "ha",
             "de",
@@ -205,7 +208,7 @@
     },
     "affix_system": {
         "enabled": true,
-        "description": "Sistema de afixação minimalista para derivação",
+        "description": "Sistema de afixação expandido para derivação e tempo",
         "derivation_rules": [
             {
                 "from_pos": "VERB",
@@ -226,6 +229,15 @@
                 "description": "Ação: verbo + -o"
             },
             {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "instance_result",
+                "affix": "-at",
+                "position": "suffix",
+                "force": true,
+                "description": "Instância concreta ou resultado: verbo + -at"
+            },
+            {
                 "from_pos": "NOUN",
                 "to_pos": "ADJ",
                 "type": "relational",
@@ -233,6 +245,24 @@
                 "position": "suffix",
                 "force": true,
                 "description": "Adjetivo relacional: nome + -i"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "type": "characteristic_intensive",
+                "affix": "-iik",
+                "position": "suffix",
+                "force": true,
+                "description": "Característica intensiva/tendência: nome + -iik"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "NOUN",
+                "type": "augmentative_time",
+                "affix": "-om",
+                "position": "suffix",
+                "force": true,
+                "description": "Temporal/Grandeza (ex-aab): nome + -om"
             },
             {
                 "from_pos": "ADJ",
@@ -254,6 +284,15 @@
             }
         ],
         "source_suffixes": [
+            {
+                "suffix": "aab",
+                "replacement": "-om",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 110,
+                "mode": "adapt",
+                "description": "Evolução do sufixo divino/grande -aab para -om"
+            },
             {
                 "suffix": "logia",
                 "replacement": "-logi",
@@ -341,108 +380,10 @@
         "description": "Sem casos morfológicos - ordem de palavras e preposições",
         "preposition_handling": "replace"
     },
-    "determiner_system": {
-        "definite_article": {
-            "form": "le",
-            "variants": [],
-            "procliticizes": false,
-            "sun_letter_assimilation": false,
-            "description": "Artigo definido invariável 'le'"
-        },
-        "indefinite_article": {
-            "form": "un",
-            "description": "Artigo indefinido invariável 'un'"
-        },
-        "demonstratives": {
-            "gender_inheritance_heuristic": false,
-            "proximal": {
-                "sg": "iste",
-                "pl": "istes"
-            },
-            "distal": {
-                "sg": "ake",
-                "pl": "akes"
-            },
-            "source_mappings": {
-                "proximal": [
-                    "este",
-                    "esta",
-                    "isto",
-                    "esse",
-                    "essa",
-                    "isso",
-                    "estes",
-                    "estas",
-                    "esses",
-                    "essas"
-                ],
-                "distal": [
-                    "aquele",
-                    "aquela",
-                    "aquilo",
-                    "aqueles",
-                    "aquelas"
-                ]
-            }
-        },
-        "possessives": {
-            "pronominal_suffixes": false,
-            "suppress_article": false,
-            "independent_forms": {
-                "1sg": "mi",
-                "2sg": "tu",
-                "3sg": "su",
-                "1pl": "noster",
-                "2pl": "voster",
-                "3pl": "lore"
-            },
-            "possessive_lemmas": {
-                "meu": "mi",
-                "minha": "mi",
-                "teu": "tu",
-                "tua": "tu",
-                "seu": "su",
-                "sua": "su",
-                "nosso": "noster",
-                "nossa": "noster",
-                "vosso": "voster",
-                "vossa": "voster"
-            }
-        }
-    },
-    "pronominal_system": {
-        "independent_pronouns": {
-            "1sg": "me",
-            "2sg": "te",
-            "3sg": "lu",
-            "1pl": "nos",
-            "2pl": "vos",
-            "3pl": "les"
-        },
-        "object_pronouns": {
-            "same_as_subject": true,
-            "description": "Pronomes objeto idênticos aos de sujeito"
-        },
-        "clitic_ordering": {
-            "enabled": false,
-            "description": "Sem clíticos - pronomes são palavras independentes"
-        }
-    },
     "adposition_system": {
         "inflected_prepositions": {
             "enabled": false,
             "description": "Preposições invariáveis, sem flexão"
-        },
-        "basic_prepositions": {
-            "de": "de",
-            "a": "a",
-            "en": "en",
-            "kon": "kon",
-            "sin": "sin",
-            "por": "por",
-            "sobre": "sobre",
-            "ante": "ante",
-            "pos": "pos"
         }
     },
     "tam_system": {
@@ -669,42 +610,8 @@
     },
     "abstract_concepts": {
         "enabled": true,
-        "mappings": {
-            "de": "de",
-            "do": "de le",
-            "da": "de le",
-            "dos": "de les",
-            "das": "de les",
-            "o": "le",
-            "a": "le",
-            "os": "les",
-            "as": "les",
-            "e": "e",
-            "que": "ke",
-            "em": "en",
-            "com": "kon",
-            "sem": "sin",
-            "para": "a",
-            "por": "por",
-            "ser": "es",
-            "estar": "stan",
-            "ter": "hav",
-            "fazer": "faser",
-            "ir": "ir",
-            "vir": "venir",
-            "dar": "dar",
-            "ver": "vider",
-            "dizer": "diser",
-            "saber": "saber",
-            "poder": "poder",
-            "querer": "voler",
-            "krim": "krim",
-            "log": "log"
-        },
-        "definitions": {
-            "krim": "gente/pessoas",
-            "log": "fala/língua"
-        }
+        "mappings": {},
+        "definitions": {}
     },
     "lexical_registers": {
         "enabled": false,
@@ -746,11 +653,6 @@
             "verb_position": "post_verbal",
             "description": "Advérbio 'bon'"
         },
-        "mal": {
-            "verb_word": "mal",
-            "verb_position": "post_verbal",
-            "description": "Advérbio 'mal'"
-        },
         "muito_intensificador": {
             "adj_word": "tre",
             "adj_position": "pre_nominal",
@@ -788,19 +690,7 @@
             "'": "'"
         }
     },
-    "mappings": {
-        "de": "de",
-        "do": "de le",
-        "da": "de le",
-        "o": "le",
-        "a": "le",
-        "e": "e",
-        "que": "ke",
-        "em": "en",
-        "ser": "es",
-        "estar": "stan",
-        "fazer": "faser"
-    },
+    "mappings": {},
     "phonological_processes": {
         "description": "Processos fonológicos mínimos - simplicidade máxima",
         "assimilation": {
@@ -828,11 +718,11 @@
             "Morfologia isolante - sem flexões complexas",
             "Ordem SVO estrita - sem inversões",
             "Vocabulário internacional - baseado no RMP com simplificação",
-            "Fonologia simples - apenas sons comuns",
+            "Fonologia simples - apenas sons comuns (com adição de û para nomes culturais)",
             "Sem gênero gramatical - neutralidade",
             "Sem concordância - economia cognitiva",
             "Partículas TAM - clareza temporal",
-            "Derivação transparente - afixos regulares",
+            "Derivação transparente - afixos regulares (-om, -iik, -at)",
             "Facilidade de aprendizagem - estrutura previsível"
         ],
         "target_learning_time": "100-200 horas para fluência básica",

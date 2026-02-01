@@ -1,7 +1,7 @@
 {
     "id": "rmp",
     "name": "Raabiano Moderno Padrão",
-    "native_name": "Ha-Raabānū Hadabīšu",
+    "native_name": "H-Āṭsūūs Hadabīšu",
     "family_node": "modern-raabic",
     "linguistic_family": "raabic_trunk.json",
     "shared_base_strength": 0.82,
@@ -1528,9 +1528,9 @@
                 "description": "Diminutivo com -akal"
             },
             "augmentative": {
-                "affix": "-ul-kabīr",
+                "affix": "-ul-kubbār",
                 "position": "suffix",
-                "description": "Aumentativo com -ul-kabīr"
+                "description": "Aumentativo com -ul-kubbār"
             },
             "superlative": {
                 "affix": "aʕẓam ",
@@ -1642,13 +1642,11 @@
             "os": "ha",
             "as": "ha",
             "e": "wa",
+            "em": "hī",
             "que": "anna",
-            "em": "fī",
             "ser": "kāna",
             "fazer": "ʕamila",
             "terra": "arḍ",
-            "planeta": "kawkab",
-            "deus": "ilāh",
             "raab": "R'aab",
             "hadab": "Hadab"
         },

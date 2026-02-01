@@ -1656,6 +1656,7 @@ class OriginalLanguageEngine:
         self.source_engines: Dict[str, 'OriginalLanguageEngine'] = {}
         self.preposition_handler = PrepositionHandler(self.profile)
         self.load_word_cache()
+        self.processing_stack = set()
 
     def _load_and_merge_family(self, family_path: Path):
         try:
@@ -1762,79 +1763,85 @@ class OriginalLanguageEngine:
         return entry
 
     def _get_word_form(self, lemma: str, tags: List[str] = None, force_word: str = None, meta: Dict = None, pos: str = None, derivation_depth: int = 0, word_form: str = None) -> str:
-        if word_form:
-            res = self.concept_handler.resolve_concept(
+        if lemma in self.processing_stack:
+            return self._generate_deterministic_word(lemma, depth=100)
+        self.processing_stack.add(lemma)
+        try:
+            if word_form:
+                res = self.concept_handler.resolve_concept(
+                    lemma, self, word_form=word_form)
+                if res and res[2].get('origin') == 'mapping_table_surface':
+                    return res[0]
+
+            entry = self.word_cache.get(lemma)
+            if not entry and force_word:
+                entry = {
+                    "lemma": lemma,
+                    "default": force_word,
+                    "synsets": [{"word": force_word, "tags": tags if tags else ["unique"], "affinity": 1.0}]
+                }
+                if meta:
+                    entry.update(meta)
+                self.word_cache[lemma] = entry
+                return force_word
+            if entry:
+                if isinstance(entry, str):
+                    return entry
+                if isinstance(entry, dict):
+                    if tags:
+                        synsets = entry.get('synsets', [])
+                        for syn in synsets:
+                            syn_tags = syn.get('tags', [])
+                            for tag in tags:
+                                if tag in syn_tags:
+                                    return syn.get('word', entry.get('default'))
+                    return entry.get('default')
+                return str(entry)
+
+            concept_result = self.concept_handler.resolve_concept(
                 lemma, self, word_form=word_form)
-            if res and res[2].get('origin') == 'mapping_table_surface':
-                return res[0]
+            if concept_result:
+                word, c_type, c_meta = concept_result
+                return self._get_word_form(lemma, tags=['concept'], force_word=word, meta=c_meta)
 
-        entry = self.word_cache.get(lemma)
-        if not entry and force_word:
-            entry = {
-                "lemma": lemma,
-                "default": force_word,
-                "synsets": [{"word": force_word, "tags": tags if tags else ["unique"], "affinity": 1.0}]
-            }
-            if meta:
-                entry.update(meta)
-            self.word_cache[lemma] = entry
-            return force_word
-        if entry:
-            if isinstance(entry, str):
-                return entry
-            if isinstance(entry, dict):
+            if self.root_handler.enabled and (pos == 'VERB' or pos == 'NOUN'):
+                root = self.root_handler.generate_root(lemma)
+                pattern_def = self.root_handler.get_binyan_by_meaning('basic')
                 if tags:
-                    synsets = entry.get('synsets', [])
-                    for syn in synsets:
-                        syn_tags = syn.get('tags', [])
-                        for tag in tags:
-                            if tag in syn_tags:
-                                return syn.get('word', entry.get('default'))
-                return entry.get('default')
-            return str(entry)
+                    for tag in tags:
+                        derived_binyan = self.root_handler.get_binyan_by_meaning(
+                            tag)
+                        if derived_binyan:
+                            pattern_def = derived_binyan
+                            break
+                if pattern_def:
+                    generated_word = self.root_handler.apply_pattern(
+                        root, pattern_def)
+                    entry = {
+                        "lemma": lemma,
+                        "default": generated_word,
+                        "synsets": [{"word": generated_word, "tags": ["root_derived"], "affinity": 1.0}],
+                        "origin": "triconsonantal_system",
+                        "root": "".join(root)
+                    }
+                    self.word_cache[lemma] = entry
+                    return generated_word
 
-        concept_result = self.concept_handler.resolve_concept(
-            lemma, self, word_form=word_form)
-        if concept_result:
-            word, c_type, c_meta = concept_result
-            return self._get_word_form(lemma, tags=['concept'], force_word=word, meta=c_meta)
-
-        if self.root_handler.enabled and (pos == 'VERB' or pos == 'NOUN'):
-            root = self.root_handler.generate_root(lemma)
-            pattern_def = self.root_handler.get_binyan_by_meaning('basic')
-            if tags:
-                for tag in tags:
-                    derived_binyan = self.root_handler.get_binyan_by_meaning(
-                        tag)
-                    if derived_binyan:
-                        pattern_def = derived_binyan
-                        break
-            if pattern_def:
-                generated_word = self.root_handler.apply_pattern(
-                    root, pattern_def)
-                entry = {
-                    "lemma": lemma,
-                    "default": generated_word,
-                    "synsets": [{"word": generated_word, "tags": ["root_derived"], "affinity": 1.0}],
-                    "origin": "triconsonantal_system",
-                    "root": "".join(root)
-                }
-                self.word_cache[lemma] = entry
-                return generated_word
-
-        if self.affix_handler.morph_derivation_enabled:
-            derived_word = self.affix_handler.try_derive_from_source(
-                lemma, pos, self, current_depth=derivation_depth)
-            if derived_word:
-                entry = {
-                    "lemma": lemma,
-                    "default": derived_word,
-                    "synsets": [{"word": derived_word, "tags": ["derived", "morphology"], "affinity": 1.0}],
-                    "origin": "derived"
-                }
-                self.word_cache[lemma] = entry
-                return derived_word
-        return self._generate_deterministic_word(lemma)
+            if self.affix_handler.morph_derivation_enabled:
+                derived_word = self.affix_handler.try_derive_from_source(
+                    lemma, pos, self, current_depth=derivation_depth)
+                if derived_word:
+                    entry = {
+                        "lemma": lemma,
+                        "default": derived_word,
+                        "synsets": [{"word": derived_word, "tags": ["derived", "morphology"], "affinity": 1.0}],
+                        "origin": "derived"
+                    }
+                    self.word_cache[lemma] = entry
+                    return derived_word
+            return self._generate_deterministic_word(lemma, depth=0)
+        finally:
+            self.processing_stack.remove(lemma)
 
     def process_text(self, text: str) -> str:
         reordered_text, functions_info = self.syntax_engine.process_text(text)
@@ -2405,10 +2412,14 @@ class OriginalLanguageEngine:
                     prev_consonant = None
         return generated_word
 
-    def _generate_deterministic_word(self, word: str) -> str:
+    def _generate_deterministic_word(self, word: str, depth: int = 0) -> str:
         clean_word = "".join(filter(str.isalpha, word.lower()))
         if not clean_word:
             return word
+        if depth > 10:
+            rng = random.Random(self.global_seed + sum(ord(c)
+                                for c in clean_word) + depth)
+            return self._generate_word_from_seed(clean_word, rng.randint(0, 1000000))
         entry = {
             "lemma": clean_word,
             "default": "",
@@ -2453,7 +2464,8 @@ class OriginalLanguageEngine:
                 else:
                     base_word = target_entry
             else:
-                base_word = self._generate_deterministic_word(manual_target)
+                base_word = self._generate_deterministic_word(
+                    manual_target, depth + 1)
                 target_entry = self.word_cache[manual_target]
                 if isinstance(target_entry, dict):
                     base_word = target_entry.get("default", "")
@@ -2472,7 +2484,8 @@ class OriginalLanguageEngine:
                 else:
                     base_word = phantom_entry
             else:
-                base_word = self._generate_deterministic_word(phantom_base_key)
+                base_word = self._generate_deterministic_word(
+                    phantom_base_key, depth + 1)
                 if phantom_base_key in self.word_cache:
                     phantom_entry = self.word_cache[phantom_base_key]
                     if isinstance(phantom_entry, dict):
@@ -2496,7 +2509,7 @@ class OriginalLanguageEngine:
                     else:
                         base_conlang_word = root_entry
                 else:
-                    self._generate_deterministic_word(root_semantic)
+                    self._generate_deterministic_word(root_semantic, depth + 1)
                     if root_semantic in self.word_cache:
                         root_entry = self.word_cache[root_semantic]
                         if isinstance(root_entry, dict):
