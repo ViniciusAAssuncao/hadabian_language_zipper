@@ -28,6 +28,30 @@
         "vowels": "au"
       }
     },
+    "transition_matrix": {
+      "enabled": true,
+      "default_weight": 10,
+      "matrix": {
+        "q": {
+          "u": 100,
+          "o": 50,
+          "a": 20
+        },
+        "k": {
+          "a": 50,
+          "i": 10
+        },
+        "t": {
+          "r": 80,
+          "l": 40,
+          "a": 30
+        },
+        "s": {
+          "t": 60,
+          "p": 40
+        }
+      }
+    },
     "syllable_templates": [
       "CV",
       "CVC",

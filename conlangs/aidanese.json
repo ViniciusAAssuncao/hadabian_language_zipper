@@ -1,7 +1,7 @@
 {
     "id": "aidanese",
     "name": "Aidanês",
-    "native_name": "Aidanische Sprache",
+    "native_name": "Höšhir Anänlied",
     "family_node": "aidanese",
     "linguistic_family": "garmanic_trunk.json",
     "lexical_confluence": {
@@ -688,6 +688,7 @@
         "enabled": true,
         "mappings": {
             "do": "ïn",
+            "da": "ïna",
             "dos": "tïen",
             "deus": "Äuris"
         },

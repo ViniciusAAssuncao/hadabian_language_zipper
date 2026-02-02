@@ -1775,7 +1775,10 @@
             "style": "german_low_high"
         }
     },
-    "mappings": {},
+    "mappings": {
+        "do": "ïnb",
+        "da": "ïnb"
+    },
     "phonological_processes": {
         "description": "Processos fonológicos ativos do Corimês Moderno",
         "final_devoicing": {

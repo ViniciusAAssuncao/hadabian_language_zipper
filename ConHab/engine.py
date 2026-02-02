@@ -511,6 +511,11 @@ class PhonologyHandler:
         self.monophthong_enabled = self.monophthong_config.get(
             'enabled', False)
         self.monophthong_rules = self.monophthong_config.get('rules', [])
+        self.transition_config = self.phonotactics.get('transition_matrix', {})
+        self.transition_enabled = self.transition_config.get('enabled', False)
+        self.transition_matrix = self.transition_config.get('matrix', {})
+        self.transition_default_weight = self.transition_config.get(
+            'default_weight', 1)
 
     def _compile_all_rules(self):
         compiled = []
@@ -720,6 +725,27 @@ class PhonologyHandler:
                 elif strategy == 'add_vowel' and self.vowels:
                     result = result + rng.choice(list(self.vowels))
         return result
+
+    def get_weighted_choice(self, candidates: List[str], prev_char: Optional[str], rng) -> str:
+        if not self.transition_enabled or not prev_char or not candidates:
+            return rng.choice(candidates)
+
+        row = self.transition_matrix.get(prev_char.lower(), {})
+        weights = []
+        for c in candidates:
+            weights.append(row.get(c.lower(), self.transition_default_weight))
+
+        total = sum(weights)
+        if total <= 0:
+            return rng.choice(candidates)
+
+        threshold = rng.random() * total
+        current = 0
+        for i, w in enumerate(weights):
+            current += w
+            if current >= threshold:
+                return candidates[i]
+        return candidates[-1]
 
 
 class RootSystemHandler:
@@ -2405,83 +2431,112 @@ class OriginalLanguageEngine:
             template = random.choice(self.templates)
             in_onset = True
             prev_consonant = None
+            last_char_generated = prefix[-1] if prefix else None
+
             for char_type in template:
                 if char_type == 'C':
-                    if self.consonants:
-                        candidates = list(self.consonants)
-                        random.shuffle(candidates)
-                        chosen_c = None
-                        if prev_consonant:
-                            for cand in candidates:
-                                if in_onset:
-                                    if self.phonology_handler.is_valid_onset_cluster(prev_consonant, cand):
-                                        chosen_c = cand
-                                        break
-                                else:
-                                    if self.phonology_handler.is_valid_coda_cluster(prev_consonant, cand):
-                                        chosen_c = cand
-                                        break
-                            if not chosen_c:
-                                chosen_c = candidates[0]
-                        else:
-                            for cand in candidates:
-                                if not in_onset and not self.phonology_handler.is_valid_final(cand):
-                                    continue
-                                chosen_c = cand
+                    valid_candidates = []
+                    candidates = list(self.consonants)
+
+                    if prev_consonant:
+                        for cand in candidates:
+                            if in_onset:
+                                if self.phonology_handler.is_valid_onset_cluster(prev_consonant, cand):
+                                    valid_candidates.append(cand)
+                            else:
+                                if self.phonology_handler.is_valid_coda_cluster(prev_consonant, cand):
+                                    valid_candidates.append(cand)
+                    else:
+                        is_final_in_syllable = True
+                        current_template_idx = template.find(char_type)
+
+                        for j in range(current_template_idx + 1, len(template)):
+                            if template[j] == 'V':
+                                is_final_in_syllable = False
                                 break
-                            if not chosen_c:
-                                chosen_c = candidates[0]
+
+                        for cand in candidates:
+                            if is_final_in_syllable and not self.phonology_handler.is_valid_final(cand):
+                                continue
+                            valid_candidates.append(cand)
+
+                    chosen_c = None
+                    if valid_candidates:
+                        chosen_c = self.phonology_handler.get_weighted_choice(
+                            valid_candidates, last_char_generated, random)
+                    else:
+                        if self.consonants:
+                            chosen_c = random.choice(list(self.consonants))
+
+                    if chosen_c:
                         generated_word += chosen_c
                         prev_consonant = chosen_c
+                        last_char_generated = chosen_c
+
                 elif char_type == 'V':
                     if self.vowels:
-                        generated_word += random.choice(list(self.vowels))
+                        chosen_v = self.phonology_handler.get_weighted_choice(
+                            list(self.vowels), last_char_generated, random)
+                        generated_word += chosen_v
+                        last_char_generated = chosen_v
                     in_onset = False
                     prev_consonant = None
             return generated_word
+
         num_syllables = random.randint(self.phonotactics.get(
             'min_syllables', 1), self.phonotactics.get('max_syllables', 3))
         generated_word = ""
+        last_char_generated = None
+
         for _ in range(num_syllables):
             template = random.choice(self.templates)
             in_onset = True
             prev_consonant = None
+
             for i, char_type in enumerate(template):
                 if char_type == 'C':
-                    if self.consonants:
-                        candidates = list(self.consonants)
-                        random.shuffle(candidates)
-                        chosen_c = None
-                        if prev_consonant:
-                            for cand in candidates:
-                                if in_onset:
-                                    if self.phonology_handler.is_valid_onset_cluster(prev_consonant, cand):
-                                        chosen_c = cand
-                                        break
-                                else:
-                                    if self.phonology_handler.is_valid_coda_cluster(prev_consonant, cand):
-                                        chosen_c = cand
-                                        break
-                            if not chosen_c:
-                                chosen_c = candidates[0]
-                        else:
-                            is_final_in_syllable = True
-                            for j in range(i+1, len(template)):
-                                if template[j] == 'V':
-                                    is_final_in_syllable = False
-                                    break
-                            for cand in candidates:
-                                if is_final_in_syllable and not self.phonology_handler.is_valid_final(cand):
-                                    continue
-                                chosen_c = cand
+                    valid_candidates = []
+                    candidates = list(self.consonants)
+
+                    if prev_consonant:
+                        for cand in candidates:
+                            if in_onset:
+                                if self.phonology_handler.is_valid_onset_cluster(prev_consonant, cand):
+                                    valid_candidates.append(cand)
+                            else:
+                                if self.phonology_handler.is_valid_coda_cluster(prev_consonant, cand):
+                                    valid_candidates.append(cand)
+                    else:
+                        is_final_in_syllable = True
+                        for j in range(i+1, len(template)):
+                            if template[j] == 'V':
+                                is_final_in_syllable = False
                                 break
-                            if not chosen_c:
-                                chosen_c = candidates[0]
+
+                        for cand in candidates:
+                            if is_final_in_syllable and not self.phonology_handler.is_valid_final(cand):
+                                continue
+                            valid_candidates.append(cand)
+
+                    chosen_c = None
+                    if valid_candidates:
+                        chosen_c = self.phonology_handler.get_weighted_choice(
+                            valid_candidates, last_char_generated, random)
+                    else:
+                        if self.consonants:
+                            chosen_c = random.choice(list(self.consonants))
+
+                    if chosen_c:
                         generated_word += chosen_c
                         prev_consonant = chosen_c
+                        last_char_generated = chosen_c
+
                 elif char_type == 'V':
                     if self.vowels:
-                        generated_word += random.choice(list(self.vowels))
+                        chosen_v = self.phonology_handler.get_weighted_choice(
+                            list(self.vowels), last_char_generated, random)
+                        generated_word += chosen_v
+                        last_char_generated = chosen_v
                     in_onset = False
                     prev_consonant = None
         return generated_word
