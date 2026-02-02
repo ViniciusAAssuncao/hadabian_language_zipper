@@ -13,7 +13,7 @@ from morphosyntax_analyzer import (
     TopicalizationHandler, FocusStructureHandler, TAMHandler,
     VowelHarmonyHandler, TransitivityAnalyzer, ConsonantMutationHandler,
     GenderHandler, PharyngealizationHandler, NegationHandler,
-    InterrogativeHandler, CopulaHandler
+    InterrogativeHandler, CopulaHandler, CompoundingHandler
 )
 
 
@@ -827,13 +827,15 @@ class ConceptHandler:
         self.profile = profile
         self.config = profile.get('abstract_concepts', {})
         self.enabled = self.config.get('enabled', False)
-        self.mappings = self.config.get('mappings', {}).copy()
+        self.mappings = {k.lower(): v for k, v in self.config.get(
+            'mappings', {}).items()}
         root_mappings = profile.get('mappings', {})
         if root_mappings:
             for k, v in root_mappings.items():
-                if k not in self.mappings:
-                    self.mappings[k] = v
-        self.local_overrides = self.config.get('local_overrides', {})
+                if k.lower() not in self.mappings:
+                    self.mappings[k.lower()] = v
+        self.local_overrides = {k.lower(): v for k, v in self.config.get(
+            'local_overrides', {}).items()}
         self.definitions = self.config.get('definitions', {})
         self.purism_level = profile.get('cultural_purism', 0.0)
         self.universal_registry = self._load_universal_registry()
@@ -856,20 +858,34 @@ class ConceptHandler:
     def resolve_concept(self, lemma: str, engine_instance, word_form: str = None) -> Optional[Tuple[str, str, Dict]]:
         if not self.enabled:
             return None
+
+        clean_lemma = lemma.lower().strip()
+
         if word_form:
             clean_word = word_form.lower().strip()
             if clean_word in self.mappings:
                 return self.mappings[clean_word], 'direct_mapping', {'origin': 'mapping_table_surface'}
-        clean_lemma = lemma.lower().strip()
-        concept_id = self.mappings.get(clean_lemma)
-        if not concept_id:
+
+        if clean_lemma in self.mappings:
+            concept_id = self.mappings[clean_lemma]
+        else:
             concept_id = self.universal_registry.get(
                 'mappings_ln', {}).get(clean_lemma)
+
         if not concept_id:
             return None
-        if concept_id in self.local_overrides:
-            word = self.local_overrides[concept_id]
+
+        concept_id_lower = concept_id.lower() if isinstance(
+            concept_id, str) else concept_id
+
+        if concept_id_lower in self.local_overrides:
+            word = self.local_overrides[concept_id_lower]
             return word, 'override', {'origin': 'local_override', 'concept_id': concept_id}
+
+        if clean_lemma in self.local_overrides:
+            word = self.local_overrides[clean_lemma]
+            return word, 'override', {'origin': 'local_override_direct'}
+
         if concept_id in self.definitions:
             definition = self.definitions[concept_id]
             if isinstance(definition, str):
@@ -906,6 +922,7 @@ class ConceptHandler:
                 generated_word = engine_instance._generate_deterministic_word(
                     concept_id)
                 return generated_word, 'unique', {'description': explanation}
+
         if concept_id in self.universal_registry.get('concepts', {}):
             if self.purism_level >= 0.8:
                 return None
@@ -918,6 +935,7 @@ class ConceptHandler:
                 'original_term': base_word,
                 'concept_id': concept_id
             }
+
         if concept_id and isinstance(concept_id, str):
             return concept_id, 'direct_mapping', {'origin': 'mapping_table'}
         return None
@@ -1680,6 +1698,7 @@ class OriginalLanguageEngine:
         self.copula_handler = CopulaHandler(self.profile)
         self.allomorphy_handler = AllomorphyHandler(
             self.profile, self.phonology_handler)
+        self.compounding_handler = CompoundingHandler(self.profile)
         self.functional_config = self.profile.get('functional_particles', {})
         self.lexical_registers = self.profile.get('lexical_registers', {})
         if not self.lexical_registers and 'lexical_registers_defaults' in self.profile:
@@ -1688,6 +1707,7 @@ class OriginalLanguageEngine:
         self.word_cache: Dict[str, Union[str, Dict]] = {}
         self.source_engines: Dict[str, 'OriginalLanguageEngine'] = {}
         self.preposition_handler = PrepositionHandler(self.profile)
+        self.vocabulary_override = self.profile.get('vocabulary', {})
         self.load_word_cache()
         self.processing_stack = set()
 
@@ -1796,6 +1816,13 @@ class OriginalLanguageEngine:
         return entry
 
     def _get_word_form(self, lemma: str, tags: List[str] = None, force_word: str = None, meta: Dict = None, pos: str = None, derivation_depth: int = 0, word_form: str = None) -> str:
+        lemma = lemma.lower().strip()
+
+        if lemma in self.vocabulary_override:
+            return self.vocabulary_override[lemma]
+        if lemma.lower() in self.vocabulary_override:
+            return self.vocabulary_override[lemma.lower()]
+
         if lemma in self.processing_stack:
             return self._generate_deterministic_word(lemma, depth=100)
         self.processing_stack.add(lemma)
@@ -1952,6 +1979,12 @@ class OriginalLanguageEngine:
                     ordered_functions, self)
                 absorbed_indices.update(prep_absorbed)
 
+            compound_map = {}
+            if self.compounding_handler.enabled:
+                compound_map, compound_absorbed = self.compounding_handler.apply_compounding(
+                    ordered_functions, self)
+                absorbed_indices.update(compound_absorbed)
+
             for i, func in enumerate(ordered_functions):
                 if func['index'] in absorbed_indices:
                     continue
@@ -2079,6 +2112,9 @@ class OriginalLanguageEngine:
                         target_lemma, context_tags, pos=current_pos, word_form=clean_word_lower)
                     current_form = translated_root
 
+                if func['index'] in compound_map:
+                    current_form = compound_map[func['index']]
+
                 if degree_type:
                     current_form = self.degree_handler.apply_degree(
                         current_form, degree_type)
@@ -2134,7 +2170,7 @@ class OriginalLanguageEngine:
                 if is_focus and suppress_case_on_focus:
                     apply_case = False
 
-                if apply_case:
+                if apply_case and func['index'] not in compound_map:
                     is_transitive = transitivity_map.get(func['index'], False)
                     current_form = self.syntax_engine.case_morphology.apply_case(
                         current_form, syntactic_func, self.syntax_engine.word_order, deprel, clause_transitivity=is_transitive, func_data=func, all_functions=ordered_functions)
@@ -2283,7 +2319,7 @@ class OriginalLanguageEngine:
 
     def _clean_word(self, word: str) -> str:
         import re
-        return re.sub(r'[^\w]', '', word)
+        return "".join(re.findall(r"[\w]", word, re.UNICODE))
 
     def _extract_punctuation(self, word: str) -> Tuple[str, str]:
         import re

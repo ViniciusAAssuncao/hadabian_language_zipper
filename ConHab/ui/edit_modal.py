@@ -82,7 +82,7 @@ class EditWordModal(tk.Toplevel):
             ("Fonotática (Padrão)", "phonotactics"),
             ("Sistema de Raízes", "triconsonantal_system"),
             ("Composição/Derivação", "derived"),
-            ("Raiz + Derivação", "root_derived"),
+            ("Nativizar", "nativization"),
         ]
 
         self.combo_strategy = ttk.Combobox(
@@ -129,8 +129,19 @@ class EditWordModal(tk.Toplevel):
         new_word = ""
         origin_tag = strategy_key
 
+        clean_lemma = "".join(filter(str.isalpha, self.lemma.lower()))
+
+        def generate_fallback():
+            input_str = f"{clean_lemma}_manual_fallback_{self.generation_counter}_{self.engine.global_seed}"
+            hash_obj = hashlib.sha256(input_str.encode())
+            hash_val = int(hash_obj.hexdigest(), 16)
+            word = self.engine._generate_word_from_seed(clean_lemma, hash_val)
+            if self.engine.phonology_handler:
+                word = self.engine.phonology_handler.apply_monophthongization(
+                    word)
+            return word
+
         if strategy_key == "phonotactics":
-            clean_lemma = "".join(filter(str.isalpha, self.lemma.lower()))
             input_str = f"{clean_lemma}_manual_gen_{self.generation_counter}_{self.engine.global_seed}"
             hash_obj = hashlib.sha256(input_str.encode())
             hash_val = int(hash_obj.hexdigest(), 16)
@@ -158,7 +169,7 @@ class EditWordModal(tk.Toplevel):
                 else:
                     new_word = "".join(root)
             else:
-                new_word = "ROOT_SYS_DISABLED"
+                new_word = generate_fallback()
 
         elif strategy_key == "derived":
             if self.engine.affix_handler:
@@ -175,36 +186,25 @@ class EditWordModal(tk.Toplevel):
                     affix = rule.get('replacement', 'enc')
                     new_word = f"{base_gen}{affix}"
                 else:
-                    new_word = f"{base_gen}ion"
-
-        elif strategy_key == "root_derived":
-            if self.engine.root_handler and self.engine.root_handler.enabled and self.engine.affix_handler:
-                root = self.engine.root_handler.generate_root(self.lemma)
-
-                binyanim = self.engine.root_handler.binyanim
-                pattern_def = None
-                if binyanim:
-                    rng_seed = self.engine.global_seed + self.generation_counter
-                    rng = random.Random(rng_seed)
-                    pattern_def = rng.choice(binyanim)
-
-                if pattern_def:
-                    base_word = self.engine.root_handler.apply_pattern(
-                        root, pattern_def)
-                else:
-                    base_word = "".join(root)
-
-                suffixes = self.engine.affix_handler.source_suffixes
-                if suffixes:
-                    rng = random.Random(
-                        self.engine.global_seed + self.generation_counter)
-                    rule = rng.choice(suffixes)
-                    affix = rule.get('replacement', 'enc')
-                    new_word = f"{base_word}{affix}"
-                else:
-                    new_word = f"{base_word}ion"
+                    new_word = generate_fallback()
             else:
-                new_word = "ROOT_OR_AFFIX_SYS_DISABLED"
+                new_word = generate_fallback()
+
+        elif strategy_key == "nativization":
+            if self.engine.phonology_handler:
+                base_nat = self.engine.phonology_handler.nativize_word(
+                    self.lemma)
+
+                if self.generation_counter > 1:
+                    seed = self.engine.global_seed + self.generation_counter
+                    if hasattr(self.engine, '_mutate_word'):
+                        new_word = self.engine._mutate_word(base_nat, seed)
+                    else:
+                        new_word = base_nat
+                else:
+                    new_word = base_nat
+            else:
+                new_word = generate_fallback()
 
         if new_word:
             self.entry_word.delete(0, tk.END)
@@ -315,7 +315,7 @@ class EditSynsetModal(tk.Toplevel):
             ("Fonotática (Padrão)", "phonotactics"),
             ("Sistema de Raízes", "triconsonantal_system"),
             ("Composição/Derivação", "derived"),
-            ("Raiz + Derivação", "root_derived"),
+            ("Nativizar", "nativization"),
         ]
 
         self.combo_strategy = ttk.Combobox(
@@ -358,8 +358,19 @@ class EditSynsetModal(tk.Toplevel):
         new_word = ""
         origin_tag = strategy_key
 
+        clean_lemma = "".join(filter(str.isalpha, self.lemma.lower()))
+
+        def generate_fallback():
+            input_str = f"{clean_lemma}_synset_fallback_{self.generation_counter}_{self.engine.global_seed}"
+            hash_obj = hashlib.sha256(input_str.encode())
+            hash_val = int(hash_obj.hexdigest(), 16)
+            word = self.engine._generate_word_from_seed(clean_lemma, hash_val)
+            if self.engine.phonology_handler:
+                word = self.engine.phonology_handler.apply_monophthongization(
+                    word)
+            return word
+
         if strategy_key == "phonotactics":
-            clean_lemma = "".join(filter(str.isalpha, self.lemma.lower()))
             input_str = f"{clean_lemma}_manual_gen_{self.generation_counter}_{self.engine.global_seed}"
             hash_obj = hashlib.sha256(input_str.encode())
             hash_val = int(hash_obj.hexdigest(), 16)
@@ -387,7 +398,7 @@ class EditSynsetModal(tk.Toplevel):
                 else:
                     new_word = "".join(root)
             else:
-                new_word = "Não há sistema de raízes ativo."
+                new_word = generate_fallback()
 
         elif strategy_key == "derived":
             if self.engine.affix_handler:
@@ -404,36 +415,25 @@ class EditSynsetModal(tk.Toplevel):
                     affix = rule.get('replacement', 'enc')
                     new_word = f"{base_gen}{affix}"
                 else:
-                    new_word = f"{base_gen}ion"
-
-        elif strategy_key == "root_derived":
-            if self.engine.root_handler and self.engine.root_handler.enabled and self.engine.affix_handler:
-                root = self.engine.root_handler.generate_root(self.lemma)
-
-                binyanim = self.engine.root_handler.binyanim
-                pattern_def = None
-                if binyanim:
-                    rng_seed = self.engine.global_seed + self.generation_counter
-                    rng = random.Random(rng_seed)
-                    pattern_def = rng.choice(binyanim)
-
-                if pattern_def:
-                    base_word = self.engine.root_handler.apply_pattern(
-                        root, pattern_def)
-                else:
-                    base_word = "".join(root)
-
-                suffixes = self.engine.affix_handler.source_suffixes
-                if suffixes:
-                    rng = random.Random(
-                        self.engine.global_seed + self.generation_counter)
-                    rule = rng.choice(suffixes)
-                    affix = rule.get('replacement', 'enc')
-                    new_word = f"{base_word}{affix}"
-                else:
-                    new_word = f"{base_word}ion"
+                    new_word = generate_fallback()
             else:
-                new_word = "Não há sistema de raízes ou afixos ativo."
+                new_word = generate_fallback()
+
+        elif strategy_key == "nativization":
+            if self.engine.phonology_handler:
+                base_nat = self.engine.phonology_handler.nativize_word(
+                    self.lemma)
+
+                if self.generation_counter > 1:
+                    seed = self.engine.global_seed + self.generation_counter
+                    if hasattr(self.engine, '_mutate_word'):
+                        new_word = self.engine._mutate_word(base_nat, seed)
+                    else:
+                        new_word = base_nat
+                else:
+                    new_word = base_nat
+            else:
+                new_word = generate_fallback()
 
         if new_word:
             self.entry_word.delete(0, tk.END)
