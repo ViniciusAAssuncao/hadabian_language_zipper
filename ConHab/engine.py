@@ -6,6 +6,7 @@ from pathlib import Path
 import re
 import random
 import unicodedata
+from post_processor import polish_output
 from syntax_engine import SyntaxEngine, SyntacticFunction
 from morphosyntax_analyzer import (
     DependencyParser, ConstituentAnalyzer, ClauseSegmenter,
@@ -2374,7 +2375,9 @@ class OriginalLanguageEngine:
             final_sentences.append(final_str)
 
         self.save_word_cache()
-        return ' '.join(final_sentences)
+        final_output = ' '.join(final_sentences)
+        final_output = polish_output(final_output, self.profile, text)
+        return final_output
 
     def process_with_analysis(self, text: str) -> Dict:
         reordered_text, functions_info = self.syntax_engine.process_text(text)

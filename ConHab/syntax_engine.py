@@ -161,7 +161,6 @@ class WordOrderMapper:
                     new_deps.append(idx_map[dep])
             f['dependencies'] = new_deps
         chunks = self._build_chunks(functions)
-        self._attach_orphaned_punctuation(chunks, functions)
         core_chunks = {'S': [], 'V': [], 'O': [], 'COMP': []}
         adjunct_chunks = []
         modifier_chunks = []
@@ -281,6 +280,8 @@ class WordOrderMapper:
         chunks = []
         processed_indices = set()
         i = 0
+        terminators = {'.', '!', '?', ';', ':'}
+
         while i < len(functions):
             if i in processed_indices:
                 i += 1
@@ -292,13 +293,24 @@ class WordOrderMapper:
                 continue
             pos = func['pos']
             func_type = func['function']
+
             if func_type == SyntacticFunction.PUNCT:
-                chunk = Chunk([(func['word'], func['index'])],
+                word = func['word']
+                if word not in terminators and chunks:
+                    last_chunk = chunks[-1]
+                    last_chunk.words.append((word, func['index']))
+                    last_chunk.dependent_indices.add(func['index'])
+                    processed_indices.add(i)
+                    i += 1
+                    continue
+
+                chunk = Chunk([(word, func['index'])],
                               SyntacticFunction.PUNCT, 0, 'punct')
                 chunks.append(chunk)
                 processed_indices.add(i)
                 i += 1
                 continue
+
             chunk_built = None
             if pos == 'NOUN' and func_type in {SyntacticFunction.SUBJECT, SyntacticFunction.OBJECT, SyntacticFunction.COMPLEMENT}:
                 chunk_built = self._build_noun_phrase_chunk(
@@ -344,25 +356,6 @@ class WordOrderMapper:
             processed_indices.add(i)
             i += 1
         return chunks
-
-    def _attach_orphaned_punctuation(self, chunks: List[Chunk], functions: List[Dict]):
-        terminators = {'.', '!', '?'}
-        chunks_to_remove = []
-        for i in range(1, len(chunks)):
-            current_chunk = chunks[i]
-            prev_chunk = chunks[i-1]
-            if current_chunk.function == SyntacticFunction.PUNCT:
-                if not current_chunk.words:
-                    continue
-                punct_char = current_chunk.words[0][0]
-                punct_idx = current_chunk.words[0][1]
-                if punct_char not in terminators:
-                    prev_chunk.words.append((punct_char, punct_idx))
-                    prev_chunk.dependent_indices.add(punct_idx)
-                    chunks_to_remove.append(current_chunk)
-        for c in chunks_to_remove:
-            if c in chunks:
-                chunks.remove(c)
 
     def _build_noun_phrase_chunk(self, functions: List[Dict], noun_index: int,
                                  processed_indices: Set[int]) -> Optional[Chunk]:
@@ -756,19 +749,12 @@ class SyntaxEngine:
         return 'NOUN'
 
     def _glue_tokens(self, words: List[str], function_objs: List[Dict]) -> List[str]:
+
         final_tokens = []
-        conlang_terminators = set(self.profile.get('style', {}).get(
-            'sentence_terminators', ['.', '!', '?']))
-        secondary_terminators = set(self.profile.get(
-            'style', {}).get('secondary_terminators', [':', ';']))
         punct_map = self.profile.get('style', {}).get('punctuation_map', {})
         mapped_comma = punct_map.get(',', ',')
-        punct_suffix = conlang_terminators.union(secondary_terminators).union(
-            {mapped_comma, '...', '…', ')', ']', '}', '”', '"', "'", '%', '?', '!', '.', ';', ':'})
-        punct_prefix = {'(', '[', '{', '«', '“', '¿', '¡'}
-        det_config = self.profile.get(
-            'determiner_system', {}).get('definite_article', {})
-        article_procliticizes = det_config.get('procliticizes', False)
+        punct_suffix = {'.', '!', '?', ';', ':', mapped_comma,
+                        '...', '…', ')', ']', '}', '”', '"', "'", '%'}
         skip_next_space = False
         for i, word in enumerate(words):
             if not word:
@@ -777,15 +763,7 @@ class SyntaxEngine:
                 last_token = final_tokens.pop()
                 if word in punct_suffix:
                     final_tokens.append(last_token)
-                    if word in conlang_terminators:
-                        strip_chars = [mapped_comma] + \
-                            list(secondary_terminators)
-                        for sc in strip_chars:
-                            if final_tokens[-1].endswith(sc):
-                                final_tokens[-1] = final_tokens[-1][:-len(sc)]
-                        final_tokens[-1] = final_tokens[-1] + word
-                    else:
-                        final_tokens[-1] = final_tokens[-1] + word
+                    final_tokens[-1] = final_tokens[-1] + word
                     skip_next_space = False
                 else:
                     final_tokens.append(last_token + word)
@@ -798,33 +776,12 @@ class SyntaxEngine:
             else:
                 last_token = final_tokens[-1]
                 if word in punct_suffix:
-                    if word in conlang_terminators:
-                        strip_chars = [mapped_comma] + \
-                            list(secondary_terminators)
-                        for sc in strip_chars:
-                            if last_token.endswith(sc):
-                                last_token = last_token[:-len(sc)]
-                        final_tokens[-1] = last_token + word
-                    else:
-                        final_tokens[-1] = last_token + word
-                    skip_next_space = False
-                elif any(last_token.startswith(p) for p in punct_prefix) and last_token in punct_prefix:
                     final_tokens[-1] = last_token + word
+                    skip_next_space = False
                 else:
                     final_tokens.append(word)
             if word.endswith('-'):
                 skip_next_space = True
-            if i < len(function_objs):
-                func = function_objs[i]
-                if article_procliticizes and func['pos'] == 'DET' and 'PronType=Art' in func.get('feats', ''):
-                    if final_tokens:
-                        last_t = final_tokens[-1]
-                        is_punctuation_end = any(
-                            last_t.endswith(p) for p in punct_suffix)
-                        if not is_punctuation_end:
-                            if not last_t.endswith('-'):
-                                final_tokens[-1] = last_t + "-"
-                            skip_next_space = True
         return final_tokens
 
     def process_text(self, text: str) -> Tuple[str, List[Dict]]:
