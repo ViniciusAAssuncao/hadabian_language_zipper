@@ -12,6 +12,16 @@
       "verb_agreement"
     ]
   },
+  "aesthetic_profile": {
+    "syllable_count_distribution": {
+      "1": 0.1,
+      "2": 0.5,
+      "3": 0.3,
+      "4": 0.1
+    },
+    "cluster_density": 0.8,
+    "vowel_consonant_ratio": 0.4
+  },
   "alignment": "ergative-absolutive",
   "global_seed": 42857,
   "phonotactics": {

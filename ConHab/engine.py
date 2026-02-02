@@ -516,6 +516,9 @@ class PhonologyHandler:
         self.transition_matrix = self.transition_config.get('matrix', {})
         self.transition_default_weight = self.transition_config.get(
             'default_weight', 1)
+        self.aesthetic = profile.get('aesthetic_profile', {})
+        self.syllable_dist = self.aesthetic.get('syllable_count_distribution')
+        self.cluster_density = self.aesthetic.get('cluster_density', 0.5)
 
     def _compile_all_rules(self):
         compiled = []
@@ -746,6 +749,47 @@ class PhonologyHandler:
             if current >= threshold:
                 return candidates[i]
         return candidates[-1]
+
+    def get_syllable_count(self, rng) -> int:
+        if self.syllable_dist:
+            counts = []
+            weights = []
+            for k, v in self.syllable_dist.items():
+                counts.append(int(k))
+                weights.append(float(v))
+
+            total = sum(weights)
+            if total > 0:
+                r = rng.random() * total
+                upto = 0
+                for c, w in zip(counts, weights):
+                    if upto + w >= r:
+                        return c
+                    upto += w
+                return counts[-1]
+
+        return rng.randint(self.phonotactics.get('min_syllables', 1),
+                           self.phonotactics.get('max_syllables', 3))
+
+    def select_template(self, rng, templates: List[str]) -> str:
+        if not templates:
+            return "CV"
+
+        if not self.aesthetic:
+            return rng.choice(templates)
+
+        complex_templates = [t for t in templates if 'CC' in t]
+        simple_templates = [t for t in templates if 'CC' not in t]
+
+        if not complex_templates:
+            return rng.choice(simple_templates)
+        if not simple_templates:
+            return rng.choice(complex_templates)
+
+        if rng.random() < self.cluster_density:
+            return rng.choice(complex_templates)
+        else:
+            return rng.choice(simple_templates)
 
 
 class RootSystemHandler:
@@ -2428,7 +2472,8 @@ class OriginalLanguageEngine:
                 clean_word.encode()).hexdigest(), 16)
             random.seed(seed + suffix_seed)
             generated_word = prefix
-            template = random.choice(self.templates)
+            template = self.phonology_handler.select_template(
+                random, self.templates)
             in_onset = True
             prev_consonant = None
             last_char_generated = prefix[-1] if prefix else None
@@ -2483,13 +2528,13 @@ class OriginalLanguageEngine:
                     prev_consonant = None
             return generated_word
 
-        num_syllables = random.randint(self.phonotactics.get(
-            'min_syllables', 1), self.phonotactics.get('max_syllables', 3))
+        num_syllables = self.phonology_handler.get_syllable_count(random)
         generated_word = ""
         last_char_generated = None
 
         for _ in range(num_syllables):
-            template = random.choice(self.templates)
+            template = self.phonology_handler.select_template(
+                random, self.templates)
             in_onset = True
             prev_consonant = None
 
