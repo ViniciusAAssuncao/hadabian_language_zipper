@@ -2453,7 +2453,9 @@ class OriginalLanguageEngine:
     def _fetch_source_word(self, source_id: str, lemma: str) -> str:
         if source_id in self.source_engines:
             engine = self.source_engines[source_id]
-            return engine._get_word_form(lemma)
+            word = engine._get_word_form(lemma)
+            engine.save_word_cache()
+            return word
 
         possible_paths = [
             Path(f"{source_id}.json"),
@@ -2472,7 +2474,9 @@ class OriginalLanguageEngine:
             try:
                 new_engine = OriginalLanguageEngine(path_to_use)
                 self.source_engines[source_id] = new_engine
-                return new_engine._get_word_form(lemma)
+                word = new_engine._get_word_form(lemma)
+                new_engine.save_word_cache()
+                return word
             except Exception:
                 pass
 

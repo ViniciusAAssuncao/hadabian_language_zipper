@@ -13,13 +13,17 @@ class EditWordModal(tk.Toplevel):
         self.engine = engine
         self.on_save = on_save
         self.generation_counter = 0
+        self.source_engine = None
+        self.source_id = None
+        self.parent_word_data = None
 
         self.title("Editar Palavra")
-        self.geometry("450x550")
+        self.geometry("500x700")
         self.configure(bg=self.colors["bg_main"])
         self.transient(parent)
         self.grab_set()
 
+        self._detect_confluence()
         self.setup_ui()
 
         self.update_idletasks()
@@ -28,6 +32,35 @@ class EditWordModal(tk.Toplevel):
         x = (self.winfo_screenwidth() // 2) - (width // 2)
         y = (self.winfo_screenheight() // 2) - (height // 2)
         self.geometry(f"+{x}+{y}")
+
+    def _detect_confluence(self):
+        origin = self.current_data.get("origin", "")
+        if origin.startswith("confluence_"):
+            self.source_id = origin.replace("confluence_", "")
+        else:
+            tags = []
+            synsets = self.current_data.get("synsets", [])
+            for s in synsets:
+                tags.extend(s.get("tags", []))
+            for t in tags:
+                if t.startswith("source:"):
+                    self.source_id = t.split(":")[1]
+                    break
+
+        if self.source_id:
+            self.engine._fetch_source_word(self.source_id, self.lemma)
+            if self.source_id in self.engine.source_engines:
+                self.source_engine = self.engine.source_engines[self.source_id]
+                if self.lemma in self.source_engine.word_cache:
+                    self.parent_word_data = self.source_engine.word_cache[self.lemma]
+                else:
+                    parent_word = self.source_engine._get_word_form(self.lemma)
+                    self.source_engine.save_word_cache()
+                    self.parent_word_data = {
+                        "lemma": self.lemma,
+                        "default": parent_word,
+                        "synsets": [{"word": parent_word, "tags": ["auto_gen"], "affinity": 1.0}]
+                    }
 
     def setup_ui(self):
         main_frame = ttk.Frame(self, padding=20)
@@ -39,6 +72,9 @@ class EditWordModal(tk.Toplevel):
             font=("Segoe UI", 14, "bold"),
             foreground=self.colors["accent"]
         ).pack(anchor="w", pady=(0, 20))
+
+        if self.source_engine:
+            self._setup_parent_ui(main_frame)
 
         ttk.Label(
             main_frame,
@@ -118,6 +154,38 @@ class EditWordModal(tk.Toplevel):
             command=self.destroy
         ).pack(fill=tk.X, pady=(10, 0))
 
+    def _setup_parent_ui(self, parent_frame):
+        parent_group = ttk.LabelFrame(
+            parent_frame, text=f"Palavra Mãe (Origem: {self.source_id.upper()})", padding=10)
+        parent_group.pack(fill=tk.X, pady=(0, 20))
+
+        row = ttk.Frame(parent_group)
+        row.pack(fill=tk.X)
+
+        self.entry_parent = ttk.Entry(row, font=("Segoe UI", 11), foreground=self.colors["text"])
+        self.entry_parent.pack(side=tk.LEFT, fill=tk.X,
+                               expand=True, padx=(0, 5))
+
+        parent_val = self.parent_word_data.get("default", "") if isinstance(
+            self.parent_word_data, dict) else str(self.parent_word_data)
+        self.entry_parent.insert(0, parent_val)
+
+        ttk.Button(row, text="↻", width=3,
+                   command=self.generate_parent_suggestion).pack(side=tk.RIGHT)
+
+    def generate_parent_suggestion(self):
+        if not self.source_engine:
+            return
+
+        self.generation_counter += 1
+        new_parent = self.source_engine._generate_word_from_seed(
+            self.lemma,
+            self.source_engine.global_seed + self.generation_counter
+        )
+
+        self.entry_parent.delete(0, tk.END)
+        self.entry_parent.insert(0, new_parent)
+
     def generate_new_suggestion(self):
         if not self.engine:
             return
@@ -141,7 +209,19 @@ class EditWordModal(tk.Toplevel):
                     word)
             return word
 
-        if strategy_key == "phonotactics":
+        if self.source_engine and self.entry_parent.get():
+            parent_word = self.entry_parent.get()
+            nativized = self.engine.phonology_handler.nativize_word(
+                parent_word)
+
+            mutation_seed = self.engine.global_seed + self.generation_counter
+            if self.generation_counter > 0:
+                nativized = self.engine._mutate_word(nativized, mutation_seed)
+
+            new_word = nativized
+            origin_tag = f"confluence_{self.source_id}"
+
+        elif strategy_key == "phonotactics":
             input_str = f"{clean_lemma}_manual_gen_{self.generation_counter}_{self.engine.global_seed}"
             hash_obj = hashlib.sha256(input_str.encode())
             hash_val = int(hash_obj.hexdigest(), 16)
@@ -215,6 +295,17 @@ class EditWordModal(tk.Toplevel):
     def save(self):
         new_word = self.entry_word.get().strip()
         new_origin = self.entry_origin.get().strip()
+
+        if self.source_engine:
+            parent_val = self.entry_parent.get().strip()
+            if parent_val:
+                parent_entry = {
+                    "lemma": self.lemma,
+                    "default": parent_val,
+                    "synsets": [{"word": parent_val, "tags": ["manual_edit"], "affinity": 1.0}]
+                }
+                self.source_engine.word_cache[self.lemma] = parent_entry
+                self.source_engine.save_word_cache()
 
         if not new_word:
             return
