@@ -2093,6 +2093,21 @@ class OriginalLanguageEngine:
                 if preposition_handling == 'replace' and pos == 'ADP':
                     continue
 
+                should_drop_article = False
+                if self.profile.get('drop_articles', False):
+                    is_det_pos = (pos == 'DET')
+                    is_det_rel = (deprel == 'det')
+
+                    if is_det_pos or is_det_rel:
+                        f_feats = func.get('feats', '_')
+                        word_lower = orig_word.lower()
+                        if 'Definite=Def' in f_feats or 'PronType=Art' in f_feats or word_lower in {'o', 'a', 'os', 'as'}:
+                            if 'PronType=Prs' not in f_feats and 'PronType=Dem' not in f_feats:
+                                should_drop_article = True
+
+                if should_drop_article:
+                    continue
+
                 clean_word_lower = self._clean_word(orig_word).lower()
                 raw_lemma = lemma if lemma else clean_word_lower
                 raw_lemma = raw_lemma.lower()
@@ -2376,7 +2391,8 @@ class OriginalLanguageEngine:
 
         self.save_word_cache()
         final_output = ' '.join(final_sentences)
-        final_output = polish_output(final_output, self.profile, text)
+        final_output = polish_output(
+            final_output, self.profile, text, functions_info)
         return final_output
 
     def process_with_analysis(self, text: str) -> Dict:

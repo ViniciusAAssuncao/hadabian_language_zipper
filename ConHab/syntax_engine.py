@@ -239,6 +239,7 @@ class WordOrderMapper:
     def _should_drop(self, func: Dict, functions: List[Dict]) -> bool:
         if func['function'] in {SyntacticFunction.QUANTIFIER, SyntacticFunction.VERB_PARTICLE, SyntacticFunction.INTENSIFIER}:
             return False
+
         is_pro_drop = False
         pro_drop_conditions = []
         if isinstance(self.pro_drop, bool):
@@ -246,6 +247,7 @@ class WordOrderMapper:
         elif isinstance(self.pro_drop, dict):
             is_pro_drop = self.pro_drop.get('enabled', False)
             pro_drop_conditions = self.pro_drop.get('conditions', [])
+
         if is_pro_drop and func['pos'] == 'PRON' and func['function'] == SyntacticFunction.SUBJECT:
             if func['word'].isupper() and len(func['word']) > 1:
                 return False
@@ -261,10 +263,16 @@ class WordOrderMapper:
                     (f for f in functions if f['original_index'] == head_idx), None)
                 if head_func and head_func['pos'] in {'VERB', 'AUX'}:
                     return True
+
         if not self.drop_articles:
             return False
-        if func['pos'] != 'DET':
+
+        is_det_pos = (func['pos'] == 'DET')
+        is_det_rel = (func.get('deprel') == 'det')
+
+        if not (is_det_pos or is_det_rel):
             return False
+
         if self.topicalization_config.get('reintroduce_articles', False):
             head_idx = func.get('dependencies', [-1])[0]
             if head_idx != -1:
@@ -273,8 +281,23 @@ class WordOrderMapper:
                         if f['function'] == SyntacticFunction.SUBJECT:
                             return False
                         break
+
         feats = func.get('feats', '_')
-        return 'PronType=Art' in feats
+        word_lower = func['word'].lower()
+
+        if 'PronType=Art' in feats:
+            return True
+        if 'Definite=Def' in feats:
+            return True
+
+        if word_lower in {'o', 'a', 'os', 'as'}:
+            if 'PronType=Dem' in feats:
+                return False
+            if 'PronType=Prs' in feats:
+                return False
+            return True
+
+        return False
 
     def _build_chunks(self, functions: List[Dict]) -> List[Chunk]:
         chunks = []
