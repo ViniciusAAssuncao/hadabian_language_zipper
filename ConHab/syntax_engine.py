@@ -264,6 +264,27 @@ class WordOrderMapper:
                 if head_func and head_func['pos'] in {'VERB', 'AUX'}:
                     return True
 
+        omission_config = self.profile.get('omission_rules', {})
+        if omission_config.get('enabled', False):
+            for rule in omission_config.get('rules', []):
+                target_pos = set(rule.get('pos', []))
+                target_deprel = set(rule.get('deprel', []))
+
+                match_pos = not target_pos or func['pos'] in target_pos
+                match_deprel = not target_deprel or func.get(
+                    'deprel', '') in target_deprel
+
+                if match_pos and match_deprel:
+                    if func['pos'] == 'DET' and self.topicalization_config.get('reintroduce_articles', False):
+                        head_idx = func.get('dependencies', [-1])[0]
+                        if head_idx != -1:
+                            for f in functions:
+                                if f['index'] == head_idx:
+                                    if f['function'] == SyntacticFunction.SUBJECT:
+                                        return False
+                                    break
+                    return True
+
         if not self.drop_articles:
             return False
 

@@ -1189,6 +1189,31 @@
         ],
         "description": "Pro-drop permitido quando sujeito é tópico estabelecido"
     },
+    "omission_rules": {
+        "enabled": true,
+        "rules": [
+            {
+                "pos": [
+                    "DET"
+                ],
+                "deprel": [
+                    "det"
+                ],
+                "description": "Descartar artigos definidos e indefinidos"
+            },
+            {
+                "pos": [
+                    "CCONJ",
+                    "SCONJ"
+                ],
+                "deprel": [
+                    "cc",
+                    "mark"
+                ],
+                "description": "Descartar conjunções (e, ou, mas, que)"
+            }
+        ]
+    },
     "drop_articles": true,
     "degree_system": {
         "enabled": true,
@@ -1502,9 +1527,9 @@
             "cultural_significance": "Língua da poesia épica e hinos agrícolas do Vale Fértil"
         },
         "sample_texts": {
-            "greeting": "Saa-nuuruu waa luuree-rii-sii (O céu brilha para você)",
-            "farewell": "Mee-waaruu waa sii-laa-ruu-sii (Que as águas fluam para você)",
-            "proverb": "Nuur-gaatee-saa waa naarii-suuruu laa-maaruu-laa (A luz do céu traz vida à terra)"
+            "greeting": "Saa-nuuruu waa lauuree-rii ēōō wīūīlee (O céu brilha para você)",
+            "farewell": "Ēājaōūēēōō waa hāīsīā-raanii ēōō wīūīlee (Que as águas fluam para você)",
+            "proverb": "Nuur-saanii waa īāenīōē-rii naa-riinuunoo laa-maaruuruu zāā saa-nuuruu ōnūēeinu. (A luz do céu traz vida à terra)"
         }
     }
 }
