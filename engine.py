@@ -914,8 +914,7 @@ class ConceptHandler:
     def _load_universal_registry(self) -> Dict:
         paths_to_try = [
             Path('reserved_universal.json'),
-            Path('../conlangs/reserved_universal.json'),
-            Path('./conlangs/reserved_universal.json')
+            Path('./conlangs/reserved_universal.json'),
         ]
         for p in paths_to_try:
             if p.exists():
