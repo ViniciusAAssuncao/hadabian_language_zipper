@@ -1012,6 +1012,96 @@ class CaseMorphology:
         return word + marker_text
 
 
+class CompoundingHandler:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.config = profile.get('compounding', {})
+        self.enabled = self.config.get('enabled', False)
+        self.head_position = self.config.get('head_position', 'final')
+        self.linking_elements = self.config.get('linking_elements', {})
+        vocab_raw = profile.get('vocabulary', {})
+        self.vocabulary = {k.lower(): v for k, v in vocab_raw.items()}
+        self.vocabulary.update(vocab_raw)
+
+    def _smart_lookup(self, lemma: str, engine_ref) -> Optional[str]:
+        if not lemma:
+            return None
+
+        lemma = lemma.lower().strip()
+
+        if lemma in self.vocabulary:
+            return self.vocabulary[lemma]
+
+        lemma_lower = lemma.lower()
+        if lemma_lower in self.vocabulary:
+            return self.vocabulary[lemma_lower]
+
+        return engine_ref._get_word_form(lemma, tags=['compound_part'])
+
+    def apply_compounding(self, functions: List[Dict], engine_ref) -> Tuple[Dict[int, str], Set[int]]:
+        if not self.enabled:
+            return {}, set()
+
+        compound_map = {}
+        absorbed_indices = set()
+
+        noun_indices = [f['index']
+                        for f in functions if f['pos'] in {'NOUN', 'PROPN'}]
+
+        for head_idx in noun_indices:
+            if head_idx in absorbed_indices:
+                continue
+
+            modifier_idx = -1
+            for f in functions:
+                if f['index'] not in absorbed_indices and \
+                   head_idx in f.get('dependencies', []) and \
+                   ('nmod' in f.get('deprel', '') or f.get('deprel') == 'compound'):
+                    if f['pos'] in {'NOUN', 'PROPN'}:
+                        modifier_idx = f['index']
+                        break
+
+            if modifier_idx != -1:
+                head_func = next(
+                    f for f in functions if f['index'] == head_idx)
+                mod_func = next(
+                    f for f in functions if f['index'] == modifier_idx)
+
+                head_lemma = head_func.get('lemma', head_func['word'])
+                mod_lemma = mod_func.get('lemma', mod_func['word'])
+
+                head_word = self._smart_lookup(head_lemma, engine_ref)
+                mod_word = self._smart_lookup(mod_lemma, engine_ref)
+
+                link = ""
+                for link_char, rules in self.linking_elements.items():
+                    suffixes = rules.get('after', [])
+                    for suff in suffixes:
+                        if mod_word.lower().endswith(suff):
+                            link = link_char
+                            break
+                    if link:
+                        break
+
+                if self.head_position == 'final':
+                    compound_word = f"{mod_word}{link}{head_word}"
+                else:
+                    compound_word = f"{head_word}{link}{mod_word}"
+
+                if head_word[0].isupper():
+                    compound_word = compound_word.capitalize()
+
+                compound_map[head_idx] = compound_word
+                absorbed_indices.add(modifier_idx)
+
+                for f in functions:
+                    if modifier_idx in f.get('dependencies', []):
+                        if f['pos'] in {'ADP', 'DET'} or f['deprel'] == 'case' or f['deprel'] == 'det':
+                            absorbed_indices.add(f['index'])
+
+        return compound_map, absorbed_indices
+
+
 class InterrogativeHandler:
     def __init__(self, profile: Dict):
         self.profile = profile

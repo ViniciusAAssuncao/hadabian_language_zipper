@@ -1,0 +1,902 @@
+{
+    "family_id": "omerian_trunk",
+    "description": "Tronco das línguas ömerianas, família linguística isolada do Vale Fértil dos Povos e margens do Mar Médio, com mais de 65.000 anos de história documentada desde o Calcolítico Inicial. Sistema vocálico extremamente rico com distinção de quantidade, qualidade e tom incipiente. Caracterizado pela 'nurgatianização' - processo histórico de vocalização, suavização consonantal e simplificação morfológica com compensação através de complexidade sintática.",
+    "proto_languages": [
+        {
+            "id": "proto-omerian",
+            "level": 0,
+            "description": "Proto-Ömeriano (aprox. 260.000-250.000 AH), língua ancestral reconstituída falada pelos primeiros agricultores do Vale Fértil. Sistema consonantal moderadamente rico com oclusivas, fricativas e nasais. Distinção de quantidade vocálica emergente. Morfologia aglutinante moderada com tendências isolantes incipientes.",
+            "shared_phonotactics": {
+                "vowels": "aiuāīūeēoō",
+                "consonants": "pbtdkgmnlrszšhwjʔ",
+                "syllable_templates": [
+                    "CV",
+                    "CVC",
+                    "V",
+                    "VC",
+                    "CVV",
+                    "CVVC"
+                ],
+                "forbidden_initial_clusters": [
+                    "pt",
+                    "bd",
+                    "nm",
+                    "lr",
+                    "sz"
+                ],
+                "forbidden_final_consonants": [
+                    "ʔ",
+                    "h"
+                ],
+                "max_consonant_cluster": 1,
+                "diphthongs": [
+                    "ai",
+                    "au",
+                    "ei",
+                    "ou",
+                    "ui"
+                ],
+                "triphthongs": []
+            },
+            "shared_lexicon_strength": 0.15,
+            "agglutination_strength": 0.65,
+            "gender_system": {
+                "enabled": true,
+                "genders": [
+                    "animate",
+                    "inanimate",
+                    "divine"
+                ],
+                "default": "inanimate",
+                "inference": [
+                    {
+                        "suffix": "at",
+                        "gender": "animate"
+                    },
+                    {
+                        "suffix": "um",
+                        "gender": "inanimate"
+                    },
+                    {
+                        "suffix": "el",
+                        "gender": "divine"
+                    }
+                ]
+            },
+            "case_system_proto": {
+                "cases": [
+                    "nominative",
+                    "accusative",
+                    "genitive",
+                    "dative",
+                    "locative",
+                    "ablative"
+                ],
+                "markers": {
+                    "nominative": "-Ø",
+                    "accusative": "-an",
+                    "genitive": "-im",
+                    "dative": "-ak",
+                    "locative": "-ru",
+                    "ablative": "-tal"
+                }
+            },
+            "verbal_system_proto": {
+                "aspects": [
+                    "perfective",
+                    "imperfective",
+                    "habitual",
+                    "inceptive"
+                ],
+                "moods": [
+                    "indicative",
+                    "subjunctive",
+                    "optative",
+                    "imperative",
+                    "hortative"
+                ],
+                "tenses_derived": [
+                    "past",
+                    "present",
+                    "future",
+                    "aorist"
+                ],
+                "voice": [
+                    "active",
+                    "passive",
+                    "middle"
+                ],
+                "person_markers": {
+                    "1sg": {
+                        "prefix": "a-",
+                        "suffix": "-ni"
+                    },
+                    "2sg": {
+                        "prefix": "ta-",
+                        "suffix": "-si"
+                    },
+                    "3sg": {
+                        "prefix": "Ø-",
+                        "suffix": "-Ø"
+                    },
+                    "1pl_incl": {
+                        "prefix": "na-",
+                        "suffix": "-mu"
+                    },
+                    "1pl_excl": {
+                        "prefix": "ma-",
+                        "suffix": "-mu"
+                    },
+                    "2pl": {
+                        "prefix": "ta-",
+                        "suffix": "-ku"
+                    },
+                    "3pl": {
+                        "prefix": "Ø-",
+                        "suffix": "-lu"
+                    }
+                }
+            },
+            "nominal_patterns": [
+                {
+                    "pattern": "CVC",
+                    "type": "basic_noun"
+                },
+                {
+                    "pattern": "CVCV",
+                    "type": "animate_noun"
+                },
+                {
+                    "pattern": "CVCat",
+                    "type": "agent"
+                },
+                {
+                    "pattern": "CuCuC",
+                    "type": "collective"
+                },
+                {
+                    "pattern": "CaCīC",
+                    "type": "abstract"
+                }
+            ],
+            "vowel_harmony_proto": {
+                "enabled": true,
+                "type": "palatal_labial",
+                "groups": {
+                    "front": "eēi",
+                    "back": "aāoōuū"
+                },
+                "triggers": [
+                    "suffixes",
+                    "enclitics"
+                ]
+            },
+            "stress_system_proto": {
+                "type": "weight_sensitive",
+                "preference": "penultimate_heavy",
+                "superheavy_attracts": true,
+                "long_vowel_weight": 2
+            },
+            "phonological_processes_proto": [
+                {
+                    "from": "VhV",
+                    "to": "VːV",
+                    "condition": "intervocalic",
+                    "description": "Lenição de h intervocálica com alongamento compensatório"
+                },
+                {
+                    "from": "Vʔ",
+                    "to": "Vː",
+                    "condition": "word_final",
+                    "description": "Queda de glotal final com alongamento"
+                },
+                {
+                    "from": "nm",
+                    "to": "mm",
+                    "condition": "all",
+                    "description": "Assimilação nasal progressiva"
+                },
+                {
+                    "from": "tn",
+                    "to": "nn",
+                    "condition": "morpheme_boundary",
+                    "description": "Assimilação nasal regressiva"
+                }
+            ]
+        },
+        {
+            "id": "early-omerian",
+            "parent_id": "proto-omerian",
+            "level": 1,
+            "description": "Ömeriano Antigo (aprox. 250.000-235.000 AH). Primeiro estágio atestado indiretamente através de empréstimos em línguas vizinhas. Início do processo de nurgatianização com vocalização de consoantes finais fracas. Desenvolvimento de sistema tonal incipiente através de diferenciação de vogais longas.",
+            "shared_phonotactics": {
+                "vowels": "aiuāīūeēoōàáìíùúèéòó",
+                "consonants": "pbtdkgmnlrszšhwj",
+                "syllable_templates": [
+                    "CV",
+                    "CVC",
+                    "CVV",
+                    "CVVC",
+                    "V",
+                    "VV"
+                ],
+                "forbidden_initial_clusters": [
+                    "pt",
+                    "bd",
+                    "nm"
+                ],
+                "forbidden_final_consonants": [
+                    "h"
+                ],
+                "diphthongs": [
+                    "ai",
+                    "au",
+                    "ei",
+                    "ou",
+                    "ui",
+                    "ia",
+                    "ua"
+                ]
+            },
+            "shared_lexicon_strength": 0.55,
+            "agglutination_strength": 0.52,
+            "innovations": [
+                "tone_incipient_development",
+                "final_consonant_weakening",
+                "vowel_length_phonemicization",
+                "case_merger_locative_dative",
+                "verb_serialization_emergence"
+            ],
+            "tone_system_proto": {
+                "enabled": true,
+                "tones": [
+                    "high",
+                    "low",
+                    "rising",
+                    "falling"
+                ],
+                "tone_bearing_units": "vowels",
+                "sandhi_rules": [
+                    {
+                        "context": "high + high",
+                        "result": "high + falling"
+                    },
+                    {
+                        "context": "low + low",
+                        "result": "low + rising"
+                    }
+                ]
+            },
+            "sound_changes_from_parent": [
+                {
+                    "from": "p",
+                    "to": "f",
+                    "condition": "intervocalic",
+                    "description": "Lenição de p intervocálica"
+                },
+                {
+                    "from": "t",
+                    "to": "s",
+                    "condition": "before_i",
+                    "description": "Palatalização de t antes de i"
+                },
+                {
+                    "from": "k",
+                    "to": "h",
+                    "condition": "word_final",
+                    "description": "Fricativização de k final"
+                },
+                {
+                    "from": "VhV",
+                    "to": "VːV",
+                    "condition": "all",
+                    "description": "Queda de h com compensação vocálica"
+                },
+                {
+                    "from": "Vn$",
+                    "to": "Vː̃",
+                    "condition": "word_final",
+                    "description": "Nasalização vocálica com queda de n"
+                },
+                {
+                    "from": "Vm$",
+                    "to": "Vː̃",
+                    "condition": "word_final",
+                    "description": "Nasalização vocálica com queda de m"
+                }
+            ],
+            "vocalic_innovations": {
+                "vowel_breaking": {
+                    "enabled": true,
+                    "rules": [
+                        {
+                            "from": "ē",
+                            "to": "ia",
+                            "condition": "stressed_open"
+                        },
+                        {
+                            "from": "ō",
+                            "to": "ua",
+                            "condition": "stressed_open"
+                        }
+                    ]
+                },
+                "compensatory_lengthening": {
+                    "enabled": true,
+                    "triggers": [
+                        "consonant_deletion",
+                        "h_loss",
+                        "glottal_loss"
+                    ]
+                }
+            }
+        },
+        {
+            "id": "middle-omerian",
+            "parent_id": "early-omerian",
+            "level": 2,
+            "description": "Ömeriano Médio (aprox. 235.000-220.000 AH). Período de grande diversificação dialetal. Aceleração da nurgatianização com perda massiva de consoantes finais e desenvolvimento de vogais ultra-longas (trimoraicas). Sistema tonal plenamente desenvolvido. Transição para morfologia mais analítica com proliferação de partículas.",
+            "shared_phonotactics": {
+                "vowels": "aiuāīūeēoōààāāííííùùūūèèēēòòōō",
+                "consonants": "pbtdkgmnlrszšwj",
+                "syllable_templates": [
+                    "CV",
+                    "CVV",
+                    "CVVV",
+                    "V",
+                    "VV",
+                    "VVV"
+                ],
+                "forbidden_initial_clusters": [
+                    "pt",
+                    "bd"
+                ],
+                "forbidden_final_consonants": [],
+                "diphthongs": [
+                    "ai",
+                    "au",
+                    "ei",
+                    "ou",
+                    "ui",
+                    "ia",
+                    "ua",
+                    "oi",
+                    "ae"
+                ],
+                "triphthongs": [
+                    "iai",
+                    "uau",
+                    "iei"
+                ]
+            },
+            "shared_lexicon_strength": 0.62,
+            "agglutination_strength": 0.38,
+            "innovations_middle": [
+                "ultra_long_vowel_development",
+                "tone_stabilization_four_way",
+                "case_system_collapse_to_two",
+                "topic_comment_structure",
+                "serial_verb_construction_productive",
+                "numeral_classifier_system"
+            ],
+            "sound_changes_middle": [
+                {
+                    "from": "CVC$",
+                    "to": "CVː",
+                    "condition": "unstressed",
+                    "description": "Queda de consoante final átona com alongamento"
+                },
+                {
+                    "from": "VːC$",
+                    "to": "VːːC > VːːːØ",
+                    "condition": "stressed",
+                    "description": "Trimoraização com posterior queda consonantal"
+                },
+                {
+                    "from": "b",
+                    "to": "w",
+                    "condition": "intervocalic",
+                    "description": "Aproximantização de b"
+                },
+                {
+                    "from": "d",
+                    "to": "r",
+                    "condition": "intervocalic",
+                    "description": "Rhotacismo de d intervocálica"
+                },
+                {
+                    "from": "g",
+                    "to": "j",
+                    "condition": "before_front_vowel",
+                    "description": "Palatalização de g"
+                },
+                {
+                    "from": "VrV",
+                    "to": "VːV",
+                    "condition": "unstressed",
+                    "description": "Síncope de r com alongamento"
+                }
+            ],
+            "dialectal_variation": {
+                "enabled": true,
+                "variation_axes": [
+                    "coastal_inland",
+                    "northern_southern",
+                    "conservative_innovative"
+                ],
+                "major_dialects": [
+                    {
+                        "name": "coastal_ugri",
+                        "description": "Dialeto costeiro de Ugri, base do Akoshiano. Mais conservador em consonantes.",
+                        "phonological_features": [
+                            "consonant_retention_higher",
+                            "vowel_length_three_way",
+                            "tone_conservative"
+                        ]
+                    },
+                    {
+                        "name": "inland_nurgate",
+                        "description": "Dialeto do interior de Nur-Gate, extremamente inovador. Base do Nurgatiano.",
+                        "phonological_features": [
+                            "consonant_loss_massive",
+                            "vowel_length_four_way",
+                            "tone_musical_elaboration",
+                            "syllable_timing_strict"
+                        ]
+                    },
+                    {
+                        "name": "southern_pastoral",
+                        "description": "Dialeto dos pastores do sul, mantém arcaísmos.",
+                        "phonological_features": [
+                            "archaic_consonant_clusters",
+                            "dual_number_preserved",
+                            "case_system_fuller"
+                        ]
+                    }
+                ]
+            }
+        },
+        {
+            "id": "proto-nurgatian",
+            "parent_id": "middle-omerian",
+            "level": 3,
+            "description": "Proto-Nurgatiano (aprox. 220.000-205.000 AH). Ancestral direto do Nurgatiano Clássico. Nurgatianização completa: fonologia quase inteiramente vocálica, morfologia predominantemente analítica, sintaxe de tópico-comentário rígida, sistema tonal musical de 5 tons.",
+            "shared_phonotactics": {
+                "vowels": "aiueāīūēōaààāāāiiììīīīuùùūūūeèèèēēēoòòōōō",
+                "consonants": "mnlrszwjh",
+                "syllable_templates": [
+                    "CV",
+                    "CVV",
+                    "CVVV",
+                    "V",
+                    "VV",
+                    "VVV"
+                ],
+                "forbidden_initial_clusters": [],
+                "forbidden_final_consonants": [],
+                "max_consonant_cluster": 0,
+                "diphthongs": [
+                    "ai",
+                    "au",
+                    "ei",
+                    "ou",
+                    "ui",
+                    "ia",
+                    "ua",
+                    "oi",
+                    "ae",
+                    "ue"
+                ],
+                "triphthongs": [
+                    "iai",
+                    "uau",
+                    "iei",
+                    "uou"
+                ]
+            },
+            "shared_lexicon_strength": 0.75,
+            "agglutination_strength": 0.22,
+            "innovations_proto_nurgatian": [
+                "five_tone_system_musical",
+                "quadruple_vowel_length",
+                "consonant_inventory_minimal",
+                "ligature_system_obligatory",
+                "topic_marker_grammaticalization",
+                "verb_serialization_complex",
+                "numeral_classifier_elaboration"
+            ],
+            "tone_system_nurgatian": {
+                "enabled": true,
+                "tones": [
+                    "high_level",
+                    "mid_level",
+                    "low_level",
+                    "rising",
+                    "falling"
+                ],
+                "notation": [
+                    "˥",
+                    "˧",
+                    "˨",
+                    "˨˥",
+                    "˥˨"
+                ],
+                "tone_sandhi": [
+                    {
+                        "context": "˥ + ˥",
+                        "result": "˥ + ˧"
+                    },
+                    {
+                        "context": "˨ + ˨",
+                        "result": "˨ + ˨˥"
+                    },
+                    {
+                        "context": "˥˨ + any",
+                        "result": "˧ + preserved"
+                    },
+                    {
+                        "context": "˨˥ + ˥",
+                        "result": "˨˥ + ˧"
+                    }
+                ],
+                "grammatical_functions": {
+                    "tense_marking": true,
+                    "aspect_marking": true,
+                    "mood_distinction": true,
+                    "evidentiality": false
+                }
+            },
+            "syllable_timing": {
+                "enabled": true,
+                "type": "strict_isochronous",
+                "mora_count_matters": true,
+                "compensation_strategies": [
+                    "vowel_lengthening",
+                    "tone_elongation",
+                    "pause_insertion"
+                ]
+            }
+        }
+    ],
+    "branches": [
+        {
+            "id": "akoshian_branch",
+            "parent_id": "middle-omerian",
+            "description": "Ramo Akoshiano, línguas das cidades-estado do norte. Mais conservador que o Nurgatiano, mantém maior inventário consonantal e morfologia aglutinante residual.",
+            "shared_lexicon_strength": 0.78,
+            "agglutination_strength": 0.45,
+            "distinctive_features": [
+                "cuneiform_writing_system",
+                "consonant_retention_moderate",
+                "three_way_vowel_length",
+                "case_system_four_cases",
+                "verb_prefix_conjugation"
+            ]
+        },
+        {
+            "id": "nurgatian_branch",
+            "parent_id": "proto-nurgatian",
+            "description": "Ramo Nurgatiano, línguas do interior do Vale Fértil. Extremamente inovador, representa o ápice da nurgatianização.",
+            "shared_lexicon_strength": 0.82,
+            "agglutination_strength": 0.18,
+            "distinctive_features": [
+                "minimal_consonant_inventory",
+                "quadruple_vowel_length",
+                "five_tone_musical_system",
+                "topic_prominent_syntax",
+                "serial_verb_chains",
+                "ligature_orthography"
+            ]
+        },
+        {
+            "id": "namurtan_branch",
+            "parent_id": "middle-omerian",
+            "description": "Ramo Namurtano, línguas do império. Híbrido com substrato não-ömeriano, intermediário em inovação.",
+            "shared_lexicon_strength": 0.68,
+            "agglutination_strength": 0.55,
+            "distinctive_features": [
+                "non_omerian_substrate",
+                "mixed_morphology",
+                "bilingual_prestige_diglossia",
+                "administrative_register_complex"
+            ]
+        },
+        {
+            "id": "levanian_coastal",
+            "parent_id": "early-omerian",
+            "description": "Ramo Levaniano costeiro, línguas dos navegadores do Mar Médio. Conservador em fonologia, inovador em vocabulário marítimo.",
+            "shared_lexicon_strength": 0.65,
+            "agglutination_strength": 0.58,
+            "distinctive_features": [
+                "maritime_specialized_vocabulary",
+                "loanwords_from_trade",
+                "conservative_phonology",
+                "nautical_metaphors_grammar"
+            ]
+        }
+    ],
+    "intelligibility": {
+        "proto-omerian:early-omerian": 0.72,
+        "early-omerian:middle-omerian": 0.65,
+        "middle-omerian:proto-nurgatian": 0.58,
+        "middle-omerian:akoshian_branch": 0.70,
+        "proto-nurgatian:nurgatian_branch": 0.88,
+        "akoshian_branch:nurgatian_branch": 0.42,
+        "akoshian_branch:namurtan_branch": 0.65,
+        "nurgatian_branch:namurtan_branch": 0.38,
+        "levanian_coastal:akoshian_branch": 0.55,
+        "levanian_coastal:nurgatian_branch": 0.28
+    },
+    "diachronic_settings": {
+        "default_divergence_factor": 0.28,
+        "max_synonym_variants": 7,
+        "semantic_drift_rate": 0.35,
+        "grammaticalization_paths": [
+            {
+                "lexical": "verb_go",
+                "grammatical": "future_marker"
+            },
+            {
+                "lexical": "verb_be_at",
+                "grammatical": "locative_copula"
+            },
+            {
+                "lexical": "verb_give",
+                "grammatical": "benefactive_applicative"
+            },
+            {
+                "lexical": "verb_say",
+                "grammatical": "quotative_complementizer"
+            },
+            {
+                "lexical": "noun_person",
+                "grammatical": "indefinite_pronoun"
+            },
+            {
+                "lexical": "demonstrative_proximal",
+                "grammatical": "topic_marker"
+            },
+            {
+                "lexical": "body_part_eye",
+                "grammatical": "anterior_spatial"
+            },
+            {
+                "lexical": "body_part_back",
+                "grammatical": "posterior_spatial"
+            }
+        ],
+        "sound_change_rates": {
+            "vowel_lengthening": 0.45,
+            "consonant_lenition": 0.52,
+            "consonant_deletion": 0.38,
+            "tone_development": 0.35,
+            "nasalization": 0.28,
+            "vowel_breaking": 0.30
+        },
+        "morphological_change_rates": {
+            "agglutination_loss": 0.42,
+            "case_merger": 0.38,
+            "analytic_tendency": 0.48,
+            "particle_development": 0.40
+        }
+    },
+    "lexical_registers_defaults": {
+        "enabled": true,
+        "registers": [
+            {
+                "name": "archaic_ritual",
+                "chance": 0.08,
+                "mutation_factor": 0.15,
+                "description": "Registro arcaico ritual conservando proto-ömeriano"
+            },
+            {
+                "name": "classical_literary",
+                "chance": 0.18,
+                "mutation_factor": 0.45,
+                "description": "Registro literário clássico"
+            },
+            {
+                "name": "administrative_formal",
+                "chance": 0.25,
+                "mutation_factor": 0.75,
+                "description": "Registro administrativo formal"
+            },
+            {
+                "name": "colloquial_everyday",
+                "chance": 0.35,
+                "mutation_factor": 1.65,
+                "description": "Registro coloquial cotidiano"
+            },
+            {
+                "name": "poetic_musical",
+                "chance": 0.10,
+                "mutation_factor": 0.55,
+                "description": "Registro poético com elaboração tonal"
+            },
+            {
+                "name": "technical_agricultural",
+                "chance": 0.04,
+                "mutation_factor": 0.85,
+                "description": "Registro técnico agrícola/hidráulico"
+            }
+        ]
+    },
+    "loanword_policy_defaults": {
+        "enabled": true,
+        "modes": {
+            "phonetic_adaptation": 0.65,
+            "calque": 0.25,
+            "semantic_extension": 0.10
+        },
+        "calque_connector": "-",
+        "adaptation_rules": [
+            {
+                "source_phoneme": "p",
+                "target_phoneme": "w",
+                "environment": "intervocalic"
+            },
+            {
+                "source_phoneme": "t",
+                "target_phoneme": "s",
+                "environment": "before_i"
+            },
+            {
+                "source_phoneme": "k",
+                "target_phoneme": "h",
+                "environment": "word_final"
+            },
+            {
+                "source_cluster": "CC",
+                "resolution": "vowel_epenthesis",
+                "epenthetic_vowel": "a"
+            },
+            {
+                "source_cluster": "CCC",
+                "resolution": "cluster_reduction",
+                "strategy": "delete_middle"
+            }
+        ],
+        "source_languages": [
+            "proto_semitic_substrate",
+            "indo_european_contact",
+            "isolate_neighbors"
+        ]
+    },
+    "morphophonological_processes": {
+        "assimilation": {
+            "enabled": true,
+            "types": [
+                {
+                    "name": "nasal_place",
+                    "trigger": "nasal",
+                    "target": "following_consonant",
+                    "result": "place_match"
+                },
+                {
+                    "name": "vowel_harmony",
+                    "trigger": "root_vowel",
+                    "target": "suffix_vowels",
+                    "result": "backness_match"
+                }
+            ]
+        },
+        "deletion": {
+            "enabled": true,
+            "rules": [
+                {
+                    "target": "unstressed_consonant",
+                    "environment": "word_final",
+                    "condition": "after_long_vowel",
+                    "compensation": "vowel_lengthening"
+                },
+                {
+                    "target": "h",
+                    "environment": "intervocalic",
+                    "condition": "unstressed",
+                    "compensation": "vowel_coalescence"
+                }
+            ]
+        },
+        "epenthesis": {
+            "enabled": true,
+            "vowel": "a",
+            "triggers": [
+                "forbidden_cluster",
+                "syllable_structure_violation"
+            ]
+        },
+        "metathesis": {
+            "enabled": true,
+            "patterns": [
+                {
+                    "input": "VrC",
+                    "output": "VCr",
+                    "condition": "unstressed"
+                }
+            ]
+        },
+        "compensatory_lengthening": {
+            "enabled": true,
+            "triggers": [
+                "consonant_deletion",
+                "cluster_simplification",
+                "coda_loss"
+            ],
+            "result_types": [
+                "vowel_lengthening",
+                "tone_change",
+                "diphthongization"
+            ]
+        }
+    },
+    "sociolinguistic_dimensions": {
+        "diglossia": {
+            "enabled": true,
+            "high_variety": "classical_nurgatian_literary",
+            "low_variety": "colloquial_dialects",
+            "domains": {
+                "high": [
+                    "literature",
+                    "religious_texts",
+                    "legal_documents",
+                    "historical_chronicles",
+                    "poetry",
+                    "philosophical_discourse"
+                ],
+                "low": [
+                    "daily_conversation",
+                    "family",
+                    "local_commerce",
+                    "informal_correspondence"
+                ]
+            }
+        },
+        "prestige_hierarchy": {
+            "classical_nurgatian": 10,
+            "akoshian_cuneiform": 9,
+            "namurtan_imperial": 8,
+            "urban_colloquial": 6,
+            "rural_dialects": 4,
+            "pastoral_varieties": 3
+        },
+        "language_death_factors": {
+            "conquest_by_arinians": 0.45,
+            "economic_disruption": 0.25,
+            "population_displacement": 0.20,
+            "prestige_shift": 0.10
+        }
+    },
+    "cultural_context": {
+        "writing_systems": [
+            {
+                "name": "nurgatian_ligature_script",
+                "type": "syllabary_with_ligatures",
+                "direction": "right_to_left",
+                "tone_marking": "diacritic_above",
+                "vowel_length_marking": "gemination_of_symbols"
+            },
+            {
+                "name": "akoshian_cuneiform",
+                "type": "logosyllabary",
+                "direction": "left_to_right",
+                "used_for": "administrative_records"
+            }
+        ],
+        "literary_traditions": [
+            "epic_poetry_sung",
+            "agricultural_almanacs",
+            "royal_chronicles",
+            "wisdom_literature",
+            "hymns_to_deities"
+        ],
+        "extinction_context": {
+            "final_speakers": "c. 180.000 AH",
+            "last_written_text": "c. 182.000 AH",
+            "successor_languages": [
+                "arinian",
+                "aromitan"
+            ],
+            "preservation": "fragmentary_inscriptions_and_loanwords"
+        }
+    }
+}

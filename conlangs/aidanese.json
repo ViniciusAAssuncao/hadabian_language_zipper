@@ -1,22 +1,25 @@
 {
     "id": "aidanese",
     "name": "Aidanês",
-    "native_name": "Aidanische Sprache",
+    "native_name": "Höšhir Anänlied",
     "family_node": "aidanese",
     "linguistic_family": "garmanic_trunk.json",
-    "lexical_influence": {
+    "lexical_confluence": {
         "enabled": true,
-        "sources": [
+        "base_stability": 0,
+        "description": "Herança total do Corimês com adaptação fonológica",
+        "strata": [
             {
-                "language_id": "corimean_modern",
-                "weight": 0.75,
+                "source_id": "corimean_modern",
+                "weight": 100,
                 "type": "inheritance",
-                "description": "Base lexical do Alto Corimês Médio do Norte"
+                "mutation_intensity": 0.15,
+                "description": "Base lexical herdada do Alto Corimês"
             }
         ]
     },
     "shared_base_strength": 0.84,
-    "global_seed": 4488203044192800,
+    "global_seed": 8820304419281847,
     "source_language_order": "SVO",
     "word_order": "SVO",
     "subordinate_word_order": "SVO",
@@ -30,7 +33,7 @@
             "standard_aidanese": {
                 "description": "Inventário padrão do Aidanês - mais suave e fino que Corimês",
                 "consonants": "pbtdkgfvszšhmnlrwj",
-                "vowels": "aiueoäöüə"
+                "vowels": "aiueoäöüaa"
             },
             "formal_imperial": {
                 "description": "Registro formal imperial com mais distinções",
@@ -43,7 +46,7 @@
                 "vowels": "aiueo"
             }
         },
-        "vowels": "aiueoäöüə",
+        "vowels": "aiueoäöüaa",
         "consonants": "pbtdkgfvszšhmnlrwj",
         "syllable_templates": [
             "CV",
@@ -364,6 +367,11 @@
             "accusative",
             "dative"
         ],
+        "genitive_replacement": {
+            "description": "Genitivo substituído pela partícula analítica ïn",
+            "construction": "prep + noun",
+            "preposition": "ïn"
+        },
         "marker_position": "article",
         "preposition_handling": "replace",
         "description": "Sistema de casos REDUZIDO - apenas 3, marcado principalmente em artigos",
@@ -409,10 +417,6 @@
                 "acc_f": "eine",
                 "dat_f": "einer"
             }
-        },
-        "genitive_replacement": {
-            "description": "Genitivo eliminado - substituído por 'von + dativo'",
-            "construction": "von + dative"
         }
     },
     "determiner_system": {
@@ -427,9 +431,10 @@
         "demonstratives": {
             "gender_inheritance_heuristic": true,
             "proximal": {
-                "sg_m": "diese",
-                "sg_f": "diese",
-                "pl": "diese"
+                "sg_m": "ïer",
+                "sg_f": "ïer-t",
+                "sg_n": "ïer-tb",
+                "pl": "ïer-e"
             },
             "distal": {
                 "sg_m": "jene",
@@ -442,13 +447,15 @@
             "pronominal_suffixes": false,
             "suppress_article": true,
             "independent_forms": {
-                "1sg": "mein",
-                "2sg": "dein",
-                "3sg_m": "sein",
-                "3sg_f": "ihr",
-                "1pl": "unser",
-                "2pl": "euer",
-                "3pl": "ihr"
+                "1sg": "är",
+                "2sg": "ä",
+                "3sg_m": "änb",
+                "3sg_f": "änbe",
+                "3sg_n": "änbi",
+                "1pl": "än",
+                "2pl": "ïr",
+                "3pl": "ïrc",
+                "formal": "ïhr"
             }
         }
     },
@@ -568,7 +575,7 @@
         "copulas": [
             {
                 "type": "default",
-                "form": "sein",
+                "form": "än",
                 "conjugates": true,
                 "conditions": []
             }
@@ -666,8 +673,7 @@
         "description": "Alta receptividade a empréstimos - ondas migratórias massivas"
     },
     "compounding": {
-        "enabled": true,
-        "productivity": "medium",
+        "enabled": false,
         "description": "Composição menos produtiva que Corimês - preferência por formas analíticas"
     },
     "v2_constraint": {
@@ -680,7 +686,16 @@
     },
     "abstract_concepts": {
         "enabled": true,
-        "mappings": {}
+        "mappings": {
+            "do": "ïn",
+            "da": "ïna",
+            "dos": "tïen",
+            "deus": "Äuris"
+        },
+        "definitions": {
+            "ïn": "Ação, atividade ou processo em geral",
+            "Äuris": "Entidade suprema criadora e mantenedora do universo"
+        }
     },
     "lexical_registers": {
         "enabled": true,

@@ -12,6 +12,16 @@
       "verb_agreement"
     ]
   },
+  "aesthetic_profile": {
+    "syllable_count_distribution": {
+      "1": 0.1,
+      "2": 0.5,
+      "3": 0.3,
+      "4": 0.1
+    },
+    "cluster_density": 0.8,
+    "vowel_consonant_ratio": 0.4
+  },
   "alignment": "ergative-absolutive",
   "global_seed": 42857,
   "phonotactics": {
@@ -26,6 +36,30 @@
       "guttural_style": {
         "consonants": "qkxgRħʕ",
         "vowels": "au"
+      }
+    },
+    "transition_matrix": {
+      "enabled": true,
+      "default_weight": 10,
+      "matrix": {
+        "q": {
+          "u": 100,
+          "o": 50,
+          "a": 20
+        },
+        "k": {
+          "a": 50,
+          "i": 10
+        },
+        "t": {
+          "r": 80,
+          "l": 40,
+          "a": 30
+        },
+        "s": {
+          "t": 60,
+          "p": 40
+        }
       }
     },
     "syllable_templates": [

@@ -4,14 +4,17 @@
     "native_name": "Karminische Sprache",
     "family_node": "carminean",
     "linguistic_family": "garmanic_trunk.json",
-    "lexical_influence": {
+    "lexical_confluence": {
         "enabled": true,
-        "sources": [
+        "base_stability": 0,
+        "description": "Herança total do Corimês com adaptação fonológica",
+        "strata": [
             {
-                "language_id": "corimean_modern",
+                "source_id": "corimean_modern",
                 "weight": 0.68,
                 "type": "inheritance",
-                "description": "Base do Alto Corimês do Norte"
+                "mutation_intensity": 0.15,
+                "description": "Base lexical herdada do Alto Corimês"
             },
             {
                 "language_id": "aidanese",
@@ -22,7 +25,7 @@
         ]
     },
     "shared_base_strength": 0.85,
-    "global_seed": 8520304419281900,
+    "global_seed": 8820304419281847,
     "source_language_order": "SVO",
     "word_order": "SVO",
     "subordinate_word_order": "SOV",
@@ -36,7 +39,7 @@
             "standard_carminean": {
                 "description": "Inventário padrão Carminês - meio-termo suave",
                 "consonants": "pbtdkgfvszšhmnlrwj",
-                "vowels": "aiueoäöüə"
+                "vowels": "aiueoäöüaa"
             },
             "formal_northern": {
                 "description": "Registro formal mais conservador",
@@ -45,12 +48,12 @@
             },
             "colloquial_soft": {
                 "description": "Coloquial suavizado",
-                "consonants": "pbtdkgfvszšhmnlrw",
-                "vowels": "aiueoə"
+                "consonants": "pbtdkgfvszšžhmnlrwj",
+                "vowels": "aiueoäöü"
             }
         },
-        "vowels": "aiueoäöüə",
-        "consonants": "pbtdkgfvszšhmnlrwj",
+        "vowels": "aiueoäöüaa",
+        "consonants": "pbtdkgfvszšžhmnlrwj",
         "syllable_templates": [
             "CV",
             "CVC",
@@ -353,7 +356,7 @@
                 "shift_to_determiner": true
             },
             "accusative": {
-                "marker": "-(e)n",
+                "marker": "-en",
                 "type": "suffix",
                 "conditions": [
                     "animate",
@@ -362,14 +365,14 @@
                 "shift_to_determiner": true
             },
             "genitive": {
-                "marker": "-(e)s",
+                "marker": "-es",
                 "type": "suffix",
                 "conditions": [],
                 "shift_to_determiner": false,
                 "register": "formal"
             },
             "dative": {
-                "marker": "-(e)m",
+                "marker": "-em",
                 "type": "suffix",
                 "shift_to_determiner": true
             }
@@ -427,15 +430,14 @@
         "demonstratives": {
             "gender_inheritance_heuristic": true,
             "proximal": {
-                "sg_m": "dieser",
-                "sg_f": "diese",
-                "sg_n": "dieses",
-                "pl": "diese"
+                "sg_m": "ïe",
+                "sg_f": "ïet",
+                "sg_n": "ïet",
+                "pl": "ïere"
             },
             "distal": {
-                "sg_m": "jener",
+                "sg_m": "jene",
                 "sg_f": "jene",
-                "sg_n": "jenes",
                 "pl": "jene"
             }
         },
@@ -443,14 +445,15 @@
             "pronominal_suffixes": false,
             "suppress_article": true,
             "independent_forms": {
-                "1sg": "mein",
-                "2sg": "dein",
-                "3sg_m": "sein",
-                "3sg_f": "ihr",
-                "3sg_n": "sein",
-                "1pl": "unser",
-                "2pl": "euer",
-                "3pl": "ihr"
+                "1sg": "är",
+                "2sg": "ä",
+                "3sg_m": "änb",
+                "3sg_f": "änbe",
+                "3sg_n": "änbi",
+                "1pl": "än",
+                "2pl": "ïr",
+                "3pl": "ïrc",
+                "formal": "ïhr"
             }
         }
     },
@@ -565,7 +568,7 @@
         "copulas": [
             {
                 "type": "default",
-                "form": "sein",
+                "form": "äni",
                 "conjugates": true
             }
         ]
@@ -575,12 +578,12 @@
         "strategies": [
             {
                 "type": "verbal_negation",
-                "marker": "nicht",
+                "marker": "warum",
                 "suffix": ""
             },
             {
                 "type": "nominal_negation",
-                "marker": "kein",
+                "marker": "apper",
                 "suffix": ""
             }
         ]

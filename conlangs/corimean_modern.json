@@ -1,7 +1,7 @@
 {
     "id": "corimean_modern",
     "name": "Corimês Moderno",
-    "native_name": "Höchkorimisc",
+    "native_name": "Tie korimischänhöchir",
     "family_node": "high-corimean-north",
     "linguistic_family": "garmanic_trunk.json",
     "shared_base_strength": 0.88,
@@ -13,6 +13,85 @@
     "agglutination_strength": 0.82,
     "divergence_factor": 0.12,
     "cultural_purism": 0.78,
+    "abstract_concepts": {
+        "enabled": true,
+        "mappings": {
+            "do": "ïn",
+            "dos": "tïen",
+            "deus": "Äuris"
+        },
+        "definitions": {
+            "ïn": "Ação, atividade ou processo em geral",
+            "Äuris": "Entidade suprema criadora e mantenedora do universo"
+        }
+    },
+    "compounding": {
+        "enabled": true,
+        "productivity": "very_high",
+        "max_components": 5,
+        "head_position": "final",
+        "description": "Composição nominal extremamente produtiva",
+        "linking_elements": {
+            "s": {
+                "after": [
+                    "ung",
+                    "heit",
+                    "keit",
+                    "schaft",
+                    "ion",
+                    "tät",
+                    "tum",
+                    "on"
+                ],
+                "examples": "Bildung-s-system, Freiheit-s-statue"
+            },
+            "es": {
+                "after": [
+                    "tum"
+                ],
+                "examples": "Königtum-es-recht"
+            },
+            "en": {
+                "after": [
+                    "e"
+                ],
+                "examples": "Straße-n-bahn"
+            },
+            "er": {
+                "after": [
+                    "buch",
+                    "kind",
+                    "ei"
+                ],
+                "examples": "Kinder-garten, Bücher-regal"
+            },
+            "n": {
+                "after": [
+                    "e"
+                ],
+                "examples": "Kirche-n-lied"
+            }
+        },
+        "noun_noun": {
+            "productivity": "very_high",
+            "head": "final",
+            "examples": "Apfel-baum, Haus-tür, Hand-schuh, Feuer-wehr"
+        },
+        "adj_noun": {
+            "productivity": "high",
+            "examples": "Groß-vater, Hoch-schule, Rot-wein"
+        },
+        "verb_noun": {
+            "productivity": "medium",
+            "stem_form": "verbal_stem",
+            "examples": "Fahr-rad, Lese-buch, Wasch-maschine"
+        },
+        "recursive_compounding": {
+            "enabled": true,
+            "max_depth": 4,
+            "examples": "Donau-dampf-schiff-fahrt-s-gesellschaft-s-kapitän"
+        }
+    },
     "phonotactics": {
         "active_style": "standard_heavy",
         "inventory_styles": {
@@ -1255,18 +1334,18 @@
             "examples": "machen → machte → gemacht, arbeiten → arbeitete → gearbeitet"
         },
         "auxiliary_verbs": {
-            "haben": {
-                "form": "haben",
+            "hibim": {
+                "form": "hibim",
                 "use": "perfective_transitive",
                 "irregular": true
             },
-            "sein": {
-                "form": "sein",
+            "kaz": {
+                "form": "kaz",
                 "use": "perfective_intransitive_motion_change",
                 "irregular": true
             },
-            "werden": {
-                "form": "werden",
+            "ershen": {
+                "form": "ershen",
                 "use": "future_passive_voice",
                 "irregular": true
             }
@@ -1286,7 +1365,7 @@
         "copulas": [
             {
                 "type": "default",
-                "form": "sein",
+                "form": "kaz",
                 "conjugates": true,
                 "irregular": true,
                 "conditions": [],
@@ -1294,7 +1373,7 @@
             },
             {
                 "type": "becoming",
-                "form": "werden",
+                "form": "ershen",
                 "conjugates": true,
                 "irregular": true,
                 "conditions": [
@@ -1304,7 +1383,7 @@
             },
             {
                 "type": "remaining",
-                "form": "bleiben",
+                "form": "teiblan",
                 "conjugates": true,
                 "conditions": [
                     "continuative"
@@ -1500,72 +1579,6 @@
             "internet": "Weltnetz (welt=mundo + netz=rede)"
         }
     },
-    "compounding": {
-        "enabled": true,
-        "productivity": "very_high",
-        "max_components": 5,
-        "head_position": "final",
-        "description": "Composição nominal extremamente produtiva - característica CENTRAL do Corimês",
-        "linking_elements": {
-            "s": {
-                "after": [
-                    "ung",
-                    "heit",
-                    "keit",
-                    "schaft",
-                    "ion",
-                    "tät",
-                    "tum"
-                ],
-                "examples": "Bildung-s-system, Freiheit-s-statue"
-            },
-            "es": {
-                "after": [
-                    "tum"
-                ],
-                "examples": "Königtum-es-recht"
-            },
-            "en": {
-                "after": [
-                    "e"
-                ],
-                "examples": "Straße-n-bahn"
-            },
-            "er": {
-                "after": [
-                    "buch",
-                    "kind",
-                    "ei"
-                ],
-                "examples": "Kinder-garten, Bücher-regal"
-            },
-            "n": {
-                "after": [
-                    "e"
-                ],
-                "examples": "Kirche-n-lied"
-            }
-        },
-        "noun_noun": {
-            "productivity": "very_high",
-            "head": "final",
-            "examples": "Apfel-baum, Haus-tür, Hand-schuh, Feuer-wehr"
-        },
-        "adj_noun": {
-            "productivity": "high",
-            "examples": "Groß-vater, Hoch-schule, Rot-wein"
-        },
-        "verb_noun": {
-            "productivity": "medium",
-            "stem_form": "verbal_stem",
-            "examples": "Fahr-rad, Lese-buch, Wasch-maschine"
-        },
-        "recursive_compounding": {
-            "enabled": true,
-            "max_depth": 4,
-            "examples": "Donau-dampf-schiff-fahrt-s-gesellschaft-s-kapitän"
-        }
-    },
     "v2_constraint": {
         "enabled": true,
         "description": "Restrição V2 obrigatória em orações principais",
@@ -1635,15 +1648,6 @@
             "subordinate_joined": "..., dass ich früh aufstehe",
             "participle": "aufgestanden",
             "infinitive_with_zu": "aufzustehen"
-        }
-    },
-    "abstract_concepts": {
-        "enabled": true,
-        "mappings": {
-            "do": "ïn"
-        },
-        "definitions": {
-            "ïn": "Ação, atividade ou processo em geral"
         }
     },
     "lexical_registers": {
@@ -1771,7 +1775,10 @@
             "style": "german_low_high"
         }
     },
-    "mappings": {},
+    "mappings": {
+        "do": "ïnb",
+        "da": "ïnb"
+    },
     "phonological_processes": {
         "description": "Processos fonológicos ativos do Corimês Moderno",
         "final_devoicing": {

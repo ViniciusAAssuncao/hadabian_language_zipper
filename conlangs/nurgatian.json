@@ -1,0 +1,1535 @@
+{
+    "id": "nurgatian",
+    "name": "Nurgatiano Clássico",
+    "native_name": "Salan Nuur-Gaatee",
+    "family_node": "nurgatian_branch",
+    "linguistic_family": "omerian_trunk.json",
+    "shared_base_strength": 0.82,
+    "global_seed": 22050019520000,
+    "source_language_order": "SVO",
+    "word_order": "SVO",
+    "subordinate_word_order": "OSV",
+    "alignment": "nominative-accusative",
+    "agglutination_strength": 0.18,
+    "divergence_factor": 0.28,
+    "cultural_purism": 0.72,
+    "phonotactics": {
+        "active_style": "classical_nurgatian",
+        "inventory_styles": {
+            "classical_nurgatian": {
+                "description": "Inventário nurgatiano clássico - extremamente vocálico e musical",
+                "consonants": "mnlrszwjh",
+                "vowels": "aiueāāāīīīūūūēēēōōō"
+            },
+            "archaic_conservative": {
+                "description": "Forma arcaica com mais consoantes",
+                "consonants": "pbtdkgmnlrszšwjh",
+                "vowels": "aiuāīūeēoō"
+            },
+            "late_colloquial": {
+                "description": "Forma tardia coloquial com simplificação extrema",
+                "consonants": "mnlrswj",
+                "vowels": "aiueāāīīūūēēōō"
+            }
+        },
+        "consonants": "mnlrszwjh",
+        "vowels": "aiueāāāīīīūūūēēēōōō",
+        "syllable_templates": [
+            "CV",
+            "CVV",
+            "CVVV",
+            "V",
+            "VV",
+            "VVV"
+        ],
+        "min_syllables": 2,
+        "max_syllables": 5,
+        "forbidden_initial_clusters": [],
+        "forbidden_final_consonants": [],
+        "max_consonant_cluster": 0,
+        "diphthongs": [
+            "ai",
+            "au",
+            "ei",
+            "ou",
+            "ui",
+            "ia",
+            "ua",
+            "oi",
+            "ae",
+            "ue",
+            "āi",
+            "āu",
+            "ēi",
+            "ōu",
+            "ūi"
+        ],
+        "triphthongs": [
+            "iai",
+            "uau",
+            "iei",
+            "uou",
+            "uai"
+        ],
+        "epenthesis_vowel": "a",
+        "epenthesis_visible": false,
+        "sonority_hierarchy": {
+            "enabled": true,
+            "strict": false,
+            "scale": {
+                "m": 4,
+                "n": 4,
+                "l": 5,
+                "r": 5,
+                "s": 3,
+                "z": 3,
+                "w": 6,
+                "j": 6,
+                "h": 2,
+                "a": 8,
+                "e": 8,
+                "i": 8,
+                "o": 8,
+                "u": 8,
+                "ā": 9,
+                "ē": 9,
+                "ī": 9,
+                "ō": 9,
+                "ū": 9
+            },
+            "onset_rules": {
+                "min_distance": 2,
+                "allow_plateau": false,
+                "allow_reversal": false
+            },
+            "coda_rules": {
+                "min_distance": 0,
+                "allow_plateau": true,
+                "allow_reversal": true
+            }
+        },
+        "transition_matrix": {
+            "enabled": true,
+            "default_weight": 10,
+            "matrix": {
+                "m": {
+                    "a": 80,
+                    "i": 60,
+                    "u": 70,
+                    "ā": 100,
+                    "n": 5
+                },
+                "n": {
+                    "a": 85,
+                    "i": 65,
+                    "u": 75,
+                    "ū": 95,
+                    "m": 5
+                },
+                "l": {
+                    "a": 90,
+                    "i": 70,
+                    "u": 60,
+                    "ē": 85
+                },
+                "r": {
+                    "a": 95,
+                    "i": 55,
+                    "u": 80,
+                    "ō": 90
+                },
+                "s": {
+                    "a": 75,
+                    "i": 85,
+                    "u": 65,
+                    "ī": 100
+                },
+                "w": {
+                    "a": 100,
+                    "i": 40,
+                    "u": 90,
+                    "ā": 85
+                },
+                "j": {
+                    "a": 70,
+                    "i": 95,
+                    "e": 100,
+                    "ē": 90
+                },
+                "h": {
+                    "a": 80,
+                    "i": 75,
+                    "u": 70,
+                    "ā": 60
+                },
+                "a": {
+                    "m": 60,
+                    "n": 65,
+                    "l": 70,
+                    "r": 75,
+                    "s": 55,
+                    "w": 50,
+                    "j": 45,
+                    "i": 80,
+                    "u": 75
+                },
+                "i": {
+                    "m": 55,
+                    "n": 60,
+                    "l": 65,
+                    "r": 50,
+                    "s": 70,
+                    "j": 85,
+                    "a": 90,
+                    "e": 95
+                },
+                "u": {
+                    "m": 70,
+                    "n": 75,
+                    "l": 60,
+                    "r": 80,
+                    "w": 90,
+                    "a": 85,
+                    "o": 95
+                },
+                "e": {
+                    "m": 60,
+                    "n": 65,
+                    "l": 70,
+                    "r": 55,
+                    "s": 60,
+                    "j": 75,
+                    "i": 90
+                },
+                "o": {
+                    "m": 65,
+                    "n": 70,
+                    "l": 60,
+                    "r": 80,
+                    "w": 85,
+                    "u": 95
+                }
+            }
+        },
+        "sandhi": {
+            "enabled": true,
+            "cross_word_boundary": true,
+            "description": "Sandhi vocálico extenso para manter isocronia silábica",
+            "rules": [
+                {
+                    "pattern": "a\\s+a",
+                    "replacement": "ā ",
+                    "ignore_case": true,
+                    "description": "Fusão de vogais idênticas com alongamento"
+                },
+                {
+                    "pattern": "i\\s+i",
+                    "replacement": "ī ",
+                    "ignore_case": true,
+                    "description": "Fusão de vogais idênticas com alongamento"
+                },
+                {
+                    "pattern": "u\\s+u",
+                    "replacement": "ū ",
+                    "ignore_case": true,
+                    "description": "Fusão de vogais idênticas com alongamento"
+                },
+                {
+                    "pattern": "a\\s+i",
+                    "replacement": "ai",
+                    "ignore_case": true,
+                    "description": "Ditongação a+i"
+                },
+                {
+                    "pattern": "a\\s+u",
+                    "replacement": "au",
+                    "ignore_case": true,
+                    "description": "Ditongação a+u"
+                },
+                {
+                    "pattern": "i\\s+a",
+                    "replacement": "ia",
+                    "ignore_case": true,
+                    "description": "Ditongação i+a"
+                },
+                {
+                    "pattern": "u\\s+a",
+                    "replacement": "ua",
+                    "ignore_case": true,
+                    "description": "Ditongação u+a"
+                },
+                {
+                    "pattern": "([mnlrszwjh])\\s+([aiueo])",
+                    "replacement": "\\1-\\2",
+                    "ignore_case": true,
+                    "description": "Inserção de hífen ligador após consoante antes de vogal"
+                }
+            ]
+        },
+        "phonological_rules": [
+            {
+                "input": "VCV",
+                "output": "VCV",
+                "register": null,
+                "description": "Regra neutra padrão"
+            },
+            {
+                "input": "h([aiueo])",
+                "output": "\\1",
+                "register": "colloquial",
+                "description": "Queda de h inicial no coloquial"
+            },
+            {
+                "input": "([aiueo])h([aiueo])",
+                "output": "\\1ː\\2",
+                "register": null,
+                "description": "Queda de h intervocálica com alongamento compensatório"
+            },
+            {
+                "input": "([mnlrs])([mnlrs])",
+                "output": "\\1",
+                "register": "colloquial",
+                "description": "Simplificação de geminadas no coloquial"
+            },
+            {
+                "input": "^([ptk])",
+                "output": "^[hw]",
+                "register": "archaic",
+                "description": "Oclusivas iniciais arcaicas transformadas em aproximantes"
+            }
+        ],
+        "vowel_length_system": {
+            "enabled": true,
+            "levels": 4,
+            "description": "Sistema único de quatro níveis de quantidade vocálica",
+            "length_notation": {
+                "short": "V",
+                "long": "VV (Vː)",
+                "extra_long": "VVV (Vːː)",
+                "ultra_long": "VVVV (Vːːː)"
+            },
+            "phonemic_distinction": true,
+            "examples": {
+                "short": "na (agora)",
+                "long": "naa/nā (céu)",
+                "extra_long": "naaa/nāā (eternidade)",
+                "ultra_long": "naaaa/nāāā (divindade primordial)"
+            },
+            "functional_load": {
+                "lexical_distinction": 0.85,
+                "grammatical_marking": 0.60,
+                "tone_interaction": 0.75
+            }
+        },
+        "tone_system": {
+            "enabled": true,
+            "type": "lexical_and_grammatical",
+            "number_of_tones": 5,
+            "tones": {
+                "high_level": {
+                    "symbol": "˥",
+                    "ipa_notation": "a˥",
+                    "description": "Tom alto sustentado, usado para nomes divinos e autoridade"
+                },
+                "mid_level": {
+                    "symbol": "˧",
+                    "ipa_notation": "a˧",
+                    "description": "Tom médio neutro, mais comum em substantivos"
+                },
+                "low_level": {
+                    "symbol": "˨",
+                    "ipa_notation": "a˨",
+                    "description": "Tom baixo, usado para verbos no presente"
+                },
+                "rising": {
+                    "symbol": "˨˥",
+                    "ipa_notation": "a˨˥",
+                    "description": "Tom ascendente, marca perguntas e subjuntivo"
+                },
+                "falling": {
+                    "symbol": "˥˨",
+                    "ipa_notation": "a˥˨",
+                    "description": "Tom descendente, marca passado e evidenciais"
+                }
+            },
+            "tone_sandhi": {
+                "enabled": true,
+                "rules": [
+                    {
+                        "context": "˥ + ˥",
+                        "result": "˥ + ˧",
+                        "description": "Dissimilação de tons altos consecutivos"
+                    },
+                    {
+                        "context": "˨ + ˨",
+                        "result": "˨ + ˨˥",
+                        "description": "Elevação do segundo tom baixo"
+                    },
+                    {
+                        "context": "˥˨ + any",
+                        "result": "˧ + preserved",
+                        "description": "Simplificação de tom cadente em posição não-final"
+                    },
+                    {
+                        "context": "˨˥ + ˥",
+                        "result": "˨˥ + ˧",
+                        "description": "Evitação de pico tonal duplo"
+                    }
+                ]
+            },
+            "grammatical_functions": {
+                "tense": {
+                    "present": "low_level",
+                    "past": "falling",
+                    "future": "rising"
+                },
+                "aspect": {
+                    "perfective": "falling",
+                    "imperfective": "mid_level",
+                    "habitual": "low_level"
+                },
+                "mood": {
+                    "indicative": "mid_level",
+                    "subjunctive": "rising",
+                    "optative": "high_level"
+                },
+                "evidentiality": {
+                    "direct": "mid_level",
+                    "inferential": "falling",
+                    "reportative": "rising"
+                }
+            },
+            "lexical_minimal_pairs": [
+                {
+                    "word": "saa˥",
+                    "meaning": "luz",
+                    "gloss": "light"
+                },
+                {
+                    "word": "saa˧",
+                    "meaning": "areia",
+                    "gloss": "sand"
+                },
+                {
+                    "word": "saa˨",
+                    "meaning": "ventar",
+                    "gloss": "to.wind"
+                },
+                {
+                    "word": "saa˨˥",
+                    "meaning": "questionar",
+                    "gloss": "to.question"
+                },
+                {
+                    "word": "saa˥˨",
+                    "meaning": "terminou",
+                    "gloss": "ended"
+                }
+            ]
+        },
+        "syllable_timing": {
+            "enabled": true,
+            "type": "strict_isochronous",
+            "description": "Ritmo silábico rigoroso - cada sílaba tem duração aproximadamente igual",
+            "mora_count": {
+                "enabled": true,
+                "short_vowel": 1,
+                "long_vowel": 2,
+                "extra_long_vowel": 3,
+                "ultra_long_vowel": 4,
+                "consonant_coda": 1
+            },
+            "compensation_strategies": [
+                {
+                    "strategy": "vowel_lengthening",
+                    "condition": "light_syllable_in_heavy_context",
+                    "description": "Alongamento para igualar peso silábico"
+                },
+                {
+                    "strategy": "pause_insertion",
+                    "condition": "phrase_boundary",
+                    "description": "Pausa para manter ritmo"
+                },
+                {
+                    "strategy": "tone_prolongation",
+                    "condition": "final_syllable",
+                    "description": "Prolongamento tonal em sílaba final"
+                }
+            ],
+            "poetic_meter": {
+                "enabled": true,
+                "traditional_forms": [
+                    {
+                        "name": "suuruu-meter",
+                        "syllable_count": 12,
+                        "caesura_after": 6,
+                        "tone_pattern": "˥˧˨˨˥˥˨˧˨˥˨˥˨"
+                    },
+                    {
+                        "name": "naaru-meter",
+                        "syllable_count": 8,
+                        "tone_pattern": "˥˨˥˨˥˨˥˨"
+                    }
+                ]
+            }
+        },
+        "ligature_system": {
+            "enabled": true,
+            "obligatory": true,
+            "description": "Sistema de ligação obrigatória entre palavras para manter fluxo vocálico",
+            "ligature_marker": "-",
+            "rules": [
+                {
+                    "condition": "consonant_word_final + vowel_word_initial",
+                    "action": "direct_ligature",
+                    "example": "nuur + aali → nuur-aali"
+                },
+                {
+                    "condition": "vowel_word_final + vowel_word_initial",
+                    "action": "glide_insertion",
+                    "glide": "j_or_w",
+                    "example": "mee + iiru → mee-jiiru"
+                },
+                {
+                    "condition": "consonant + consonant",
+                    "action": "vowel_epenthesis",
+                    "epenthetic_vowel": "a",
+                    "example": "sal + muu → sal-amuu"
+                }
+            ],
+            "phrase_level_ligature": {
+                "enabled": true,
+                "description": "Frases inteiras são pronunciadas como unidade contínua",
+                "example": "nuur-gaatee-saa-luuremii-naa (A luz do céu brilha agora)"
+            }
+        }
+    },
+    "root_system": {
+        "enabled": false,
+        "description": "Nurgatiano não utiliza sistema de raízes triconsonantais"
+    },
+    "morphological_derivation": {
+        "enabled": true,
+        "root_based": false,
+        "strategy": "suffixation_and_compounding",
+        "max_depth": 3,
+        "exceptions": [
+            "nuu",
+            "saa",
+            "mee",
+            "laa",
+            "waa",
+            "jaa"
+        ],
+        "source_suffixes": [
+            {
+                "suffix": "ção",
+                "replacement": "-nuurii",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 95,
+                "mode": "derive",
+                "derivation_type": "abstract_action"
+            },
+            {
+                "suffix": "dade",
+                "replacement": "-saanuu",
+                "input_pos": "NOUN",
+                "target_pos": "ADJ",
+                "priority": 90,
+                "mode": "derive",
+                "derivation_type": "abstract_quality"
+            },
+            {
+                "suffix": "dor",
+                "replacement": "-luurii",
+                "input_pos": "NOUN",
+                "target_pos": "VERB",
+                "priority": 85,
+                "mode": "derive",
+                "derivation_type": "agent"
+            },
+            {
+                "suffix": "mente",
+                "replacement": "-meesu",
+                "input_pos": "ADV",
+                "target_pos": "ADJ",
+                "priority": 90,
+                "mode": "derive",
+                "derivation_type": "adverbial"
+            }
+        ]
+    },
+    "affix_system": {
+        "enabled": true,
+        "description": "Sistema de afixação nurgatiano - predominantemente sufixal",
+        "derivation_rules": [
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "agent",
+                "affix": "-luurii",
+                "position": "suffix",
+                "force": false,
+                "description": "Agente realizador da ação"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "action_noun",
+                "affix": "-nuurii",
+                "position": "suffix",
+                "force": false,
+                "description": "Substantivo de ação"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "type": "relational",
+                "affix": "-siinaa",
+                "position": "suffix",
+                "force": false,
+                "description": "Adjetivo relacional"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "ADV",
+                "type": "manner",
+                "affix": "-meesu",
+                "position": "suffix",
+                "force": false,
+                "description": "Advérbio de modo"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "ADJ",
+                "type": "participial",
+                "affix": "-raanuu",
+                "position": "suffix",
+                "force": false,
+                "description": "Particípio adjetival"
+            }
+        ]
+    },
+    "gender_system": {
+        "enabled": false,
+        "description": "Nurgatiano não possui gênero gramatical"
+    },
+    "number_system": {
+        "numbers": [
+            "singular",
+            "plural",
+            "collective"
+        ],
+        "default": "singular",
+        "markers": {
+            "singular": {
+                "marker": ""
+            },
+            "plural": {
+                "marker": "-lii",
+                "alternatives": [
+                    "-nuu",
+                    "-wii"
+                ]
+            },
+            "collective": {
+                "marker": "-suuruu",
+                "description": "Coletivo para grupos orgânicos ou totalidades"
+            }
+        },
+        "broken_plurals": {
+            "enabled": false
+        }
+    },
+    "case_system": {
+        "enabled": true,
+        "cases": [
+            "nominative",
+            "accusative",
+            "genitive",
+            "dative",
+            "locative",
+            "ablative",
+            "instrumental",
+            "comitative"
+        ],
+        "marker_position": "suffix",
+        "preposition_handling": "coexist",
+        "markers": {
+            "nominative": {
+                "marker": "",
+                "type": "suffix",
+                "conditions": [],
+                "shift_to_determiner": false,
+                "description": "Caso sujeito - sem marcação"
+            },
+            "accusative": {
+                "marker": "-naa",
+                "type": "suffix",
+                "conditions": [],
+                "shift_to_determiner": false,
+                "description": "Caso objeto direto"
+            },
+            "genitive": {
+                "marker": "-saa",
+                "type": "suffix",
+                "conditions": [],
+                "shift_to_determiner": false,
+                "description": "Caso possessivo/genitivo"
+            },
+            "dative": {
+                "marker": "-ruu",
+                "type": "suffix",
+                "conditions": [],
+                "shift_to_determiner": false,
+                "description": "Caso beneficiário/recipiente"
+            },
+            "locative": {
+                "marker": "-laa",
+                "type": "suffix",
+                "conditions": [],
+                "shift_to_determiner": false,
+                "description": "Caso locativo (em/sobre)"
+            },
+            "ablative": {
+                "marker": "-maa",
+                "type": "suffix",
+                "conditions": [],
+                "shift_to_determiner": false,
+                "description": "Caso de origem (de/desde)"
+            },
+            "instrumental": {
+                "marker": "-wuu",
+                "type": "suffix",
+                "conditions": [],
+                "shift_to_determiner": false,
+                "description": "Caso instrumental (com/por meio de)"
+            },
+            "comitative": {
+                "marker": "-juu",
+                "type": "suffix",
+                "conditions": [],
+                "shift_to_determiner": false,
+                "description": "Caso comitativo (junto com)"
+            }
+        },
+        "case_stacking": {
+            "enabled": false,
+            "description": "Apenas um caso por palavra"
+        }
+    },
+    "determiner_system": {
+        "definite_article": {
+            "form": null,
+            "description": "Nurgatiano não possui artigos definidos - definitude marcada por contexto e tom"
+        },
+        "indefinite_article": {
+            "form": null,
+            "description": "Nurgatiano não possui artigos indefinidos"
+        },
+        "demonstratives": {
+            "gender_inheritance_heuristic": false,
+            "proximal": {
+                "sg": "ii-naa",
+                "pl": "ii-naa-lii",
+                "description": "Demonstrativo proximal (este/esta)"
+            },
+            "medial": {
+                "sg": "uu-naa",
+                "pl": "uu-naa-lii",
+                "description": "Demonstrativo medial (esse/essa)"
+            },
+            "distal": {
+                "sg": "aa-naa",
+                "pl": "aa-naa-lii",
+                "description": "Demonstrativo distal (aquele/aquela)"
+            }
+        },
+        "possessives": {
+            "pronominal_suffixes": true,
+            "suppress_article": false,
+            "suffixes": {
+                "1sg": "-nii",
+                "2sg": "-sii",
+                "3sg": "-rii",
+                "1pl_incl": "-muunii",
+                "1pl_excl": "-maanii",
+                "2pl": "-suulii",
+                "3pl": "-raanii"
+            }
+        }
+    },
+    "pronominal_system": {
+        "independent_pronouns": {
+            "1sg": "nii-aa",
+            "2sg": "sii-aa",
+            "3sg": "rii-aa",
+            "1pl_incl": "muunii-aa",
+            "1pl_excl": "maanii-aa",
+            "2pl": "suulii-aa",
+            "3pl": "raanii-aa"
+        },
+        "object_pronouns": {
+            "direct": {
+                "1sg": "-nii-naa",
+                "2sg": "-sii-naa",
+                "3sg": "-rii-naa",
+                "1pl_incl": "-muunii-naa",
+                "1pl_excl": "-maanii-naa",
+                "2pl": "-suulii-naa",
+                "3pl": "-raanii-naa"
+            }
+        },
+        "clitic_ordering": {
+            "enabled": false,
+            "description": "Pronomes são palavras independentes, não clíticos"
+        }
+    },
+    "adposition_system": {
+        "type": "postpositions",
+        "description": "Nurgatiano utiliza posposições que seguem o substantivo",
+        "postpositions": {
+            "suuraa": "sobre, em cima de",
+            "luuraa": "dentro de",
+            "maaraa": "fora de, além de",
+            "nuuraa": "através de",
+            "waaraa": "ao redor de",
+            "jaaraa": "entre, no meio de"
+        },
+        "inflected_prepositions": {
+            "enabled": false
+        }
+    },
+    "tam_system": {
+        "enabled": true,
+        "description": "Sistema TAM nurgatiano - marcação por sufixos verbais e tons",
+        "infer_imperative_from_context": true,
+        "person_marking": {
+            "enabled": true,
+            "position": "suffix",
+            "suffixes": {
+                "1sg": "-nii",
+                "2sg": "-sii",
+                "3sg": "-rii",
+                "1pl_incl": "-muunii",
+                "1pl_excl": "-maanii",
+                "2pl": "-suulii",
+                "3pl": "-raanii"
+            }
+        },
+        "rules": [
+            {
+                "features": [
+                    "Tense=Pres"
+                ],
+                "marker": "",
+                "type": "suffix",
+                "tone_change": "low_level",
+                "description": "Presente - sem sufixo, tom baixo"
+            },
+            {
+                "features": [
+                    "Tense=Past"
+                ],
+                "marker": "-saaluu",
+                "type": "suffix",
+                "tone_change": "falling",
+                "description": "Passado com sufixo -saaluu e tom cadente"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "-meeruu",
+                "type": "suffix",
+                "tone_change": "rising",
+                "description": "Futuro com sufixo -meeruu e tom ascendente"
+            },
+            {
+                "features": [
+                    "Aspect=Perf"
+                ],
+                "marker": "-nuuraa",
+                "type": "suffix",
+                "tone_change": "falling",
+                "description": "Aspecto perfectivo"
+            },
+            {
+                "features": [
+                    "Aspect=Imp"
+                ],
+                "marker": "-luuree",
+                "type": "suffix",
+                "tone_change": "mid_level",
+                "description": "Aspecto imperfectivo"
+            },
+            {
+                "features": [
+                    "Aspect=Hab"
+                ],
+                "marker": "-raasuu",
+                "type": "suffix",
+                "tone_change": "low_level",
+                "description": "Aspecto habitual"
+            },
+            {
+                "features": [
+                    "Mood=Ind"
+                ],
+                "marker": "",
+                "type": "suffix",
+                "tone_change": "mid_level",
+                "description": "Modo indicativo - neutro"
+            },
+            {
+                "features": [
+                    "Mood=Sub"
+                ],
+                "marker": "-siinuu",
+                "type": "suffix",
+                "tone_change": "rising",
+                "description": "Modo subjuntivo"
+            },
+            {
+                "features": [
+                    "Mood=Imp"
+                ],
+                "marker": "-waaruu",
+                "type": "suffix",
+                "tone_change": "high_level",
+                "description": "Modo imperativo"
+            },
+            {
+                "features": [
+                    "Voice=Pass"
+                ],
+                "marker": "-saanaa",
+                "type": "suffix",
+                "description": "Voz passiva"
+            }
+        ],
+        "evidentiality": {
+            "enabled": true,
+            "description": "Sistema evidencial através de partículas e tons",
+            "markers": {
+                "direct": {
+                    "marker": "",
+                    "tone": "mid_level",
+                    "description": "Evidência direta - testemunhado"
+                },
+                "inferential": {
+                    "marker": "-laarii",
+                    "tone": "falling",
+                    "description": "Evidência inferencial - deduzido"
+                },
+                "reportative": {
+                    "marker": "-naarii",
+                    "tone": "rising",
+                    "description": "Evidência reportativa - ouviu dizer"
+                }
+            }
+        },
+        "serial_verbs": {
+            "enabled": true,
+            "description": "Construções de verbos seriais altamente produtivas",
+            "patterns": [
+                {
+                    "type": "motion_plus_action",
+                    "structure": "V1-motion + V2-action",
+                    "example": "luu-meesu (ir-ver = ir para ver)",
+                    "description": "Verbo de movimento + verbo de ação"
+                },
+                {
+                    "type": "action_plus_result",
+                    "structure": "V1-action + V2-result",
+                    "example": "saa-nuurii (bater-quebrar = quebrar batendo)",
+                    "description": "Verbo de ação + verbo de resultado"
+                },
+                {
+                    "type": "manner_plus_action",
+                    "structure": "V1-manner + V2-action",
+                    "example": "waa-luuree (rápido-correr = correr rapidamente)",
+                    "description": "Verbo de modo + verbo de ação"
+                }
+            ]
+        }
+    },
+    "copula_system": {
+        "enabled": true,
+        "obligatory": true,
+        "copulas": [
+            {
+                "type": "existential",
+                "form": "naa-rii",
+                "conjugates": true,
+                "description": "Cópula existencial (haver, existir)"
+            },
+            {
+                "type": "identificational",
+                "form": "sii-rii",
+                "conjugates": true,
+                "description": "Cópula identificacional (ser, equivalência)"
+            },
+            {
+                "type": "locative",
+                "form": "laa-rii",
+                "conjugates": true,
+                "description": "Cópula locativa (estar em)"
+            }
+        ]
+    },
+    "negation_system": {
+        "enabled": true,
+        "strategies": [
+            {
+                "type": "verbal_negation",
+                "marker": "muu-",
+                "suffix": "",
+                "position": "prefix",
+                "description": "Negação verbal com prefixo muu-"
+            },
+            {
+                "type": "nominal_negation",
+                "marker": "laa-muu",
+                "suffix": "",
+                "position": "particle_before",
+                "description": "Negação nominal"
+            },
+            {
+                "type": "prohibitive",
+                "marker": "waaruu-muu",
+                "suffix": "",
+                "description": "Proibitivo (imperativo negativo)"
+            }
+        ]
+    },
+    "interrogative_system": {
+        "enabled": true,
+        "question_particles": [
+            {
+                "type": "yes_no",
+                "particle": "naa",
+                "position": "final",
+                "optional": false,
+                "tone": "rising",
+                "description": "Partícula interrogativa polar obrigatória com tom ascendente"
+            }
+        ],
+        "wh_words": {
+            "who": "jaa-nuu",
+            "what": "saa-nuu",
+            "where": "laa-nuu",
+            "when": "mee-nuu",
+            "why": "raa-nuu",
+            "how": "waa-nuu"
+        }
+    },
+    "topic_comment_structure": {
+        "enabled": true,
+        "obligatory": true,
+        "description": "Estrutura tópico-comentário obrigatória no Nurgatiano",
+        "topic_marker": {
+            "form": "waa",
+            "position": "after_topic",
+            "tone": "high_level",
+            "description": "Marcador de tópico obrigatório"
+        },
+        "structure_patterns": [
+            {
+                "pattern": "TOPIC waa COMMENT",
+                "example": "Nuur-gaatee waa saa-luuree-rii",
+                "gloss": "light-sky TOP shine-IMPF-3SG",
+                "translation": "Quanto ao céu, ele brilha"
+            },
+            {
+                "pattern": "TOPIC-GEN waa POSSESSUM COMMENT",
+                "example": "Nii-aa-saa waa laamu suuraa-rii",
+                "gloss": "1SG-GEN TOP house big-3SG",
+                "translation": "Quanto à minha casa, ela é grande"
+            }
+        ]
+    },
+    "numeral_system": {
+        "enabled": true,
+        "base": 10,
+        "cardinal_numbers": {
+            "1": "ii",
+            "2": "uu",
+            "3": "see",
+            "4": "laa",
+            "5": "mee",
+            "6": "nuu",
+            "7": "raa",
+            "8": "waa",
+            "9": "jaa",
+            "10": "sii-laa",
+            "100": "suuruu",
+            "1000": "nuuruu"
+        },
+        "classifier_system": {
+            "enabled": true,
+            "obligatory": true,
+            "description": "Sistema de classificadores numeral obrigatório",
+            "classifiers": {
+                "animate_human": "-luurii",
+                "animate_animal": "-raanii",
+                "inanimate_round": "-saanii",
+                "inanimate_long": "-waaruu",
+                "inanimate_flat": "-laanii",
+                "liquid": "-maarii",
+                "abstract": "-naarii"
+            },
+            "usage": {
+                "pattern": "NUMBER CLASSIFIER NOUN",
+                "example": "uu-luurii nii-aa (dois-CLAS.HUMANO pessoa = duas pessoas)"
+            }
+        }
+    },
+    "vowel_harmony": {
+        "enabled": true,
+        "type": "backness_and_height",
+        "groups": {
+            "high_front": "iīīī",
+            "high_back": "uūūū",
+            "mid_front": "eēēē",
+            "mid_back": "oōōō",
+            "low": "aāāā"
+        },
+        "rules": [
+            {
+                "input": "a",
+                "map": {
+                    "high_front": "e",
+                    "high_back": "o",
+                    "mid_front": "e",
+                    "mid_back": "o",
+                    "low": "a"
+                }
+            },
+            {
+                "input": "u",
+                "map": {
+                    "high_front": "i",
+                    "high_back": "u",
+                    "mid_front": "e",
+                    "mid_back": "o",
+                    "low": "a"
+                }
+            }
+        ]
+    },
+    "consonant_mutation": {
+        "enabled": false,
+        "description": "Não há mutação consonantal inicial em Nurgatiano"
+    },
+    "pharyngealization": {
+        "enabled": false
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "mora_counting",
+        "position": "penultimate_mora",
+        "graphic_accent": false,
+        "description": "Acento na penúltima mora, interagindo com quantidade vocálica",
+        "accent_map": {}
+    },
+    "reduplication": {
+        "enabled": true,
+        "epenthesis_vowel": "a",
+        "rules": [
+            {
+                "features": [
+                    "Aspect=Iter"
+                ],
+                "method": "whole_word",
+                "separator": "-",
+                "pos": [
+                    "VERB"
+                ],
+                "description": "Reduplicação total para aspecto iterativo"
+            },
+            {
+                "features": [
+                    "Number=Plur",
+                    "Emphasis=Yes"
+                ],
+                "method": "first_syllable",
+                "separator": "-",
+                "pos": [
+                    "NOUN"
+                ],
+                "description": "Reduplicação parcial para plural enfático"
+            }
+        ]
+    },
+    "topicalization": {
+        "enabled": true,
+        "topic_marker": "waa",
+        "position": "after_topic",
+        "reintroduce_articles": false,
+        "obligatory": true,
+        "description": "Topicalização obrigatória com marcador waa"
+    },
+    "focus_structure": {
+        "enabled": false
+    },
+    "agreement_rules": {
+        "gender_agreement": false,
+        "number_agreement": true,
+        "person_agreement": true,
+        "adjunct_position": "post_nominal",
+        "description": "Concordância de número e pessoa, sem gênero"
+    },
+    "pro_drop": {
+        "enabled": true,
+        "conditions": [
+            "verb_agreement",
+            "topic_established"
+        ],
+        "description": "Pro-drop permitido quando sujeito é tópico estabelecido"
+    },
+    "omission_rules": {
+        "enabled": true,
+        "rules": [
+            {
+                "pos": [
+                    "DET"
+                ],
+                "deprel": [
+                    "det"
+                ],
+                "description": "Descartar artigos definidos e indefinidos"
+            },
+            {
+                "pos": [
+                    "CCONJ",
+                    "SCONJ"
+                ],
+                "deprel": [
+                    "cc",
+                    "mark"
+                ],
+                "description": "Descartar conjunções (e, ou, mas, que)"
+            }
+        ]
+    },
+    "drop_articles": true,
+    "degree_system": {
+        "enabled": true,
+        "rules": {
+            "comparative": {
+                "affix": "suuraa-",
+                "position": "prefix",
+                "description": "Comparativo com prefixo suuraa-"
+            },
+            "superlative": {
+                "affix": "nuuraa-",
+                "position": "prefix",
+                "description": "Superlativo com prefixo nuuraa-"
+            },
+            "diminutive": {
+                "affix": "-laanii",
+                "position": "suffix",
+                "description": "Diminutivo"
+            },
+            "augmentative": {
+                "affix": "-suuruu",
+                "position": "suffix",
+                "description": "Aumentativo"
+            }
+        }
+    },
+    "semantic_fields": {
+        "enabled": true,
+        "use_nltk": false,
+        "animate_domains": [
+            "human",
+            "deity",
+            "animal"
+        ],
+        "manual_groups": {
+            "nuur": "light",
+            "saa": "sky",
+            "mee": "water",
+            "laa": "earth",
+            "waa": "wind"
+        }
+    },
+    "polysemy_rules": {
+        "enabled": false
+    },
+    "false_cognates": {
+        "enabled": false
+    },
+    "loanword_policy": {
+        "enabled": true,
+        "modes": {
+            "phonetic_adaptation": 0.75,
+            "calque": 0.20,
+            "semantic_extension": 0.05
+        },
+        "calque_connector": "-",
+        "description": "Adaptação fonética massiva para conformar ao padrão CV(V)(V)"
+    },
+    "abstract_concepts": {
+        "enabled": true,
+        "mappings": {
+            "céu": "saa-nuuruu",
+            "terra": "laa-maaruu",
+            "água": "mee-waaruu",
+            "fogo": "waa-suuruu",
+            "vento": "jaa-luuruu",
+            "luz": "nuur-saanii",
+            "escuridão": "muu-nuuruu",
+            "vida": "naa-riinuu",
+            "morte": "muu-naarii",
+            "amor": "sii-laanuu",
+            "ódio": "muu-siinuu"
+        },
+        "definitions": {}
+    },
+    "lexical_registers": {
+        "enabled": true,
+        "registers": [
+            {
+                "name": "archaic_ritual",
+                "chance": 0.10,
+                "mutation_factor": 0.25,
+                "description": "Registro ritual arcaico com mais consoantes"
+            },
+            {
+                "name": "classical_literary",
+                "chance": 0.25,
+                "mutation_factor": 0.60,
+                "description": "Registro literário clássico"
+            },
+            {
+                "name": "formal_administrative",
+                "chance": 0.30,
+                "mutation_factor": 0.85,
+                "description": "Registro administrativo formal"
+            },
+            {
+                "name": "colloquial_everyday",
+                "chance": 0.25,
+                "mutation_factor": 1.50,
+                "description": "Registro coloquial cotidiano"
+            },
+            {
+                "name": "poetic_sung",
+                "chance": 0.10,
+                "mutation_factor": 0.40,
+                "description": "Registro poético cantado com elaboração tonal"
+            }
+        ]
+    },
+    "functional_particles": {
+        "muito": {
+            "adj_word": "suuraa",
+            "adj_position": "pre_nominal",
+            "noun_word": "suuraa",
+            "noun_position": "pre_nominal",
+            "verb_word": "suuraa",
+            "verb_position": "pre_verbal"
+        },
+        "pouco": {
+            "adj_word": "laanii",
+            "adj_position": "pre_nominal",
+            "noun_word": "laanii",
+            "noun_position": "pre_nominal"
+        },
+        "já": {
+            "verb_word": "naa-saaluu",
+            "verb_position": "pre_verbal"
+        },
+        "ainda": {
+            "verb_word": "luuree-naa",
+            "verb_position": "pre_verbal"
+        }
+    },
+    "numeric_handling": {
+        "ignore_digits": true
+    },
+    "style": {
+        "capitalization": true,
+        "noun_capitalization": false,
+        "sentence_terminators": [
+            ".",
+            "!",
+            "?"
+        ],
+        "secondary_terminators": [
+            ":",
+            ";"
+        ],
+        "punctuation_map": {
+            ",": ",",
+            ".": ".",
+            "!": "!",
+            "?": "?",
+            ":": ":",
+            ";": ";",
+            "...": "...",
+            "(": "(",
+            ")": ")",
+            "\"": "\"",
+            "'": "'"
+        }
+    },
+    "mappings": {},
+    "phonological_processes": {
+        "description": "Processos fonológicos do Nurgatiano",
+        "assimilation": {
+            "nasal_place": true,
+            "vowel_harmony": true,
+            "tone_sandhi": true
+        },
+        "deletion": {
+            "consonant_deletion_intervocalic": true,
+            "h_deletion": true,
+            "final_consonant_weakening": true
+        },
+        "insertion": {
+            "epenthetic_vowel": "a",
+            "glide_insertion": true,
+            "ligature_insertion": true
+        },
+        "lengthening": {
+            "compensatory_lengthening": true,
+            "tone_lengthening": true,
+            "isochrony_compensation": true
+        }
+    },
+    "root_generation": {
+        "description": "Geração de raízes com estética nurgatiana musical",
+        "strategy": "vowel_rich_cv_structure",
+        "preferred_root_shapes": [
+            "CVV",
+            "CVVV",
+            "CV",
+            "VV",
+            "VVV"
+        ],
+        "preferred_initial_consonants": [
+            "m",
+            "n",
+            "l",
+            "r",
+            "s",
+            "w",
+            "j",
+            "h"
+        ],
+        "preferred_nuclei": [
+            "aa",
+            "ii",
+            "uu",
+            "ee",
+            "oo",
+            "aaa",
+            "iii",
+            "uuu",
+            "eee",
+            "ooo",
+            "ai",
+            "au",
+            "ei",
+            "ou"
+        ],
+        "preferred_final_vowels": [
+            "a",
+            "i",
+            "u",
+            "e",
+            "o",
+            "aa",
+            "ii",
+            "uu",
+            "ee",
+            "oo"
+        ],
+        "avoid": {
+            "consonant_clusters": [
+                "all"
+            ],
+            "final_consonants": [
+                "most"
+            ],
+            "harsh_sounds": [
+                "k",
+                "g",
+                "hard_stops"
+            ]
+        }
+    },
+    "word_formation_priority": {
+        "description": "Prioridade de formação de palavras",
+        "strategies": [
+            {
+                "rank": 1,
+                "strategy": "vowel_lengthening_derivation",
+                "weight": 0.40,
+                "description": "Derivação por alongamento vocálico"
+            },
+            {
+                "rank": 2,
+                "strategy": "tone_alternation",
+                "weight": 0.30,
+                "description": "Derivação por alternância tonal"
+            },
+            {
+                "rank": 3,
+                "strategy": "suffixation",
+                "weight": 0.20,
+                "description": "Derivação por sufixação"
+            },
+            {
+                "rank": 4,
+                "strategy": "compounding_with_ligature",
+                "weight": 0.10,
+                "description": "Composição com ligação"
+            }
+        ]
+    },
+    "design_notes": {
+        "inspiration": "Línguas tonais do Sudeste Asiático, Polinésio, com substrato Semítico",
+        "character": "Musical, vocálico, fluido, ligado, rítmico, melódico",
+        "key_features": [
+            "Sistema de cinco tons com funções gramaticais",
+            "Quatro níveis de quantidade vocálica (único no mundo)",
+            "Inventário consonantal mínimo (apenas 9 consoantes)",
+            "Ritmo silábico isocrônico estrito",
+            "Sistema de ligação obrigatória entre palavras",
+            "Estrutura tópico-comentário obrigatória",
+            "Sem artigos definidos ou indefinidos",
+            "Sistema de casos robusto (8 casos)",
+            "Verbos seriais altamente produtivos",
+            "Sistema de classificadores numeral obrigatório",
+            "Harmonia vocálica de posterioridade e altura",
+            "Pro-drop quando tópico estabelecido",
+            "Evidencialidade marcada por tom e partículas"
+        ],
+        "aesthetic_goals": [
+            "Som EXTREMAMENTE VOCÁLICO e MUSICAL",
+            "Fluxo contínuo sem quebras consonantais",
+            "Clareza e distinção de cada sílaba",
+            "Musicalidade através de tons e comprimento",
+            "Elegância e suavidade sonora",
+            "Complexidade através de simplicidade"
+        ],
+        "historical_context": {
+            "peak_period": "220.000-190.000 AH",
+            "decline": "190.000-180.000 AH",
+            "extinction": "c. 180.000 AH",
+            "last_speakers": "Comunidades isoladas do interior de Nur-Gate",
+            "legacy": "Influenciou substrato tonal em línguas arinianas, empréstimos em Akoshiano",
+            "cultural_significance": "Língua da poesia épica e hinos agrícolas do Vale Fértil"
+        },
+        "sample_texts": {
+            "greeting": "Saa-nuuruu waa lauuree-rii ēōō wīūīlee (O céu brilha para você)",
+            "farewell": "Ēājaōūēēōō waa hāīsīā-raanii ēōō wīūīlee (Que as águas fluam para você)",
+            "proverb": "Nuur-saanii waa īāenīōē-rii naa-riinuunoo laa-maaruuruu zāā saa-nuuruu ōnūēeinu. (A luz do céu traz vida à terra)"
+        }
+    }
+}

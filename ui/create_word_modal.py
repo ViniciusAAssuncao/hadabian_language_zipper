@@ -64,7 +64,8 @@ class CreateWordModal(tk.Toplevel):
 
         ttk.Label(info_frame, text="Lema / Conceito (Entrada):",
                   foreground=self.colors["fg_secondary"]).pack(anchor="w")
-        self.entry_lemma = ttk.Entry(info_frame, font=("Segoe UI", 11), foreground=self.colors["text"])
+        self.entry_lemma = ttk.Entry(info_frame, font=(
+            "Segoe UI", 11), foreground=self.colors["text"])
         self.entry_lemma.pack(fill=tk.X, pady=(5, 15))
 
         ttk.Label(info_frame, text="Palavra na Conlang (Saída):",
@@ -85,7 +86,7 @@ class CreateWordModal(tk.Toplevel):
             ("Fonotática Padrão", "phonotactics"),
             ("Sistema de Raízes (Triconsonantal)", "triconsonantal_system"),
             ("Derivação (Sufixação)", "derived"),
-            ("Raiz + Derivação", "root_derived"),
+            ("Nativizar", "nativization"),
         ]
 
         self.combo_strategy = ttk.Combobox(
@@ -112,7 +113,8 @@ class CreateWordModal(tk.Toplevel):
 
         ttk.Label(details_frame, text="Classe Gramatical (POS):",
                   foreground=self.colors["fg_secondary"]).pack(anchor="w")
-        self.entry_pos = ttk.Entry(details_frame, foreground=self.colors["text"])
+        self.entry_pos = ttk.Entry(
+            details_frame, foreground=self.colors["text"])
         self.entry_pos.pack(fill=tk.X, pady=(5, 10))
 
         ttk.Label(details_frame, text="Definição / Descrição:",
@@ -123,13 +125,15 @@ class CreateWordModal(tk.Toplevel):
 
         ttk.Label(details_frame, text="Origem / Etimologia:",
                   foreground=self.colors["fg_secondary"]).pack(anchor="w")
-        self.entry_origin = ttk.Entry(details_frame, foreground=self.colors["text"])
+        self.entry_origin = ttk.Entry(
+            details_frame, foreground=self.colors["text"])
         self.entry_origin.pack(fill=tk.X, pady=(5, 10))
         self.entry_origin.insert(0, "custom")
 
         ttk.Label(details_frame, text="Tags (separadas por vírgula):",
                   foreground=self.colors["fg_secondary"]).pack(anchor="w")
-        self.entry_tags = ttk.Entry(details_frame, foreground=self.colors["text"])
+        self.entry_tags = ttk.Entry(
+            details_frame, foreground=self.colors["text"])
         self.entry_tags.pack(fill=tk.X, pady=(5, 5))
 
         btn_frame = ttk.Frame(scrollable_frame)
@@ -172,8 +176,20 @@ class CreateWordModal(tk.Toplevel):
             self.generation_counter += 1
             new_word = ""
 
+            clean_lemma = "".join(filter(str.isalpha, lemma.lower()))
+
+            def generate_fallback():
+                input_str = f"{clean_lemma}_fallback_gen_{self.generation_counter}_{self.engine.global_seed}"
+                hash_obj = hashlib.sha256(input_str.encode())
+                hash_val = int(hash_obj.hexdigest(), 16)
+                word = self.engine._generate_word_from_seed(
+                    clean_lemma, hash_val)
+                if self.engine.phonology_handler:
+                    word = self.engine.phonology_handler.apply_monophthongization(
+                        word)
+                return word
+
             if strategy_key == "phonotactics":
-                clean_lemma = "".join(filter(str.isalpha, lemma.lower()))
                 input_str = f"{clean_lemma}_create_gen_{self.generation_counter}_{self.engine.global_seed}"
                 hash_obj = hashlib.sha256(input_str.encode())
                 hash_val = int(hash_obj.hexdigest(), 16)
@@ -201,7 +217,7 @@ class CreateWordModal(tk.Toplevel):
                     else:
                         new_word = "".join(root)
                 else:
-                    new_word = "Não há sistema de raízes ativo."
+                    new_word = generate_fallback()
 
             elif strategy_key == "derived":
                 if self.engine.affix_handler:
@@ -217,26 +233,25 @@ class CreateWordModal(tk.Toplevel):
                         affix = rule.get('replacement', 'enc')
                         new_word = f"{base_gen}{affix}"
                     else:
-                        new_word = f"{base_gen}ion"
+                        new_word = generate_fallback()
                 else:
-                    new_word = "Não há sistema de afixos ativo."
+                    new_word = generate_fallback()
 
-            elif strategy_key == "root_derived":
-                if self.engine.root_handler and self.engine.root_handler.enabled and self.engine.affix_handler:
-                    root = self.engine.root_handler.generate_root(lemma)
-                    base_word = "".join(root)
+            elif strategy_key == "nativization":
+                if self.engine.phonology_handler:
+                    base_nat = self.engine.phonology_handler.nativize_word(
+                        lemma)
 
-                    suffixes = self.engine.affix_handler.source_suffixes
-                    if suffixes:
-                        rng = random.Random(
-                            self.engine.global_seed + self.generation_counter)
-                        rule = rng.choice(suffixes)
-                        affix = rule.get('replacement', 'enc')
-                        new_word = f"{base_word}{affix}"
+                    if self.generation_counter > 1:
+                        seed = self.engine.global_seed + self.generation_counter
+                        if hasattr(self.engine, '_mutate_word'):
+                            new_word = self.engine._mutate_word(base_nat, seed)
+                        else:
+                            new_word = base_nat
                     else:
-                        new_word = f"{base_word}ion"
+                        new_word = base_nat
                 else:
-                    new_word = "Não há sistema de raízes ou afixos ativo."
+                    new_word = generate_fallback()
 
             self.after(0, lambda: self._update_ui_after_gen(
                 new_word, strategy_key))
