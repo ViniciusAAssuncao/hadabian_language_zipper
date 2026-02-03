@@ -1885,6 +1885,23 @@ class OriginalLanguageEngine:
         self.save_word_cache()
         return entry
 
+    def generate_compound(self, lemmas: List[str]) -> str:
+        if not lemmas:
+            return ""
+
+        words = []
+        for lemma in lemmas:
+            word = self._get_word_form(lemma, tags=['compound_part'])
+            words.append(word)
+
+        compound_word = self.compounding_handler.construct_compound(
+            words, self)
+
+        if self.sandhi_handler.enabled:
+            compound_word = self.sandhi_handler.apply_sandhi(compound_word)
+
+        return compound_word
+
     def _get_word_form(self, lemma: str, tags: List[str] = None, force_word: str = None, meta: Dict = None, pos: str = None, derivation_depth: int = 0, word_form: str = None) -> str:
         lemma = lemma.lower().strip()
 
