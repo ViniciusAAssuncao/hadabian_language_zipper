@@ -7,7 +7,6 @@ import time
 from ui.lexicon import LexiconTab
 from ui.profile import ProfileTab
 from ui.spinner import LoadingOverlay
-from ui.onomasticon import OnomasticonTab
 
 
 class ConHabApp:
@@ -118,9 +117,6 @@ class ConHabApp:
 
         self.lexicon_widget = LexiconTab(self.notebook, self.colors)
         self.notebook.add(self.lexicon_widget, text="Léxico")
-
-        self.onomasticon_widget = OnomasticonTab(self.notebook, self.colors)
-        self.notebook.add(self.onomasticon_widget, text="Onomasticon")
 
         self.profile_widget = ProfileTab(self.notebook, self.colors)
         self.notebook.add(self.profile_widget, text="Editor JSON")
