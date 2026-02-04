@@ -1781,6 +1781,36 @@ class OriginalLanguageEngine:
         self.load_word_cache()
         self.processing_stack = set()
 
+    def get_source_engine(self, source_id: str) -> Optional['OriginalLanguageEngine']:
+        if source_id in self.source_engines:
+            return self.source_engines[source_id]
+
+        possible_paths = [
+            Path(f"{source_id}.json"),
+            Path(f"./conlangs/{source_id}.json"),
+            Path(f"../conlangs/{source_id}.json"),
+            Path(f"cache/{source_id}.json")
+        ]
+
+        for p in possible_paths:
+            if p.exists():
+                try:
+                    new_engine = OriginalLanguageEngine(str(p))
+                    self.source_engines[source_id] = new_engine
+                    return new_engine
+                except Exception:
+                    pass
+
+        cache_path = Path(f"cache/{source_id}_words.json")
+        if cache_path.exists():
+            class DummyEngine:
+                def __init__(self, c_path):
+                    with open(c_path, 'r', encoding='utf-8') as f:
+                        self.word_cache = json.load(f)
+            return DummyEngine(cache_path)
+
+        return None
+
     def _load_and_merge_family(self, family_path: Path):
         try:
             with open(family_path, 'r', encoding='utf-8') as f:
@@ -2468,34 +2498,12 @@ class OriginalLanguageEngine:
         return "".join(chars)
 
     def _fetch_source_word(self, source_id: str, lemma: str) -> str:
-        if source_id in self.source_engines:
-            engine = self.source_engines[source_id]
+        engine = self.get_source_engine(source_id)
+        if engine:
             word = engine._get_word_form(lemma)
-            engine.save_word_cache()
+            if hasattr(engine, 'save_word_cache'):
+                engine.save_word_cache()
             return word
-
-        possible_paths = [
-            Path(f"{source_id}.json"),
-            Path(f"./conlangs/{source_id}.json"),
-            Path(f"../conlangs/{source_id}.json"),
-            Path(f"cache/{source_id}.json")
-        ]
-
-        path_to_use = None
-        for p in possible_paths:
-            if p.exists():
-                path_to_use = str(p)
-                break
-
-        if path_to_use:
-            try:
-                new_engine = OriginalLanguageEngine(path_to_use)
-                self.source_engines[source_id] = new_engine
-                word = new_engine._get_word_form(lemma)
-                new_engine.save_word_cache()
-                return word
-            except Exception:
-                pass
 
         rng = random.Random(self.global_seed + sum(ord(c) for c in lemma))
         fallback = "".join(rng.choice(list(self.phonotactics.get(

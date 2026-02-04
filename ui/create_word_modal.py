@@ -3,6 +3,8 @@ from tkinter import ttk
 import hashlib
 import random
 import threading
+import json
+from pathlib import Path
 
 
 class LemmaSearchDialog(tk.Toplevel):
@@ -32,12 +34,12 @@ class LemmaSearchDialog(tk.Toplevel):
         search_frame = ttk.Frame(self, padding=10)
         search_frame.pack(fill=tk.X)
 
-        ttk.Label(search_frame, text="Buscar:",
+        ttk.Label(search_frame, text="Buscar (Nativo ou Português):",
                   foreground=self.colors["fg_secondary"]).pack(anchor="w")
         self.search_var = tk.StringVar()
         self.search_var.trace("w", self.filter_list)
-        entry = ttk.Entry(search_frame, textvariable=self.search_var)
-        entry.foreground = self.colors["text"]
+        entry = ttk.Entry(
+            search_frame, textvariable=self.search_var, foreground="black")
         entry.pack(fill=tk.X, pady=(0, 5))
         entry.focus()
 
@@ -47,7 +49,7 @@ class LemmaSearchDialog(tk.Toplevel):
         self.listbox = tk.Listbox(
             list_frame,
             bg=self.colors.get("bg_entry", "#ffffff"),
-            fg=self.colors["text"],
+            fg="black",
             selectbackground=self.colors["accent"],
             selectforeground="white",
             relief="flat",
@@ -64,24 +66,39 @@ class LemmaSearchDialog(tk.Toplevel):
         self.listbox.bind("<Double-Button-1>", self.on_select)
         self.listbox.bind("<Return>", self.on_select)
 
-        self.full_list = sorted(self.word_cache.keys())
-        self.update_list(self.full_list)
+        self.data_items = []
+        for lemma, entry in self.word_cache.items():
+            if isinstance(entry, dict):
+                word = entry.get("default", lemma)
+            else:
+                word = entry
+
+            display_text = f"{word} ({lemma})"
+            self.data_items.append((display_text, lemma))
+
+        self.data_items.sort(key=lambda x: x[0].lower())
+
+        self.current_items = self.data_items
+        self.update_list(self.data_items)
 
     def filter_list(self, *args):
         search_term = self.search_var.get().lower()
-        filtered = [w for w in self.full_list if search_term in w.lower()]
+        filtered = [
+            item for item in self.data_items if search_term in item[0].lower()]
+        self.current_items = filtered
         self.update_list(filtered)
 
     def update_list(self, items):
         self.listbox.delete(0, tk.END)
         for item in items:
-            self.listbox.insert(tk.END, item)
+            self.listbox.insert(tk.END, item[0])
 
     def on_select(self, event=None):
         selection = self.listbox.curselection()
         if selection:
-            lemma = self.listbox.get(selection[0])
-            self.callback(lemma)
+            index = selection[0]
+            lemma_key = self.current_items[index][1]
+            self.callback(lemma_key)
             self.destroy()
 
 
@@ -92,6 +109,7 @@ class CreateWordModal(tk.Toplevel):
         self.engine = engine
         self.on_save = on_save
         self.generation_counter = 0
+        self.loan_gen_counter = 0
         self.is_generating = False
 
         self.title("Criar Nova Palavra")
@@ -102,6 +120,8 @@ class CreateWordModal(tk.Toplevel):
 
         self.lemma_a_data = None
         self.lemma_b_data = None
+        self.source_engine_cache = None
+        self.selected_source_id = None
 
         self.setup_ui()
         self.center_window()
@@ -120,12 +140,15 @@ class CreateWordModal(tk.Toplevel):
 
         self.tab_simple = ttk.Frame(self.notebook, padding=15)
         self.tab_compound = ttk.Frame(self.notebook, padding=15)
+        self.tab_loan = ttk.Frame(self.notebook, padding=15)
 
         self.notebook.add(self.tab_simple, text="Geração Simples")
         self.notebook.add(self.tab_compound, text="Aglutinação/Composição")
+        self.notebook.add(self.tab_loan, text="Empréstimos")
 
         self.setup_simple_tab()
         self.setup_compound_tab()
+        self.setup_loan_tab()
 
     def create_action_buttons(self, parent, mode):
         btn_frame = ttk.Frame(parent)
@@ -169,13 +192,13 @@ class CreateWordModal(tk.Toplevel):
         ttk.Label(info_frame, text="Lema / Conceito (Entrada):",
                   foreground=self.colors["fg_secondary"]).pack(anchor="w")
         self.entry_lemma = ttk.Entry(info_frame, font=(
-            "Segoe UI", 11), foreground=self.colors["text"])
+            "Segoe UI", 11), foreground="black")
         self.entry_lemma.pack(fill=tk.X, pady=(5, 15))
 
         ttk.Label(info_frame, text="Palavra na Conlang (Saída):",
                   foreground=self.colors["fg_secondary"]).pack(anchor="w")
         self.entry_word = ttk.Entry(info_frame, font=(
-            "Segoe UI", 11, "bold"), foreground=self.colors["text"])
+            "Segoe UI", 11, "bold"), foreground="black")
         self.entry_word.pack(fill=tk.X, pady=(5, 5))
 
         gen_frame = ttk.LabelFrame(
@@ -195,13 +218,14 @@ class CreateWordModal(tk.Toplevel):
             gen_frame,
             textvariable=self.strategy_var,
             values=[s[0] for s in strategies],
-            state="readonly"
+            state="readonly",
+            foreground="black"
         )
         self.combo_strategy.current(0)
         self.combo_strategy.pack(fill=tk.X, pady=(5, 10))
         self.map_strategy = {s[0]: s[1] for s in strategies}
 
-        self.btn_gen = ttk.Button(gen_frame, text="⚡ Gerar Sugestão",
+        self.btn_gen = ttk.Button(gen_frame, text="Gerar Sugestão",
                                   style="Secondary.TButton", command=self.start_generation)
         self.btn_gen.pack(fill=tk.X)
 
@@ -255,19 +279,212 @@ class CreateWordModal(tk.Toplevel):
             scrollable_frame, text="Resultado da Aglutinação", padding=15)
         preview_frame.pack(fill=tk.X, pady=(0, 15))
         self.btn_agglutinate = ttk.Button(
-            preview_frame, text="⚙️ Processar Aglutinação", command=self.process_agglutination)
+            preview_frame, text="Processar Aglutinação", command=self.process_agglutination)
         self.btn_agglutinate.pack(fill=tk.X, pady=(0, 10))
         ttk.Label(preview_frame, text="Lema Composto:",
                   foreground=self.colors["fg_secondary"]).pack(anchor="w")
         self.entry_compound_lemma = ttk.Entry(preview_frame, font=(
-            "Segoe UI", 11), foreground=self.colors["text"])
+            "Segoe UI", 11), foreground="black")
         self.entry_compound_lemma.pack(fill=tk.X, pady=(5, 10))
         ttk.Label(preview_frame, text="Palavra Resultante:",
                   foreground=self.colors["fg_secondary"]).pack(anchor="w")
         self.entry_compound_word = ttk.Entry(preview_frame, font=(
-            "Segoe UI", 11, "bold"), foreground=self.colors["text"])
+            "Segoe UI", 11, "bold"), foreground="black")
         self.entry_compound_word.pack(fill=tk.X, pady=(5, 5))
         self.setup_common_fields(scrollable_frame, "compound")
+
+    def setup_loan_tab(self):
+        footer_frame = ttk.Frame(self.tab_loan)
+        footer_frame.pack(side="bottom", fill="x")
+        self.create_action_buttons(footer_frame, "loan")
+
+        body_frame = ttk.Frame(self.tab_loan)
+        body_frame.pack(side="top", fill="both", expand=True)
+
+        canvas = tk.Canvas(
+            body_frame, bg=self.colors["bg_main"], highlightthickness=0)
+        scrollbar = ttk.Scrollbar(
+            body_frame, orient="vertical", command=canvas.yview)
+        scrollable_frame = ttk.Frame(canvas)
+        scrollable_frame.bind(
+            "<Configure>",
+            lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
+        )
+        canvas.create_window(
+            (0, 0), window=scrollable_frame, anchor="nw", width=540)
+        canvas.configure(yscrollcommand=scrollbar.set)
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+
+        source_frame = ttk.LabelFrame(
+            scrollable_frame, text="Fonte de Empréstimo", padding=15)
+        source_frame.pack(fill=tk.X, pady=(0, 15))
+
+        ttk.Label(source_frame, text="ID da Conlang Fonte:",
+                  foreground=self.colors["fg_secondary"]).pack(anchor="w")
+
+        source_input_frame = ttk.Frame(source_frame)
+        source_input_frame.pack(fill=tk.X, pady=(5, 10))
+
+        self.entry_source_id = ttk.Entry(
+            source_input_frame, foreground="black")
+        self.entry_source_id.pack(
+            side="left", fill=tk.X, expand=True, padx=(0, 5))
+
+        ttk.Button(source_input_frame, text="Carregar",
+                   command=self.load_source_conlang).pack(side="right")
+
+        preferred = self.engine.profile.get(
+            "loanword_policy", {}).get("preferred_sources", [])
+        if preferred:
+            ttk.Label(source_frame, text=f"Sugeridos: {', '.join(preferred)}",
+                      font=("Segoe UI", 9), foreground=self.colors["fg_secondary"]).pack(anchor="w")
+
+        self.lbl_source_status = ttk.Label(
+            source_frame, text="", foreground="gray")
+        self.lbl_source_status.pack(anchor="w")
+
+        lookup_frame = ttk.LabelFrame(
+            scrollable_frame, text="Buscar na Fonte", padding=15)
+        lookup_frame.pack(fill=tk.X, pady=(0, 15))
+
+        self.btn_search_source = ttk.Button(lookup_frame, text="Buscar Palavra na Fonte",
+                                            command=self.open_source_search, state="disabled")
+        self.btn_search_source.pack(fill=tk.X, pady=(0, 10))
+
+        ttk.Label(lookup_frame, text="Palavra Original:",
+                  foreground=self.colors["fg_secondary"]).pack(anchor="w")
+        self.lbl_original_word = ttk.Label(
+            lookup_frame, text="---", font=("Segoe UI", 11, "bold"))
+        self.lbl_original_word.pack(anchor="w", pady=(0, 10))
+
+        adapt_frame = ttk.LabelFrame(
+            scrollable_frame, text="Adaptação", padding=15)
+        adapt_frame.pack(fill=tk.X, pady=(0, 15))
+
+        self.adapt_var = tk.StringVar(value="nativize")
+        
+        r1 = tk.Radiobutton(adapt_frame, text="Nativização Fonológica (Adaptar sons)",
+                            variable=self.adapt_var, value="nativize",
+                            command=self.reset_and_preview_loan,
+                            bg=self.colors["bg_main"], fg="white",
+                            selectcolor=self.colors["bg_main"],
+                            activebackground=self.colors["bg_main"],
+                            activeforeground="black")
+        r1.pack(anchor="w")
+
+        r2 = tk.Radiobutton(adapt_frame, text="Herança Direta (Raw)",
+                            variable=self.adapt_var, value="raw",
+                            command=self.reset_and_preview_loan,
+                            bg=self.colors["bg_main"], fg="white",
+                            selectcolor=self.colors["bg_main"],
+                            activebackground=self.colors["bg_main"],
+                            activeforeground="black")
+        r2.pack(anchor="w")
+
+        self.btn_gen_loan = ttk.Button(
+            adapt_frame, text="Gerar Sugestão", command=self.generate_loan_suggestion)
+        self.btn_gen_loan.pack(fill=tk.X, pady=(10, 5))
+
+        ttk.Label(adapt_frame, text="Lema (Entrada):",
+                  foreground=self.colors["fg_secondary"]).pack(anchor="w", pady=(10, 0))
+        self.entry_loan_lemma = ttk.Entry(
+            adapt_frame, font=("Segoe UI", 11), foreground="black")
+        self.entry_loan_lemma.pack(fill=tk.X, pady=(5, 10))
+
+        ttk.Label(adapt_frame, text="Palavra Adaptada (Saída):",
+                  foreground=self.colors["fg_secondary"]).pack(anchor="w")
+        self.entry_loan_word = ttk.Entry(
+            adapt_frame, font=("Segoe UI", 11, "bold"), foreground="black")
+        self.entry_loan_word.pack(fill=tk.X, pady=(5, 5))
+
+        self.setup_common_fields(scrollable_frame, "loan")
+
+    def load_source_conlang(self):
+        source_id = self.entry_source_id.get().strip()
+        if not source_id:
+            return
+
+        self.lbl_source_status.config(text="Carregando...", foreground="blue")
+        self.update_idletasks()
+
+        try:
+            source_engine = self.engine.get_source_engine(source_id)
+            if source_engine:
+                self.source_engine_cache = source_engine.word_cache
+                self.selected_source_id = source_id
+                self.lbl_source_status.config(
+                    text=f"Carregado: {len(self.source_engine_cache)} palavras", foreground="green")
+                self.btn_search_source.config(state="normal")
+            else:
+                self.lbl_source_status.config(
+                    text="Erro: Conlang não encontrada", foreground="red")
+        except Exception as e:
+            self.lbl_source_status.config(
+                text=f"Erro: {str(e)}", foreground="red")
+
+    def open_source_search(self):
+        if not self.source_engine_cache:
+            return
+
+        def callback(lemma):
+            entry = self.source_engine_cache.get(lemma)
+            default_word = entry.get("default", lemma) if isinstance(
+                entry, dict) else entry
+            self.lbl_original_word.config(text=f"{lemma} ({default_word})")
+            self.entry_loan_lemma.delete(0, tk.END)
+            self.entry_loan_lemma.insert(0, lemma)
+
+            origin_field = getattr(self, "entry_origin_loan")
+            origin_field.delete(0, tk.END)
+            origin_field.insert(0, f"loan:{self.selected_source_id}")
+
+            self.loan_gen_counter = 0
+            self.preview_loan(default_word)
+
+        LemmaSearchDialog(self, self.colors,
+                          self.source_engine_cache, callback)
+
+    def reset_and_preview_loan(self):
+        self.loan_gen_counter = 0
+        self.preview_loan()
+
+    def generate_loan_suggestion(self):
+        self.loan_gen_counter += 1
+        self.preview_loan()
+
+    def preview_loan(self, word=None):
+        if word is None:
+            text = self.lbl_original_word.cget("text")
+            if "---" in text:
+                return
+            if "(" in text:
+                word = text.split("(")[1].strip(")")
+            else:
+                word = text
+
+        mode = self.adapt_var.get()
+        result = word
+
+        if mode == "nativize":
+            base_nat = self.engine.phonology_handler.nativize_word(word)
+
+            if self.loan_gen_counter == 0:
+                result = base_nat
+            else:
+                seed = self.engine.global_seed + \
+                    self.loan_gen_counter + sum(ord(c) for c in word)
+                if hasattr(self.engine, '_mutate_word'):
+                    result = self.engine._mutate_word(base_nat, seed)
+                else:
+                    result = base_nat
+
+            if self.engine.phonology_handler:
+                result = self.engine.phonology_handler.apply_monophthongization(
+                    result)
+
+        self.entry_loan_word.delete(0, tk.END)
+        self.entry_loan_word.insert(0, result)
 
     def setup_common_fields(self, parent, prefix):
         details_frame = ttk.LabelFrame(parent, text="Detalhes", padding=15)
@@ -275,28 +492,32 @@ class CreateWordModal(tk.Toplevel):
 
         ttk.Label(details_frame, text="Classe Gramatical (POS):",
                   foreground=self.colors["fg_secondary"]).pack(anchor="w")
-        entry_pos = ttk.Entry(details_frame, foreground=self.colors["text"])
+        entry_pos = ttk.Entry(details_frame, foreground="black")
         entry_pos.pack(fill=tk.X, pady=(5, 10))
         setattr(self, f"entry_pos_{prefix}", entry_pos)
 
         ttk.Label(details_frame, text="Definição / Descrição:",
                   foreground=self.colors["fg_secondary"]).pack(anchor="w")
         text_def = tk.Text(details_frame, height=3, font=("Segoe UI", 10), bg=self.colors.get("bg_entry", "#ffffff"),
-                           fg=self.colors["text"], relief="flat", highlightthickness=1, highlightbackground=self.colors.get("border", "#cccccc"))
+                           fg="black", relief="flat", highlightthickness=1, highlightbackground=self.colors.get("border", "#cccccc"))
         text_def.pack(fill=tk.X, pady=(5, 10))
         setattr(self, f"text_def_{prefix}", text_def)
 
         ttk.Label(details_frame, text="Origem / Etimologia:",
                   foreground=self.colors["fg_secondary"]).pack(anchor="w")
-        entry_origin = ttk.Entry(details_frame, foreground=self.colors["text"])
+        entry_origin = ttk.Entry(details_frame, foreground="black")
         entry_origin.pack(fill=tk.X, pady=(5, 10))
-        entry_origin.insert(0, "compound" if prefix ==
-                            "compound" else "custom")
+        default_origin = "custom"
+        if prefix == "compound":
+            default_origin = "compound"
+        elif prefix == "loan":
+            default_origin = "loanword"
+        entry_origin.insert(0, default_origin)
         setattr(self, f"entry_origin_{prefix}", entry_origin)
 
         ttk.Label(details_frame, text="Tags (separadas por vírgula):",
                   foreground=self.colors["fg_secondary"]).pack(anchor="w")
-        entry_tags = ttk.Entry(details_frame, foreground=self.colors["text"])
+        entry_tags = ttk.Entry(details_frame, foreground="black")
         entry_tags.pack(fill=tk.X, pady=(5, 5))
         setattr(self, f"entry_tags_{prefix}", entry_tags)
 
@@ -348,69 +569,91 @@ class CreateWordModal(tk.Toplevel):
                          args=(lemma,), daemon=True).start()
 
     def _run_generation(self, lemma):
-        try:
-            display_strat = self.combo_strategy.get()
-            strategy_key = self.map_strategy.get(display_strat, "phonotactics")
-            self.generation_counter += 1
-            new_word = ""
-            clean_lemma = "".join(filter(str.isalpha, lemma.lower()))
+        display_strat = self.combo_strategy.get()
+        strategy_key = self.map_strategy.get(display_strat, "phonotactics")
 
-            def generate_fallback():
-                input_str = f"{clean_lemma}_fallback_{self.generation_counter}_{self.engine.global_seed}"
-                h = int(hashlib.sha256(input_str.encode()).hexdigest(), 16)
-                w = self.engine._generate_word_from_seed(clean_lemma, h)
-                if self.engine.phonology_handler:
-                    w = self.engine.phonology_handler.apply_monophthongization(
-                        w)
-                return w
+        self.generation_counter += 1
+        new_word = ""
 
-            if strategy_key == "phonotactics":
-                input_str = f"{clean_lemma}_gen_{self.generation_counter}"
-                h = int(hashlib.sha256(input_str.encode()).hexdigest(), 16)
-                new_word = self.engine._generate_word_from_seed(clean_lemma, h)
-                if self.engine.phonology_handler:
-                    new_word = self.engine.phonology_handler.apply_monophthongization(
-                        new_word)
+        clean_lemma = "".join(filter(str.isalpha, lemma.lower()))
 
-            elif strategy_key == "triconsonantal_system":
-                if self.engine.root_handler and self.engine.root_handler.enabled:
-                    root = self.engine.root_handler.generate_root(lemma)
-                    binyanim = self.engine.root_handler.binyanim
-                    if binyanim:
-                        rng = random.Random(
-                            self.generation_counter + len(lemma))
-                        pat = rng.choice(binyanim)
-                        new_word = self.engine.root_handler.apply_pattern(
-                            root, pat)
-                    else:
-                        new_word = "".join(root)
+        def generate_fallback():
+            input_str = f"{clean_lemma}_fallback_gen_{self.generation_counter}_{self.engine.global_seed}"
+            hash_obj = hashlib.sha256(input_str.encode())
+            hash_val = int(hash_obj.hexdigest(), 16)
+            word = self.engine._generate_word_from_seed(
+                clean_lemma, hash_val)
+            if self.engine.phonology_handler:
+                word = self.engine.phonology_handler.apply_monophthongization(
+                    word)
+            return word
+
+        if strategy_key == "phonotactics":
+            input_str = f"{clean_lemma}_create_gen_{self.generation_counter}_{self.engine.global_seed}"
+            hash_obj = hashlib.sha256(input_str.encode())
+            hash_val = int(hash_obj.hexdigest(), 16)
+
+            new_word = self.engine._generate_word_from_seed(
+                clean_lemma, hash_val)
+            if self.engine.phonology_handler:
+                new_word = self.engine.phonology_handler.apply_monophthongization(
+                    new_word)
+
+        elif strategy_key == "triconsonantal_system":
+            if self.engine.root_handler and self.engine.root_handler.enabled:
+                root = self.engine.root_handler.generate_root(lemma)
+                binyanim = self.engine.root_handler.binyanim
+                pattern_def = None
+                if binyanim:
+                    rng_seed = self.engine.global_seed + \
+                        self.generation_counter + len(lemma)
+                    rng = random.Random(rng_seed)
+                    pattern_def = rng.choice(binyanim)
+
+                if pattern_def:
+                    new_word = self.engine.root_handler.apply_pattern(
+                        root, pattern_def)
                 else:
-                    new_word = generate_fallback()
+                    new_word = "".join(root)
+            else:
+                new_word = generate_fallback()
 
-            elif strategy_key == "derived":
-                if self.engine.affix_handler and self.engine.affix_handler.source_suffixes:
-                    base = self.engine._generate_word_from_seed(
-                        lemma, self.generation_counter)
-                    rng = random.Random(self.generation_counter)
-                    rule = rng.choice(
-                        self.engine.affix_handler.source_suffixes)
+        elif strategy_key == "derived":
+            if self.engine.affix_handler:
+                base_gen = self.engine._generate_word_from_seed(
+                    lemma,
+                    self.engine.global_seed + self.generation_counter
+                )
+                suffixes = self.engine.affix_handler.source_suffixes
+                if suffixes:
+                    rng = random.Random(
+                        self.engine.global_seed + self.generation_counter)
+                    rule = rng.choice(suffixes)
                     affix = rule.get('replacement', 'enc')
-                    new_word = f"{base}{affix}"
+                    new_word = f"{base_gen}{affix}"
                 else:
                     new_word = generate_fallback()
+            else:
+                new_word = generate_fallback()
 
-            elif strategy_key == "nativization":
-                if self.engine.phonology_handler:
-                    new_word = self.engine.phonology_handler.nativize_word(
-                        lemma)
+        elif strategy_key == "nativization":
+            if self.engine.phonology_handler:
+                base_nat = self.engine.phonology_handler.nativize_word(
+                    lemma)
+
+                if self.generation_counter > 1:
+                    seed = self.engine.global_seed + self.generation_counter
+                    if hasattr(self.engine, '_mutate_word'):
+                        new_word = self.engine._mutate_word(base_nat, seed)
+                    else:
+                        new_word = base_nat
                 else:
-                    new_word = generate_fallback()
+                    new_word = base_nat
+            else:
+                new_word = generate_fallback()
 
-            self.after(0, lambda: self._update_ui_after_gen(
-                new_word, strategy_key))
-        except Exception as e:
-            print(f"Gen Error: {e}")
-            self.after(0, lambda: self._update_ui_after_gen("Error", "error"))
+        self.after(0, lambda: self._update_ui_after_gen(
+            new_word, strategy_key))
 
     def _update_ui_after_gen(self, word, origin):
         self.entry_word.delete(0, tk.END)
@@ -419,15 +662,18 @@ class CreateWordModal(tk.Toplevel):
         entry_origin.delete(0, tk.END)
         entry_origin.insert(0, origin)
         self.is_generating = False
-        self.btn_gen.config(text="↻ Gerar Nova Sugestão", state="normal")
+        self.btn_gen.config(text="Gerar Nova Sugestão", state="normal")
 
     def save(self, mode):
         if mode == "simple":
             lemma = self.entry_lemma.get().strip()
             word = self.entry_word.get().strip()
-        else:
+        elif mode == "compound":
             lemma = self.entry_compound_lemma.get().strip()
             word = self.entry_compound_word.get().strip()
+        else:
+            lemma = self.entry_loan_lemma.get().strip()
+            word = self.entry_loan_word.get().strip()
 
         pos = getattr(self, f"entry_pos_{mode}").get().strip()
         definition = getattr(self, f"text_def_{mode}").get(

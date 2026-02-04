@@ -230,8 +230,11 @@ class ConHabApp:
 
         style.configure("Accent.TButton", font=("Segoe UI", 10, "bold"),
                         background=self.colors["accent"], foreground="white", borderwidth=0, focuscolor=self.colors["bg_main"], padding=(20, 10))
-        style.map("Accent.TButton", background=[
-                  ("active", self.colors["accent_hover"])], relief=[("pressed", "flat")])
+
+        style.map("Accent.TButton",
+                  background=[("active", self.colors["accent_hover"])],
+                  foreground=[("!active", "white"), ("active", "white")],
+                  relief=[("pressed", "flat")])
 
         style.configure("Secondary.TButton", font=("Segoe UI", 9), background=self.colors["bg_sec"], foreground=self.colors["fg_primary"],
                         borderwidth=1, bordercolor=self.colors["input_bg"], focuscolor=self.colors["bg_sec"], padding=(10, 5))
@@ -291,7 +294,7 @@ class ConHabApp:
         actions_box = ttk.Frame(profile_card, style="Card.TFrame")
         actions_box.pack(side=tk.RIGHT)
 
-        ttk.Button(actions_box, text="SELECIONAR PERFIL", style="Accent.TButton",
+        ttk.Button(actions_box, text="SELECIONAR PERFIL", style="Secondary.TButton",
                    command=self.open_profile_selector).pack(side=tk.LEFT, padx=(0, 10))
 
         self.btn_reload = ttk.Button(actions_box, text="⟳ Recarregar", style="Secondary.TButton",
@@ -325,20 +328,20 @@ class ConHabApp:
         ttk.Label(input_frame, text="ENTRADA (Linguagem Natural)",
                   style="SubHeader.TLabel").pack(anchor="w")
 
+        self.btn_process = ttk.Button(
+            input_frame, text="PROCESSAR TEXTO", style="Accent.TButton", command=self.process_language
+        )
+        self.btn_process.pack(anchor="e", pady=(0, 10))
+
         self.ln_input = self.create_styled_text(input_frame, height=8)
         self.ln_input.pack(fill=tk.BOTH, expand=True, pady=(0, 15))
 
         action_frame = ttk.Frame(input_frame)
         action_frame.pack(fill=tk.X, pady=(0, 15))
 
-        self.btn_process = ttk.Button(
-            action_frame, text="PROCESSAR CONLANG", style="Accent.TButton", command=self.process_language)
-        self.btn_process.pack(side=tk.LEFT)
-
         self.progress_bar = ttk.Progressbar(
             action_frame, orient="horizontal", mode="determinate", style="Horizontal.TProgressbar")
-        self.progress_bar.pack(side=tk.LEFT, fill=tk.X,
-                               expand=True, padx=(20, 0))
+        self.progress_bar.pack(fill=tk.X, expand=True)
 
         output_frame = ttk.Frame(content_pane)
         content_pane.add(output_frame, weight=1)
