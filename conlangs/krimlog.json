@@ -382,11 +382,10 @@
     },
     "determiner_system": {
         "definite_article": {
-            "form": "le",
             "variants": [],
             "procliticizes": false,
             "sun_letter_assimilation": false,
-            "description": "Artigo definido invariável 'le'"
+            "description": "Artigo definido invariável 'ha' (antigo 'le')"
         },
         "indefinite_article": {
             "form": "un",
@@ -394,49 +393,18 @@
         },
         "demonstratives": {
             "gender_inheritance_heuristic": false,
-            "proximal": {
-                "sg": "iste",
-                "pl": "istes"
-            },
-            "distal": {
-                "sg": "ake",
-                "pl": "akes"
-            }
+            "proximal": {},
+            "distal": {}
         },
         "possessives": {
             "pronominal_suffixes": false,
             "suppress_article": false,
-            "independent_forms": {
-                "1sg": "mi",
-                "2sg": "tu",
-                "3sg": "su",
-                "1pl": "noster",
-                "2pl": "voster",
-                "3pl": "lore"
-            },
-            "possessive_lemmas": {
-                "meu": "mi",
-                "minha": "mi",
-                "teu": "tu",
-                "tua": "tu",
-                "seu": "su",
-                "sua": "su",
-                "nosso": "noster",
-                "nossa": "noster",
-                "vosso": "voster",
-                "vossa": "voster"
-            }
+            "independent_forms": {},
+            "possessive_lemmas": {}
         }
     },
     "pronominal_system": {
-        "independent_pronouns": {
-            "1sg": "me",
-            "2sg": "te",
-            "3sg": "lu",
-            "1pl": "nos",
-            "2pl": "vos",
-            "3pl": "les"
-        },
+        "independent_pronouns": {},
         "object_pronouns": {
             "same_as_subject": true,
             "description": "Pronomes objeto idênticos aos de sujeito"
@@ -451,17 +419,7 @@
             "enabled": false,
             "description": "Preposições invariáveis, sem flexão"
         },
-        "basic_prepositions": {
-            "de": "de",
-            "a": "a",
-            "en": "en",
-            "kon": "kon",
-            "sin": "sin",
-            "por": "por",
-            "sobre": "sobre",
-            "ante": "ante",
-            "pos": "pos"
-        }
+        "basic_prepositions": {}
     },
     "tam_system": {
         "enabled": true,
@@ -688,10 +646,25 @@
     "abstract_concepts": {
         "enabled": true,
         "mappings": {
-            "do": "mim",
-            "dos": "mimes",
-            "de": "mim-ha",
-            "da": "mim-hxa"
+            "de": "min",
+            "do": "min",
+            "da": "min",
+            "dos": "min-ha",
+            "das": "min-ha",
+            "o": "ha",
+            "a": "ha",
+            "os": "ha-txi",
+            "as": "ha-txi",
+            "e": "wa",
+            "às": "ha-en",
+            "à": "ha",
+            "em": "hī-en",
+            "que": "ana",
+            "aos": "txa",
+            "nesta": "nedi",
+            "esta": "puii",
+            "este": "nedi",
+            "nesse": "puei"
         },
         "definitions": {}
     },
@@ -772,7 +745,27 @@
             "'": "'"
         }
     },
-    "mappings": {},
+    "mappings": {
+        "de": "min",
+        "do": "min",
+        "da": "min",
+        "dos": "min-ha",
+        "das": "min-ha",
+        "o": "ha",
+        "a": "ha",
+        "os": "ha-txi",
+        "as": "ha-txi",
+        "e": "wa",
+        "às": "ha-en",
+        "à": "ha",
+        "em": "hī-en",
+        "que": "ana",
+        "aos": "txa",
+        "nesta": "nedi",
+        "esta": "puii",
+        "este": "nedi",
+        "nesse": "puei"
+    },
     "phonological_processes": {
         "description": "Processos fonológicos mínimos - simplicidade máxima",
         "assimilation": {

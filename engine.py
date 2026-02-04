@@ -925,7 +925,7 @@ class ConceptHandler:
                     continue
         return {"concepts": {}, "mappings_ln": {}}
 
-    def resolve_concept(self, lemma: str, engine_instance, word_form: str = None) -> Optional[Tuple[str, str, Dict]]:
+    def resolve_concept(self, lemma: str, engine_instance, word_form: str = None, pos: str = None) -> Optional[Tuple[str, str, Dict]]:
         if not self.enabled:
             return None
 
@@ -1946,9 +1946,25 @@ class OriginalLanguageEngine:
         try:
             if word_form:
                 res = self.concept_handler.resolve_concept(
-                    lemma, self, word_form=word_form)
+                    lemma, self, word_form=word_form, pos=pos)
                 if res and res[2].get('origin') == 'mapping_table_surface':
                     return res[0]
+
+            if pos == 'ADP':
+                basic_preps = self.profile.get(
+                    'adposition_system', {}).get('basic_prepositions', {})
+                if lemma in basic_preps:
+                    return basic_preps[lemma]
+
+            if pos in {'PRON', 'DET'}:
+                possessives = self.profile.get('determiner_system', {}).get(
+                    'possessives', {}).get('independent_forms', {})
+                pos_lemmas = self.profile.get('determiner_system', {}).get(
+                    'possessives', {}).get('possessive_lemmas', {})
+
+                target_lemma = pos_lemmas.get(lemma)
+                if target_lemma and target_lemma in possessives:
+                    return possessives[target_lemma]
 
             entry = self.word_cache.get(lemma)
             if not entry and force_word:
@@ -1976,7 +1992,7 @@ class OriginalLanguageEngine:
                 return str(entry)
 
             concept_result = self.concept_handler.resolve_concept(
-                lemma, self, word_form=word_form)
+                lemma, self, word_form=word_form, pos=pos)
             if concept_result:
                 word, c_type, c_meta = concept_result
                 return self._get_word_form(lemma, tags=['concept'], force_word=word, meta=c_meta)
@@ -2136,7 +2152,18 @@ class OriginalLanguageEngine:
                 deprel = func.get("deprel", "")
                 is_named_entity = func.get("named_entity", False)
 
-                if preposition_handling == 'replace' and pos == 'ADP':
+                clean_word_lower = self._clean_word(orig_word).lower()
+                raw_lemma = lemma if lemma else clean_word_lower
+                raw_lemma = raw_lemma.lower()
+
+                is_mapped = False
+                if self.concept_handler.enabled:
+                    mapping_res = self.concept_handler.resolve_concept(
+                        raw_lemma, self, word_form=clean_word_lower, pos=pos)
+                    if mapping_res:
+                        is_mapped = True
+
+                if preposition_handling == 'replace' and pos == 'ADP' and not is_mapped and self.profile.get('case_system', {}).get('enabled', False):
                     continue
 
                 should_drop_article = False
@@ -2236,9 +2263,29 @@ class OriginalLanguageEngine:
                 if self.lexical_registers.get('enabled', False):
                     pass
 
+                current_form = ""
                 if self.demonstrative_handler.enabled and self.demonstrative_handler.is_demonstrative(func):
                     current_form = self.demonstrative_handler.get_form(
                         func, ordered_functions, self)
+                elif pos == 'DET' and ('Definite=Def' in feats or 'PronType=Art' in feats or raw_lemma in {'o', 'a', 'os', 'as'}):
+                    det_config = self.profile.get(
+                        'determiner_system', {}).get('definite_article', {})
+                    if det_config.get('form'):
+                        translated_root = det_config.get('form')
+                        current_form = translated_root
+                    else:
+                        translated_root = self._get_word_form(
+                            target_lemma, context_tags, pos=current_pos, word_form=clean_word_lower)
+                        current_form = translated_root
+                elif pos == 'ADP':
+                    basic_preps = self.profile.get(
+                        'adposition_system', {}).get('basic_prepositions', {})
+                    if raw_lemma in basic_preps:
+                        current_form = basic_preps[raw_lemma]
+                    else:
+                        translated_root = self._get_word_form(
+                            target_lemma, context_tags, pos=current_pos, word_form=clean_word_lower)
+                        current_form = translated_root
                 else:
                     translated_root = self._get_word_form(
                         target_lemma, context_tags, pos=current_pos, word_form=clean_word_lower)
