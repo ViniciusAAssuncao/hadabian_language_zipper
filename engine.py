@@ -1740,7 +1740,9 @@ class GramatakiManager:
 
         clean_meaning = "".join(
             c for c in meaning if c.isalnum() or c.isspace()).strip()
-        seed_str = f"{clean_meaning}_{self.engine.global_seed}_gramataki"
+
+        salt = options.get('salt', '')
+        seed_str = f"{clean_meaning}_{self.engine.global_seed}_gramataki_{salt}"
         seed = int(hashlib.sha256(seed_str.encode()).hexdigest(), 16)
 
         generated_word = ""

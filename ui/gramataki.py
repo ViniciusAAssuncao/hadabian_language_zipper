@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
+import random
 
 
 class GramatakiTab(ttk.Frame):
@@ -124,13 +125,14 @@ class GramatakiTab(ttk.Frame):
         )
         out_header.pack(fill=tk.X, pady=(0, 10))
 
-        tree_scroll = ttk.Frame(output_frame)
-        tree_scroll.pack(fill=tk.BOTH, expand=True)
+        tree_container = ttk.Frame(output_frame)
+        tree_container.pack(fill=tk.BOTH, expand=True)
 
-        cols = ("lemma", "pos", "score", "gloss")
+        cols = ("lemma", "pos", "score", "gloss", "raw_meaning")
         self.result_tree = ttk.Treeview(
-            tree_scroll,
+            tree_container,
             columns=cols,
+            displaycolumns=("lemma", "pos", "score", "gloss"),
             show="headings",
             style="Treeview"
         )
@@ -140,17 +142,29 @@ class GramatakiTab(ttk.Frame):
         self.result_tree.heading("score", text="Precisão")
         self.result_tree.heading("gloss", text="Glose / Notas")
 
-        self.result_tree.column("lemma", width=150)
-        self.result_tree.column("pos", width=80, anchor="center")
-        self.result_tree.column("score", width=80, anchor="center")
-        self.result_tree.column("gloss", width=200)
+        self.result_tree.column(
+            "lemma", width=250, minwidth=100, stretch=False)
+        self.result_tree.column(
+            "pos", width=80, minwidth=50, anchor="center", stretch=False)
+        self.result_tree.column(
+            "score", width=80, minwidth=50, anchor="center", stretch=False)
+        self.result_tree.column(
+            "gloss", width=800, minwidth=200, stretch=False)
 
-        scrollbar = ttk.Scrollbar(
-            tree_scroll, orient=tk.VERTICAL, command=self.result_tree.yview)
-        self.result_tree.configure(yscroll=scrollbar.set)
+        v_scrollbar = ttk.Scrollbar(
+            tree_container, orient=tk.VERTICAL, command=self.result_tree.yview)
+        h_scrollbar = ttk.Scrollbar(
+            tree_container, orient=tk.HORIZONTAL, command=self.result_tree.xview)
 
-        self.result_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        self.result_tree.configure(
+            yscrollcommand=v_scrollbar.set, xscrollcommand=h_scrollbar.set)
+
+        self.result_tree.grid(row=0, column=0, sticky="nsew")
+        v_scrollbar.grid(row=0, column=1, sticky="ns")
+        h_scrollbar.grid(row=1, column=0, sticky="ew")
+
+        tree_container.grid_rowconfigure(0, weight=1)
+        tree_container.grid_columnconfigure(0, weight=1)
 
         details_frame = ttk.Frame(output_frame, height=150)
         details_frame.pack(fill=tk.X, pady=(10, 0))
@@ -176,6 +190,15 @@ class GramatakiTab(ttk.Frame):
         action_bar = ttk.Frame(output_frame)
         action_bar.pack(fill=tk.X, pady=10)
 
+        self.btn_delete = ttk.Button(
+            action_bar,
+            text="🗑 Excluir Selecionado",
+            style="Secondary.TButton",
+            state="disabled",
+            command=self.on_delete
+        )
+        self.btn_delete.pack(side=tk.LEFT, padx=(0, 5))
+
         self.btn_accept = ttk.Button(
             action_bar,
             text="✔ Incorporar ao Léxico Gramataki",
@@ -186,6 +209,7 @@ class GramatakiTab(ttk.Frame):
         self.btn_accept.pack(side=tk.RIGHT)
 
         self.result_tree.bind("<<TreeviewSelect>>", self.on_select_result)
+        self.result_tree.bind("<Delete>", lambda e: self.on_delete())
 
     def on_generate(self):
         if not self.engine:
@@ -198,14 +222,17 @@ class GramatakiTab(ttk.Frame):
                 "Aviso", "Por favor, insira um significado ou conceito.")
             return
 
+        for child in self.result_tree.get_children():
+            item_meaning = self.result_tree.set(child, "raw_meaning")
+            if item_meaning == meaning:
+                self.result_tree.delete(child)
+
         options = {
             'abstract': self.var_abstract.get(),
             'force_loan': self.var_force_loan.get(),
-            'register': self.combo_register.get()
+            'register': self.combo_register.get(),
+            'salt': random.randint(0, 1000000)
         }
-
-        for item in self.result_tree.get_children():
-            self.result_tree.delete(item)
 
         results = self.engine.generate_gramataki_candidates(meaning, options)
 
@@ -214,7 +241,8 @@ class GramatakiTab(ttk.Frame):
                 res.get('lemma', '???'),
                 res.get('pos', 'UNK'),
                 f"{res.get('score', 0)}%",
-                res.get('gloss', '')
+                res.get('gloss', ''),
+                meaning
             ))
 
     def on_clear(self):
@@ -228,15 +256,17 @@ class GramatakiTab(ttk.Frame):
         self.txt_details.delete("1.0", tk.END)
         self.txt_details.config(state="disabled")
         self.btn_accept.state(["disabled"])
+        self.btn_delete.state(["disabled"])
 
     def on_select_result(self, event):
         selected = self.result_tree.selection()
         if selected:
             self.btn_accept.state(["!disabled"])
+            self.btn_delete.state(["!disabled"])
             item = self.result_tree.item(selected[0])
             values = item['values']
 
-            analysis_text = f"Lema: {values[0]}\nClasse: {values[1]}\nConceito Base: {self.txt_meaning.get('1.0', 'end-1c').strip()}\nOrigem: Gerado via Gramataki Engine"
+            analysis_text = f"Lema: {values[0]}\nClasse: {values[1]}\nNotas: {values[3]}\nOrigem: Gerado via Gramataki Engine"
 
             self.txt_details.config(state="normal")
             self.txt_details.delete("1.0", tk.END)
@@ -244,6 +274,17 @@ class GramatakiTab(ttk.Frame):
             self.txt_details.config(state="disabled")
         else:
             self.btn_accept.state(["disabled"])
+            self.btn_delete.state(["disabled"])
+
+    def on_delete(self):
+        selected_items = self.result_tree.selection()
+        if not selected_items:
+            return
+
+        for item in selected_items:
+            self.result_tree.delete(item)
+
+        self.on_select_result(None)
 
     def on_accept(self):
         selected = self.result_tree.selection()
@@ -256,15 +297,16 @@ class GramatakiTab(ttk.Frame):
         entry = {
             'lemma': values[0],
             'pos': values[1],
-            'meaning': self.txt_meaning.get("1.0", "end-1c").strip(),
+            'meaning': self.txt_meaning.get("1.0", "end-1c").strip() or values[3],
             'gloss': values[3],
-            'origin': 'gramataki'
+            'origin': 'gramataki',
+            'unique_constraint': 'meaning'
         }
 
         try:
             self.engine.save_gramataki_entry(entry)
             messagebox.showinfo(
-                "Sucesso", f"O termo '{values[0]}' foi adicionado ao dicionário Gramataki.")
+                "Sucesso", f"O termo '{values[0]}' foi processado no dicionário Gramataki.")
             self.on_clear()
         except Exception as e:
             messagebox.showerror("Erro", f"Falha ao salvar termo: {str(e)}")
