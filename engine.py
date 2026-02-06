@@ -1700,6 +1700,119 @@ class DemonstrativeHandler:
         return func.get('word', '')
 
 
+class GramatakiManager:
+    def __init__(self, profile: Dict, engine_ref):
+        self.profile = profile
+        self.engine = engine_ref
+        self.profile_id = profile.get('id', 'unknown')
+        self.dictionary: Dict[str, Dict] = {}
+        self.storage_path = Path(
+            f"./gramatakis/{self.profile_id}_gramataki.json")
+        self.load_dictionary()
+
+    def load_dictionary(self):
+        if self.storage_path.exists():
+            try:
+                with open(self.storage_path, 'r', encoding='utf-8') as f:
+                    self.dictionary = json.load(f)
+            except Exception:
+                self.dictionary = {}
+        else:
+            self.dictionary = {}
+
+    def save_dictionary(self):
+        if not self.storage_path.parent.exists():
+            self.storage_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(self.storage_path, 'w', encoding='utf-8') as f:
+            json.dump(self.dictionary, f, indent=2, ensure_ascii=False)
+
+    def save_entry(self, entry: Dict):
+        lemma = entry.get('lemma')
+        if lemma:
+            self.dictionary[lemma] = entry
+            self.save_dictionary()
+
+    def generate_candidates(self, meaning: str, options: Dict) -> List[Dict]:
+        candidates = []
+        is_abstract = options.get('abstract', False)
+        force_loan = options.get('force_loan', False)
+        register = options.get('register', 'Neutro')
+
+        clean_meaning = "".join(
+            c for c in meaning if c.isalnum() or c.isspace()).strip()
+        seed_str = f"{clean_meaning}_{self.engine.global_seed}_gramataki"
+        seed = int(hashlib.sha256(seed_str.encode()).hexdigest(), 16)
+
+        generated_word = ""
+        gloss = meaning
+
+        if force_loan:
+            generated_word = self.engine.loanword_handler.nativize_reserved_term(
+                clean_meaning.split()[0])
+            gloss = f"Empréstimo de: {clean_meaning}"
+
+        elif self.engine.compounding_handler.enabled and " " in clean_meaning:
+            parts = clean_meaning.split()
+            keywords = [w for w in parts if len(w) > 3]
+            if len(keywords) < 2:
+                keywords = parts[:2]
+
+            sub_words = []
+            for kw in keywords:
+                sub_word = self.engine._generate_word_from_seed(
+                    kw,
+                    int(hashlib.sha256(
+                        f"{kw}_{seed}".encode()).hexdigest(), 16)
+                )
+                sub_words.append(sub_word)
+
+            generated_word = self.engine.compounding_handler.construct_compound(
+                sub_words, self.engine)
+            if self.engine.sandhi_handler.enabled:
+                generated_word = self.engine.sandhi_handler.apply_sandhi(
+                    generated_word)
+            gloss = f"Composto de: {', '.join(keywords)}"
+
+        else:
+            if self.engine.root_handler.enabled:
+                root = self.engine.root_handler.generate_root(clean_meaning)
+                pattern = self.engine.root_handler.get_binyan_by_meaning(
+                    'basic')
+                generated_word = self.engine.root_handler.apply_pattern(
+                    root, pattern)
+                gloss = f"Raiz: {'-'.join(root)}"
+            else:
+                generated_word = self.engine._generate_word_from_seed(
+                    clean_meaning, seed)
+                gloss = "Geração fonotática simples"
+
+        if is_abstract and self.engine.affix_handler.enabled:
+            rule = self.engine.affix_handler.get_derivation_rule(
+                "ADJ", "NOUN", "abstract_noun")
+            if not rule:
+                rule = self.engine.affix_handler.get_derivation_rule(
+                    "VERB", "NOUN", "verbal_noun")
+
+            if rule:
+                generated_word = self.engine.affix_handler.apply_affix(
+                    generated_word, rule)
+                gloss += " + Derivação Abstrata"
+
+        if register != "Neutro":
+            generated_word = self.engine.phonology_handler.apply_rules(
+                generated_word, register.lower())
+            gloss += f" ({register})"
+
+        candidates.append({
+            'lemma': generated_word,
+            'pos': 'NOUN' if is_abstract else 'UNK',
+            'score': 100,
+            'gloss': gloss
+        })
+
+        return candidates
+
+
 class OriginalLanguageEngine:
     def __init__(self, profile_path: str):
         with open(profile_path, 'r', encoding='utf-8') as f:
@@ -1780,6 +1893,14 @@ class OriginalLanguageEngine:
         self.vocabulary_override = self.profile.get('vocabulary', {})
         self.load_word_cache()
         self.processing_stack = set()
+
+        self.gramataki_manager = GramatakiManager(self.profile, self)
+
+    def generate_gramataki_candidates(self, meaning: str, options: Dict) -> List[Dict]:
+        return self.gramataki_manager.generate_candidates(meaning, options)
+
+    def save_gramataki_entry(self, entry: Dict):
+        self.gramataki_manager.save_entry(entry)
 
     def get_source_engine(self, source_id: str) -> Optional['OriginalLanguageEngine']:
         if source_id in self.source_engines:
@@ -2890,6 +3011,7 @@ class OriginalLanguageEngine:
             'profile_id': self.profile_id,
             'word_order': self.syntax_engine.word_order,
             'cached_words': len(self.word_cache),
+            'gramataki_terms': len(self.gramataki_manager.dictionary),
             'syntax': syntax_stats,
             'phonotactics': {
                 'vowels': len(self.vowels),

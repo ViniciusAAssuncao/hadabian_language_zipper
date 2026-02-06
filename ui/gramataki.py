@@ -1,5 +1,5 @@
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 
 
 class GramatakiTab(ttk.Frame):
@@ -178,7 +178,7 @@ class GramatakiTab(ttk.Frame):
 
         self.btn_accept = ttk.Button(
             action_bar,
-            text="✔ Incorporar ao Léxico",
+            text="✔ Incorporar ao Léxico Gramataki",
             style="Accent.TButton",
             state="disabled",
             command=self.on_accept
@@ -188,7 +188,34 @@ class GramatakiTab(ttk.Frame):
         self.result_tree.bind("<<TreeviewSelect>>", self.on_select_result)
 
     def on_generate(self):
-        pass
+        if not self.engine:
+            messagebox.showwarning("Aviso", "Motor não inicializado.")
+            return
+
+        meaning = self.txt_meaning.get("1.0", "end-1c").strip()
+        if not meaning:
+            messagebox.showwarning(
+                "Aviso", "Por favor, insira um significado ou conceito.")
+            return
+
+        options = {
+            'abstract': self.var_abstract.get(),
+            'force_loan': self.var_force_loan.get(),
+            'register': self.combo_register.get()
+        }
+
+        for item in self.result_tree.get_children():
+            self.result_tree.delete(item)
+
+        results = self.engine.generate_gramataki_candidates(meaning, options)
+
+        for res in results:
+            self.result_tree.insert("", "end", values=(
+                res.get('lemma', '???'),
+                res.get('pos', 'UNK'),
+                f"{res.get('score', 0)}%",
+                res.get('gloss', '')
+            ))
 
     def on_clear(self):
         self.txt_meaning.delete("1.0", tk.END)
@@ -206,8 +233,38 @@ class GramatakiTab(ttk.Frame):
         selected = self.result_tree.selection()
         if selected:
             self.btn_accept.state(["!disabled"])
+            item = self.result_tree.item(selected[0])
+            values = item['values']
+
+            analysis_text = f"Lema: {values[0]}\nClasse: {values[1]}\nConceito Base: {self.txt_meaning.get('1.0', 'end-1c').strip()}\nOrigem: Gerado via Gramataki Engine"
+
+            self.txt_details.config(state="normal")
+            self.txt_details.delete("1.0", tk.END)
+            self.txt_details.insert("1.0", analysis_text)
+            self.txt_details.config(state="disabled")
         else:
             self.btn_accept.state(["disabled"])
 
     def on_accept(self):
-        pass
+        selected = self.result_tree.selection()
+        if not selected:
+            return
+
+        item = self.result_tree.item(selected[0])
+        values = item['values']
+
+        entry = {
+            'lemma': values[0],
+            'pos': values[1],
+            'meaning': self.txt_meaning.get("1.0", "end-1c").strip(),
+            'gloss': values[3],
+            'origin': 'gramataki'
+        }
+
+        try:
+            self.engine.save_gramataki_entry(entry)
+            messagebox.showinfo(
+                "Sucesso", f"O termo '{values[0]}' foi adicionado ao dicionário Gramataki.")
+            self.on_clear()
+        except Exception as e:
+            messagebox.showerror("Erro", f"Falha ao salvar termo: {str(e)}")
