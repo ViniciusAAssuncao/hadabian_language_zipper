@@ -7,6 +7,7 @@ import os
 
 from ui.lexicon import LexiconTab
 from ui.profile import ProfileTab
+from ui.gramataki import GramatakiTab
 from ui.spinner import LoadingOverlay
 
 
@@ -260,6 +261,9 @@ class ConHabApp:
         style.map("Treeview.Heading", background=[
                   ("active", self.colors["bg_sec"])])
 
+        style.configure("Switch.TCheckbutton",
+                        background=self.colors["card_bg"], foreground=self.colors["fg_primary"])
+
     def setup_ui(self):
         header_frame = ttk.Frame(self.root)
         header_frame.pack(fill=tk.X)
@@ -311,6 +315,10 @@ class ConHabApp:
         self.tab_translation = ttk.Frame(self.notebook, padding=15)
         self.notebook.add(self.tab_translation, text="Tradução")
         self.setup_translation_tab()
+
+        self.gramataki_widget = GramatakiTab(
+            self.notebook, self.colors, self.engine)
+        self.notebook.add(self.gramataki_widget, text="Gramataki")
 
         self.lexicon_widget = LexiconTab(self.notebook, self.colors)
         self.notebook.add(self.lexicon_widget, text="Léxico")
@@ -417,6 +425,7 @@ class ConHabApp:
             foreground=self.colors["success"]
         )
         self.lexicon_widget.refresh(self.engine)
+        self.gramataki_widget.update_engine(self.engine)
         self.loading_overlay.hide()
 
     def _on_load_error(self, error):

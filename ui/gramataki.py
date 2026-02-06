@@ -1,0 +1,213 @@
+import tkinter as tk
+from tkinter import ttk
+
+
+class GramatakiTab(ttk.Frame):
+    def __init__(self, parent, colors, engine=None):
+        super().__init__(parent)
+        self.colors = colors
+        self.engine = engine
+        self.setup_ui()
+
+    def update_engine(self, engine):
+        self.engine = engine
+
+    def setup_ui(self):
+        main_split = ttk.PanedWindow(self, orient=tk.HORIZONTAL)
+        main_split.pack(fill=tk.BOTH, expand=True, padx=10, pady=10)
+
+        input_frame = ttk.Frame(main_split, style="Card.TFrame")
+        main_split.add(input_frame, weight=1)
+
+        header_lbl = ttk.Label(
+            input_frame,
+            text="DEFINIÇÃO SEMÂNTICA",
+            style="SubHeader.TLabel",
+            background=self.colors["card_bg"]
+        )
+        header_lbl.pack(fill=tk.X, pady=(10, 5), padx=10)
+
+        lbl_meaning = ttk.Label(
+            input_frame,
+            text="Intenção / Conceito:",
+            background=self.colors["card_bg"],
+            foreground=self.colors["fg_secondary"]
+        )
+        lbl_meaning.pack(anchor="w", padx=10)
+
+        self.txt_meaning = tk.Text(
+            input_frame,
+            height=4,
+            bg=self.colors["input_bg"],
+            fg=self.colors["text"],
+            insertbackground=self.colors["accent"],
+            font=("Segoe UI", 10),
+            relief="flat",
+            highlightthickness=1,
+            highlightbackground=self.colors["bg_sec"],
+            highlightcolor=self.colors["accent"]
+        )
+        self.txt_meaning.pack(fill=tk.X, padx=10, pady=(0, 10))
+
+        lbl_params = ttk.Label(
+            input_frame,
+            text="Parâmetros de Construção:",
+            background=self.colors["card_bg"],
+            foreground=self.colors["fg_secondary"]
+        )
+        lbl_params.pack(anchor="w", padx=10, pady=(5, 0))
+
+        params_container = ttk.Frame(input_frame, style="Card.TFrame")
+        params_container.pack(fill=tk.X, padx=10, pady=5)
+
+        self.var_abstract = tk.BooleanVar()
+        chk_abstract = ttk.Checkbutton(
+            params_container,
+            text="Conceito Abstrato",
+            variable=self.var_abstract,
+            style="Switch.TCheckbutton"
+        )
+        chk_abstract.pack(anchor="w", pady=2)
+
+        self.var_force_loan = tk.BooleanVar()
+        chk_loan = ttk.Checkbutton(
+            params_container,
+            text="Forçar Empréstimo",
+            variable=self.var_force_loan,
+            style="Switch.TCheckbutton"
+        )
+        chk_loan.pack(anchor="w", pady=2)
+
+        lbl_register = ttk.Label(
+            params_container,
+            text="Registro / Tom:",
+            background=self.colors["card_bg"],
+            foreground=self.colors["fg_secondary"],
+            font=("Segoe UI", 9)
+        )
+        lbl_register.pack(anchor="w", pady=(10, 2))
+
+        self.combo_register = ttk.Combobox(
+            params_container,
+            values=["Neutro", "Formal", "Poético", "Arcaico", "Vulgar"],
+            state="readonly"
+        )
+        self.combo_register.current(0)
+        self.combo_register.pack(fill=tk.X)
+
+        btn_container = ttk.Frame(input_frame, style="Card.TFrame")
+        btn_container.pack(fill=tk.X, padx=10, pady=20)
+
+        self.btn_generate = ttk.Button(
+            btn_container,
+            text="⚙ GERAR GRAMATAKI",
+            style="Accent.TButton",
+            command=self.on_generate
+        )
+        self.btn_generate.pack(fill=tk.X, pady=5)
+
+        self.btn_clear = ttk.Button(
+            btn_container,
+            text="Limpar Campos",
+            style="Secondary.TButton",
+            command=self.on_clear
+        )
+        self.btn_clear.pack(fill=tk.X)
+
+        output_frame = ttk.Frame(main_split)
+        main_split.add(output_frame, weight=2)
+
+        out_header = ttk.Label(
+            output_frame,
+            text="RESULTADOS E VARIAÇÕES",
+            style="SubHeader.TLabel"
+        )
+        out_header.pack(fill=tk.X, pady=(0, 10))
+
+        tree_scroll = ttk.Frame(output_frame)
+        tree_scroll.pack(fill=tk.BOTH, expand=True)
+
+        cols = ("lemma", "pos", "score", "gloss")
+        self.result_tree = ttk.Treeview(
+            tree_scroll,
+            columns=cols,
+            show="headings",
+            style="Treeview"
+        )
+
+        self.result_tree.heading("lemma", text="Lema Gerado")
+        self.result_tree.heading("pos", text="POS")
+        self.result_tree.heading("score", text="Precisão")
+        self.result_tree.heading("gloss", text="Glose / Notas")
+
+        self.result_tree.column("lemma", width=150)
+        self.result_tree.column("pos", width=80, anchor="center")
+        self.result_tree.column("score", width=80, anchor="center")
+        self.result_tree.column("gloss", width=200)
+
+        scrollbar = ttk.Scrollbar(
+            tree_scroll, orient=tk.VERTICAL, command=self.result_tree.yview)
+        self.result_tree.configure(yscroll=scrollbar.set)
+
+        self.result_tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        details_frame = ttk.Frame(output_frame, height=150)
+        details_frame.pack(fill=tk.X, pady=(10, 0))
+
+        lbl_details = ttk.Label(
+            details_frame,
+            text="ANÁLISE ESTRUTURAL",
+            style="SubHeader.TLabel"
+        )
+        lbl_details.pack(anchor="w")
+
+        self.txt_details = tk.Text(
+            details_frame,
+            height=6,
+            bg=self.colors["input_bg"],
+            fg=self.colors["fg_primary"],
+            relief="flat",
+            state="disabled",
+            font=("Consolas", 10)
+        )
+        self.txt_details.pack(fill=tk.BOTH, expand=True, pady=5)
+
+        action_bar = ttk.Frame(output_frame)
+        action_bar.pack(fill=tk.X, pady=10)
+
+        self.btn_accept = ttk.Button(
+            action_bar,
+            text="✔ Incorporar ao Léxico",
+            style="Accent.TButton",
+            state="disabled",
+            command=self.on_accept
+        )
+        self.btn_accept.pack(side=tk.RIGHT)
+
+        self.result_tree.bind("<<TreeviewSelect>>", self.on_select_result)
+
+    def on_generate(self):
+        pass
+
+    def on_clear(self):
+        self.txt_meaning.delete("1.0", tk.END)
+        self.var_abstract.set(False)
+        self.var_force_loan.set(False)
+        self.combo_register.current(0)
+        for item in self.result_tree.get_children():
+            self.result_tree.delete(item)
+        self.txt_details.config(state="normal")
+        self.txt_details.delete("1.0", tk.END)
+        self.txt_details.config(state="disabled")
+        self.btn_accept.state(["disabled"])
+
+    def on_select_result(self, event):
+        selected = self.result_tree.selection()
+        if selected:
+            self.btn_accept.state(["!disabled"])
+        else:
+            self.btn_accept.state(["disabled"])
+
+    def on_accept(self):
+        pass
