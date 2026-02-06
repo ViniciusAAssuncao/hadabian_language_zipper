@@ -656,6 +656,7 @@
             "os": "ha-txi",
             "as": "ha-txi",
             "e": "wa",
+            "é": "wa",
             "às": "ha-en",
             "à": "ha",
             "em": "hī-en",
@@ -664,7 +665,9 @@
             "nesta": "nedi",
             "esta": "puii",
             "este": "nedi",
-            "nesse": "puei"
+            "nesse": "puei",
+            "sou": "eti",
+            "no": "figr"
         },
         "definitions": {}
     },

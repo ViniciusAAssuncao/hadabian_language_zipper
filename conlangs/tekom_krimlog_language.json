@@ -30,7 +30,23 @@
         "mappings": {
             "do": "txo-",
             "de": "txa-",
-            "da": "txa-"
+            "da": "txa-",
+            "dos": "min-ha",
+            "das": "min-ha",
+            "o": "ha",
+            "a": "ha",
+            "os": "ha-txi",
+            "as": "ha-txi",
+            "e": "wa",
+            "às": "ha-en",
+            "à": "ha",
+            "em": "hī-en",
+            "que": "ana",
+            "aos": "tzi",
+            "nesta": "nedi",
+            "esta": "puii",
+            "este": "nedi",
+            "nesse": "puei"
         },
         "definitions": {}
     },

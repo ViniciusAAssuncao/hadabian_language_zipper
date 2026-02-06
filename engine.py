@@ -2157,6 +2157,7 @@ class OriginalLanguageEngine:
                 raw_lemma = raw_lemma.lower()
 
                 is_mapped = False
+                mapping_res = None
                 if self.concept_handler.enabled:
                     mapping_res = self.concept_handler.resolve_concept(
                         raw_lemma, self, word_form=clean_word_lower, pos=pos)
@@ -2200,7 +2201,15 @@ class OriginalLanguageEngine:
                         last_content_func = func
                         continue
 
-                if self.copula_handler.enabled and deprel == 'cop':
+                is_copula_dep = (deprel == 'cop')
+                skip_copula_handler = False
+                if is_mapped and is_copula_dep:
+                    if mapping_res[2].get('origin') in {'mapping_table_surface', 'local_override_direct'}:
+                        skip_copula_handler = True
+                    else:
+                        skip_copula_handler = True
+
+                if self.copula_handler.enabled and is_copula_dep and not skip_copula_handler:
                     copula_form = self.copula_handler.get_copula_form(
                         func, ordered_functions, self)
                     if copula_form is None:
@@ -2264,32 +2273,37 @@ class OriginalLanguageEngine:
                     pass
 
                 current_form = ""
-                if self.demonstrative_handler.enabled and self.demonstrative_handler.is_demonstrative(func):
-                    current_form = self.demonstrative_handler.get_form(
-                        func, ordered_functions, self)
-                elif pos == 'DET' and ('Definite=Def' in feats or 'PronType=Art' in feats or raw_lemma in {'o', 'a', 'os', 'as'}):
-                    det_config = self.profile.get(
-                        'determiner_system', {}).get('definite_article', {})
-                    if det_config.get('form'):
-                        translated_root = det_config.get('form')
-                        current_form = translated_root
+
+                if is_mapped and mapping_res:
+                    current_form = mapping_res[0]
+
+                if not current_form:
+                    if self.demonstrative_handler.enabled and self.demonstrative_handler.is_demonstrative(func):
+                        current_form = self.demonstrative_handler.get_form(
+                            func, ordered_functions, self)
+                    elif pos == 'DET' and ('Definite=Def' in feats or 'PronType=Art' in feats or raw_lemma in {'o', 'a', 'os', 'as'}):
+                        det_config = self.profile.get(
+                            'determiner_system', {}).get('definite_article', {})
+                        if det_config.get('form'):
+                            translated_root = det_config.get('form')
+                            current_form = translated_root
+                        else:
+                            translated_root = self._get_word_form(
+                                target_lemma, context_tags, pos=current_pos, word_form=clean_word_lower)
+                            current_form = translated_root
+                    elif pos == 'ADP':
+                        basic_preps = self.profile.get(
+                            'adposition_system', {}).get('basic_prepositions', {})
+                        if raw_lemma in basic_preps:
+                            current_form = basic_preps[raw_lemma]
+                        else:
+                            translated_root = self._get_word_form(
+                                target_lemma, context_tags, pos=current_pos, word_form=clean_word_lower)
+                            current_form = translated_root
                     else:
                         translated_root = self._get_word_form(
                             target_lemma, context_tags, pos=current_pos, word_form=clean_word_lower)
                         current_form = translated_root
-                elif pos == 'ADP':
-                    basic_preps = self.profile.get(
-                        'adposition_system', {}).get('basic_prepositions', {})
-                    if raw_lemma in basic_preps:
-                        current_form = basic_preps[raw_lemma]
-                    else:
-                        translated_root = self._get_word_form(
-                            target_lemma, context_tags, pos=current_pos, word_form=clean_word_lower)
-                        current_form = translated_root
-                else:
-                    translated_root = self._get_word_form(
-                        target_lemma, context_tags, pos=current_pos, word_form=clean_word_lower)
-                    current_form = translated_root
 
                 if func['index'] in compound_map:
                     current_form = compound_map[func['index']]
@@ -2500,8 +2514,7 @@ class OriginalLanguageEngine:
         }
 
     def _clean_word(self, word: str) -> str:
-        import re
-        return "".join(re.findall(r"[\w]", word, re.UNICODE))
+        return "".join(c for c in word if c.isalnum() or c == '-')
 
     def _extract_punctuation(self, word: str) -> Tuple[str, str]:
         import re
