@@ -316,12 +316,12 @@ class ConHabApp:
         self.notebook.add(self.tab_translation, text="Tradução")
         self.setup_translation_tab()
 
+        self.lexicon_widget = LexiconTab(self.notebook, self.colors)
+        self.notebook.add(self.lexicon_widget, text="Léxico")
+
         self.gramataki_widget = GramatakiTab(
             self.notebook, self.colors, self.engine)
         self.notebook.add(self.gramataki_widget, text="Gramataki")
-
-        self.lexicon_widget = LexiconTab(self.notebook, self.colors)
-        self.notebook.add(self.lexicon_widget, text="Léxico")
 
         self.profile_widget = ProfileTab(self.notebook, self.colors)
         self.notebook.add(self.profile_widget, text="Editor JSON")
