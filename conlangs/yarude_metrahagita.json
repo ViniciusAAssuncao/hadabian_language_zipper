@@ -1,77 +1,79 @@
 {
     "id": "yarude_metrahagita",
     "name": "Yarude Metrahagita",
-    "native_name": "Lish-Yarudd Ha-Gulim",
+    "native_name": "Lish Yarādd mōrīṭ ha-Metrahagim",
     "family_node": "north-enkian",
     "linguistic_family": "ordo_enkian_trunk.json",
-    "shared_base_strength": 0.45,
-    "global_seed": 857691029384,
+    "shared_base_strength": 0.35,
+    "global_seed": 99402184,
     "source_language_order": "VSO",
     "word_order": "VSO",
     "subordinate_word_order": "SVO",
     "alignment": "nominative-accusative",
-    "agglutination_strength": 0.55,
-    "divergence_factor": 0.40,
-    "cultural_purism": 0.95,
-    "lexical_confluence": {
-        "enabled": true,
-        "base_stability": 60,
-        "strata": [
-            {
-                "source_id": "archaic-raabic",
-                "weight": 30,
-                "type": "pidgin_substrate",
-                "mutation_intensity": 0.4
-            },
-            {
-                "source_id": "xograzian_plateau",
-                "weight": 10,
-                "type": "adstratum",
-                "mutation_intensity": 0.2
-            }
+    "agglutination_strength": 0.65,
+    "divergence_factor": 0.45,
+    "cultural_purism": 0.98,
+    "aesthetic_profile": {
+        "syllable_count_distribution": {
+            "2": 0.7,
+            "3": 0.2,
+            "1": 0.1
+        },
+        "cluster_density": 0.3,
+        "preferred_roots": [
+            "k-b-d",
+            "š-l-m",
+            "g-d-l",
+            "m-l-k",
+            "q-d-š",
+            "z-k-r",
+            "s-p-r"
         ]
     },
     "phonotactics": {
-        "active_style": "liturgical_reconstructed",
+        "active_style": "liturgical",
         "inventory_styles": {
-            "liturgical_reconstructed": {
-                "description": "Reconstrução baseada nas estelas de Amenótis",
-                "consonants": "ʔbdgghḥjklmnpqsṣštṭwzʕ",
+            "liturgical": {
+                "description": "Estilo solene, gutural e rítmico",
+                "consonants": "ʔbgdwhzḥṭyklmnsʕpṣqrš",
                 "vowels": "aeiouāēīōūə"
-            },
-            "vulgar_pidgin": {
-                "description": "Variante hipotética falada antes da codificação",
-                "consonants": "bdghklmnprstz",
-                "vowels": "aeiou"
             }
         },
         "vowels": "aeiouāēīōūə",
-        "consonants": "ʔbdgghḥjklmnpqsṣštṭwzʕ",
+        "consonants": "ʔbgdwhzḥṭyklmnsʕpṣqrš",
         "syllable_templates": [
             "CV",
             "CVC",
             "CVCC",
-            "CCV",
-            "CVCVC"
+            "CV:C"
         ],
-        "min_syllables": 1,
-        "max_syllables": 5,
+        "min_syllables": 2,
+        "max_syllables": 4,
         "forbidden_initial_clusters": [
             "tp",
             "kg",
             "bg",
-            "dt"
+            "dt",
+            "nm",
+            "lr",
+            "bp",
+            "gk",
+            "td",
+            "sz",
+            "zs",
+            "šs"
         ],
         "forbidden_final_consonants": [
             "w",
-            "j"
+            "j",
+            "h"
         ],
-        "max_consonant_cluster": 2,
+        "max_consonant_cluster": 1,
         "diphthongs": [
             "ai",
             "au",
             "oi",
-            "ui"
+            "uy"
         ],
         "epenthesis_vowel": "ə",
         "sonority_hierarchy": {
@@ -99,7 +101,7 @@
                 "l": 4,
                 "r": 5,
                 "w": 6,
-                "j": 6,
+                "y": 6,
                 "ə": 7,
                 "i": 8,
                 "u": 8,
@@ -108,136 +110,104 @@
                 "a": 10
             },
             "onset_rules": {
-                "min_distance": 1,
+                "min_distance": 2,
                 "allow_plateau": false,
                 "allow_reversal": false
-            },
-            "coda_rules": {
-                "min_distance": -2,
-                "allow_plateau": true,
-                "allow_reversal": true
             }
         },
-        "sandhi": {
-            "enabled": true,
-            "rules": [
-                {
-                    "pattern": "n\\s+([bp])",
-                    "replacement": "m\\1",
-                    "ignore_case": true
-                },
-                {
-                    "pattern": "([aeiou])\\s+ʔ([aeiou])",
-                    "replacement": "\\1'\\2",
-                    "ignore_case": true
-                },
-                {
-                    "pattern": "dt",
-                    "replacement": "tt",
-                    "ignore_case": true
-                }
-            ]
-        }
+        "phonological_rules": [
+            {
+                "input": "n([bp])",
+                "output": "m\\1",
+                "description": "Assimilação nasal labial (nb -> mb)"
+            },
+            {
+                "input": "dt",
+                "output": "tt",
+                "description": "Assimilação dental"
+            },
+            {
+                "input": "aʔa",
+                "output": "ā",
+                "description": "Fusão vocálica com queda de glotal"
+            }
+        ]
     },
     "allomorphy": {
         "enabled": true,
         "feature_definitions": {
-            "guttural": [
-                "ʔ",
-                "h",
-                "ḥ",
-                "ʕ"
-            ],
-            "emphatic": [
-                "ṣ",
-                "ṭ",
-                "q"
-            ],
-            "sibilant": [
-                "s",
-                "z",
-                "š",
-                "ṣ"
+            "vowel": [
+                "a",
+                "e",
+                "i",
+                "o",
+                "u",
+                "ā",
+                "ē",
+                "ī",
+                "ō",
+                "ū",
+                "ə"
             ]
         },
         "rules": [
             {
-                "target_word": "ha",
-                "environment": "before_feature",
-                "feature": "guttural",
-                "replacement": "he"
-            },
-            {
                 "target_word": "im",
                 "environment": "after_vowel",
-                "replacement": "-yim"
+                "replacement": "yim"
+            },
+            {
+                "target_word": "ort",
+                "environment": "after_vowel",
+                "replacement": "yort"
             },
             {
                 "target_word": "az",
-                "environment": "before_consonant",
-                "replacement": "-z"
+                "environment": "after_vowel",
+                "replacement": "z"
+            },
+            {
+                "target_word": "im",
+                "environment": "after_consonant",
+                "replacement": "im"
             }
         ]
     },
     "root_system": {
         "enabled": true,
         "type": "triconsonantal",
-        "description": "Sistema de raízes semíticas adaptadas ao substrato norte-enkiano",
+        "description": "Raízes estritas com vocalização típica",
         "patterns": [
-            "CaCaC",
-            "CiCiC",
-            "CaCūC",
-            "MaCCāC",
-            "HaCCāC",
-            "NiCCaC",
-            "CiCCūC"
+            "CeCeC",
+            "CaCāC",
+            "CiCCā",
+            "maCCēC",
+            "CaCCān",
+            "hīCCiC",
+            "mīCCāC",
+            "CohēC",
+            "CaCūC"
         ],
         "binyanim": [
             {
-                "name": "yaram",
+                "name": "paal",
                 "form": "I",
                 "pattern": "CaCaC",
                 "meaning": "basic_active"
             },
             {
-                "name": "nigram",
+                "name": "nifal",
                 "form": "II",
                 "pattern": "niCCaC",
-                "meaning": "passive_reflexive"
+                "meaning": "passive"
             },
             {
-                "name": "sharam",
-                "form": "III",
-                "pattern": "CiCCēC",
-                "meaning": "intensive_causative"
-            },
-            {
-                "name": "haglam",
-                "form": "IV",
+                "name": "hifil",
+                "form": "V",
                 "pattern": "haCCīC",
                 "meaning": "causative"
             }
-        ],
-        "root_registry": {
-            "falar": "d-b-r",
-            "escrever": "k-t-b",
-            "ser": "h-y-h",
-            "fazer": "ʕ-s-h",
-            "saber": "y-d-ʕ",
-            "ver": "r-ʔ-h",
-            "andar": "h-l-k",
-            "sagrado": "q-d-š",
-            "profeta": "n-b-ʔ",
-            "eleito": "b-ḥ-r",
-            "sombra": "ṣ-l-l",
-            "sol": "š-m-š",
-            "água": "m-y-m",
-            "círculo": "h-g-l",
-            "rio": "ʔ-n-k",
-            "pedra": "ʔ-b-n",
-            "destruição": "š-ḥ-t",
-            "aliança": "b-r-t"
-        }
+        ]
     },
     "morphological_derivation": {
         "enabled": true,
@@ -259,6 +229,10 @@
             {
                 "pattern": "taCCīC",
                 "type": "abstract_noun"
+            },
+            {
+                "pattern": "miCCāC",
+                "type": "place"
             }
         ]
     },
@@ -266,20 +240,12 @@
         "enabled": true,
         "derivation_rules": [
             {
-                "from_pos": "NOUN",
-                "to_pos": "ADJ",
-                "type": "relational",
-                "affix": "-az",
-                "position": "suffix",
-                "description": "Adjetivo relacional ou construto genitivo (Yarude Arcaico)"
-            },
-            {
                 "from_pos": "VERB",
                 "to_pos": "NOUN",
-                "type": "agent",
+                "type": "agent_doer",
                 "affix": "-gim",
                 "position": "suffix",
-                "description": "Plural de agente ou classe de pessoas (ex: Kohanim -> Kohanigim no dialeto pidgin)"
+                "description": "Agente/Classe (ex: Kohen -> Kohengim)"
             },
             {
                 "from_pos": "NOUN",
@@ -287,14 +253,15 @@
                 "type": "abstract_collective",
                 "affix": "-ort",
                 "position": "suffix",
-                "description": "Coletivo abstrato ou plural feminino arcaico"
+                "description": "Coletivo (ex: Eretz -> Eretzort)"
             },
             {
-                "from_pos": "VERB",
+                "from_pos": "NOUN",
                 "to_pos": "ADJ",
-                "type": "passive_participle",
-                "affix": "ma-",
-                "position": "prefix"
+                "type": "relational",
+                "affix": "-az",
+                "position": "suffix",
+                "description": "Relacional/Genitivo (ex: Kodesh -> Kodeshaz)"
             }
         ],
         "source_suffixes": [
@@ -325,8 +292,9 @@
             "plural": {
                 "marker": "-im",
                 "alternatives": [
+                    "-gim",
                     "-ort",
-                    "-gim"
+                    "-ayin"
                 ]
             },
             "singular": {
@@ -389,6 +357,10 @@
         "construct_state": {
             "enabled": true,
             "suppress_article_on_head": true,
+            "trigger_dependencies": [
+                "nmod",
+                "nmod:poss"
+            ],
             "phonological_changes": [
                 {
                     "pattern": "ah$",
@@ -438,6 +410,58 @@
             }
         }
     },
+    "tam_system": {
+        "enabled": true,
+        "person_marking": {
+            "enabled": true,
+            "prefixes": {
+                "1sg": "e-",
+                "2sg_m": "ti-",
+                "2sg_f": "ti-",
+                "3sg_m": "yi-",
+                "3sg_f": "ti-",
+                "1pl": "ni-",
+                "2pl": "ti-",
+                "3pl": "yi-"
+            },
+            "suffixes": {
+                "1sg": "-ti",
+                "2sg_m": "-ta",
+                "2sg_f": "-t",
+                "3sg_m": "",
+                "3sg_f": "-ah",
+                "1pl": "-nu",
+                "2pl": "-tem",
+                "3pl": "-u"
+            }
+        },
+        "rules": [
+            {
+                "features": [
+                    "Aspect=Perf"
+                ],
+                "marker": "",
+                "type": "suffix",
+                "description": "Perfective (Suffixes)"
+            },
+            {
+                "features": [
+                    "Aspect=Imp"
+                ],
+                "marker": "",
+                "type": "prefix",
+                "description": "Imperfective (Prefixes)"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "",
+                "type": "prefix",
+                "description": "Future uses Imperfective"
+            }
+        ]
+    },
     "gender_system": {
         "enabled": true,
         "genders": [
@@ -471,57 +495,43 @@
             }
         }
     },
-    "tam_system": {
+    "semantic_fields": {
         "enabled": true,
-        "person_marking": {
-            "enabled": true,
-            "prefixes": {
-                "1sg": "e-",
-                "2sg_m": "ti-",
-                "2sg_f": "ti-",
-                "3sg_m": "yi-",
-                "3sg_f": "ti-",
-                "1pl": "ni-",
-                "2pl": "ti-",
-                "3pl": "yi-"
-            },
-            "suffixes": {
-                "1sg": "-ti",
-                "2sg_m": "-ta",
-                "2sg_f": "-t",
-                "3sg_m": "",
-                "3sg_f": "-ah",
-                "1pl": "-nu",
-                "2pl": "-tem",
-                "3pl": "-u"
-            }
+        "manual_groups": {
+            "yarude": "ethnoreligious",
+            "hagul": "symbolic",
+            "metrahag": "ritual"
+        }
+    },
+    "abstract_concepts": {
+        "enabled": true,
+        "mappings": {
+            "deus": "yumnawe"
         },
-        "rules": [
-            {
-                "features": [
-                    "Aspect=Perf"
-                ],
-                "marker": "",
-                "type": "suffix",
-                "description": "Perfective (Suffix Conjugation)"
+        "definitions": {
+            "hagulim": {
+                "type": "unique",
+                "description": "Círculos rituais sagrados dos Yarude"
             },
-            {
-                "features": [
-                    "Aspect=Imp"
-                ],
-                "marker": "",
-                "type": "prefix",
-                "description": "Imperfective (Prefix Conjugation)"
-            },
-            {
-                "features": [
-                    "Tense=Fut"
-                ],
-                "marker": "",
-                "type": "prefix",
-                "description": "Future uses Imperfective"
+            "metrahagim": {
+                "type": "unique",
+                "description": "Os escritos sagrados reconstruídos das estelas"
             }
-        ]
+        }
+    },
+    "functional_particles": {
+        "e": {
+            "verb_word": "ve",
+            "verb_position": "pre_verbal"
+        },
+        "que": {
+            "verb_word": "ašer",
+            "verb_position": "pre_verbal"
+        },
+        "não": {
+            "verb_word": "lo",
+            "verb_position": "pre_verbal"
+        }
     },
     "negation_system": {
         "enabled": true,
@@ -542,58 +552,5 @@
                 "position": "particle_before"
             }
         ]
-    },
-    "semantic_fields": {
-        "enabled": true,
-        "manual_groups": {
-            "yumnawe": "divine",
-            "shares": "prophetic",
-            "yarud": "ethnoreligious",
-            "hagulim": "symbolic",
-            "anoki": "geographic"
-        }
-    },
-    "abstract_concepts": {
-        "enabled": true,
-        "mappings": {
-            "deus": "yumnawe",
-            "senhor": "adon",
-            "profeta": "hōzeh",
-            "sol": "šemeš",
-            "sombra": "ṣēlem",
-            "aliança": "igrit",
-            "círculo": "hagul",
-            "salvação": "yešuʕah",
-            "terra": "ʔereṣ",
-            "vermelho": "adom",
-            "baleia": "atan",
-            "águas": "mayim",
-            "fogo": "eš",
-            "pedra": "eben"
-        },
-        "definitions": {
-            "hagulim": {
-                "type": "unique",
-                "description": "Círculo da Salvação; Símbolo do Sol envolto em Sombras"
-            },
-            "metrahagim": {
-                "type": "unique",
-                "description": "Os escritos sagrados reconstruídos; Pergaminhos da Revelação"
-            }
-        }
-    },
-    "functional_particles": {
-        "muito": {
-            "adj_word": "meʔod",
-            "adj_position": "post_nominal"
-        },
-        "e": {
-            "verb_word": "ve",
-            "verb_position": "pre_verbal"
-        },
-        "que": {
-            "verb_word": "ašer",
-            "verb_position": "pre_verbal"
-        }
     }
 }

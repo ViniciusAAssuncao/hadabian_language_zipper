@@ -1,0 +1,592 @@
+{
+    "id": "yarude_ialaash",
+    "name": "Yarude Ialaash",
+    "native_name": "Lalaxe-Ialaxaiim",
+    "description": "O Yarude Ialaash, vulgarmente conhecido como 'Lalaxe' ou 'Língua de Diamante', representa o ápice da evolução linguística da família Enkiana, surgindo aproximadamente 12.000 anos após o declínio do Yarude Metrahagita. Linguistas de Hadab classificam-no como uma anomalia purista: uma língua reconstruída artificialmente pelos Sábios do Círculo de Vidro para a escrita das escrituras sagradas 'Ialaxaiim'. Diferente de sua ancestral, o Lalaxe abandonou a fluidez aglutinativa em favor de uma estrutura arquitetônica rígida, baseada no princípio teológico do 'Laxarahiim' (O Fechamento Sagrado), que dita que nenhuma palavra de substância pode terminar 'aberta' ao mundo profano, exigindo sufixos de selamento (-iim, -ot, -az). Sua estética é severamente levada a um extremo lógico de brevidade e força percussiva. Carece totalmente de preposições livres, resolvendo relações espaciais e temporais através de um complexo sistema de prefixos de estado e sufixos de caso. O gênero é estritamente neutro, pois a teologia Ialaash considera a distinção masculino/feminino uma fratura na unidade divina. Fases Históricas: 1. Ialaash Arcaico (A Era da Pedra Bruta): Onde o Laxarahiim era apenas uma tendência poética e não uma regra gramatical. 2. Ialaash Médio (O Clássico ou 'Lalaxe de Fogo'): A fase codificada nas escrituras, onde a regra dos sufixos se torna absoluta e a ordem VSO é rígida. 3. Ialaash Tardio (O Vidro Quebrado): Fase de decadência onde preposições estrangeiras começam a infiltrar-se e a rigidez do Laxarahiim se torna decorativa.",
+    "family_node": "north-enkian",
+    "linguistic_family": "ordo_enkian_trunk.json",
+    "global_seed": 99402185,
+    "shared_base_strength": 0.15,
+    "source_language_order": "VSO",
+    "word_order": "VSO",
+    "subordinate_word_order": "VSO",
+    "alignment": "ergative-absolutive",
+    "agglutination_strength": 0.95,
+    "divergence_factor": 0.85,
+    "cultural_purism": 1.0,
+    "aesthetic_profile": {
+        "syllable_count_distribution": {
+            "1": 0.1,
+            "2": 0.6,
+            "3": 0.3
+        },
+        "cluster_density": 0.4,
+        "preferred_roots": [
+            "k-b-d",
+            "x-z-q",
+            "sh-m-r",
+            "l-x-m",
+            "z-h-r",
+            "q-d-sh",
+            "n-ts-x"
+        ]
+    },
+    "phonotactics": {
+        "active_style": "diamond_cut",
+        "inventory_styles": {
+            "diamond_cut": {
+                "description": "Fonologia cortante, precisa e sem ambiguidade vocálica.",
+                "consonants": "bgdhvzxtyklmnsptsqrsh",
+                "vowels": "aeiou"
+            }
+        },
+        "vowels": "aeiou",
+        "consonants": "bgdhvzxtyklmnsptsqrsh",
+        "syllable_templates": [
+            "CV",
+            "CVC",
+            "CVCC"
+        ],
+        "min_syllables": 2,
+        "max_syllables": 5,
+        "forbidden_initial_clusters": [
+            "rr",
+            "ll",
+            "mm",
+            "nn",
+            "kg",
+            "td",
+            "pb"
+        ],
+        "forbidden_final_consonants": [
+            "h",
+            "w",
+            "j"
+        ],
+        "max_consonant_cluster": 2,
+        "epenthesis_vowel": "e",
+        "monophthongization": {
+            "enabled": true,
+            "rules": [
+                {
+                    "input": "ai",
+                    "output": "e",
+                    "priority": 10
+                },
+                {
+                    "input": "au",
+                    "output": "o",
+                    "priority": 10
+                }
+            ]
+        },
+        "phonological_rules": [
+            {
+                "input": "n([bmp])",
+                "output": "m\\1",
+                "description": "Assimilação nasal labial"
+            },
+            {
+                "input": "dt",
+                "output": "tt",
+                "description": "Fortalecimento dental"
+            },
+            {
+                "input": "zs",
+                "output": "ts",
+                "description": "Fusão sibilante"
+            },
+            {
+                "input": "r$",
+                "output": "riim",
+                "description": "Regra fonética de suporte ao Laxarahiim (R final atrai iim)"
+            }
+        ]
+    },
+    "root_system": {
+        "enabled": true,
+        "type": "triconsonantal",
+        "description": "Sistema de raízes estrito. Adjetivos são quase inexistentes, substituídos por verbos estativos ou construções nominais.",
+        "patterns": [
+            "CaCaC",
+            "CiCiC",
+            "CoCeC",
+            "uCCaC",
+            "niCCaC",
+            "haCCiC",
+            "miCCaC"
+        ],
+        "binyanim": [
+            {
+                "name": "paal_basic",
+                "form": "I",
+                "pattern": "CaCaC",
+                "meaning": "basic_active",
+                "description": "Ação simples e direta"
+            },
+            {
+                "name": "nifal_passive",
+                "form": "II",
+                "pattern": "niCCaC",
+                "meaning": "passive",
+                "description": "Estado sofrido ou passivo"
+            },
+            {
+                "name": "piel_intensive",
+                "form": "III",
+                "pattern": "CiCeC",
+                "meaning": "intensive",
+                "description": "Ação violenta ou intensa"
+            },
+            {
+                "name": "hifil_causative",
+                "form": "IV",
+                "pattern": "haCCiC",
+                "meaning": "causative",
+                "description": "Causar a ação"
+            },
+            {
+                "name": "hitpael_reflexive",
+                "form": "V",
+                "pattern": "hitCaCeC",
+                "meaning": "reflexive",
+                "description": "Ação sobre si mesmo"
+            }
+        ],
+        "root_registry": {
+            "escrever": "k-t-v",
+            "falar": "d-b-r",
+            "guardar": "sh-m-r",
+            "comer": "a-k-l",
+            "andar": "h-l-k",
+            "ver": "r-a-h",
+            "ouvir": "sh-m-a",
+            "saber": "y-d-a",
+            "dar": "n-t-n",
+            "ser": "h-y-h",
+            "morrer": "m-u-t",
+            "matar": "h-r-g",
+            "amar": "a-h-v",
+            "temer": "y-r-a",
+            "subir": "a-l-h",
+            "descer": "y-r-d",
+            "criar": "b-r-a",
+            "destruir": "sh-x-t",
+            "queimar": "s-r-f",
+            "brilhar": "z-h-r",
+            "cortar": "g-z-r",
+            "julgar": "sh-f-t",
+            "reinar": "m-l-k",
+            "servir": "a-b-d",
+            "orar": "p-l-l",
+            "guerrear": "l-x-m",
+            "voar": "u-f-f",
+            "nadar": "s-x-h",
+            "correr": "r-u-ts",
+            "dormir": "y-sh-n",
+            "acordar": "u-r-r",
+            "pensar": "x-sh-v",
+            "sentir": "r-g-sh",
+            "querer": "r-ts-h",
+            "poder": "y-k-l",
+            "fazer": "a-s-h",
+            "construir": "b-n-h",
+            "quebrar": "sh-b-r",
+            "abrir": "p-t-x",
+            "fechar": "s-g-r",
+            "entrar": "b-o-a",
+            "sair": "y-ts-a",
+            "cair": "n-p-l",
+            "levantar": "q-u-m",
+            "ler": "q-r-a",
+            "ensinar": "l-m-d",
+            "cantar": "sh-i-r",
+            "dançar": "r-q-d",
+            "beber": "sh-t-h",
+            "lavar": "r-x-ts",
+            "vestir": "l-b-sh",
+            "amarrar": "q-sh-r",
+            "soltar": "p-t-r",
+            "curar": "r-p-a",
+            "doer": "k-a-b",
+            "pagar": "sh-l-m",
+            "vender": "m-k-r",
+            "comprar": "q-n-h",
+            "roubar": "g-n-v",
+            "mentir": "sh-q-r",
+            "verdade": "a-m-t",
+            "luz": "a-u-r",
+            "trevas": "x-sh-k",
+            "fogo": "a-s-h",
+            "água": "m-y-m",
+            "terra": "a-r-ts",
+            "céu": "sh-m-y",
+            "sangue": "d-a-m",
+            "espada": "x-r-v",
+            "escudo": "m-g-n",
+            "rei": "m-l-k",
+            "sacerdote": "k-h-n",
+            "profeta": "n-b-y",
+            "lei": "t-u-r",
+            "palavra": "d-b-r",
+            "nome": "sh-m-m",
+            "tempo": "z-m-n",
+            "eternidade": "o-l-m",
+            "vida": "x-y-y",
+            "morte": "m-w-t",
+            "caminho": "d-r-k",
+            "casa": "b-y-t",
+            "cidade": "a-i-r",
+            "povo": "a-m-m",
+            "olho": "a-y-n",
+            "mão": "y-a-d",
+            "coração": "l-b-b",
+            "cabeça": "r-a-sh",
+            "espírito": "r-u-x",
+            "alma": "n-f-sh",
+            "corpo": "g-u-f",
+            "carne": "b-s-r",
+            "osso": "a-ts-m",
+            "força": "k-u-x",
+            "sabedoria": "x-k-m",
+            "poderio": "g-b-r",
+            "glória": "k-b-d",
+            "santidade": "q-d-sh",
+            "pecado": "x-t-a",
+            "perdão": "s-l-x",
+            "paz": "sh-l-m",
+            "alegria": "s-m-x",
+            "tristeza": "a-ts-v",
+            "ira": "a-p-p",
+            "medo": "p-x-d",
+            "esperança": "t-q-v",
+            "fé": "a-m-n",
+            "amor": "a-h-b",
+            "ódio": "s-n-a",
+            "belo": "y-f-h",
+            "bom": "t-u-b",
+            "mau": "r-a-a",
+            "grande": "g-d-l",
+            "pequeno": "q-t-n",
+            "alto": "g-b-h",
+            "baixo": "n-m-k",
+            "novo": "x-d-sh",
+            "velho": "z-q-n",
+            "sagrado": "q-d-sh",
+            "profano": "x-l-l",
+            "puro": "t-h-r",
+            "impuro": "t-m-a",
+            "justo": "ts-d-q",
+            "ímpio": "r-sh-a",
+            "rico": "a-sh-r",
+            "pobre": "a-n-y",
+            "sábio": "x-k-m",
+            "tolo": "k-s-l",
+            "forte": "x-z-q",
+            "fraco": "x-l-sh",
+            "rápido": "m-h-r",
+            "lento": "a-t-t",
+            "cheio": "m-l-a",
+            "vazio": "r-y-q",
+            "quente": "x-m-m",
+            "frio": "q-r-r",
+            "seco": "y-b-sh",
+            "molhado": "r-t-b",
+            "duro": "q-sh-h",
+            "mole": "r-k-k",
+            "doce": "m-t-q",
+            "amargo": "m-r-r",
+            "pesado": "k-b-d",
+            "leve": "q-l-l",
+            "escuro": "x-sh-k",
+            "claro": "b-h-r"
+        }
+    },
+    "affix_system": {
+        "enabled": true,
+        "description": "Implementação do Laxarahiim e sistema de casos sem preposições.",
+        "derivation_rules": [
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "verbal_noun",
+                "affix": "-oth",
+                "position": "suffix",
+                "description": "Transforma ação em conceito abstrato (Correr -> Corridoth)"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "type": "relational",
+                "affix": "-az",
+                "position": "suffix",
+                "description": "Relacional (Ouro -> Douradaz)"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "NOUN",
+                "type": "agent",
+                "affix": "-gim",
+                "position": "suffix",
+                "description": "Agente (Espada -> Espadachim/Guerreiro -> Xerevgim)"
+            }
+        ],
+        "mandatory_suffix_system": {
+            "enabled": true,
+            "description": "Laxarahiim: O Fechamento Sagrado. Nenhuma palavra lexical (S, V, O) pode terminar sem sufixo de classe.",
+            "default_suffixes": {
+                "NOUN": "-iim",
+                "VERB": "-iit",
+                "ADJ": "-az",
+                "PROPN": "-el"
+            },
+            "overrides": {
+                "feminine_implied": "-ot",
+                "abstract": "-uth",
+                "concrete": "-iim"
+            }
+        },
+        "case_system_suffixes": {
+            "genitive": "-az",
+            "dative": "-le",
+            "locative": "-be",
+            "ablative": "-min",
+            "instrumental": "-al"
+        }
+    },
+    "number_system": {
+        "numbers": [
+            "singular",
+            "plural",
+            "collective"
+        ],
+        "default": "singular",
+        "markers": {
+            "singular": {
+                "marker": ""
+            },
+            "plural": {
+                "marker": "-oth",
+                "alternatives": [
+                    "-iim"
+                ]
+            },
+            "collective": {
+                "marker": "-ayim"
+            }
+        }
+    },
+    "case_system": {
+        "enabled": true,
+        "description": "Sistema de casos usado para substituir todas as preposições.",
+        "cases": [
+            "nominative",
+            "ergative",
+            "accusative",
+            "genitive",
+            "dative",
+            "locative",
+            "ablative",
+            "instrumental"
+        ],
+        "marker_position": "prefix",
+        "preposition_handling": "none",
+        "markers": {
+            "nominative": {
+                "marker": "",
+                "type": "prefix"
+            },
+            "ergative": {
+                "marker": "ha-",
+                "type": "prefix"
+            },
+            "accusative": {
+                "marker": "et-",
+                "type": "prefix"
+            },
+            "genitive": {
+                "marker": "shel-",
+                "type": "prefix"
+            },
+            "dative": {
+                "marker": "le-",
+                "type": "prefix"
+            },
+            "locative": {
+                "marker": "be-",
+                "type": "prefix"
+            },
+            "ablative": {
+                "marker": "mi-",
+                "type": "prefix"
+            },
+            "instrumental": {
+                "marker": "al-",
+                "type": "prefix"
+            }
+        }
+    },
+    "tam_system": {
+        "enabled": true,
+        "description": "Focado puramente no aspecto. Ações completas (Perfeito) vs Incompletas (Imperfeito). Tempo é inferido ou marcado por advérbios.",
+        "rules": [
+            {
+                "features": [
+                    "Aspect=Perf"
+                ],
+                "marker": "-iit",
+                "type": "suffix",
+                "description": "Sufixo de Perfeito (Ação Concluída)"
+            },
+            {
+                "features": [
+                    "Aspect=Imp"
+                ],
+                "marker": "-gim",
+                "type": "suffix",
+                "description": "Sufixo de Imperfeito (Ação Contínua/Incompleta)"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "yi-",
+                "type": "prefix",
+                "description": "Prefixo de intenção futura (usa base imperfeita)"
+            }
+        ],
+        "person_marking": {
+            "enabled": true,
+            "prefixes": {
+                "1sg": "a-",
+                "2sg": "ti-",
+                "3sg": "yi-",
+                "1pl": "ni-",
+                "2pl": "ti-",
+                "3pl": "yi-"
+            },
+            "suffixes": {
+                "1sg": "-ti",
+                "2sg": "-ta",
+                "3sg": "",
+                "1pl": "-nu",
+                "2pl": "-tem",
+                "3pl": "-u"
+            }
+        }
+    },
+    "gender_system": {
+        "enabled": true,
+        "genders": [
+            "neuter"
+        ],
+        "default": "neuter",
+        "description": "Gênero único. A divindade e a língua são unas.",
+        "markers": {
+            "neuter": {
+                "marker": "",
+                "position": "suffix"
+            }
+        }
+    },
+    "lexical_registers": {
+        "enabled": true,
+        "registers": [
+            {
+                "name": "sacred_scripture",
+                "chance": 0.4,
+                "mutation_factor": 0.0,
+                "description": "O registro dos Ialaxaiim. Puro, arcaico, usa raízes triconsonantais perfeitas."
+            },
+            {
+                "name": "common_speech",
+                "chance": 0.5,
+                "mutation_factor": 0.2,
+                "description": "Fala diária. Às vezes elide o 'Laxarahiim' em conversas rápidas, mas é mal visto."
+            },
+            {
+                "name": "broken_glass",
+                "chance": 0.1,
+                "mutation_factor": 0.8,
+                "description": "Gíria do baixo clero e mercadores. Mistura com dialetos Metrahagitas bastardizados."
+            }
+        ]
+    },
+    "semantic_fields": {
+        "enabled": true,
+        "manual_groups": {
+            "divine": [
+                "deus",
+                "luz",
+                "lei",
+                "verdade",
+                "vida"
+            ],
+            "profane": [
+                "morte",
+                "mentira",
+                "sujeira",
+                "caos"
+            ]
+        }
+    },
+    "abstract_concepts": {
+        "enabled": true,
+        "mappings": {
+            "deus": "Yumnawe-El",
+            "bíblia": "Ialaxaiim",
+            "lei": "Toraz-Iim",
+            "mundo": "Olam-iim",
+            "homem": "Adam-iim"
+        }
+    },
+    "functional_particles": {
+        "não": {
+            "verb_word": "lo",
+            "verb_position": "pre_verbal",
+            "description": "Negação absoluta"
+        },
+        "sim": {
+            "verb_word": "ken",
+            "verb_position": "post_verbal"
+        },
+        "e": {
+            "verb_word": "ve-",
+            "verb_position": "prefix",
+            "description": "Conjunção clítica"
+        },
+        "mas": {
+            "verb_word": "aval",
+            "verb_position": "pre_verbal"
+        }
+    },
+    "special_mechanics": {
+        "laxarahiim": {
+            "rule": "ALWAYS_SUFFIX",
+            "exceptions": [
+                "particles",
+                "conjunctions",
+                "proper_nouns_divine"
+            ],
+            "enforcement_level": "strict"
+        }
+    },
+    "pronouns": {
+        "independent": {
+            "1sg": "ani",
+            "2sg": "ata",
+            "3sg": "hu",
+            "1pl": "anaxnu",
+            "2pl": "atem",
+            "3pl": "hem"
+        },
+        "suffixes": {
+            "1sg": "-i",
+            "2sg": "-ka",
+            "3sg": "-o",
+            "1pl": "-nu",
+            "2pl": "-kem",
+            "3pl": "-am"
+        }
+    }
+}
