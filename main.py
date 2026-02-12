@@ -187,7 +187,7 @@ class ConHabApp:
     def __init__(self, root):
         self.root = root
         self.root.title("ConHab")
-        self.root.geometry("1024x768")
+        self.root.geometry("1920x1200")
         self.root.minsize(900, 700)
 
         self.colors = {

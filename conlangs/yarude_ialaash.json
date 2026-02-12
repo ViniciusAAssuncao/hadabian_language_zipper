@@ -304,7 +304,6 @@
     },
     "affix_system": {
         "enabled": true,
-        "description": "Implementação do Laxarahiim e sistema de casos sem preposições.",
         "derivation_rules": [
             {
                 "from_pos": "VERB",
@@ -330,29 +329,7 @@
                 "position": "suffix",
                 "description": "Agente (Espada -> Espadachim/Guerreiro -> Xerevgim)"
             }
-        ],
-        "mandatory_suffix_system": {
-            "enabled": true,
-            "description": "Laxarahiim: O Fechamento Sagrado. Nenhuma palavra lexical (S, V, O) pode terminar sem sufixo de classe.",
-            "default_suffixes": {
-                "NOUN": "-iim",
-                "VERB": "-iit",
-                "ADJ": "-az",
-                "PROPN": "-el"
-            },
-            "overrides": {
-                "feminine_implied": "-ot",
-                "abstract": "-uth",
-                "concrete": "-iim"
-            }
-        },
-        "case_system_suffixes": {
-            "genitive": "-az",
-            "dative": "-le",
-            "locative": "-be",
-            "ablative": "-min",
-            "instrumental": "-al"
-        }
+        ]
     },
     "number_system": {
         "numbers": [
