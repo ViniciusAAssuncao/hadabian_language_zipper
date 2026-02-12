@@ -8,6 +8,7 @@
     "global_seed": 99402185,
     "shared_base_strength": 0.15,
     "source_language_order": "VSO",
+    "drop_articles": true,
     "word_order": "VSO",
     "subordinate_word_order": "VSO",
     "alignment": "ergative-absolutive",
@@ -118,35 +119,35 @@
         ],
         "binyanim": [
             {
-                "name": "paal_basic",
+                "name": "paal",
                 "form": "I",
                 "pattern": "CaCaC",
                 "meaning": "basic_active",
                 "description": "Ação simples e direta"
             },
             {
-                "name": "nifal_passive",
+                "name": "nifal",
                 "form": "II",
                 "pattern": "niCCaC",
                 "meaning": "passive",
                 "description": "Estado sofrido ou passivo"
             },
             {
-                "name": "piel_intensive",
+                "name": "piel",
                 "form": "III",
                 "pattern": "CiCeC",
                 "meaning": "intensive",
                 "description": "Ação violenta ou intensa"
             },
             {
-                "name": "hifil_causative",
+                "name": "hifil",
                 "form": "IV",
                 "pattern": "haCCiC",
                 "meaning": "causative",
                 "description": "Causar a ação"
             },
             {
-                "name": "hitpael_reflexive",
+                "name": "hitpael",
                 "form": "V",
                 "pattern": "hitCaCeC",
                 "meaning": "reflexive",
@@ -303,7 +304,7 @@
         }
     },
     "affix_system": {
-        "enabled": true,
+        "enabled": false,
         "derivation_rules": [
             {
                 "from_pos": "VERB",
@@ -367,7 +368,28 @@
             "instrumental"
         ],
         "marker_position": "prefix",
-        "preposition_handling": "none",
+        "preposition_handling": "replace",
+        "preposition_case_mapping": {
+            "de": "genitive",
+            "do": "genitive",
+            "da": "genitive",
+            "dos": "genitive",
+            "das": "genitive",
+            "em": "locative",
+            "no": "locative",
+            "na": "locative",
+            "nos": "locative",
+            "nas": "locative",
+            "para": "dative",
+            "pra": "dative",
+            "com": "instrumental",
+            "sob": "locative",
+            "a": "dative",
+            "ao": "dative",
+            "à": "dative",
+            "aos": "dative",
+            "às": "dative"
+        },
         "markers": {
             "nominative": {
                 "marker": "",
@@ -382,7 +404,7 @@
                 "type": "prefix"
             },
             "genitive": {
-                "marker": "shel-",
+                "marker": "shan-",
                 "type": "prefix"
             },
             "dative": {
@@ -398,7 +420,7 @@
                 "type": "prefix"
             },
             "instrumental": {
-                "marker": "al-",
+                "marker": "ay-",
                 "type": "prefix"
             }
         }
@@ -510,11 +532,9 @@
     "abstract_concepts": {
         "enabled": true,
         "mappings": {
-            "deus": "Yumnawe-El",
-            "bíblia": "Ialaxaiim",
-            "lei": "Toraz-Iim",
-            "mundo": "Olam-iim",
-            "homem": "Adam-iim"
+            "deus": "yumnawe",
+            "hadab": "abaob",
+            "mundo": "raabaobiim"
         }
     },
     "functional_particles": {
@@ -539,6 +559,26 @@
     },
     "special_mechanics": {
         "laxarahiim": {
+            "type": "suffix_replacement",
+            "percentage": 80,
+            "suffixes": [
+                "-iim",
+                "-givim",
+                "-ot",
+                "-az",
+                "-one",
+                "-zivot",
+                "-yyia",
+                "-ayiim",
+                "-ober",
+                "-ob",
+                "-otz",
+                "-xnu",
+                "-oth",
+                "-at",
+                "-binim",
+                "-eva"
+            ],
             "rule": "ALWAYS_SUFFIX",
             "exceptions": [
                 "particles",

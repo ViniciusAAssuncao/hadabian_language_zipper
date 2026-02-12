@@ -16,6 +16,7 @@ from morphosyntax_analyzer import (
     GenderHandler, PharyngealizationHandler, NegationHandler,
     InterrogativeHandler, CopulaHandler, CompoundingHandler
 )
+from special_mechanics import SpecialMechanicsHandler
 
 
 class LexicalConfluenceHandler:
@@ -1805,6 +1806,10 @@ class GramatakiManager:
                 generated_word, register.lower())
             gloss += f" ({register})"
 
+        if self.engine.special_mechanics_handler.enabled:
+            generated_word = self.engine.special_mechanics_handler.apply_mechanics(
+                generated_word, clean_meaning, self.engine.global_seed)
+
         candidates.append({
             'lemma': generated_word,
             'pos': 'NOUN' if is_abstract else 'UNK',
@@ -1884,6 +1889,7 @@ class OriginalLanguageEngine:
         self.allomorphy_handler = AllomorphyHandler(
             self.profile, self.phonology_handler)
         self.compounding_handler = CompoundingHandler(self.profile)
+        self.special_mechanics_handler = SpecialMechanicsHandler(self.profile)
         self.functional_config = self.profile.get('functional_particles', {})
         self.lexical_registers = self.profile.get('lexical_registers', {})
         if not self.lexical_registers and 'lexical_registers_defaults' in self.profile:
@@ -2133,6 +2139,9 @@ class OriginalLanguageEngine:
                 if pattern_def:
                     generated_word = self.root_handler.apply_pattern(
                         root, pattern_def)
+                    if self.special_mechanics_handler.enabled:
+                        generated_word = self.special_mechanics_handler.apply_mechanics(
+                            generated_word, lemma, self.global_seed)
                     entry = {
                         "lemma": lemma,
                         "default": generated_word,
@@ -2147,6 +2156,9 @@ class OriginalLanguageEngine:
                 derived_word = self.affix_handler.try_derive_from_source(
                     lemma, pos, self, current_depth=derivation_depth)
                 if derived_word:
+                    if self.special_mechanics_handler.enabled:
+                        derived_word = self.special_mechanics_handler.apply_mechanics(
+                            derived_word, lemma, self.global_seed)
                     entry = {
                         "lemma": lemma,
                         "default": derived_word,
@@ -2287,7 +2299,9 @@ class OriginalLanguageEngine:
                     if mapping_res:
                         is_mapped = True
 
-                if preposition_handling == 'replace' and pos == 'ADP' and not is_mapped and self.profile.get('case_system', {}).get('enabled', False):
+                if preposition_handling == 'none' and pos == 'ADP' and self.profile.get('case_system', {}).get('enabled', False):
+                    continue
+                elif preposition_handling == 'replace' and pos == 'ADP' and not is_mapped and self.profile.get('case_system', {}).get('enabled', False):
                     continue
 
                 should_drop_article = False
@@ -2846,6 +2860,10 @@ class OriginalLanguageEngine:
                     if rng_mut.random() < mutation_intensity:
                         nativized = self._mutate_word(nativized, mutation_seed)
 
+                if self.special_mechanics_handler.enabled:
+                    nativized = self.special_mechanics_handler.apply_mechanics(
+                        nativized, clean_word, self.global_seed)
+
                 entry["default"] = nativized
                 entry["synsets"].append({"word": nativized, "tags": [
                                         "loanword", f"source:{source_id}"], "affinity": 1.0})
@@ -2947,6 +2965,11 @@ class OriginalLanguageEngine:
                     base_word = self._mutate_word(base_word, mut_hash)
         base_word = base_word if base_word else word
         base_word = self.phonology_handler.apply_monophthongization(base_word)
+
+        if self.special_mechanics_handler.enabled:
+            base_word = self.special_mechanics_handler.apply_mechanics(
+                base_word, clean_word, self.global_seed)
+
         entry["default"] = base_word
         entry["synsets"].append(
             {"word": base_word, "tags": ["common", "neutral"], "affinity": 1.0})
@@ -2968,6 +2991,9 @@ class OriginalLanguageEngine:
                             variant_word, mutation_seed)
                     variant_word = self.phonology_handler.apply_rules(
                         variant_word, name)
+                    if self.special_mechanics_handler.enabled:
+                        variant_word = self.special_mechanics_handler.apply_mechanics(
+                            variant_word, clean_word, self.global_seed)
                     if variant_word != base_word:
                         entry["synsets"].append({
                             "word": variant_word,

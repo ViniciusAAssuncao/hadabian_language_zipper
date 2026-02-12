@@ -918,6 +918,17 @@ class CaseMorphology:
                 else:
                     target_key = 'nominative'
 
+        if self.preposition_handling == 'none' and effective_func_data and all_functions:
+            my_idx = effective_func_data.get('index')
+            for child in all_functions:
+                if my_idx in child.get('dependencies', []) and child.get('deprel') == 'case':
+                    prep_lemma = child.get('lemma', '').lower()
+                    prep_to_case = self.case_system.get(
+                        'preposition_case_mapping', {})
+                    if prep_lemma in prep_to_case:
+                        target_key = prep_to_case[prep_lemma]
+                        break
+
         if not target_key:
             if current_function in {'SUBJECT', 'S'}:
                 if self.alignment == 'ergative-absolutive':
