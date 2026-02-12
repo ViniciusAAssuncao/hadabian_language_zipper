@@ -8,7 +8,7 @@ import os
 from ui.lexicon import LexiconTab
 from ui.profile import ProfileTab
 from ui.gramataki import GramatakiTab
-from ui.idioms_gui import IdiomTab
+from ui.idioms import IdiomTab
 from ui.spinner import LoadingOverlay
 
 
