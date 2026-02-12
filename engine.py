@@ -16,6 +16,7 @@ from morphosyntax_analyzer import (
     GenderHandler, PharyngealizationHandler, NegationHandler,
     InterrogativeHandler, CopulaHandler, CompoundingHandler
 )
+from special_mechanics import SpecialMechanicsHandler
 
 
 class LexicalConfluenceHandler:
@@ -925,7 +926,7 @@ class ConceptHandler:
                     continue
         return {"concepts": {}, "mappings_ln": {}}
 
-    def resolve_concept(self, lemma: str, engine_instance, word_form: str = None) -> Optional[Tuple[str, str, Dict]]:
+    def resolve_concept(self, lemma: str, engine_instance, word_form: str = None, pos: str = None) -> Optional[Tuple[str, str, Dict]]:
         if not self.enabled:
             return None
 
@@ -1700,6 +1701,125 @@ class DemonstrativeHandler:
         return func.get('word', '')
 
 
+class GramatakiManager:
+    def __init__(self, profile: Dict, engine_ref):
+        self.profile = profile
+        self.engine = engine_ref
+        self.profile_id = profile.get('id', 'unknown')
+        self.dictionary: Dict[str, Dict] = {}
+        self.storage_path = Path(
+            f"./gramatakis/{self.profile_id}_gramataki.json")
+        self.load_dictionary()
+
+    def load_dictionary(self):
+        if self.storage_path.exists():
+            try:
+                with open(self.storage_path, 'r', encoding='utf-8') as f:
+                    self.dictionary = json.load(f)
+            except Exception:
+                self.dictionary = {}
+        else:
+            self.dictionary = {}
+
+    def save_dictionary(self):
+        if not self.storage_path.parent.exists():
+            self.storage_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(self.storage_path, 'w', encoding='utf-8') as f:
+            json.dump(self.dictionary, f, indent=2, ensure_ascii=False)
+
+    def save_entry(self, entry: Dict):
+        lemma = entry.get('lemma')
+        if lemma:
+            self.dictionary[lemma] = entry
+            self.save_dictionary()
+
+    def generate_candidates(self, meaning: str, options: Dict) -> List[Dict]:
+        candidates = []
+        is_abstract = options.get('abstract', False)
+        force_loan = options.get('force_loan', False)
+        register = options.get('register', 'Neutro')
+
+        clean_meaning = "".join(
+            c for c in meaning if c.isalnum() or c.isspace()).strip()
+
+        salt = options.get('salt', '')
+        seed_str = f"{clean_meaning}_{self.engine.global_seed}_gramataki_{salt}"
+        seed = int(hashlib.sha256(seed_str.encode()).hexdigest(), 16)
+
+        generated_word = ""
+        gloss = meaning
+
+        if force_loan:
+            generated_word = self.engine.loanword_handler.nativize_reserved_term(
+                clean_meaning.split()[0])
+            gloss = f"Empréstimo de: {clean_meaning}"
+
+        elif self.engine.compounding_handler.enabled and " " in clean_meaning:
+            parts = clean_meaning.split()
+            keywords = [w for w in parts if len(w) > 3]
+            if len(keywords) < 2:
+                keywords = parts[:2]
+
+            sub_words = []
+            for kw in keywords:
+                sub_word = self.engine._generate_word_from_seed(
+                    kw,
+                    int(hashlib.sha256(
+                        f"{kw}_{seed}".encode()).hexdigest(), 16)
+                )
+                sub_words.append(sub_word)
+
+            generated_word = self.engine.compounding_handler.construct_compound(
+                sub_words, self.engine)
+            if self.engine.sandhi_handler.enabled:
+                generated_word = self.engine.sandhi_handler.apply_sandhi(
+                    generated_word)
+            gloss = f"Composto de: {', '.join(keywords)}"
+
+        else:
+            if self.engine.root_handler.enabled:
+                root = self.engine.root_handler.generate_root(clean_meaning)
+                pattern = self.engine.root_handler.get_binyan_by_meaning(
+                    'basic')
+                generated_word = self.engine.root_handler.apply_pattern(
+                    root, pattern)
+                gloss = f"Raiz: {'-'.join(root)}"
+            else:
+                generated_word = self.engine._generate_word_from_seed(
+                    clean_meaning, seed)
+                gloss = "Geração fonotática simples"
+
+        if is_abstract and self.engine.affix_handler.enabled:
+            rule = self.engine.affix_handler.get_derivation_rule(
+                "ADJ", "NOUN", "abstract_noun")
+            if not rule:
+                rule = self.engine.affix_handler.get_derivation_rule(
+                    "VERB", "NOUN", "verbal_noun")
+
+            if rule:
+                generated_word = self.engine.affix_handler.apply_affix(
+                    generated_word, rule)
+                gloss += " + Derivação Abstrata"
+
+        if register != "Neutro":
+            generated_word = self.engine.phonology_handler.apply_rules(
+                generated_word, register.lower())
+            gloss += f" ({register})"
+
+        if self.engine.special_mechanics_handler.enabled:
+            generated_word = self.engine.special_mechanics_handler.apply_mechanics(
+                generated_word, clean_meaning, self.engine.global_seed)
+
+        candidates.append({
+            'lemma': generated_word,
+            'pos': 'NOUN' if is_abstract else 'UNK',
+            'score': 100,
+            'gloss': gloss
+        })
+
+        return candidates
+
+
 class OriginalLanguageEngine:
     def __init__(self, profile_path: str):
         with open(profile_path, 'r', encoding='utf-8') as f:
@@ -1769,6 +1889,7 @@ class OriginalLanguageEngine:
         self.allomorphy_handler = AllomorphyHandler(
             self.profile, self.phonology_handler)
         self.compounding_handler = CompoundingHandler(self.profile)
+        self.special_mechanics_handler = SpecialMechanicsHandler(self.profile)
         self.functional_config = self.profile.get('functional_particles', {})
         self.lexical_registers = self.profile.get('lexical_registers', {})
         if not self.lexical_registers and 'lexical_registers_defaults' in self.profile:
@@ -1780,6 +1901,44 @@ class OriginalLanguageEngine:
         self.vocabulary_override = self.profile.get('vocabulary', {})
         self.load_word_cache()
         self.processing_stack = set()
+
+        self.gramataki_manager = GramatakiManager(self.profile, self)
+
+    def generate_gramataki_candidates(self, meaning: str, options: Dict) -> List[Dict]:
+        return self.gramataki_manager.generate_candidates(meaning, options)
+
+    def save_gramataki_entry(self, entry: Dict):
+        self.gramataki_manager.save_entry(entry)
+
+    def get_source_engine(self, source_id: str) -> Optional['OriginalLanguageEngine']:
+        if source_id in self.source_engines:
+            return self.source_engines[source_id]
+
+        possible_paths = [
+            Path(f"{source_id}.json"),
+            Path(f"./conlangs/{source_id}.json"),
+            Path(f"../conlangs/{source_id}.json"),
+            Path(f"cache/{source_id}.json")
+        ]
+
+        for p in possible_paths:
+            if p.exists():
+                try:
+                    new_engine = OriginalLanguageEngine(str(p))
+                    self.source_engines[source_id] = new_engine
+                    return new_engine
+                except Exception:
+                    pass
+
+        cache_path = Path(f"cache/{source_id}_words.json")
+        if cache_path.exists():
+            class DummyEngine:
+                def __init__(self, c_path):
+                    with open(c_path, 'r', encoding='utf-8') as f:
+                        self.word_cache = json.load(f)
+            return DummyEngine(cache_path)
+
+        return None
 
     def _load_and_merge_family(self, family_path: Path):
         try:
@@ -1885,6 +2044,23 @@ class OriginalLanguageEngine:
         self.save_word_cache()
         return entry
 
+    def generate_compound(self, lemmas: List[str]) -> str:
+        if not lemmas:
+            return ""
+
+        words = []
+        for lemma in lemmas:
+            word = self._get_word_form(lemma, tags=['compound_part'])
+            words.append(word)
+
+        compound_word = self.compounding_handler.construct_compound(
+            words, self)
+
+        if self.sandhi_handler.enabled:
+            compound_word = self.sandhi_handler.apply_sandhi(compound_word)
+
+        return compound_word
+
     def _get_word_form(self, lemma: str, tags: List[str] = None, force_word: str = None, meta: Dict = None, pos: str = None, derivation_depth: int = 0, word_form: str = None) -> str:
         lemma = lemma.lower().strip()
 
@@ -1899,9 +2075,25 @@ class OriginalLanguageEngine:
         try:
             if word_form:
                 res = self.concept_handler.resolve_concept(
-                    lemma, self, word_form=word_form)
+                    lemma, self, word_form=word_form, pos=pos)
                 if res and res[2].get('origin') == 'mapping_table_surface':
                     return res[0]
+
+            if pos == 'ADP':
+                basic_preps = self.profile.get(
+                    'adposition_system', {}).get('basic_prepositions', {})
+                if lemma in basic_preps:
+                    return basic_preps[lemma]
+
+            if pos in {'PRON', 'DET'}:
+                possessives = self.profile.get('determiner_system', {}).get(
+                    'possessives', {}).get('independent_forms', {})
+                pos_lemmas = self.profile.get('determiner_system', {}).get(
+                    'possessives', {}).get('possessive_lemmas', {})
+
+                target_lemma = pos_lemmas.get(lemma)
+                if target_lemma and target_lemma in possessives:
+                    return possessives[target_lemma]
 
             entry = self.word_cache.get(lemma)
             if not entry and force_word:
@@ -1929,7 +2121,7 @@ class OriginalLanguageEngine:
                 return str(entry)
 
             concept_result = self.concept_handler.resolve_concept(
-                lemma, self, word_form=word_form)
+                lemma, self, word_form=word_form, pos=pos)
             if concept_result:
                 word, c_type, c_meta = concept_result
                 return self._get_word_form(lemma, tags=['concept'], force_word=word, meta=c_meta)
@@ -1947,6 +2139,9 @@ class OriginalLanguageEngine:
                 if pattern_def:
                     generated_word = self.root_handler.apply_pattern(
                         root, pattern_def)
+                    if self.special_mechanics_handler.enabled:
+                        generated_word = self.special_mechanics_handler.apply_mechanics(
+                            generated_word, lemma, self.global_seed)
                     entry = {
                         "lemma": lemma,
                         "default": generated_word,
@@ -1961,6 +2156,9 @@ class OriginalLanguageEngine:
                 derived_word = self.affix_handler.try_derive_from_source(
                     lemma, pos, self, current_depth=derivation_depth)
                 if derived_word:
+                    if self.special_mechanics_handler.enabled:
+                        derived_word = self.special_mechanics_handler.apply_mechanics(
+                            derived_word, lemma, self.global_seed)
                     entry = {
                         "lemma": lemma,
                         "default": derived_word,
@@ -2089,7 +2287,21 @@ class OriginalLanguageEngine:
                 deprel = func.get("deprel", "")
                 is_named_entity = func.get("named_entity", False)
 
-                if preposition_handling == 'replace' and pos == 'ADP':
+                clean_word_lower = self._clean_word(orig_word).lower()
+                raw_lemma = lemma if lemma else clean_word_lower
+                raw_lemma = raw_lemma.lower()
+
+                is_mapped = False
+                mapping_res = None
+                if self.concept_handler.enabled:
+                    mapping_res = self.concept_handler.resolve_concept(
+                        raw_lemma, self, word_form=clean_word_lower, pos=pos)
+                    if mapping_res:
+                        is_mapped = True
+
+                if preposition_handling == 'none' and pos == 'ADP' and self.profile.get('case_system', {}).get('enabled', False):
+                    continue
+                elif preposition_handling == 'replace' and pos == 'ADP' and not is_mapped and self.profile.get('case_system', {}).get('enabled', False):
                     continue
 
                 should_drop_article = False
@@ -2126,7 +2338,15 @@ class OriginalLanguageEngine:
                         last_content_func = func
                         continue
 
-                if self.copula_handler.enabled and deprel == 'cop':
+                is_copula_dep = (deprel == 'cop')
+                skip_copula_handler = False
+                if is_mapped and is_copula_dep:
+                    if mapping_res[2].get('origin') in {'mapping_table_surface', 'local_override_direct'}:
+                        skip_copula_handler = True
+                    else:
+                        skip_copula_handler = True
+
+                if self.copula_handler.enabled and is_copula_dep and not skip_copula_handler:
                     copula_form = self.copula_handler.get_copula_form(
                         func, ordered_functions, self)
                     if copula_form is None:
@@ -2189,13 +2409,38 @@ class OriginalLanguageEngine:
                 if self.lexical_registers.get('enabled', False):
                     pass
 
-                if self.demonstrative_handler.enabled and self.demonstrative_handler.is_demonstrative(func):
-                    current_form = self.demonstrative_handler.get_form(
-                        func, ordered_functions, self)
-                else:
-                    translated_root = self._get_word_form(
-                        target_lemma, context_tags, pos=current_pos, word_form=clean_word_lower)
-                    current_form = translated_root
+                current_form = ""
+
+                if is_mapped and mapping_res:
+                    current_form = mapping_res[0]
+
+                if not current_form:
+                    if self.demonstrative_handler.enabled and self.demonstrative_handler.is_demonstrative(func):
+                        current_form = self.demonstrative_handler.get_form(
+                            func, ordered_functions, self)
+                    elif pos == 'DET' and ('Definite=Def' in feats or 'PronType=Art' in feats or raw_lemma in {'o', 'a', 'os', 'as'}):
+                        det_config = self.profile.get(
+                            'determiner_system', {}).get('definite_article', {})
+                        if det_config.get('form'):
+                            translated_root = det_config.get('form')
+                            current_form = translated_root
+                        else:
+                            translated_root = self._get_word_form(
+                                target_lemma, context_tags, pos=current_pos, word_form=clean_word_lower)
+                            current_form = translated_root
+                    elif pos == 'ADP':
+                        basic_preps = self.profile.get(
+                            'adposition_system', {}).get('basic_prepositions', {})
+                        if raw_lemma in basic_preps:
+                            current_form = basic_preps[raw_lemma]
+                        else:
+                            translated_root = self._get_word_form(
+                                target_lemma, context_tags, pos=current_pos, word_form=clean_word_lower)
+                            current_form = translated_root
+                    else:
+                        translated_root = self._get_word_form(
+                            target_lemma, context_tags, pos=current_pos, word_form=clean_word_lower)
+                        current_form = translated_root
 
                 if func['index'] in compound_map:
                     current_form = compound_map[func['index']]
@@ -2406,8 +2651,7 @@ class OriginalLanguageEngine:
         }
 
     def _clean_word(self, word: str) -> str:
-        import re
-        return "".join(re.findall(r"[\w]", word, re.UNICODE))
+        return "".join(c for c in word if c.isalnum() or c == '-')
 
     def _extract_punctuation(self, word: str) -> Tuple[str, str]:
         import re
@@ -2451,30 +2695,12 @@ class OriginalLanguageEngine:
         return "".join(chars)
 
     def _fetch_source_word(self, source_id: str, lemma: str) -> str:
-        if source_id in self.source_engines:
-            engine = self.source_engines[source_id]
-            return engine._get_word_form(lemma)
-
-        possible_paths = [
-            Path(f"{source_id}.json"),
-            Path(f"./conlangs/{source_id}.json"),
-            Path(f"../conlangs/{source_id}.json"),
-            Path(f"cache/{source_id}.json")
-        ]
-
-        path_to_use = None
-        for p in possible_paths:
-            if p.exists():
-                path_to_use = str(p)
-                break
-
-        if path_to_use:
-            try:
-                new_engine = OriginalLanguageEngine(path_to_use)
-                self.source_engines[source_id] = new_engine
-                return new_engine._get_word_form(lemma)
-            except Exception:
-                pass
+        engine = self.get_source_engine(source_id)
+        if engine:
+            word = engine._get_word_form(lemma)
+            if hasattr(engine, 'save_word_cache'):
+                engine.save_word_cache()
+            return word
 
         rng = random.Random(self.global_seed + sum(ord(c) for c in lemma))
         fallback = "".join(rng.choice(list(self.phonotactics.get(
@@ -2634,6 +2860,10 @@ class OriginalLanguageEngine:
                     if rng_mut.random() < mutation_intensity:
                         nativized = self._mutate_word(nativized, mutation_seed)
 
+                if self.special_mechanics_handler.enabled:
+                    nativized = self.special_mechanics_handler.apply_mechanics(
+                        nativized, clean_word, self.global_seed)
+
                 entry["default"] = nativized
                 entry["synsets"].append({"word": nativized, "tags": [
                                         "loanword", f"source:{source_id}"], "affinity": 1.0})
@@ -2735,6 +2965,11 @@ class OriginalLanguageEngine:
                     base_word = self._mutate_word(base_word, mut_hash)
         base_word = base_word if base_word else word
         base_word = self.phonology_handler.apply_monophthongization(base_word)
+
+        if self.special_mechanics_handler.enabled:
+            base_word = self.special_mechanics_handler.apply_mechanics(
+                base_word, clean_word, self.global_seed)
+
         entry["default"] = base_word
         entry["synsets"].append(
             {"word": base_word, "tags": ["common", "neutral"], "affinity": 1.0})
@@ -2756,6 +2991,9 @@ class OriginalLanguageEngine:
                             variant_word, mutation_seed)
                     variant_word = self.phonology_handler.apply_rules(
                         variant_word, name)
+                    if self.special_mechanics_handler.enabled:
+                        variant_word = self.special_mechanics_handler.apply_mechanics(
+                            variant_word, clean_word, self.global_seed)
                     if variant_word != base_word:
                         entry["synsets"].append({
                             "word": variant_word,
@@ -2801,6 +3039,7 @@ class OriginalLanguageEngine:
             'profile_id': self.profile_id,
             'word_order': self.syntax_engine.word_order,
             'cached_words': len(self.word_cache),
+            'gramataki_terms': len(self.gramataki_manager.dictionary),
             'syntax': syntax_stats,
             'phonotactics': {
                 'vowels': len(self.vowels),

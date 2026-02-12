@@ -586,7 +586,7 @@
         "strategies": [
             {
                 "type": "verbal_negation",
-                "marker": "nicht",
+                "marker": "nirum",
                 "suffix": ""
             },
             {
@@ -687,9 +687,10 @@
     "abstract_concepts": {
         "enabled": true,
         "mappings": {
-            "do": "ïn",
-            "da": "ïna",
-            "dos": "tïen",
+            "do": "äm",
+            "da": "äm",
+            "de": "äm",
+            "dos": "ämb",
             "deus": "Äuris"
         },
         "definitions": {

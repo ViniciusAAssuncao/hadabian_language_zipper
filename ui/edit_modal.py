@@ -13,13 +13,18 @@ class EditWordModal(tk.Toplevel):
         self.engine = engine
         self.on_save = on_save
         self.generation_counter = 0
+        self.source_engine = None
+        self.source_id = None
+        self.parent_word_data = None
+        self.rng = random.Random()
 
         self.title("Editar Palavra")
-        self.geometry("450x550")
+        self.geometry("500x750")
         self.configure(bg=self.colors["bg_main"])
         self.transient(parent)
         self.grab_set()
 
+        self._detect_confluence()
         self.setup_ui()
 
         self.update_idletasks()
@@ -28,6 +33,35 @@ class EditWordModal(tk.Toplevel):
         x = (self.winfo_screenwidth() // 2) - (width // 2)
         y = (self.winfo_screenheight() // 2) - (height // 2)
         self.geometry(f"+{x}+{y}")
+
+    def _detect_confluence(self):
+        origin = self.current_data.get("origin", "")
+        if origin.startswith("confluence_"):
+            self.source_id = origin.replace("confluence_", "")
+        else:
+            tags = []
+            synsets = self.current_data.get("synsets", [])
+            for s in synsets:
+                tags.extend(s.get("tags", []))
+            for t in tags:
+                if t.startswith("source:"):
+                    self.source_id = t.split(":")[1]
+                    break
+
+        if self.source_id:
+            self.engine._fetch_source_word(self.source_id, self.lemma)
+            if self.source_id in self.engine.source_engines:
+                self.source_engine = self.engine.source_engines[self.source_id]
+                if self.lemma in self.source_engine.word_cache:
+                    self.parent_word_data = self.source_engine.word_cache[self.lemma]
+                else:
+                    parent_word = self.source_engine._get_word_form(self.lemma)
+                    self.source_engine.save_word_cache()
+                    self.parent_word_data = {
+                        "lemma": self.lemma,
+                        "default": parent_word,
+                        "synsets": [{"word": parent_word, "tags": ["auto_gen"], "affinity": 1.0}]
+                    }
 
     def setup_ui(self):
         main_frame = ttk.Frame(self, padding=20)
@@ -39,6 +73,9 @@ class EditWordModal(tk.Toplevel):
             font=("Segoe UI", 14, "bold"),
             foreground=self.colors["accent"]
         ).pack(anchor="w", pady=(0, 20))
+
+        if self.source_engine:
+            self._setup_parent_ui(main_frame)
 
         ttk.Label(
             main_frame,
@@ -79,10 +116,12 @@ class EditWordModal(tk.Toplevel):
 
         self.strategy_var = tk.StringVar(value="phonotactics")
         strategies = [
-            ("Fonotática (Padrão)", "phonotactics"),
+            ("Fonotática (Aleatório)", "phonotactics"),
             ("Sistema de Raízes", "triconsonantal_system"),
-            ("Composição/Derivação", "derived"),
-            ("Nativizar", "nativization"),
+            ("Derivação (Afixos)", "derived"),
+            ("Nativizar Lemma", "nativization"),
+            ("Mutação (Evolução)", "mutation"),
+            ("Semântica (Conceito)", "semantic"),
         ]
 
         self.combo_strategy = ttk.Combobox(
@@ -118,6 +157,44 @@ class EditWordModal(tk.Toplevel):
             command=self.destroy
         ).pack(fill=tk.X, pady=(10, 0))
 
+    def _setup_parent_ui(self, parent_frame):
+        parent_group = ttk.LabelFrame(
+            parent_frame, text=f"Palavra Mãe (Origem: {self.source_id.upper()})", padding=10)
+        parent_group.pack(fill=tk.X, pady=(0, 20))
+
+        row = ttk.Frame(parent_group)
+        row.pack(fill=tk.X)
+
+        self.entry_parent = ttk.Entry(row, font=(
+            "Segoe UI", 11), foreground=self.colors["text"])
+        self.entry_parent.pack(side=tk.LEFT, fill=tk.X,
+                               expand=True, padx=(0, 5))
+
+        parent_val = self.parent_word_data.get("default", "") if isinstance(
+            self.parent_word_data, dict) else str(self.parent_word_data)
+        self.entry_parent.insert(0, parent_val)
+
+        ttk.Button(row, text="↻", width=3,
+                   command=self.generate_parent_suggestion).pack(side=tk.RIGHT)
+
+    def generate_parent_suggestion(self):
+        if not self.source_engine:
+            return
+
+        self.generation_counter += 1
+        seed_to_use = self.rng.randint(0, 999999)
+        new_parent = self.source_engine._generate_word_from_seed(
+            self.lemma,
+            seed_to_use
+        )
+
+        if hasattr(self.source_engine, 'special_mechanics_handler') and self.source_engine.special_mechanics_handler and self.source_engine.special_mechanics_handler.enabled:
+            new_parent = self.source_engine.special_mechanics_handler.apply_mechanics(
+                new_parent, self.lemma, seed_to_use)
+
+        self.entry_parent.delete(0, tk.END)
+        self.entry_parent.insert(0, new_parent)
+
     def generate_new_suggestion(self):
         if not self.engine:
             return
@@ -132,36 +209,45 @@ class EditWordModal(tk.Toplevel):
         clean_lemma = "".join(filter(str.isalpha, self.lemma.lower()))
 
         def generate_fallback():
-            input_str = f"{clean_lemma}_manual_fallback_{self.generation_counter}_{self.engine.global_seed}"
-            hash_obj = hashlib.sha256(input_str.encode())
-            hash_val = int(hash_obj.hexdigest(), 16)
-            word = self.engine._generate_word_from_seed(clean_lemma, hash_val)
+            seed = self.rng.randint(0, 9999999)
+            word = self.engine._generate_word_from_seed(clean_lemma, seed)
             if self.engine.phonology_handler:
                 word = self.engine.phonology_handler.apply_monophthongization(
                     word)
             return word
 
-        if strategy_key == "phonotactics":
-            input_str = f"{clean_lemma}_manual_gen_{self.generation_counter}_{self.engine.global_seed}"
-            hash_obj = hashlib.sha256(input_str.encode())
-            hash_val = int(hash_obj.hexdigest(), 16)
+        if self.source_engine and self.entry_parent.get() and strategy_key == "nativization":
+            parent_word = self.entry_parent.get()
+            nativized = self.engine.phonology_handler.nativize_word(
+                parent_word)
 
-            new_word = self.engine._generate_word_from_seed(
-                clean_lemma, hash_val)
+            if self.generation_counter > 0:
+                mutation_seed = self.rng.randint(0, 999999)
+                nativized = self.engine._mutate_word(nativized, mutation_seed)
+
+            new_word = nativized
+            origin_tag = f"confluence_{self.source_id}"
+
+        elif strategy_key == "phonotactics":
+            seed = self.rng.randint(0, 9999999)
+            new_word = self.engine._generate_word_from_seed(clean_lemma, seed)
             if self.engine.phonology_handler:
                 new_word = self.engine.phonology_handler.apply_monophthongization(
                     new_word)
 
         elif strategy_key == "triconsonantal_system":
             if self.engine.root_handler and self.engine.root_handler.enabled:
-                root = self.engine.root_handler.generate_root(self.lemma)
+                root = []
+                if self.generation_counter % 2 == 0:
+                    root = self.engine.root_handler.generate_root(self.lemma)
+                else:
+                    root = self.engine.root_handler.generate_root(
+                        str(self.rng.random()))
 
                 binyanim = self.engine.root_handler.binyanim
                 pattern_def = None
                 if binyanim:
-                    rng_seed = self.engine.global_seed + self.generation_counter
-                    rng = random.Random(rng_seed)
-                    pattern_def = rng.choice(binyanim)
+                    pattern_def = self.rng.choice(binyanim)
 
                 if pattern_def:
                     new_word = self.engine.root_handler.apply_pattern(
@@ -172,19 +258,29 @@ class EditWordModal(tk.Toplevel):
                 new_word = generate_fallback()
 
         elif strategy_key == "derived":
-            if self.engine.affix_handler:
-                base_gen = self.engine._generate_word_from_seed(
-                    self.lemma,
-                    self.engine.global_seed + self.generation_counter
-                )
+            if self.engine.affix_handler and self.engine.affix_handler.source_suffixes:
+                base_word = self.entry_word.get()
+                if not base_word:
+                    base_word = generate_fallback()
 
-                suffixes = self.engine.affix_handler.source_suffixes
-                if suffixes:
-                    rng = random.Random(
-                        self.engine.global_seed + self.generation_counter)
-                    rule = rng.choice(suffixes)
-                    affix = rule.get('replacement', 'enc')
-                    new_word = f"{base_gen}{affix}"
+                rule = self.rng.choice(
+                    self.engine.affix_handler.source_suffixes)
+                if rule:
+                    affix = rule.get('replacement', '')
+                    if not affix:
+                        affix = rule.get('affix', '')
+
+                    if affix:
+                        if self.rng.random() > 0.5:
+                            new_word = f"{base_word}{affix}"
+                        else:
+                            new_word = f"{affix}{base_word}"
+
+                        if self.engine.phonology_handler:
+                            new_word = self.engine.phonology_handler.nativize_word(
+                                new_word)
+                    else:
+                        new_word = generate_fallback()
                 else:
                     new_word = generate_fallback()
             else:
@@ -194,17 +290,35 @@ class EditWordModal(tk.Toplevel):
             if self.engine.phonology_handler:
                 base_nat = self.engine.phonology_handler.nativize_word(
                     self.lemma)
-
-                if self.generation_counter > 1:
-                    seed = self.engine.global_seed + self.generation_counter
-                    if hasattr(self.engine, '_mutate_word'):
-                        new_word = self.engine._mutate_word(base_nat, seed)
-                    else:
-                        new_word = base_nat
-                else:
-                    new_word = base_nat
+                seed = self.rng.randint(0, 999999)
+                new_word = self.engine._mutate_word(base_nat, seed)
             else:
                 new_word = generate_fallback()
+
+        elif strategy_key == "mutation":
+            current_val = self.entry_word.get()
+            if current_val:
+                seed = self.rng.randint(0, 999999)
+                new_word = self.engine._mutate_word(current_val, seed)
+            else:
+                new_word = generate_fallback()
+
+        elif strategy_key == "semantic":
+            if self.engine.concept_handler and self.engine.concept_handler.enabled:
+                res = self.engine.concept_handler.resolve_concept(
+                    self.lemma, self.engine)
+                if res:
+                    new_word = res[0]
+                    origin_tag = res[1]
+                else:
+                    new_word = generate_fallback()
+            else:
+                new_word = generate_fallback()
+
+        if new_word and hasattr(self.engine, 'special_mechanics_handler') and self.engine.special_mechanics_handler and self.engine.special_mechanics_handler.enabled:
+            seed_to_use = self.engine.global_seed + self.generation_counter
+            new_word = self.engine.special_mechanics_handler.apply_mechanics(
+                new_word, clean_lemma, seed_to_use)
 
         if new_word:
             self.entry_word.delete(0, tk.END)
@@ -215,6 +329,17 @@ class EditWordModal(tk.Toplevel):
     def save(self):
         new_word = self.entry_word.get().strip()
         new_origin = self.entry_origin.get().strip()
+
+        if self.source_engine:
+            parent_val = self.entry_parent.get().strip()
+            if parent_val:
+                parent_entry = {
+                    "lemma": self.lemma,
+                    "default": parent_val,
+                    "synsets": [{"word": parent_val, "tags": ["manual_edit"], "affinity": 1.0}]
+                }
+                self.source_engine.word_cache[self.lemma] = parent_entry
+                self.source_engine.save_word_cache()
 
         if not new_word:
             return
@@ -239,9 +364,10 @@ class EditSynsetModal(tk.Toplevel):
         self.engine = engine
         self.on_save = on_save
         self.generation_counter = 0
+        self.rng = random.Random()
 
         self.title(f"Editar Variação: {lemma}")
-        self.geometry("450x650")
+        self.geometry("450x700")
         self.configure(bg=self.colors["bg_main"])
         self.transient(parent)
         self.grab_set()
@@ -312,10 +438,11 @@ class EditSynsetModal(tk.Toplevel):
 
         self.strategy_var = tk.StringVar(value="phonotactics")
         strategies = [
-            ("Fonotática (Padrão)", "phonotactics"),
+            ("Fonotática (Aleatório)", "phonotactics"),
             ("Sistema de Raízes", "triconsonantal_system"),
-            ("Composição/Derivação", "derived"),
-            ("Nativizar", "nativization"),
+            ("Derivação (Afixos)", "derived"),
+            ("Nativizar Lemma", "nativization"),
+            ("Mutação (Evolução)", "mutation"),
         ]
 
         self.combo_strategy = ttk.Combobox(
@@ -361,22 +488,16 @@ class EditSynsetModal(tk.Toplevel):
         clean_lemma = "".join(filter(str.isalpha, self.lemma.lower()))
 
         def generate_fallback():
-            input_str = f"{clean_lemma}_synset_fallback_{self.generation_counter}_{self.engine.global_seed}"
-            hash_obj = hashlib.sha256(input_str.encode())
-            hash_val = int(hash_obj.hexdigest(), 16)
-            word = self.engine._generate_word_from_seed(clean_lemma, hash_val)
+            seed = self.rng.randint(0, 9999999)
+            word = self.engine._generate_word_from_seed(clean_lemma, seed)
             if self.engine.phonology_handler:
                 word = self.engine.phonology_handler.apply_monophthongization(
                     word)
             return word
 
         if strategy_key == "phonotactics":
-            input_str = f"{clean_lemma}_manual_gen_{self.generation_counter}_{self.engine.global_seed}"
-            hash_obj = hashlib.sha256(input_str.encode())
-            hash_val = int(hash_obj.hexdigest(), 16)
-
-            new_word = self.engine._generate_word_from_seed(
-                clean_lemma, hash_val)
+            seed = self.rng.randint(0, 9999999)
+            new_word = self.engine._generate_word_from_seed(clean_lemma, seed)
             if self.engine.phonology_handler:
                 new_word = self.engine.phonology_handler.apply_monophthongization(
                     new_word)
@@ -384,13 +505,10 @@ class EditSynsetModal(tk.Toplevel):
         elif strategy_key == "triconsonantal_system":
             if self.engine.root_handler and self.engine.root_handler.enabled:
                 root = self.engine.root_handler.generate_root(self.lemma)
-
                 binyanim = self.engine.root_handler.binyanim
                 pattern_def = None
                 if binyanim:
-                    rng_seed = self.engine.global_seed + self.generation_counter
-                    rng = random.Random(rng_seed)
-                    pattern_def = rng.choice(binyanim)
+                    pattern_def = self.rng.choice(binyanim)
 
                 if pattern_def:
                     new_word = self.engine.root_handler.apply_pattern(
@@ -401,19 +519,26 @@ class EditSynsetModal(tk.Toplevel):
                 new_word = generate_fallback()
 
         elif strategy_key == "derived":
-            if self.engine.affix_handler:
-                base_gen = self.engine._generate_word_from_seed(
-                    self.lemma,
-                    self.engine.global_seed + self.generation_counter
-                )
+            if self.engine.affix_handler and self.engine.affix_handler.source_suffixes:
+                base_word = self.entry_word.get()
+                if not base_word:
+                    base_word = generate_fallback()
 
-                suffixes = self.engine.affix_handler.source_suffixes
-                if suffixes:
-                    rng = random.Random(
-                        self.engine.global_seed + self.generation_counter)
-                    rule = rng.choice(suffixes)
-                    affix = rule.get('replacement', 'enc')
-                    new_word = f"{base_gen}{affix}"
+                rule = self.rng.choice(
+                    self.engine.affix_handler.source_suffixes)
+                if rule:
+                    affix = rule.get(
+                        'replacement', '') or rule.get('affix', '')
+                    if affix:
+                        if self.rng.random() > 0.5:
+                            new_word = f"{base_word}{affix}"
+                        else:
+                            new_word = f"{affix}{base_word}"
+                        if self.engine.phonology_handler:
+                            new_word = self.engine.phonology_handler.nativize_word(
+                                new_word)
+                    else:
+                        new_word = generate_fallback()
                 else:
                     new_word = generate_fallback()
             else:
@@ -423,17 +548,23 @@ class EditSynsetModal(tk.Toplevel):
             if self.engine.phonology_handler:
                 base_nat = self.engine.phonology_handler.nativize_word(
                     self.lemma)
-
-                if self.generation_counter > 1:
-                    seed = self.engine.global_seed + self.generation_counter
-                    if hasattr(self.engine, '_mutate_word'):
-                        new_word = self.engine._mutate_word(base_nat, seed)
-                    else:
-                        new_word = base_nat
-                else:
-                    new_word = base_nat
+                seed = self.rng.randint(0, 999999)
+                new_word = self.engine._mutate_word(base_nat, seed)
             else:
                 new_word = generate_fallback()
+
+        elif strategy_key == "mutation":
+            current_val = self.entry_word.get()
+            if current_val:
+                seed = self.rng.randint(0, 999999)
+                new_word = self.engine._mutate_word(current_val, seed)
+            else:
+                new_word = generate_fallback()
+
+        if new_word and hasattr(self.engine, 'special_mechanics_handler') and self.engine.special_mechanics_handler and self.engine.special_mechanics_handler.enabled:
+            seed_to_use = self.engine.global_seed + self.generation_counter
+            new_word = self.engine.special_mechanics_handler.apply_mechanics(
+                new_word, clean_lemma, seed_to_use)
 
         if new_word:
             self.entry_word.delete(0, tk.END)

@@ -918,6 +918,17 @@ class CaseMorphology:
                 else:
                     target_key = 'nominative'
 
+        if self.preposition_handling == 'none' and effective_func_data and all_functions:
+            my_idx = effective_func_data.get('index')
+            for child in all_functions:
+                if my_idx in child.get('dependencies', []) and child.get('deprel') == 'case':
+                    prep_lemma = child.get('lemma', '').lower()
+                    prep_to_case = self.case_system.get(
+                        'preposition_case_mapping', {})
+                    if prep_lemma in prep_to_case:
+                        target_key = prep_to_case[prep_lemma]
+                        break
+
         if not target_key:
             if current_function in {'SUBJECT', 'S'}:
                 if self.alignment == 'ergative-absolutive':
@@ -1038,6 +1049,65 @@ class CompoundingHandler:
 
         return engine_ref._get_word_form(lemma, tags=['compound_part'])
 
+    def construct_compound(self, parts: List[str], engine_ref) -> str:
+        if not parts:
+            return ""
+
+        if len(parts) == 1:
+            return parts[0]
+
+        head_word = parts[-1] if self.head_position == 'final' else parts[0]
+        modifier_words = parts[:-
+                               1] if self.head_position == 'final' else parts[1:]
+
+        current_base = modifier_words[0] if self.head_position == 'final' else head_word
+        remaining = modifier_words[1:] + \
+            [head_word] if self.head_position == 'final' else modifier_words
+
+        if self.head_position == 'initial':
+            current_base = head_word
+            remaining = modifier_words
+
+        full_compound = current_base
+
+        if self.head_position == 'final':
+            for i, next_part in enumerate(remaining):
+                modifier = full_compound
+                link = self._get_linking_element(modifier, next_part)
+                full_compound = f"{modifier}{link}{next_part}"
+        else:
+            for i, next_part in enumerate(remaining):
+                head = full_compound
+                modifier = next_part
+                link = self._get_linking_element(head, modifier)
+                full_compound = f"{head}{link}{modifier}"
+
+        if full_compound and parts[0][0].isupper():
+            full_compound = full_compound.capitalize()
+
+        return full_compound
+
+    def _get_linking_element(self, element_a: str, element_b: str) -> str:
+        link = ""
+        element_a_lower = element_a.lower()
+
+        for link_char, rules in self.linking_elements.items():
+            suffixes = rules.get('after', [])
+            exact_matches = rules.get('words', [])
+
+            if element_a_lower in exact_matches:
+                link = link_char
+                break
+
+            for suff in suffixes:
+                if element_a_lower.endswith(suff):
+                    link = link_char
+                    break
+            if link:
+                break
+
+        return link
+
     def apply_compounding(self, functions: List[Dict], engine_ref) -> Tuple[Dict[int, str], Set[int]]:
         if not self.enabled:
             return {}, set()
@@ -1073,23 +1143,12 @@ class CompoundingHandler:
                 head_word = self._smart_lookup(head_lemma, engine_ref)
                 mod_word = self._smart_lookup(mod_lemma, engine_ref)
 
-                link = ""
-                for link_char, rules in self.linking_elements.items():
-                    suffixes = rules.get('after', [])
-                    for suff in suffixes:
-                        if mod_word.lower().endswith(suff):
-                            link = link_char
-                            break
-                    if link:
-                        break
-
                 if self.head_position == 'final':
-                    compound_word = f"{mod_word}{link}{head_word}"
+                    compound_word = self.construct_compound(
+                        [mod_word, head_word], engine_ref)
                 else:
-                    compound_word = f"{head_word}{link}{mod_word}"
-
-                if head_word[0].isupper():
-                    compound_word = compound_word.capitalize()
+                    compound_word = self.construct_compound(
+                        [head_word, mod_word], engine_ref)
 
                 compound_map[head_idx] = compound_word
                 absorbed_indices.add(modifier_idx)

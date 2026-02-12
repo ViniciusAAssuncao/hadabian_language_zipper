@@ -62,13 +62,22 @@ def polish_output(output: str, profile: Dict, original_input: str, functions_inf
 
     for prefix in sorted_prefixes:
         clean_prefix = prefix.replace('-', '')
+        if len(clean_prefix) < 2:
+            continue
 
         pattern = fr'\b({re.escape(clean_prefix)})\s*-\s*(\w+)'
         cleaned = re.sub(pattern, r'\1-\2', cleaned, flags=re.IGNORECASE)
 
         pattern_direct = fr'\b({re.escape(clean_prefix)})\s+(\w+)'
-        cleaned = re.sub(pattern_direct, r'\1-\2',
-                         cleaned, flags=re.IGNORECASE)
+
+        matches = re.finditer(pattern_direct, cleaned, flags=re.IGNORECASE)
+        for match in matches:
+            p_word = match.group(1)
+            next_word = match.group(2)
+            if p_word.lower() == next_word.lower() and len(p_word) < 3:
+                continue
+            cleaned = re.sub(pattern_direct, r'\1-\2',
+                             cleaned, flags=re.IGNORECASE)
 
     cleaned = re.sub(r'(\w+)-\s+(\w+)', r'\1-\2', cleaned)
 
@@ -93,9 +102,7 @@ def polish_output(output: str, profile: Dict, original_input: str, functions_inf
             cleaned += '.'
 
     output_words = cleaned.split()
-    original_words = re.findall(r'\b\w+\b', original_input)
     final_words = []
-    original_idx = 0
 
     for i, word in enumerate(output_words):
         current_word = word
@@ -111,14 +118,6 @@ def polish_output(output: str, profile: Dict, original_input: str, functions_inf
 
         if is_start:
             should_capitalize = True
-
-        if not should_capitalize and original_idx < len(original_words):
-            orig_w = original_words[original_idx]
-            if orig_w and orig_w[0].isupper() and original_idx > 0:
-                should_capitalize = True
-
-            if len(clean_current) > 2:
-                original_idx += 1
 
         if not should_capitalize and functions_info:
             for sent_info in functions_info:

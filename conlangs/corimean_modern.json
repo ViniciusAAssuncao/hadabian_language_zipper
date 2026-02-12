@@ -358,7 +358,7 @@
         "strategy": "affixation_and_compounding",
         "max_depth": 4,
         "exceptions": [
-            "der",
+            "tau",
             "die",
             "das",
             "ein",
@@ -765,7 +765,7 @@
                 "marker": ""
             },
             "plural": {
-                "marker": "en",
+                "marker": "ir",
                 "alternatives": [
                     {
                         "marker": "e",
@@ -896,21 +896,21 @@
             "enabled": true,
             "description": "Declinação completa de artigos - marca principal dos casos",
             "definite": {
-                "nom_m": "der",
+                "nom_m": "tau",
                 "acc_m": "den",
                 "gen_m": "des",
                 "dat_m": "dem",
                 "nom_f": "die",
                 "acc_f": "die",
-                "gen_f": "der",
-                "dat_f": "der",
+                "gen_f": "tau",
+                "dat_f": "tau",
                 "nom_n": "das",
                 "acc_n": "das",
                 "gen_n": "des",
                 "dat_n": "dem",
                 "nom_pl": "die",
                 "acc_pl": "die",
-                "gen_pl": "der",
+                "gen_pl": "tau",
                 "dat_pl": "den"
             },
             "indefinite": {
@@ -999,10 +999,10 @@
     },
     "determiner_system": {
         "definite_article": {
-            "form": "der",
+            "form": "tau",
             "variants": [
-                "die",
-                "das"
+                "tie",
+                "tas"
             ],
             "procliticizes": false,
             "declines": true,

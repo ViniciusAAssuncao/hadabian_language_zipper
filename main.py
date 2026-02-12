@@ -2,19 +2,193 @@ import tkinter as tk
 from tkinter import ttk, scrolledtext, messagebox
 from pathlib import Path
 import threading
-import time
+import json
+import os
 
 from ui.lexicon import LexiconTab
 from ui.profile import ProfileTab
+from ui.gramataki import GramatakiTab
 from ui.spinner import LoadingOverlay
+
+
+class ProfileSelectorDialog(tk.Toplevel):
+    def __init__(self, parent, colors, on_select_callback):
+        super().__init__(parent)
+        self.colors = colors
+        self.on_select_callback = on_select_callback
+        self.selected_file = None
+        self.profiles_data = []
+
+        self.title("Biblioteca de Conlangs")
+        self.geometry("800x600")
+        self.configure(bg=self.colors["bg_main"])
+        self.transient(parent)
+        self.grab_set()
+
+        self.setup_ui()
+        self.load_profile_list()
+
+        self.center_window()
+
+    def center_window(self):
+        self.update_idletasks()
+        width = self.winfo_width()
+        height = self.winfo_height()
+        x = (self.winfo_screenwidth() // 2) - (width // 2)
+        y = (self.winfo_screenheight() // 2) - (height // 2)
+        self.geometry(f'{width}x{height}+{x}+{y}')
+
+    def setup_ui(self):
+        main_frame = ttk.Frame(self)
+        main_frame.pack(fill=tk.BOTH, expand=True, padx=20, pady=20)
+
+        header_frame = ttk.Frame(main_frame)
+        header_frame.pack(fill=tk.X, pady=(0, 15))
+
+        ttk.Label(header_frame, text="Selecione um Perfil Linguístico",
+                  style="Header.TLabel", font=("Segoe UI", 16, "bold")).pack(side=tk.LEFT)
+
+        search_frame = ttk.Frame(main_frame)
+        search_frame.pack(fill=tk.X, pady=(0, 10))
+
+        ttk.Label(search_frame, text="Buscar:", foreground=self.colors["fg_secondary"]).pack(
+            side=tk.LEFT, padx=(0, 10))
+
+        self.search_var = tk.StringVar()
+        self.search_var.trace("w", self.filter_list)
+        self.search_entry = tk.Entry(search_frame, textvariable=self.search_var,
+                                     bg=self.colors["input_bg"], fg=self.colors["fg_primary"],
+                                     insertbackground=self.colors["fg_primary"], relief="flat", borderwidth=5)
+        self.search_entry.pack(side=tk.LEFT, fill=tk.X, expand=True)
+        self.search_entry.focus_set()
+
+        tree_frame = ttk.Frame(main_frame)
+        tree_frame.pack(fill=tk.BOTH, expand=True)
+
+        columns = ("name", "id", "author", "filename")
+        self.tree = ttk.Treeview(
+            tree_frame, columns=columns, show="headings", selectmode="browse")
+
+        self.tree.heading("name", text="Nome da Língua")
+        self.tree.heading("id", text="ID")
+        self.tree.heading("author", text="Autor")
+        self.tree.heading("filename", text="Arquivo")
+
+        self.tree.column("name", width=200, anchor="w")
+        self.tree.column("id", width=100, anchor="center")
+        self.tree.column("author", width=150, anchor="w")
+        self.tree.column("filename", width=150, anchor="e")
+
+        scrollbar = ttk.Scrollbar(
+            tree_frame, orient=tk.VERTICAL, command=self.tree.yview)
+        self.tree.configure(yscroll=scrollbar.set)
+
+        self.tree.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+
+        self.tree.bind("<Double-1>", self.on_double_click)
+
+        btn_frame = ttk.Frame(main_frame)
+        btn_frame.pack(fill=tk.X, pady=(20, 0))
+
+        ttk.Button(btn_frame, text="Cancelar", style="Secondary.TButton",
+                   command=self.destroy).pack(side=tk.RIGHT, padx=(10, 0))
+
+        ttk.Button(btn_frame, text="Carregar Perfil Selecionado", style="Accent.TButton",
+                   command=self.confirm_selection).pack(side=tk.RIGHT)
+
+    def load_profile_list(self):
+        path = Path("./conlangs")
+        path.mkdir(exist_ok=True)
+        files = sorted([f for f in path.glob("*.json")])
+
+        self.profiles_data = []
+
+        for file_path in files:
+            meta = self._extract_metadata(file_path)
+            self.profiles_data.append(meta)
+
+        self.populate_tree(self.profiles_data)
+
+    def _extract_metadata(self, path):
+        default_meta = {
+            "name": "Desconhecido",
+            "id": "N/A",
+            "author": "-",
+            "filename": path.name,
+            "sort_key": path.name.lower()
+        }
+
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+
+                metadata = data.get('metadata', {})
+
+                name = metadata.get('name', data.get('id', path.stem))
+                p_id = data.get('id', 'unknown')
+                author = metadata.get('author', '-')
+
+                return {
+                    "name": name,
+                    "id": p_id,
+                    "author": author,
+                    "filename": path.name,
+                    "sort_key": name.lower()
+                }
+        except Exception:
+            return default_meta
+
+    def populate_tree(self, data):
+        for item in self.tree.get_children():
+            self.tree.delete(item)
+
+        for item in data:
+            self.tree.insert("", tk.END, values=(
+                item["name"],
+                item["id"],
+                item["author"],
+                item["filename"]
+            ))
+
+    def filter_list(self, *args):
+        query = self.search_var.get().lower()
+        if not query:
+            self.populate_tree(self.profiles_data)
+            return
+
+        filtered = []
+        for item in self.profiles_data:
+            if (query in item["name"].lower() or
+                query in item["id"].lower() or
+                query in item["author"].lower() or
+                    query in item["filename"].lower()):
+                filtered.append(item)
+
+        self.populate_tree(filtered)
+
+    def on_double_click(self, event):
+        self.confirm_selection()
+
+    def confirm_selection(self):
+        selected_item = self.tree.selection()
+        if not selected_item:
+            return
+
+        item_values = self.tree.item(selected_item[0])['values']
+        filename = item_values[3]
+
+        self.selected_file = filename
+        self.on_select_callback(filename)
+        self.destroy()
 
 
 class ConHabApp:
     def __init__(self, root):
         self.root = root
         self.root.title("ConHab")
-        self.root.geometry("900x750")
-        self.root.minsize(800, 600)
+        self.root.geometry("1920x1200")
+        self.root.minsize(900, 700)
 
         self.colors = {
             "bg_main": "#1e1e1e",
@@ -26,16 +200,18 @@ class ConHabApp:
             "accent_hover": "#0098ff",
             "input_bg": "#2d2d2d",
             "success": "#4ec9b0",
-            "error": "#f44747"
+            "error": "#f44747",
+            "card_bg": "#333333",
         }
 
         self.engine = None
+        self.current_profile_name = "Nenhum Selecionado"
+        self.current_profile_file = None
+
         self.setup_styles()
         self.setup_ui()
 
         self.loading_overlay = LoadingOverlay(self.root, self.colors)
-
-        self.load_conlangs()
 
     def setup_styles(self):
         self.root.configure(bg=self.colors["bg_main"])
@@ -49,32 +225,44 @@ class ConHabApp:
                         foreground=self.colors["fg_primary"], background=self.colors["bg_sec"], padding=15)
         style.configure("SubHeader.TLabel", font=("Segoe UI", 11, "bold"),
                         foreground=self.colors["fg_secondary"], background=self.colors["bg_main"], padding=(0, 10, 0, 5))
+        style.configure("Card.TLabel", font=(
+            "Segoe UI", 12), foreground=self.colors["fg_primary"], background=self.colors["card_bg"])
+        style.configure("Card.TFrame", background=self.colors["card_bg"])
+
         style.configure("Accent.TButton", font=("Segoe UI", 10, "bold"),
                         background=self.colors["accent"], foreground="white", borderwidth=0, focuscolor=self.colors["bg_main"], padding=(20, 10))
-        style.map("Accent.TButton", background=[
-                  ("active", self.colors["accent_hover"])], relief=[("pressed", "flat")])
-        style.configure("Secondary.TButton", font=("Segoe UI", 9), background=self.colors["bg_sec"], foreground=self.colors[
-                        "fg_primary"], borderwidth=1, bordercolor=self.colors["input_bg"], focuscolor=self.colors["bg_sec"], padding=(10, 5))
+
+        style.map("Accent.TButton",
+                  background=[("active", self.colors["accent_hover"])],
+                  foreground=[("!active", "white"), ("active", "white")],
+                  relief=[("pressed", "flat")])
+
+        style.configure("Secondary.TButton", font=("Segoe UI", 9), background=self.colors["bg_sec"], foreground=self.colors["fg_primary"],
+                        borderwidth=1, bordercolor=self.colors["input_bg"], focuscolor=self.colors["bg_sec"], padding=(10, 5))
         style.map("Secondary.TButton", background=[
                   ("active", self.colors["input_bg"])])
-        style.configure("TCombobox", fieldbackground=self.colors["input_bg"], background=self.colors["bg_sec"],
-                        foreground=self.colors["fg_primary"], arrowcolor=self.colors["fg_primary"], bordercolor=self.colors["bg_main"], padding=5)
-        style.map("TCombobox", fieldbackground=[("readonly", self.colors["input_bg"])], selectbackground=[
-                  ("readonly", self.colors["input_bg"])], selectforeground=[("readonly", self.colors["fg_primary"])])
+
         style.configure("Horizontal.TProgressbar", troughcolor=self.colors["input_bg"], background=self.colors["accent"],
                         bordercolor=self.colors["bg_main"], lightcolor=self.colors["accent"], darkcolor=self.colors["accent"])
+
         style.configure(
             "TNotebook", background=self.colors["bg_main"], borderwidth=0)
         style.configure("TNotebook.Tab", background=self.colors["bg_sec"], foreground=self.colors["fg_secondary"], padding=(
             15, 5), borderwidth=0)
         style.map("TNotebook.Tab", background=[("selected", self.colors["accent"]), ("active", self.colors["input_bg"])], foreground=[
                   ("selected", "white"), ("active", self.colors["fg_primary"])])
-        style.configure("Treeview", background=self.colors["input_bg"], fieldbackground=self.colors[
-                        "input_bg"], foreground=self.colors["fg_primary"], borderwidth=0, rowheight=25)
+
+        style.configure("Treeview", background=self.colors["input_bg"], fieldbackground=self.colors["input_bg"], foreground=self.colors["fg_primary"],
+                        borderwidth=0, rowheight=30, font=("Segoe UI", 10))
         style.configure("Treeview.Heading", background=self.colors["bg_sec"], foreground=self.colors["fg_primary"], relief="flat", font=(
-            "Segoe UI", 10, "bold"))
+            "Segoe UI", 10, "bold"), padding=10)
+        style.map("Treeview", background=[
+                  ("selected", self.colors["accent"])], foreground=[("selected", "white")])
         style.map("Treeview.Heading", background=[
                   ("active", self.colors["bg_sec"])])
+
+        style.configure("Switch.TCheckbutton",
+                        background=self.colors["card_bg"], foreground=self.colors["fg_primary"])
 
     def setup_ui(self):
         header_frame = ttk.Frame(self.root)
@@ -82,31 +270,44 @@ class ConHabApp:
         header_bg = tk.Frame(header_frame, bg=self.colors["bg_sec"], height=60)
         header_bg.pack(fill=tk.BOTH, expand=True)
         header_bg.pack_propagate(False)
-        ttk.Label(header_bg, text="ConHab",
-                  style="Header.TLabel").pack(side=tk.LEFT, padx=20)
+        ttk.Label(header_bg, text="ConHab", style="Header.TLabel").pack(
+            side=tk.LEFT, padx=20)
 
         main_container = ttk.Frame(self.root, padding=30)
         main_container.pack(fill=tk.BOTH, expand=True)
 
         config_frame = ttk.Frame(main_container)
         config_frame.pack(fill=tk.X, pady=(0, 20))
-        ttk.Label(config_frame, text="PERFIL LINGUÍSTICO",
+        ttk.Label(config_frame, text="PERFIL ATIVO",
                   style="SubHeader.TLabel").pack(anchor="w")
 
-        controls_row = ttk.Frame(config_frame)
-        controls_row.pack(fill=tk.X, pady=5)
+        profile_card = ttk.Frame(config_frame, style="Card.TFrame", padding=15)
+        profile_card.pack(fill=tk.X, pady=5)
 
-        self.cl_selector = ttk.Combobox(
-            controls_row, state="readonly", width=40, font=("Segoe UI", 10))
-        self.cl_selector.pack(side=tk.LEFT, padx=(0, 10), ipady=3)
-        self.cl_selector.bind("<<ComboboxSelected>>", self.on_profile_selected)
+        info_box = ttk.Frame(profile_card, style="Card.TFrame")
+        info_box.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
-        ttk.Button(controls_row, text="↻ Recarregar Perfis",
-                   style="Secondary.TButton", command=self.load_conlangs).pack(side=tk.LEFT)
+        self.lbl_profile_name = ttk.Label(info_box, text="Nenhum perfil carregado",
+                                          font=("Segoe UI", 14, "bold"), style="Card.TLabel")
+        self.lbl_profile_name.pack(anchor="w")
+
+        self.lbl_profile_file = ttk.Label(info_box, text="Selecione um arquivo para começar",
+                                          font=("Segoe UI", 10, "italic"), foreground=self.colors["fg_secondary"], background=self.colors["card_bg"])
+        self.lbl_profile_file.pack(anchor="w", pady=(2, 0))
+
+        actions_box = ttk.Frame(profile_card, style="Card.TFrame")
+        actions_box.pack(side=tk.RIGHT)
+
+        ttk.Button(actions_box, text="SELECIONAR PERFIL", style="Secondary.TButton",
+                   command=self.open_profile_selector).pack(side=tk.LEFT, padx=(0, 10))
+
+        self.btn_reload = ttk.Button(actions_box, text="⟳ Recarregar", style="Secondary.TButton",
+                                     command=self.reload_current_profile, state="disabled")
+        self.btn_reload.pack(side=tk.LEFT)
 
         self.status_lbl = ttk.Label(
-            controls_row, text="", foreground=self.colors["fg_secondary"])
-        self.status_lbl.pack(side=tk.LEFT, padx=20)
+            config_frame, text="", foreground=self.colors["fg_secondary"])
+        self.status_lbl.pack(anchor="e", pady=(5, 0))
 
         self.notebook = ttk.Notebook(main_container)
         self.notebook.pack(fill=tk.BOTH, expand=True)
@@ -117,6 +318,10 @@ class ConHabApp:
 
         self.lexicon_widget = LexiconTab(self.notebook, self.colors)
         self.notebook.add(self.lexicon_widget, text="Léxico")
+
+        self.gramataki_widget = GramatakiTab(
+            self.notebook, self.colors, self.engine)
+        self.notebook.add(self.gramataki_widget, text="Gramataki")
 
         self.profile_widget = ProfileTab(self.notebook, self.colors)
         self.notebook.add(self.profile_widget, text="Editor JSON")
@@ -131,20 +336,20 @@ class ConHabApp:
         ttk.Label(input_frame, text="ENTRADA (Linguagem Natural)",
                   style="SubHeader.TLabel").pack(anchor="w")
 
+        self.btn_process = ttk.Button(
+            input_frame, text="PROCESSAR TEXTO", style="Accent.TButton", command=self.process_language
+        )
+        self.btn_process.pack(anchor="e", pady=(0, 10))
+
         self.ln_input = self.create_styled_text(input_frame, height=8)
         self.ln_input.pack(fill=tk.BOTH, expand=True, pady=(0, 15))
 
         action_frame = ttk.Frame(input_frame)
         action_frame.pack(fill=tk.X, pady=(0, 15))
 
-        self.btn_process = ttk.Button(action_frame, text="PROCESSAR CONVERSÃO",
-                                      style="Accent.TButton", cursor="hand2", command=self.process_language)
-        self.btn_process.pack(side=tk.LEFT)
-
         self.progress_bar = ttk.Progressbar(
             action_frame, orient="horizontal", mode="determinate", style="Horizontal.TProgressbar")
-        self.progress_bar.pack(side=tk.LEFT, fill=tk.X,
-                               expand=True, padx=(20, 0))
+        self.progress_bar.pack(fill=tk.X, expand=True)
 
         output_frame = ttk.Frame(content_pane)
         content_pane.add(output_frame, weight=1)
@@ -163,32 +368,27 @@ class ConHabApp:
             highlightbackground=self.colors["bg_sec"], highlightcolor=self.colors["accent"]
         )
 
-    def load_conlangs(self):
-        path = Path("./conlangs")
-        path.mkdir(exist_ok=True)
-        files = sorted([f.name for f in path.glob("*.json")])
-        self.cl_selector['values'] = files
-        if files:
-            current = self.cl_selector.get()
-            if not current or current not in files:
-                self.cl_selector.current(0)
-                self.on_profile_selected(None)
-        else:
-            self.status_lbl.config(
-                text="Nenhum perfil encontrado.", foreground=self.colors["error"])
+    def open_profile_selector(self):
+        ProfileSelectorDialog(self.root, self.colors,
+                              self.on_profile_selected_from_dialog)
 
-    def on_profile_selected(self, event):
-        selection = self.cl_selector.get()
-        if selection:
-            self.loading_overlay.show("Carregando e indexando vocabulário...")
+    def on_profile_selected_from_dialog(self, filename):
+        if filename:
+            self.loading_overlay.show(f"Carregando {filename}...")
 
-            profile_path = Path("./conlangs") / selection
+            profile_path = Path("./conlangs") / filename
             self.profile_widget.load_profile(profile_path)
 
+            self.current_profile_file = filename
+
             thread = threading.Thread(
-                target=self._async_load_engine, args=(selection,))
+                target=self._async_load_engine, args=(filename,))
             thread.daemon = True
             thread.start()
+
+    def reload_current_profile(self):
+        if self.current_profile_file:
+            self.on_profile_selected_from_dialog(self.current_profile_file)
 
     def _async_load_engine(self, selection):
         try:
@@ -198,18 +398,34 @@ class ConHabApp:
             new_engine = OriginalLanguageEngine(profile_path)
             stats = new_engine.get_statistics()
 
-            self.root.after(
-                0, lambda: self._on_engine_loaded(new_engine, stats))
+            try:
+                with open(profile_path, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    meta = data.get('metadata', {})
+                    display_name = meta.get('name', data.get('id', selection))
+            except:
+                display_name = selection
+
+            self.root.after(0, lambda: self._on_engine_loaded(
+                new_engine, stats, display_name))
         except Exception as e:
             self.root.after(0, self._on_load_error, e)
 
-    def _on_engine_loaded(self, engine, stats):
+    def _on_engine_loaded(self, engine, stats, display_name):
         self.engine = engine
+        self.current_profile_name = display_name
+
+        self.lbl_profile_name.config(text=display_name)
+        self.lbl_profile_file.config(
+            text=f"Arquivo: {self.current_profile_file}")
+        self.btn_reload.config(state="normal")
+
         self.status_lbl.config(
-            text=f"Carregado: {stats.get('profile_id')} | Vocabulário: {stats.get('cached_words')} palavras",
+            text=f"ID: {stats.get('profile_id')} | Vocabulário: {stats.get('cached_words')} palavras | Status: Pronto",
             foreground=self.colors["success"]
         )
         self.lexicon_widget.refresh(self.engine)
+        self.gramataki_widget.update_engine(self.engine)
         self.loading_overlay.hide()
 
     def _on_load_error(self, error):

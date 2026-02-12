@@ -13,6 +13,40 @@
     "agglutination_strength": 0.72,
     "divergence_factor": 0.22,
     "cultural_purism": 0.68,
+    "compounding": {
+        "enabled": true,
+        "head_position": "final",
+        "linking_elements": {
+            "-": {
+                "after": [
+                    "a",
+                    "e",
+                    "i",
+                    "o",
+                    "u",
+                    "ā",
+                    "ī",
+                    "ū",
+                    "ē",
+                    "ō"
+                ]
+            },
+            "s": {
+                "after": [
+                    "k",
+                    "p",
+                    "t"
+                ]
+            },
+            "i": {
+                "after": [
+                    "b",
+                    "d",
+                    "g"
+                ]
+            }
+        }
+    },
     "phonotactics": {
         "active_style": "standard_rmp",
         "inventory_styles": {
@@ -1637,6 +1671,7 @@
             "das": "min-ha",
             "o": "ha",
             "a": "ha",
+            "às": "ha",
             "os": "ha",
             "as": "ha",
             "e": "wa",
