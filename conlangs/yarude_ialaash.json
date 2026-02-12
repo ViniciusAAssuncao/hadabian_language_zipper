@@ -560,7 +560,7 @@
     "special_mechanics": {
         "laxarahiim": {
             "type": "suffix_replacement",
-            "percentage": 80,
+            "percentage": 30,
             "suffixes": [
                 "-iim",
                 "-givim",
@@ -577,7 +577,15 @@
                 "-oth",
                 "-at",
                 "-binim",
-                "-eva"
+                "-eva",
+                "-aam",
+                "-yd",
+                "-kor",
+                "-hem",
+                "-ist",
+                "-or",
+                "-hor",
+                "-ayam"
             ],
             "rule": "ALWAYS_SUFFIX",
             "exceptions": [

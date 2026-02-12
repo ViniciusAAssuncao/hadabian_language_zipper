@@ -32,13 +32,21 @@ class SpecialMechanicsHandler:
         self.mechanics = profile.get('special_mechanics', {})
         self.enabled = bool(self.mechanics)
         self.handlers = []
+        
         for key, config in self.mechanics.items():
+            if key == 'enabled' or not isinstance(config, dict):
+                continue
+                
             if config.get('type') == 'suffix_replacement':
                 self.handlers.append(SuffixReplacementHandler(config))
 
     def apply_mechanics(self, word: str, original_lemma: str, seed: int) -> str:
         if not self.enabled or not word:
             return word
+        
+        if self.mechanics.get('enabled') is False:
+            return word
+
         current_word = word
         for handler in self.handlers:
             current_word = handler.apply(current_word, original_lemma, seed)

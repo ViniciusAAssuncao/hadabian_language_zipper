@@ -586,7 +586,7 @@
         "strategies": [
             {
                 "type": "verbal_negation",
-                "marker": "nicht",
+                "marker": "nirum",
                 "suffix": ""
             },
             {

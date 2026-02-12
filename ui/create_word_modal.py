@@ -363,7 +363,7 @@ class CreateWordModal(tk.Toplevel):
         adapt_frame.pack(fill=tk.X, pady=(0, 15))
 
         self.adapt_var = tk.StringVar(value="nativize")
-        
+
         r1 = tk.Radiobutton(adapt_frame, text="Nativização Fonológica (Adaptar sons)",
                             variable=self.adapt_var, value="nativize",
                             command=self.reset_and_preview_loan,
@@ -483,6 +483,12 @@ class CreateWordModal(tk.Toplevel):
                 result = self.engine.phonology_handler.apply_monophthongization(
                     result)
 
+            if hasattr(self.engine, 'special_mechanics_handler') and self.engine.special_mechanics_handler and self.engine.special_mechanics_handler.enabled:
+                seed_to_use = self.engine.global_seed + self.loan_gen_counter
+                original_lemma = word if word else ""
+                result = self.engine.special_mechanics_handler.apply_mechanics(
+                    result, original_lemma, seed_to_use)
+
         self.entry_loan_word.delete(0, tk.END)
         self.entry_loan_word.insert(0, result)
 
@@ -550,6 +556,10 @@ class CreateWordModal(tk.Toplevel):
         lemma_b = self.lemma_b_data[0]
 
         final_word = self.engine.generate_compound([lemma_a, lemma_b])
+
+        if hasattr(self.engine, 'special_mechanics_handler') and self.engine.special_mechanics_handler and self.engine.special_mechanics_handler.enabled:
+            final_word = self.engine.special_mechanics_handler.apply_mechanics(
+                final_word, f"{lemma_a}-{lemma_b}", self.engine.global_seed)
 
         self.entry_compound_word.delete(0, tk.END)
         self.entry_compound_word.insert(0, final_word)
@@ -651,6 +661,11 @@ class CreateWordModal(tk.Toplevel):
                     new_word = base_nat
             else:
                 new_word = generate_fallback()
+
+        if new_word and hasattr(self.engine, 'special_mechanics_handler') and self.engine.special_mechanics_handler and self.engine.special_mechanics_handler.enabled:
+            seed_to_use = self.engine.global_seed + self.generation_counter
+            new_word = self.engine.special_mechanics_handler.apply_mechanics(
+                new_word, clean_lemma, seed_to_use)
 
         self.after(0, lambda: self._update_ui_after_gen(
             new_word, strategy_key))

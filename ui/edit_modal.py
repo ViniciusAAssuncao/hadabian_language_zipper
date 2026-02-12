@@ -182,10 +182,15 @@ class EditWordModal(tk.Toplevel):
             return
 
         self.generation_counter += 1
+        seed_to_use = self.rng.randint(0, 999999)
         new_parent = self.source_engine._generate_word_from_seed(
             self.lemma,
-            self.rng.randint(0, 999999)
+            seed_to_use
         )
+
+        if hasattr(self.source_engine, 'special_mechanics_handler') and self.source_engine.special_mechanics_handler and self.source_engine.special_mechanics_handler.enabled:
+            new_parent = self.source_engine.special_mechanics_handler.apply_mechanics(
+                new_parent, self.lemma, seed_to_use)
 
         self.entry_parent.delete(0, tk.END)
         self.entry_parent.insert(0, new_parent)
@@ -309,6 +314,11 @@ class EditWordModal(tk.Toplevel):
                     new_word = generate_fallback()
             else:
                 new_word = generate_fallback()
+
+        if new_word and hasattr(self.engine, 'special_mechanics_handler') and self.engine.special_mechanics_handler and self.engine.special_mechanics_handler.enabled:
+            seed_to_use = self.engine.global_seed + self.generation_counter
+            new_word = self.engine.special_mechanics_handler.apply_mechanics(
+                new_word, clean_lemma, seed_to_use)
 
         if new_word:
             self.entry_word.delete(0, tk.END)
@@ -550,6 +560,11 @@ class EditSynsetModal(tk.Toplevel):
                 new_word = self.engine._mutate_word(current_val, seed)
             else:
                 new_word = generate_fallback()
+
+        if new_word and hasattr(self.engine, 'special_mechanics_handler') and self.engine.special_mechanics_handler and self.engine.special_mechanics_handler.enabled:
+            seed_to_use = self.engine.global_seed + self.generation_counter
+            new_word = self.engine.special_mechanics_handler.apply_mechanics(
+                new_word, clean_lemma, seed_to_use)
 
         if new_word:
             self.entry_word.delete(0, tk.END)
