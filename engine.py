@@ -17,6 +17,7 @@ from morphosyntax_analyzer import (
     InterrogativeHandler, CopulaHandler, CompoundingHandler
 )
 from special_mechanics import SpecialMechanicsHandler
+from idiom_manager import IdiomManager
 
 
 class LexicalConfluenceHandler:
@@ -1834,6 +1835,7 @@ class OriginalLanguageEngine:
             if family_path.exists():
                 self._load_and_merge_family(family_path)
         self.profile_id = self.profile.get('id', 'unknown')
+        self.idiom_manager = IdiomManager(self.profile_id)
         self.global_seed = self.profile.get('global_seed', 12345)
         self.phonology_handler = PhonologyHandler(self.profile)
         self.phonotactics = self.profile.get('phonotactics', {})
@@ -2172,472 +2174,486 @@ class OriginalLanguageEngine:
             self.processing_stack.remove(lemma)
 
     def process_text(self, text: str) -> str:
-        reordered_text, functions_info = self.syntax_engine.process_text(text)
-        final_sentences = []
-        case_system = self.profile.get('case_system', {})
-        preposition_handling = case_system.get(
-            'preposition_handling', 'coexist')
-        topicalization_config = self.profile.get('topicalization', {})
-        topic_enabled = topicalization_config.get('enabled', False)
-        topic_marker = topicalization_config.get('topic_marker', 'wa')
-        focus_config = self.profile.get('focus_structure', {})
-        focus_enabled = focus_config.get('enabled', False)
-        object_focus_marker = focus_config.get('object_focus_marker', 'ko')
-        suppress_case_on_focus = focus_config.get('suppress_case', False)
-        ignore_digits = self.profile.get(
-            'numeric_handling', {}).get('ignore_digits', True)
-        capitalization_enabled = self.profile.get(
-            'style', {}).get('capitalization', False)
-        punctuation_map = self.profile.get(
-            'style', {}).get('punctuation_map', {})
-        hoistable_terminators = {'.', '!', '?'}
-        all_terminators = set(self.profile.get('style', {}).get(
-            'sentence_terminators', ['.', '!', '?']))
-        all_terminators.update(self.profile.get('style', {}).get(
-            'secondary_terminators', [':', ';']))
+            reordered_text, functions_info = self.syntax_engine.process_text(text)
+            final_sentences = []
+            case_system = self.profile.get('case_system', {})
+            preposition_handling = case_system.get(
+                'preposition_handling', 'coexist')
+            topicalization_config = self.profile.get('topicalization', {})
+            topic_enabled = topicalization_config.get('enabled', False)
+            topic_marker = topicalization_config.get('topic_marker', 'wa')
+            focus_config = self.profile.get('focus_structure', {})
+            focus_enabled = focus_config.get('enabled', False)
+            object_focus_marker = focus_config.get('object_focus_marker', 'ko')
+            suppress_case_on_focus = focus_config.get('suppress_case', False)
+            ignore_digits = self.profile.get(
+                'numeric_handling', {}).get('ignore_digits', True)
+            capitalization_enabled = self.profile.get(
+                'style', {}).get('capitalization', False)
+            punctuation_map = self.profile.get(
+                'style', {}).get('punctuation_map', {})
+            hoistable_terminators = {'.', '!', '?'}
+            all_terminators = set(self.profile.get('style', {}).get(
+                'sentence_terminators', ['.', '!', '?']))
+            all_terminators.update(self.profile.get('style', {}).get(
+                'secondary_terminators', [':', ';']))
 
-        last_content_word_str = None
-        last_content_func = None
+            last_content_word_str = None
+            last_content_func = None
 
-        for sent_idx, sent_data in enumerate(functions_info):
-            ordered_functions = sent_data['functions']
-            translated_words = []
-            transitivity_map = self.transitivity_analyzer.analyze(
-                ordered_functions)
-            topic_idx = self.topicalization_handler.identify_topic(
-                ordered_functions)
-            sentence_terminator = None
-            is_question, q_type = self.interrogative_handler.is_yes_no_question(
-                sent_data['original'])
-            construct_heads_indices = set()
-            if self.construct_state_handler.enabled:
-                for func in ordered_functions:
-                    if func['pos'] in {'NOUN', 'PROPN'}:
-                        if self.construct_state_handler.is_construct_head(func, ordered_functions):
-                            construct_heads_indices.add(func['index'])
-            absorbed_indices = set()
-            clitic_map = {}
-            if self.clitic_handler.enabled:
-                clitic_map, clitic_absorbed = self.clitic_handler.analyze_clitics(
-                    ordered_functions, self.negation_handler)
-                absorbed_indices.update(clitic_absorbed)
-            if self.negation_handler.enabled:
-                for func in ordered_functions:
+            for sent_idx, sent_data in enumerate(functions_info):
+                ordered_functions = sent_data['functions']
+
+                ordered_functions, idiom_absorbed_indices = self.idiom_manager.process_functions(
+                    ordered_functions)
+
+                translated_words = []
+                transitivity_map = self.transitivity_analyzer.analyze(
+                    ordered_functions)
+                topic_idx = self.topicalization_handler.identify_topic(
+                    ordered_functions)
+                sentence_terminator = None
+                is_question, q_type = self.interrogative_handler.is_yes_no_question(
+                    sent_data['original'])
+                construct_heads_indices = set()
+                if self.construct_state_handler.enabled:
+                    for func in ordered_functions:
+                        if func['pos'] in {'NOUN', 'PROPN'}:
+                            if self.construct_state_handler.is_construct_head(func, ordered_functions):
+                                construct_heads_indices.add(func['index'])
+
+                absorbed_indices = set()
+                absorbed_indices.update(idiom_absorbed_indices)
+
+                clitic_map = {}
+                if self.clitic_handler.enabled:
+                    clitic_map, clitic_absorbed = self.clitic_handler.analyze_clitics(
+                        ordered_functions, self.negation_handler)
+                    absorbed_indices.update(clitic_absorbed)
+                if self.negation_handler.enabled:
+                    for func in ordered_functions:
+                        if func['index'] in absorbed_indices:
+                            continue
+                        is_negated, trigger_idx, neg_strategy = self.negation_handler.detect_negation(
+                            func, ordered_functions)
+                        if is_negated and trigger_idx is not None:
+                            should_absorb = True
+                            trigger_word = next(
+                                (f['word'].lower() for f in ordered_functions if f['index'] == trigger_idx), '')
+                            if neg_strategy.get('type') == 'emphatic_negation':
+                                if trigger_word not in {'não', 'nao', 'not'}:
+                                    should_absorb = False
+                            if should_absorb:
+                                absorbed_indices.add(trigger_idx)
+                possessive_suffixes_map = {}
+                if self.possessive_handler.enabled:
+                    possessive_suffixes_map, possessive_indices = self.possessive_handler.analyze_possessives(
+                        ordered_functions)
+                    absorbed_indices.update(possessive_indices)
+                inflected_preps_map = {}
+                if self.preposition_handler.enabled:
+                    inflected_preps_map, prep_absorbed = self.preposition_handler.analyze_inflections(
+                        ordered_functions, self)
+                    absorbed_indices.update(prep_absorbed)
+
+                compound_map = {}
+                if self.compounding_handler.enabled:
+                    compound_map, compound_absorbed = self.compounding_handler.apply_compounding(
+                        ordered_functions, self)
+                    absorbed_indices.update(compound_absorbed)
+
+                for i, func in enumerate(ordered_functions):
                     if func['index'] in absorbed_indices:
                         continue
-                    is_negated, trigger_idx, neg_strategy = self.negation_handler.detect_negation(
-                        func, ordered_functions)
-                    if is_negated and trigger_idx is not None:
-                        should_absorb = True
-                        trigger_word = next(
-                            (f['word'].lower() for f in ordered_functions if f['index'] == trigger_idx), '')
-                        if neg_strategy.get('type') == 'emphatic_negation':
-                            if trigger_word not in {'não', 'nao', 'not'}:
-                                should_absorb = False
-                        if should_absorb:
-                            absorbed_indices.add(trigger_idx)
-            possessive_suffixes_map = {}
-            if self.possessive_handler.enabled:
-                possessive_suffixes_map, possessive_indices = self.possessive_handler.analyze_possessives(
-                    ordered_functions)
-                absorbed_indices.update(possessive_indices)
-            inflected_preps_map = {}
-            if self.preposition_handler.enabled:
-                inflected_preps_map, prep_absorbed = self.preposition_handler.analyze_inflections(
-                    ordered_functions, self)
-                absorbed_indices.update(prep_absorbed)
 
-            compound_map = {}
-            if self.compounding_handler.enabled:
-                compound_map, compound_absorbed = self.compounding_handler.apply_compounding(
-                    ordered_functions, self)
-                absorbed_indices.update(compound_absorbed)
-
-            for i, func in enumerate(ordered_functions):
-                if func['index'] in absorbed_indices:
-                    continue
-
-                if 'mwt' in func and self.concept_handler.enabled:
-                    mwt = func['mwt']
-                    span_indices = set(mwt['span_indices'])
-                    mapping = self.concept_handler.resolve_concept(
-                        mwt['form'], self)
-                    if mapping:
-                        if not span_indices.intersection(absorbed_indices):
-                            remaining_span = span_indices - {func['index']}
-                            found_count = 0
-                            if i + len(remaining_span) < len(ordered_functions):
-                                for k in range(1, len(remaining_span) + 1):
-                                    next_f = ordered_functions[i + k]
-                                    if next_f['index'] in remaining_span:
-                                        found_count += 1
-                            if found_count == len(remaining_span):
-                                word, _, _ = mapping
-                                translated_words.append(word)
-                                absorbed_indices.update(remaining_span)
-                                last_content_word_str = word
-                                last_content_func = func
-                                continue
-
-                orig_word = func.get("word", "")
-                lemma = func.get("lemma", "")
-                pos = func.get("pos", "")
-                feats = func.get("feats", "")
-                syntactic_func = func.get("function", "")
-                deprel = func.get("deprel", "")
-                is_named_entity = func.get("named_entity", False)
-
-                clean_word_lower = self._clean_word(orig_word).lower()
-                raw_lemma = lemma if lemma else clean_word_lower
-                raw_lemma = raw_lemma.lower()
-
-                is_mapped = False
-                mapping_res = None
-                if self.concept_handler.enabled:
-                    mapping_res = self.concept_handler.resolve_concept(
-                        raw_lemma, self, word_form=clean_word_lower, pos=pos)
-                    if mapping_res:
-                        is_mapped = True
-
-                if preposition_handling == 'none' and pos == 'ADP' and self.profile.get('case_system', {}).get('enabled', False):
-                    continue
-                elif preposition_handling == 'replace' and pos == 'ADP' and not is_mapped and self.profile.get('case_system', {}).get('enabled', False):
-                    continue
-
-                should_drop_article = False
-                if self.profile.get('drop_articles', False):
-                    is_det_pos = (pos == 'DET')
-                    is_det_rel = (deprel == 'det')
-
-                    if is_det_pos or is_det_rel:
-                        f_feats = func.get('feats', '_')
-                        word_lower = orig_word.lower()
-                        if 'Definite=Def' in f_feats or 'PronType=Art' in f_feats or word_lower in {'o', 'a', 'os', 'as'}:
-                            if 'PronType=Prs' not in f_feats and 'PronType=Dem' not in f_feats:
-                                should_drop_article = True
-
-                if should_drop_article:
-                    continue
-
-                clean_word_lower = self._clean_word(orig_word).lower()
-                raw_lemma = lemma if lemma else clean_word_lower
-                raw_lemma = raw_lemma.lower()
-
-                if pos == 'PUNCT':
-                    mapped_punct = punctuation_map.get(orig_word, orig_word)
-                    if orig_word in hoistable_terminators:
-                        sentence_terminator = mapped_punct
-                        continue
-                    translated_words.append(mapped_punct)
-                    continue
-
-                if ignore_digits and pos == 'NUM':
-                    if re.search(r'\d', orig_word):
-                        translated_words.append(orig_word)
-                        last_content_word_str = orig_word
+                    if func.get('pos') == 'IDIOM' or func.get('_fixed'):
+                        translated_words.append(func['word'])
+                        last_content_word_str = func['word']
                         last_content_func = func
                         continue
 
-                is_copula_dep = (deprel == 'cop')
-                skip_copula_handler = False
-                if is_mapped and is_copula_dep:
-                    if mapping_res[2].get('origin') in {'mapping_table_surface', 'local_override_direct'}:
-                        skip_copula_handler = True
-                    else:
-                        skip_copula_handler = True
+                    if 'mwt' in func and self.concept_handler.enabled:
+                        mwt = func['mwt']
+                        span_indices = set(mwt['span_indices'])
+                        mapping = self.concept_handler.resolve_concept(
+                            mwt['form'], self)
+                        if mapping:
+                            if not span_indices.intersection(absorbed_indices):
+                                remaining_span = span_indices - {func['index']}
+                                found_count = 0
+                                if i + len(remaining_span) < len(ordered_functions):
+                                    for k in range(1, len(remaining_span) + 1):
+                                        next_f = ordered_functions[i + k]
+                                        if next_f['index'] in remaining_span:
+                                            found_count += 1
+                                if found_count == len(remaining_span):
+                                    word, _, _ = mapping
+                                    translated_words.append(word)
+                                    absorbed_indices.update(remaining_span)
+                                    last_content_word_str = word
+                                    last_content_func = func
+                                    continue
 
-                if self.copula_handler.enabled and is_copula_dep and not skip_copula_handler:
-                    copula_form = self.copula_handler.get_copula_form(
-                        func, ordered_functions, self)
-                    if copula_form is None:
+                    orig_word = func.get("word", "")
+                    lemma = func.get("lemma", "")
+                    pos = func.get("pos", "")
+                    feats = func.get("feats", "")
+                    syntactic_func = func.get("function", "")
+                    deprel = func.get("deprel", "")
+                    is_named_entity = func.get("named_entity", False)
+                    manual_tags = func.get("manual_tags", [])
+
+                    clean_word_lower = self._clean_word(orig_word).lower()
+                    raw_lemma = lemma if lemma else clean_word_lower
+                    raw_lemma = raw_lemma.lower()
+
+                    is_mapped = False
+                    mapping_res = None
+                    if self.concept_handler.enabled:
+                        mapping_res = self.concept_handler.resolve_concept(
+                            raw_lemma, self, word_form=clean_word_lower, pos=pos)
+                        if mapping_res:
+                            is_mapped = True
+
+                    if preposition_handling == 'none' and pos == 'ADP' and self.profile.get('case_system', {}).get('enabled', False):
                         continue
-                    if self.mutation_handler.enabled:
-                        prev_word = last_content_word_str
-                        copula_form = self.mutation_handler.apply_mutation(
-                            copula_form, prev_word, last_content_func)
-                    translated_words.append(copula_form)
-                    last_content_word_str = copula_form
-                    last_content_func = func
-                    continue
+                    elif preposition_handling == 'replace' and pos == 'ADP' and not is_mapped and self.profile.get('case_system', {}).get('enabled', False):
+                        continue
 
-                if syntactic_func in {SyntacticFunction.QUANTIFIER, SyntacticFunction.VERB_PARTICLE, SyntacticFunction.INTENSIFIER}:
-                    mapping = self.functional_config.get(raw_lemma, {})
-                    translated_word = ""
-                    if syntactic_func == SyntacticFunction.QUANTIFIER:
-                        translated_word = mapping.get(
-                            'noun_word', self._get_word_form(f'{raw_lemma}_quant'))
-                    elif syntactic_func == SyntacticFunction.VERB_PARTICLE:
-                        translated_word = mapping.get(
-                            'verb_word', self._get_word_form(f'{raw_lemma}_verb'))
-                    elif syntactic_func == SyntacticFunction.INTENSIFIER:
-                        translated_word = mapping.get(
-                            'adj_word', self._get_word_form(f'{raw_lemma}_intens'))
-                    if translated_word:
+                    should_drop_article = False
+                    if self.profile.get('drop_articles', False):
+                        is_det_pos = (pos == 'DET')
+                        is_det_rel = (deprel == 'det')
+
+                        if is_det_pos or is_det_rel:
+                            f_feats = func.get('feats', '_')
+                            word_lower = orig_word.lower()
+                            if 'Definite=Def' in f_feats or 'PronType=Art' in f_feats or word_lower in {'o', 'a', 'os', 'as'}:
+                                if 'PronType=Prs' not in f_feats and 'PronType=Dem' not in f_feats:
+                                    should_drop_article = True
+
+                    if should_drop_article:
+                        continue
+
+                    clean_word_lower = self._clean_word(orig_word).lower()
+                    raw_lemma = lemma if lemma else clean_word_lower
+                    raw_lemma = raw_lemma.lower()
+
+                    if pos == 'PUNCT':
+                        mapped_punct = punctuation_map.get(orig_word, orig_word)
+                        if orig_word in hoistable_terminators:
+                            sentence_terminator = mapped_punct
+                            continue
+                        translated_words.append(mapped_punct)
+                        continue
+
+                    if ignore_digits and pos == 'NUM':
+                        if re.search(r'\d', orig_word):
+                            translated_words.append(orig_word)
+                            last_content_word_str = orig_word
+                            last_content_func = func
+                            continue
+
+                    is_copula_dep = (deprel == 'cop')
+                    skip_copula_handler = False
+                    if is_mapped and is_copula_dep:
+                        if mapping_res[2].get('origin') in {'mapping_table_surface', 'local_override_direct'}:
+                            skip_copula_handler = True
+                        else:
+                            skip_copula_handler = True
+
+                    if self.copula_handler.enabled and is_copula_dep and not skip_copula_handler:
+                        copula_form = self.copula_handler.get_copula_form(
+                            func, ordered_functions, self)
+                        if copula_form is None:
+                            continue
                         if self.mutation_handler.enabled:
                             prev_word = last_content_word_str
-                            translated_word = self.mutation_handler.apply_mutation(
-                                translated_word, prev_word, last_content_func)
-                        translated_words.append(translated_word)
-                        last_content_word_str = translated_word
+                            copula_form = self.mutation_handler.apply_mutation(
+                                copula_form, prev_word, last_content_func)
+                        translated_words.append(copula_form)
+                        last_content_word_str = copula_form
                         last_content_func = func
                         continue
 
-                if pos == 'DET' and self.construct_state_handler.enabled and self.construct_state_handler.suppress_article:
-                    head_idx = func.get('dependencies', [-1])[0]
-                    if head_idx in construct_heads_indices:
-                        continue
+                    if syntactic_func in {SyntacticFunction.QUANTIFIER, SyntacticFunction.VERB_PARTICLE, SyntacticFunction.INTENSIFIER}:
+                        mapping = self.functional_config.get(raw_lemma, {})
+                        translated_word = ""
+                        if syntactic_func == SyntacticFunction.QUANTIFIER:
+                            translated_word = mapping.get(
+                                'noun_word', self._get_word_form(f'{raw_lemma}_quant'))
+                        elif syntactic_func == SyntacticFunction.VERB_PARTICLE:
+                            translated_word = mapping.get(
+                                'verb_word', self._get_word_form(f'{raw_lemma}_verb'))
+                        elif syntactic_func == SyntacticFunction.INTENSIFIER:
+                            translated_word = mapping.get(
+                                'adj_word', self._get_word_form(f'{raw_lemma}_intens'))
+                        if translated_word:
+                            if self.mutation_handler.enabled:
+                                prev_word = last_content_word_str
+                                translated_word = self.mutation_handler.apply_mutation(
+                                    translated_word, prev_word, last_content_func)
+                            translated_words.append(translated_word)
+                            last_content_word_str = translated_word
+                            last_content_func = func
+                            continue
 
-                degree_type = None
-                if self.degree_handler.enabled:
-                    degree_type = self.degree_handler.detect_degree(
-                        clean_word_lower, raw_lemma, feats)
+                    if pos == 'DET' and self.construct_state_handler.enabled and self.construct_state_handler.suppress_article:
+                        head_idx = func.get('dependencies', [-1])[0]
+                        if head_idx in construct_heads_indices:
+                            continue
 
-                base_lemma_for_translation = raw_lemma
-                if degree_type:
-                    base_lemma_for_translation = self.degree_handler.get_base_lemma(
-                        clean_word_lower, raw_lemma, degree_type, feats)
+                    degree_type = None
+                    if self.degree_handler.enabled:
+                        degree_type = self.degree_handler.detect_degree(
+                            clean_word_lower, raw_lemma, feats)
 
-                if self.polysemy_handler.enabled:
-                    base_lemma_for_translation = self.polysemy_handler.resolve_lemma(
-                        base_lemma_for_translation, func)
+                    base_lemma_for_translation = raw_lemma
+                    if degree_type:
+                        base_lemma_for_translation = self.degree_handler.get_base_lemma(
+                            clean_word_lower, raw_lemma, degree_type, feats)
 
-                target_lemma = base_lemma_for_translation
-                current_pos = pos
-                translated_root = None
-                context_tags = []
+                    if self.polysemy_handler.enabled:
+                        base_lemma_for_translation = self.polysemy_handler.resolve_lemma(
+                            base_lemma_for_translation, func)
 
-                if self.lexical_registers.get('enabled', False):
-                    pass
+                    target_lemma = base_lemma_for_translation
+                    current_pos = pos
+                    translated_root = None
+                    context_tags = manual_tags if manual_tags else []
 
-                current_form = ""
+                    if self.lexical_registers.get('enabled', False):
+                        pass
 
-                if is_mapped and mapping_res:
-                    current_form = mapping_res[0]
+                    current_form = ""
 
-                if not current_form:
-                    if self.demonstrative_handler.enabled and self.demonstrative_handler.is_demonstrative(func):
-                        current_form = self.demonstrative_handler.get_form(
-                            func, ordered_functions, self)
-                    elif pos == 'DET' and ('Definite=Def' in feats or 'PronType=Art' in feats or raw_lemma in {'o', 'a', 'os', 'as'}):
-                        det_config = self.profile.get(
-                            'determiner_system', {}).get('definite_article', {})
-                        if det_config.get('form'):
-                            translated_root = det_config.get('form')
-                            current_form = translated_root
+                    if is_mapped and mapping_res:
+                        current_form = mapping_res[0]
+
+                    if not current_form:
+                        if self.demonstrative_handler.enabled and self.demonstrative_handler.is_demonstrative(func):
+                            current_form = self.demonstrative_handler.get_form(
+                                func, ordered_functions, self)
+                        elif pos == 'DET' and ('Definite=Def' in feats or 'PronType=Art' in feats or raw_lemma in {'o', 'a', 'os', 'as'}):
+                            det_config = self.profile.get(
+                                'determiner_system', {}).get('definite_article', {})
+                            if det_config.get('form'):
+                                translated_root = det_config.get('form')
+                                current_form = translated_root
+                            else:
+                                translated_root = self._get_word_form(
+                                    target_lemma, context_tags, pos=current_pos, word_form=clean_word_lower)
+                                current_form = translated_root
+                        elif pos == 'ADP':
+                            basic_preps = self.profile.get(
+                                'adposition_system', {}).get('basic_prepositions', {})
+                            if raw_lemma in basic_preps:
+                                current_form = basic_preps[raw_lemma]
+                            else:
+                                translated_root = self._get_word_form(
+                                    target_lemma, context_tags, pos=current_pos, word_form=clean_word_lower)
+                                current_form = translated_root
                         else:
                             translated_root = self._get_word_form(
                                 target_lemma, context_tags, pos=current_pos, word_form=clean_word_lower)
                             current_form = translated_root
-                    elif pos == 'ADP':
-                        basic_preps = self.profile.get(
-                            'adposition_system', {}).get('basic_prepositions', {})
-                        if raw_lemma in basic_preps:
-                            current_form = basic_preps[raw_lemma]
-                        else:
-                            translated_root = self._get_word_form(
-                                target_lemma, context_tags, pos=current_pos, word_form=clean_word_lower)
-                            current_form = translated_root
-                    else:
-                        translated_root = self._get_word_form(
-                            target_lemma, context_tags, pos=current_pos, word_form=clean_word_lower)
+
+                    if func['index'] in compound_map:
+                        current_form = compound_map[func['index']]
+
+                    if degree_type:
+                        current_form = self.degree_handler.apply_degree(
+                            current_form, degree_type)
+
+                    if self.gender_handler.enabled and (pos in {'ADJ', 'DET', 'VERB'} or syntactic_func in {SyntacticFunction.MODIFIER, SyntacticFunction.COMPLEMENT}):
+                        deps = func.get('dependencies', [])
+                        head_idx = deps[0] if deps else -1
+                        if head_idx != -1:
+                            head_func = next(
+                                (f for f in ordered_functions if f['index'] == head_idx), None)
+                            if head_func and head_func.get('pos') == 'NOUN':
+                                head_lemma = head_func.get(
+                                    'lemma', head_func.get('word').lower())
+                                if self.polysemy_handler.enabled:
+                                    head_lemma = self.polysemy_handler.resolve_lemma(
+                                        head_lemma, head_func)
+                                head_conlang_word = self._get_word_form(head_lemma)
+                                if head_conlang_word:
+                                    head_gender = self.gender_handler.infer_gender(
+                                        head_conlang_word)
+                                    current_form = self.gender_handler.apply_agreement(
+                                        current_form, head_gender, pos)
+
+                    if self.broken_plural_handler.enabled:
+                        current_form = self.broken_plural_handler.apply_plural(
+                            current_form, feats, current_pos
+                        )
+
+                    if self.dual_handler.enabled:
+                        current_form = self.dual_handler.apply_dual(
+                            current_form, feats, deprel, current_pos
+                        )
+
+                    if self.construct_state_handler.enabled and func['index'] in construct_heads_indices:
+                        current_form = self.construct_state_handler.apply_construct_morphology(
+                            current_form, func)
+
+                    if func['index'] in possessive_suffixes_map:
+                        suffix = possessive_suffixes_map[func['index']]
+                        current_form = f"{current_form}{suffix}"
+
+                    is_topic = False
+                    if topic_enabled and topic_idx is not None:
+                        if func['index'] == topic_idx:
+                            is_topic = True
+
+                    is_focus = False
+                    if focus_enabled:
+                        if syntactic_func == SyntacticFunction.OBJECT:
+                            is_focus = True
+
+                    apply_case = True
+                    if is_focus and suppress_case_on_focus:
+                        apply_case = False
+
+                    if apply_case and func['index'] not in compound_map:
+                        is_transitive = transitivity_map.get(func['index'], False)
+                        current_form = self.syntax_engine.case_morphology.apply_case(
+                            current_form, syntactic_func, self.syntax_engine.word_order, deprel, clause_transitivity=is_transitive, func_data=func, all_functions=ordered_functions)
+
+                    if is_topic and topic_marker:
+                        current_form = f"{current_form} {topic_marker}"
+
+                    if is_focus and object_focus_marker:
+                        current_form = f"{current_form} {object_focus_marker}"
+
+                    effective_feats = feats
+                    if is_focus:
+                        effective_feats = f"{effective_feats}|Focus=Yes"
+
+                    if self.tam_handler.enabled and (pos in {'VERB', 'AUX'} or 'Tense=' in feats or 'Mood=' in feats or 'Aspect=' in feats or 'VerbForm=' in feats):
+                        tam_feats = effective_feats
+                        current_form = self.tam_handler.apply_tam(
+                            current_form, tam_feats, func, ordered_functions)
+
+                    is_negated, trigger_idx, neg_strategy = self.negation_handler.detect_negation(
+                        func, ordered_functions)
+
+                    clitic_handled_neg = False
+                    if self.clitic_handler.enabled and func['index'] in clitic_map:
+                        if 'neg' in self.clitic_handler.order and clitic_map[func['index']].get('neg'):
+                            clitic_handled_neg = True
+
+                    if is_negated and not clitic_handled_neg:
+                        current_form = self.negation_handler.apply_negation(
+                            current_form, neg_strategy)
+
+                    if self.clitic_handler.enabled and func['index'] in clitic_map:
+                        current_form = self.clitic_handler.apply_clitics(
+                            current_form, func['index'], clitic_map)
+
+                    if self.reduplication_handler.enabled:
+                        current_form = self.reduplication_handler.apply_reduplication(
+                            current_form, effective_feats, pos=current_pos)
+
+                    if self.stress_handler.enabled:
+                        current_form = self.stress_handler.apply_stress(
+                            current_form)
+
+                    if self.pharyngealization_handler.enabled:
+                        current_form = self.pharyngealization_handler.apply_effect(
+                            current_form)
+
+                    if self.mutation_handler.enabled:
+                        prev_word = last_content_word_str
+                        current_form = self.mutation_handler.apply_mutation(
+                            current_form, prev_word, last_content_func)
+
+                    if is_named_entity:
+                        current_form = current_form.capitalize()
+
+                    if orig_word[0].isupper() and pos == 'PROPN':
+                        current_form = current_form.capitalize()
+
+                    if func['index'] in inflected_preps_map:
+                        translated_root = inflected_preps_map[func['index']]
                         current_form = translated_root
 
-                if func['index'] in compound_map:
-                    current_form = compound_map[func['index']]
+                    translated_words.append(current_form)
+                    last_content_word_str = current_form
+                    last_content_func = func
 
-                if degree_type:
-                    current_form = self.degree_handler.apply_degree(
-                        current_form, degree_type)
+                    if self.sun_letter_handler.enabled and len(translated_words) > 1 and last_content_func:
+                        if last_content_func.get('pos') == 'DET':
+                            prev_word = translated_words[-2]
+                            assimilated_prev = self.sun_letter_handler.assimilate(
+                                prev_word, current_form)
+                            translated_words[-2] = assimilated_prev
 
-                if self.gender_handler.enabled and (pos in {'ADJ', 'DET', 'VERB'} or syntactic_func in {SyntacticFunction.MODIFIER, SyntacticFunction.COMPLEMENT}):
-                    deps = func.get('dependencies', [])
-                    head_idx = deps[0] if deps else -1
-                    if head_idx != -1:
-                        head_func = next(
-                            (f for f in ordered_functions if f['index'] == head_idx), None)
-                        if head_func and head_func.get('pos') == 'NOUN':
-                            head_lemma = head_func.get(
-                                'lemma', head_func.get('word').lower())
-                            if self.polysemy_handler.enabled:
-                                head_lemma = self.polysemy_handler.resolve_lemma(
-                                    head_lemma, head_func)
-                            head_conlang_word = self._get_word_form(head_lemma)
-                            if head_conlang_word:
-                                head_gender = self.gender_handler.infer_gender(
-                                    head_conlang_word)
-                                current_form = self.gender_handler.apply_agreement(
-                                    current_form, head_gender, pos)
+                if sentence_terminator:
+                    translated_words.append(sentence_terminator)
 
-                if self.broken_plural_handler.enabled:
-                    current_form = self.broken_plural_handler.apply_plural(
-                        current_form, feats, current_pos
-                    )
+                if is_question and self.interrogative_handler.enabled:
+                    particle = self.interrogative_handler.get_particle(q_type)
+                    if particle:
+                        translated_words.insert(0, particle)
+                        meta_config = self.profile.get('interrogative_system', {}).get(
+                            'particle_metadata', {})
+                        particle_meta = {
+                            'word': particle,
+                            'lemma': particle,
+                            'pos': meta_config.get('pos', 'PART'),
+                            'function': meta_config.get('function', 'INT'),
+                            'deprel': meta_config.get('deprel', 'discourse'),
+                            'index': -1,
+                            'dependencies': []
+                        }
+                        ordered_functions.insert(0, particle_meta)
 
-                if self.dual_handler.enabled:
-                    current_form = self.dual_handler.apply_dual(
-                        current_form, feats, deprel, current_pos
-                    )
+                if capitalization_enabled and translated_words:
+                    force_capitalization = True
+                    for idx, word in enumerate(translated_words):
+                        clean_w = word.strip()
+                        if not clean_w:
+                            continue
+                        if force_capitalization:
+                            if len(word) > 0 and not word[0].isupper():
+                                translated_words[idx] = word[0].upper() + word[1:]
+                            force_capitalization = False
+                        if any(clean_w.endswith(t) for t in all_terminators):
+                            force_capitalization = True
+                        else:
+                            force_capitalization = False
 
-                if self.construct_state_handler.enabled and func['index'] in construct_heads_indices:
-                    current_form = self.construct_state_handler.apply_construct_morphology(
-                        current_form, func)
+                if self.allomorphy_handler.enabled:
+                    translated_words = self.allomorphy_handler.apply_allomorphy(
+                        translated_words)
 
-                if func['index'] in possessive_suffixes_map:
-                    suffix = possessive_suffixes_map[func['index']]
-                    current_form = f"{current_form}{suffix}"
+                functions_for_glue = []
+                for func in ordered_functions:
+                    if func['index'] not in absorbed_indices:
+                        functions_for_glue.append(func)
 
-                is_topic = False
-                if topic_enabled and topic_idx is not None:
-                    if func['index'] == topic_idx:
-                        is_topic = True
+                final_sentence_tokens = self.syntax_engine._glue_tokens(
+                    translated_words, functions_for_glue)
 
-                is_focus = False
-                if focus_enabled:
-                    if syntactic_func == SyntacticFunction.OBJECT:
-                        is_focus = True
+                if final_sentence_tokens:
+                    if capitalization_enabled:
+                        first = final_sentence_tokens[0]
+                        if first:
+                            final_sentence_tokens[0] = first[0].upper() + first[1:]
 
-                apply_case = True
-                if is_focus and suppress_case_on_focus:
-                    apply_case = False
+                final_str = ' '.join(final_sentence_tokens)
+                if self.sandhi_handler.enabled:
+                    final_str = self.sandhi_handler.apply_sandhi(final_str)
 
-                if apply_case and func['index'] not in compound_map:
-                    is_transitive = transitivity_map.get(func['index'], False)
-                    current_form = self.syntax_engine.case_morphology.apply_case(
-                        current_form, syntactic_func, self.syntax_engine.word_order, deprel, clause_transitivity=is_transitive, func_data=func, all_functions=ordered_functions)
+                final_sentences.append(final_str)
 
-                if is_topic and topic_marker:
-                    current_form = f"{current_form} {topic_marker}"
-
-                if is_focus and object_focus_marker:
-                    current_form = f"{current_form} {object_focus_marker}"
-
-                effective_feats = feats
-                if is_focus:
-                    effective_feats = f"{effective_feats}|Focus=Yes"
-
-                if self.tam_handler.enabled and (pos in {'VERB', 'AUX'} or 'Tense=' in feats or 'Mood=' in feats or 'Aspect=' in feats or 'VerbForm=' in feats):
-                    tam_feats = effective_feats
-                    current_form = self.tam_handler.apply_tam(
-                        current_form, tam_feats, func, ordered_functions)
-
-                is_negated, trigger_idx, neg_strategy = self.negation_handler.detect_negation(
-                    func, ordered_functions)
-
-                clitic_handled_neg = False
-                if self.clitic_handler.enabled and func['index'] in clitic_map:
-                    if 'neg' in self.clitic_handler.order and clitic_map[func['index']].get('neg'):
-                        clitic_handled_neg = True
-
-                if is_negated and not clitic_handled_neg:
-                    current_form = self.negation_handler.apply_negation(
-                        current_form, neg_strategy)
-
-                if self.clitic_handler.enabled and func['index'] in clitic_map:
-                    current_form = self.clitic_handler.apply_clitics(
-                        current_form, func['index'], clitic_map)
-
-                if self.reduplication_handler.enabled:
-                    current_form = self.reduplication_handler.apply_reduplication(
-                        current_form, effective_feats, pos=current_pos)
-
-                if self.stress_handler.enabled:
-                    current_form = self.stress_handler.apply_stress(
-                        current_form)
-
-                if self.pharyngealization_handler.enabled:
-                    current_form = self.pharyngealization_handler.apply_effect(
-                        current_form)
-
-                if self.mutation_handler.enabled:
-                    prev_word = last_content_word_str
-                    current_form = self.mutation_handler.apply_mutation(
-                        current_form, prev_word, last_content_func)
-
-                if is_named_entity:
-                    current_form = current_form.capitalize()
-
-                if orig_word[0].isupper() and pos == 'PROPN':
-                    current_form = current_form.capitalize()
-
-                if func['index'] in inflected_preps_map:
-                    translated_root = inflected_preps_map[func['index']]
-                    current_form = translated_root
-
-                translated_words.append(current_form)
-                last_content_word_str = current_form
-                last_content_func = func
-
-                if self.sun_letter_handler.enabled and len(translated_words) > 1 and last_content_func:
-                    if last_content_func.get('pos') == 'DET':
-                        prev_word = translated_words[-2]
-                        assimilated_prev = self.sun_letter_handler.assimilate(
-                            prev_word, current_form)
-                        translated_words[-2] = assimilated_prev
-
-            if sentence_terminator:
-                translated_words.append(sentence_terminator)
-
-            if is_question and self.interrogative_handler.enabled:
-                particle = self.interrogative_handler.get_particle(q_type)
-                if particle:
-                    translated_words.insert(0, particle)
-                    meta_config = self.profile.get('interrogative_system', {}).get(
-                        'particle_metadata', {})
-                    particle_meta = {
-                        'word': particle,
-                        'lemma': particle,
-                        'pos': meta_config.get('pos', 'PART'),
-                        'function': meta_config.get('function', 'INT'),
-                        'deprel': meta_config.get('deprel', 'discourse'),
-                        'index': -1,
-                        'dependencies': []
-                    }
-                    ordered_functions.insert(0, particle_meta)
-
-            if capitalization_enabled and translated_words:
-                force_capitalization = True
-                for idx, word in enumerate(translated_words):
-                    clean_w = word.strip()
-                    if not clean_w:
-                        continue
-                    if force_capitalization:
-                        if len(word) > 0 and not word[0].isupper():
-                            translated_words[idx] = word[0].upper() + word[1:]
-                        force_capitalization = False
-                    if any(clean_w.endswith(t) for t in all_terminators):
-                        force_capitalization = True
-                    else:
-                        force_capitalization = False
-
-            if self.allomorphy_handler.enabled:
-                translated_words = self.allomorphy_handler.apply_allomorphy(
-                    translated_words)
-
-            functions_for_glue = []
-            for func in ordered_functions:
-                if func['index'] not in absorbed_indices:
-                    functions_for_glue.append(func)
-
-            final_sentence_tokens = self.syntax_engine._glue_tokens(
-                translated_words, functions_for_glue)
-
-            if final_sentence_tokens:
-                if capitalization_enabled:
-                    first = final_sentence_tokens[0]
-                    if first:
-                        final_sentence_tokens[0] = first[0].upper() + first[1:]
-
-            final_str = ' '.join(final_sentence_tokens)
-            if self.sandhi_handler.enabled:
-                final_str = self.sandhi_handler.apply_sandhi(final_str)
-
-            final_sentences.append(final_str)
-
-        self.save_word_cache()
-        final_output = ' '.join(final_sentences)
-        final_output = polish_output(
-            final_output, self.profile, text, functions_info)
-        return final_output
+            self.save_word_cache()
+            final_output = ' '.join(final_sentences)
+            final_output = polish_output(
+                final_output, self.profile, text, functions_info)
+            return final_output
 
     def process_with_analysis(self, text: str) -> Dict:
         reordered_text, functions_info = self.syntax_engine.process_text(text)

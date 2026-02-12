@@ -8,6 +8,7 @@ import os
 from ui.lexicon import LexiconTab
 from ui.profile import ProfileTab
 from ui.gramataki import GramatakiTab
+from ui.idioms_gui import IdiomTab
 from ui.spinner import LoadingOverlay
 
 
@@ -323,6 +324,9 @@ class ConHabApp:
             self.notebook, self.colors, self.engine)
         self.notebook.add(self.gramataki_widget, text="Gramataki")
 
+        self.tab_idioms = IdiomTab(self.notebook, self.colors, None)
+        self.notebook.add(self.tab_idioms, text="Expressões & Padrões")
+
         self.profile_widget = ProfileTab(self.notebook, self.colors)
         self.notebook.add(self.profile_widget, text="Editor JSON")
 
@@ -426,6 +430,11 @@ class ConHabApp:
         )
         self.lexicon_widget.refresh(self.engine)
         self.gramataki_widget.update_engine(self.engine)
+
+        self.tab_idioms.engine = self.engine
+        self.tab_idioms.manager = self.engine.idiom_manager
+        self.tab_idioms.refresh_list()
+
         self.loading_overlay.hide()
 
     def _on_load_error(self, error):
