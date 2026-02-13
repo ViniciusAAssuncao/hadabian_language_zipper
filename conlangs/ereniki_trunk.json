@@ -1,0 +1,754 @@
+{
+    "family_id": "ereniki_trunk",
+    "description": "Tronco das línguas ereníki (Eresseo), família linguística isolada de Hadab com mais de 100.000 anos de história documentada. Caracteriza-se por morfologia fusional complexa, quatro gêneros gramaticais (masculino, feminino, neutro, animado), sistema de casos elaborado (até 8 casos), número dual produtivo e altíssima capacidade de composição. Mantém contato milenar com o tronco raabiano, resultando em influência mútua comparável à relação greco-latina.",
+    "proto_languages": [
+        {
+            "id": "proto-ereniki",
+            "level": 0,
+            "description": "Proto-Ereníki (aprox. 100.300 anos atrás). Língua ancestral isolada, originária do planalto de Aellor. Sistema consonantal equilibrado, ausência de sons guturais fortes. Morfologia aglutinante com tendências fusionais incipientes. Raízes predominantemente CVC.",
+            "shared_phonotactics": {
+                "vowels": "aeiouāēīōū",
+                "consonants": "pbtdkɡfvθðszʃʒmnɲŋlʎrwj",
+                "syllable_templates": [
+                    "CV",
+                    "CVC",
+                    "CVCC",
+                    "CCV",
+                    "V",
+                    "VC"
+                ],
+                "forbidden_initial_clusters": [
+                    "tl",
+                    "dl",
+                    "θl",
+                    "ðl",
+                    "sr",
+                    "zr",
+                    "nm",
+                    "ɲŋ",
+                    "pw",
+                    "kw"
+                ],
+                "forbidden_final_consonants": [
+                    "h",
+                    "j",
+                    "w",
+                    "ɲ"
+                ],
+                "max_consonant_cluster": 2,
+                "diphthongs": [
+                    "ai",
+                    "au",
+                    "ei",
+                    "eu",
+                    "oi",
+                    "ou"
+                ],
+                "triphthongs": []
+            },
+            "shared_lexicon_strength": 0.20,
+            "agglutination_strength": 0.92,
+            "gender_system": {
+                "enabled": true,
+                "genders": [
+                    "masculine",
+                    "feminine",
+                    "neuter",
+                    "animate"
+                ],
+                "default": "masculine",
+                "inference": [
+                    {
+                        "suffix": "os",
+                        "gender": "masculine"
+                    },
+                    {
+                        "suffix": "us",
+                        "gender": "masculine"
+                    },
+                    {
+                        "suffix": "a",
+                        "gender": "feminine"
+                    },
+                    {
+                        "suffix": "ā",
+                        "gender": "feminine"
+                    },
+                    {
+                        "suffix": "on",
+                        "gender": "neuter"
+                    },
+                    {
+                        "suffix": "um",
+                        "gender": "neuter"
+                    },
+                    {
+                        "suffix": "ēs",
+                        "gender": "animate"
+                    },
+                    {
+                        "suffix": "ōn",
+                        "gender": "animate"
+                    }
+                ]
+            },
+            "case_system_proto": {
+                "cases": [
+                    "nominative",
+                    "accusative",
+                    "genitive",
+                    "dative",
+                    "locative",
+                    "ablative",
+                    "vocative",
+                    "instrumental"
+                ],
+                "markers": {
+                    "nominative": "-s",
+                    "accusative": "-m",
+                    "genitive": "-l",
+                    "dative": "-bʰ",
+                    "locative": "-i",
+                    "ablative": "-āt",
+                    "vocative": "-Ø",
+                    "instrumental": "-p"
+                },
+                "dual_markers": {
+                    "nominative": "-ō",
+                    "accusative": "-ō",
+                    "genitive": "-ous",
+                    "dative": "-obʰ",
+                    "locative": "-oi",
+                    "ablative": "-ōt",
+                    "vocative": "-ō",
+                    "instrumental": "-ōp"
+                }
+            },
+            "verbal_system_proto": {
+                "aspects": [
+                    "perfective",
+                    "imperfective",
+                    "stative",
+                    "iterative"
+                ],
+                "moods": [
+                    "indicative",
+                    "subjunctive",
+                    "optative",
+                    "imperative"
+                ],
+                "tenses_derived": [
+                    "present",
+                    "past",
+                    "future",
+                    "aorist"
+                ],
+                "person_markers": {
+                    "1sg": {
+                        "suffix": "-mi"
+                    },
+                    "2sg": {
+                        "suffix": "-si"
+                    },
+                    "3sg": {
+                        "suffix": "-ti"
+                    },
+                    "1pl": {
+                        "suffix": "-mes"
+                    },
+                    "2pl": {
+                        "suffix": "-te"
+                    },
+                    "3pl": {
+                        "suffix": "-nti"
+                    },
+                    "1du": {
+                        "suffix": "-wos"
+                    },
+                    "2du": {
+                        "suffix": "-tos"
+                    },
+                    "3du": {
+                        "suffix": "-ton"
+                    }
+                }
+            },
+            "nominal_patterns": [
+                {
+                    "pattern": "CVC-os",
+                    "type": "basic_masculine"
+                },
+                {
+                    "pattern": "CVC-a",
+                    "type": "basic_feminine"
+                },
+                {
+                    "pattern": "CVC-on",
+                    "type": "basic_neuter"
+                },
+                {
+                    "pattern": "CVC-ēs",
+                    "type": "basic_animate"
+                },
+                {
+                    "pattern": "CVC-tā",
+                    "type": "abstract_noun"
+                },
+                {
+                    "pattern": "CVC-tor",
+                    "type": "agent_noun"
+                },
+                {
+                    "pattern": "CVC-ilis",
+                    "type": "adjective_relational"
+                }
+            ],
+            "compounding": {
+                "enabled": true,
+                "head_position": "final",
+                "linking_elements": [
+                    "s",
+                    "o",
+                    "i"
+                ]
+            },
+            "number_system": {
+                "numbers": [
+                    "singular",
+                    "dual",
+                    "plural"
+                ],
+                "dual_markers": {
+                    "nominative": "-ō",
+                    "accusative": "-ō",
+                    "genitive": "-ous",
+                    "dative": "-obʰ"
+                }
+            },
+            "stress_system_proto": {
+                "type": "pitch_accent",
+                "preference": "recessive",
+                "description": "Acento musical herdado, frequentemente na primeira sílaba."
+            }
+        },
+        {
+            "id": "archaic-eressean",
+            "parent_id": "proto-ereniki",
+            "level": 1,
+            "description": "Eresseo Arcaico (aprox. 80.000 – 50.000 anos atrás). Primeiras inscrições. Desenvolvimento de classes declinacionais fusionais. Queda de consoantes aspiradas e simplificação de grupos consonantais.",
+            "shared_phonotactics": {
+                "vowels": "aeiouāēīōū",
+                "consonants": "pbtdkɡfvθðszʃʒmnɲlrwj",
+                "syllable_templates": [
+                    "CV",
+                    "CVC",
+                    "CVCC",
+                    "CCV"
+                ],
+                "forbidden_initial_clusters": [
+                    "tl",
+                    "dl",
+                    "θl",
+                    "ðl"
+                ],
+                "diphthongs": [
+                    "ai",
+                    "au",
+                    "ei",
+                    "eu",
+                    "oi"
+                ]
+            },
+            "shared_lexicon_strength": 0.68,
+            "agglutination_strength": 0.75,
+            "innovations": [
+                "fusional_declension_emergence",
+                "loss_of_aspirated_stops",
+                "diphthong_monophthongization_in_final_syllables",
+                "productive_dual_morphology",
+                "vowel_length_phonemicized"
+            ],
+            "sound_changes_from_parent": [
+                {
+                    "from": "bʰ",
+                    "to": "b",
+                    "condition": "all"
+                },
+                {
+                    "from": "dʰ",
+                    "to": "d",
+                    "condition": "all"
+                },
+                {
+                    "from": "gʰ",
+                    "to": "g",
+                    "condition": "all"
+                },
+                {
+                    "from": "p",
+                    "to": "f",
+                    "condition": "intervocalic"
+                },
+                {
+                    "from": "t",
+                    "to": "θ",
+                    "condition": "intervocalic"
+                },
+                {
+                    "from": "k",
+                    "to": "x",
+                    "condition": "intervocalic"
+                },
+                {
+                    "from": "ai",
+                    "to": "ē",
+                    "condition": "word_final"
+                },
+                {
+                    "from": "au",
+                    "to": "ō",
+                    "condition": "word_final"
+                }
+            ],
+            "case_system_archaic": {
+                "cases": [
+                    "nominative",
+                    "accusative",
+                    "genitive",
+                    "dative",
+                    "locative",
+                    "ablative",
+                    "instrumental",
+                    "vocative"
+                ],
+                "declension_classes": 4,
+                "fusional_tendency": "high"
+            },
+            "gender_neutrality": {
+                "animate_gender": "crystallized for beings and divine forces"
+            }
+        },
+        {
+            "id": "classical-eressean",
+            "parent_id": "archaic-eressean",
+            "level": 2,
+            "description": "Eresseo Clássico (aprox. 50.000 – 20.000 anos atrás). Língua literária, filosófica e administrativa do Império Eren. Canonização da morfologia fusional, sistema de 8 casos plenamente produtivo, dual obrigatório em pares naturais. Período de contato intenso com o Raabiano Clássico.",
+            "shared_phonotactics": {
+                "vowels": "aeiouāēīōū",
+                "consonants": "pbtdkɡfvθðszʃʒmnɲlrwj",
+                "syllable_templates": [
+                    "CV",
+                    "CVC",
+                    "CVCC",
+                    "CCV"
+                ],
+                "diphthongs": [
+                    "ai",
+                    "au",
+                    "ei",
+                    "eu"
+                ]
+            },
+            "shared_lexicon_strength": 0.78,
+            "agglutination_strength": 0.55,
+            "innovations": [
+                "morphological_fusion_peak",
+                "preposition_emergence_with_case_government",
+                "compounding_explosion",
+                "raabian_loanwords_philosophical",
+                "dual_mandatory_for_paired_objects"
+            ],
+            "case_system_classical": {
+                "cases": [
+                    "nominative",
+                    "accusative",
+                    "genitive",
+                    "dative",
+                    "locative",
+                    "ablative",
+                    "instrumental",
+                    "vocative"
+                ],
+                "declension_paradigms": "fully_fusional",
+                "prepositional_government": "established"
+            },
+            "syntactic_innovations": {
+                "word_order": "VSO_dominant",
+                "pro_drop": "enabled",
+                "copula": "often_null_in_present"
+            },
+            "lexical_exchange_with_raabic": {
+                "domains": [
+                    "philosophy",
+                    "mathematics",
+                    "theology",
+                    "trade"
+                ],
+                "direction": "bidirectional",
+                "analogy": "Latin_Greek"
+            }
+        },
+        {
+            "id": "middle-eressean",
+            "parent_id": "classical-eressean",
+            "level": 3,
+            "description": "Eresseo Médio (aprox. 20.000 – 2.000 anos atrás). Simplificação de casos periféricos (locativo e ablativo fundem-se, instrumental torna-se perifrástico). Aumento do uso de preposições. Dialetização acentuada. Contato com o Raabiano Médio e Proto-Levínico.",
+            "shared_phonotactics": {
+                "vowels": "aeiouāēīōū",
+                "consonants": "pbtdkɡfvθðszʃmnlrwj",
+                "syllable_templates": [
+                    "CV",
+                    "CVC",
+                    "CVCC"
+                ],
+                "diphthongs": [
+                    "ai",
+                    "au",
+                    "ei"
+                ]
+            },
+            "shared_lexicon_strength": 0.72,
+            "agglutination_strength": 0.48,
+            "innovations": [
+                "case_syncretism_locative_ablative",
+                "instrumental_replaced_by_preposition_ana",
+                "dual_optional_in_colloquial",
+                "raabian_calques_common",
+                "development_of_analytic_comparatives"
+            ],
+            "sound_changes_middle": [
+                {
+                    "from": "θ",
+                    "to": "t",
+                    "condition": "word_initial"
+                },
+                {
+                    "from": "ð",
+                    "to": "d",
+                    "condition": "word_initial"
+                },
+                {
+                    "from": "x",
+                    "to": "h",
+                    "condition": "all"
+                },
+                {
+                    "from": "ɲ",
+                    "to": "n",
+                    "condition": "coda"
+                },
+                {
+                    "from": "ā",
+                    "to": "a",
+                    "condition": "unstressed_final"
+                }
+            ],
+            "dialectal_variation": {
+                "enabled": true,
+                "variation_axes": [
+                    "north_south",
+                    "coastal_inland",
+                    "conservative_innovative"
+                ],
+                "major_dialects": [
+                    {
+                        "name": "northern_eressean",
+                        "description": "Dialeto setentrional, conservador, mantém 7 casos.",
+                        "features": [
+                            "pharyngeal_absence",
+                            "dual_productive",
+                            "vso_rigid"
+                        ]
+                    },
+                    {
+                        "name": "southern_eressean",
+                        "description": "Dialeto meridional, inovador, influência raabiana intensa.",
+                        "features": [
+                            "case_reduction_5",
+                            "prepositional_phrases",
+                            "svo_flexible"
+                        ]
+                    },
+                    {
+                        "name": "coastal_eressean",
+                        "description": "Dialeto portuário, forte empréstimo raabiano marítimo.",
+                        "features": [
+                            "raabian_loanwords_heavy",
+                            "phonetic_adaptation",
+                            "simplified_gender_agreement"
+                        ]
+                    }
+                ]
+            }
+        }
+    ],
+    "branches": [
+        {
+            "id": "western-eressean",
+            "parent_id": "middle-eressean",
+            "description": "Ramo ocidental, base do Eresseo Moderno Padrão. Influência raabiana moderada, manutenção dos 4 gêneros e dos 5 casos principais (nom, ac, gen, dat, loc-abl fundido). Dual preservado na língua escrita e formal.",
+            "shared_lexicon_strength": 0.85,
+            "agglutination_strength": 0.42,
+            "distinctive_features": [
+                "five_case_system",
+                "dual_formal",
+                "preposition_government_strict",
+                "compounding_very_productive",
+                "soft_consonant_inventory"
+            ]
+        },
+        {
+            "id": "eastern-eressean",
+            "parent_id": "classical-eressean",
+            "description": "Ramo oriental, conservador. Preserva 7 casos, dual obrigatório, vocabulário arcaico. Falado em regiões montanhosas isoladas.",
+            "shared_lexicon_strength": 0.88,
+            "agglutination_strength": 0.58,
+            "distinctive_features": [
+                "seven_case_preservation",
+                "dual_mandatory",
+                "minimal_raabian_influence",
+                "archaic_lexicon",
+                "vso_only"
+            ]
+        },
+        {
+            "id": "insular-eressean",
+            "parent_id": "archaic-eressean",
+            "description": "Ramo insular, altamente arcaico, preserva traços do Eresseo Arcaico. Língua litúrgica e de comunidades fechadas.",
+            "shared_lexicon_strength": 0.80,
+            "agglutination_strength": 0.70,
+            "distinctive_features": [
+                "six_case_system_archaic",
+                "pitch_accent_retention",
+                "no_raabian_loans",
+                "sov_residual"
+            ]
+        },
+        {
+            "id": "raabianized-coastal",
+            "parent_id": "middle-eressean",
+            "description": "Ramo costeiro, fortemente influenciado pelo Raabiano. Léxico marítimo e comercial adaptado. Simplificação de gêneros (perda do animado em contextos coloquiais).",
+            "shared_lexicon_strength": 0.70,
+            "agglutination_strength": 0.50,
+            "distinctive_features": [
+                "gender_collapse_tendency",
+                "raabian_loanwords_integrated",
+                "phonetic_raabianisms",
+                "calque_morphology"
+            ]
+        }
+    ],
+    "intelligibility": {
+        "archaic-eressean:classical-eressean": 0.68,
+        "classical-eressean:middle-eressean": 0.75,
+        "middle-eressean:western-eressean": 0.82,
+        "middle-eressean:eastern-eressean": 0.70,
+        "western-eressean:eastern-eressean": 0.65,
+        "western-eressean:raabianized-coastal": 0.78,
+        "eastern-eressean:insular-eressean": 0.60,
+        "classical-eressean:insular-eressean": 0.85
+    },
+    "diachronic_settings": {
+        "default_divergence_factor": 0.18,
+        "max_synonym_variants": 5,
+        "semantic_drift_rate": 0.20,
+        "grammaticalization_paths": [
+            {
+                "lexical": "verb_give",
+                "grammatical": "benefactive_marker_para"
+            },
+            {
+                "lexical": "verb_come",
+                "grammatical": "future_marker"
+            },
+            {
+                "lexical": "noun_hand",
+                "grammatical": "instrumental_preposition"
+            },
+            {
+                "lexical": "noun_face",
+                "grammatical": "directional_marker"
+            },
+            {
+                "lexical": "demonstrative_this",
+                "grammatical": "definite_article"
+            }
+        ],
+        "sound_change_rates": {
+            "vowel_mergers": 0.10,
+            "consonant_lenition": 0.20,
+            "cluster_simplification": 0.15,
+            "syncope": 0.25
+        }
+    },
+    "lexical_registers_defaults": {
+        "enabled": true,
+        "registers": [
+            {
+                "name": "archaic_liturgical",
+                "chance": 0.05,
+                "mutation_factor": 0.15,
+                "description": "Registro arcaico litúrgico, preserva formas do Eresseo Clássico."
+            },
+            {
+                "name": "classical_literary",
+                "chance": 0.12,
+                "mutation_factor": 0.40,
+                "description": "Registro literário erudito, imitação do Eresseo Clássico."
+            },
+            {
+                "name": "formal_standard",
+                "chance": 0.30,
+                "mutation_factor": 0.80,
+                "description": "Registro formal padrão (administração, academia)."
+            },
+            {
+                "name": "colloquial_everyday",
+                "chance": 0.35,
+                "mutation_factor": 1.50,
+                "description": "Registro coloquial cotidiano, simplificações comuns."
+            },
+            {
+                "name": "vulgar_slang",
+                "chance": 0.08,
+                "mutation_factor": 2.20,
+                "description": "Registro vulgar, gírias urbanas, empréstimos não adaptados."
+            },
+            {
+                "name": "technical",
+                "chance": 0.10,
+                "mutation_factor": 0.90,
+                "description": "Registro técnico-científico, neologismos e compostos."
+            }
+        ]
+    },
+    "loanword_policy_defaults": {
+        "enabled": true,
+        "modes": {
+            "phonetic_adaptation": 0.55,
+            "calque": 0.30,
+            "semantic_extension": 0.15
+        },
+        "calque_connector": "-",
+        "adaptation_rules": [
+            {
+                "source_phoneme": "ħ",
+                "target_phoneme": "h",
+                "environment": "all"
+            },
+            {
+                "source_phoneme": "ʕ",
+                "target_phoneme": "a",
+                "environment": "coda"
+            },
+            {
+                "source_phoneme": "q",
+                "target_phoneme": "k",
+                "environment": "all"
+            },
+            {
+                "source_phoneme": "ṣ",
+                "target_phoneme": "s",
+                "environment": "all"
+            },
+            {
+                "source_cluster": "CC",
+                "resolution": "epenthesis",
+                "epenthetic_vowel": "e"
+            }
+        ],
+        "source_languages": [
+            "classical_raabic",
+            "middle_raabic",
+            "proto_levinic"
+        ]
+    },
+    "morphophonological_processes": {
+        "assimilation": {
+            "enabled": true,
+            "types": [
+                {
+                    "name": "nasal_place",
+                    "trigger": "n",
+                    "target": "following_labial",
+                    "result": "m"
+                },
+                {
+                    "name": "voice_assimilation",
+                    "trigger": "obstruent",
+                    "target": "following_obstruent",
+                    "result": "agree_voice"
+                }
+            ]
+        },
+        "deletion": {
+            "enabled": true,
+            "rules": [
+                {
+                    "target": "short_vowel",
+                    "environment": "unstressed_medial",
+                    "condition": "colloquial"
+                },
+                {
+                    "target": "n",
+                    "environment": "_#",
+                    "condition": "after_long_vowel"
+                }
+            ]
+        },
+        "epenthesis": {
+            "enabled": true,
+            "vowel": "e",
+            "triggers": [
+                "forbidden_cluster",
+                "word_final_cluster"
+            ]
+        },
+        "lenition": {
+            "enabled": true,
+            "context": "intervocalic",
+            "changes": {
+                "p": "f",
+                "t": "θ",
+                "k": "h",
+                "b": "v",
+                "d": "ð",
+                "g": "ɣ"
+            },
+            "condition": "not_historical_geminate"
+        }
+    },
+    "sociolinguistic_dimensions": {
+        "diglossia": {
+            "enabled": true,
+            "high_variety": "classical_eressean",
+            "low_variety": "western_eressean_colloquial",
+            "domains": {
+                "high": [
+                    "literature",
+                    "religion",
+                    "law",
+                    "formal_education"
+                ],
+                "low": [
+                    "conversation",
+                    "family",
+                    "local_media",
+                    "commerce"
+                ]
+            }
+        },
+        "prestige_hierarchy": {
+            "classical_eressean": 10,
+            "eastern_eressean": 8,
+            "western_eressean_standard": 9,
+            "raabianized_coastal": 6,
+            "insular_eressean": 7,
+            "colloquial_dialects": 5
+        },
+        "language_attitudes": {
+            "towards_raabic": "Respeito e admiração, visto como língua irmã erudita",
+            "purism_movements": "Correntes que evitam empréstimos raabianos diretos, preferindo calques"
+        }
+    }
+}

@@ -113,7 +113,7 @@ class CreateWordModal(tk.Toplevel):
         self.is_generating = False
 
         self.title("Criar Nova Palavra")
-        self.geometry("600x750")
+        self.geometry("700x800")
         self.configure(bg=self.colors["bg_main"])
         self.transient(parent)
         self.grab_set()
@@ -122,6 +122,7 @@ class CreateWordModal(tk.Toplevel):
         self.lemma_b_data = None
         self.source_engine_cache = None
         self.selected_source_id = None
+        self.compound_suggestions = []
 
         self.setup_ui()
         self.center_window()
@@ -179,7 +180,7 @@ class CreateWordModal(tk.Toplevel):
         )
 
         canvas.create_window(
-            (0, 0), window=scrollable_frame, anchor="nw", width=540)
+            (0, 0), window=scrollable_frame, anchor="nw", width=650)
         canvas.configure(yscrollcommand=scrollbar.set)
 
         canvas.pack(side="left", fill="both", expand=True)
@@ -249,7 +250,7 @@ class CreateWordModal(tk.Toplevel):
             lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
         )
         canvas.create_window(
-            (0, 0), window=scrollable_frame, anchor="nw", width=540)
+            (0, 0), window=scrollable_frame, anchor="nw", width=650)
         canvas.configure(yscrollcommand=scrollbar.set)
         canvas.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")
@@ -257,6 +258,7 @@ class CreateWordModal(tk.Toplevel):
         parts_frame = ttk.LabelFrame(
             scrollable_frame, text="Componentes da Aglutinação", padding=15)
         parts_frame.pack(fill=tk.X, pady=(0, 15))
+
         ttk.Label(parts_frame, text="Parte A (Modificador/Cabeça):",
                   foreground=self.colors["fg_secondary"]).pack(anchor="w")
         frame_a = ttk.Frame(parts_frame)
@@ -266,6 +268,12 @@ class CreateWordModal(tk.Toplevel):
         self.lbl_part_a.pack(side="left", fill=tk.X, expand=True)
         ttk.Button(frame_a, text="Buscar", width=10,
                    command=lambda: self.open_search("A")).pack(side="right")
+
+        swap_frame = ttk.Frame(parts_frame)
+        swap_frame.pack(fill=tk.X, pady=2)
+        ttk.Button(swap_frame, text="⇅ Inverter Ordem",
+                   command=self.swap_components, style="Secondary.TButton").pack(anchor="center")
+
         ttk.Label(parts_frame, text="Parte B (Modificador/Cabeça):",
                   foreground=self.colors["fg_secondary"]).pack(anchor="w")
         frame_b = ttk.Frame(parts_frame)
@@ -275,12 +283,25 @@ class CreateWordModal(tk.Toplevel):
         self.lbl_part_b.pack(side="left", fill=tk.X, expand=True)
         ttk.Button(frame_b, text="Buscar", width=10,
                    command=lambda: self.open_search("B")).pack(side="right")
+
+        suggestion_frame = ttk.LabelFrame(
+            scrollable_frame, text="Sugestões Inteligentes", padding=15)
+        suggestion_frame.pack(fill=tk.X, pady=(0, 15))
+
+        self.suggestion_list = tk.Listbox(suggestion_frame, height=4, relief="flat",
+                                          bg=self.colors.get("bg_entry", "#ffffff"), fg="black",
+                                          highlightthickness=1, highlightbackground=self.colors.get("border", "#cccccc"))
+        self.suggestion_list.pack(fill=tk.X, pady=(0, 5))
+        self.suggestion_list.bind(
+            "<<ListboxSelect>>", self.on_suggestion_select)
+
+        ttk.Button(suggestion_frame, text="↻ Regenerar Sugestões",
+                   command=self.refresh_compound_suggestions).pack(fill=tk.X)
+
         preview_frame = ttk.LabelFrame(
             scrollable_frame, text="Resultado da Aglutinação", padding=15)
         preview_frame.pack(fill=tk.X, pady=(0, 15))
-        self.btn_agglutinate = ttk.Button(
-            preview_frame, text="Processar Aglutinação", command=self.process_agglutination)
-        self.btn_agglutinate.pack(fill=tk.X, pady=(0, 10))
+
         ttk.Label(preview_frame, text="Lema Composto:",
                   foreground=self.colors["fg_secondary"]).pack(anchor="w")
         self.entry_compound_lemma = ttk.Entry(preview_frame, font=(
@@ -311,7 +332,7 @@ class CreateWordModal(tk.Toplevel):
             lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
         )
         canvas.create_window(
-            (0, 0), window=scrollable_frame, anchor="nw", width=540)
+            (0, 0), window=scrollable_frame, anchor="nw", width=650)
         canvas.configure(yscrollcommand=scrollbar.set)
         canvas.pack(side="left", fill="both", expand=True)
         scrollbar.pack(side="right", fill="y")
@@ -545,24 +566,59 @@ class CreateWordModal(tk.Toplevel):
                 combined_lemma = f"{self.lemma_a_data[0]}-{self.lemma_b_data[0]}"
                 self.entry_compound_lemma.delete(0, tk.END)
                 self.entry_compound_lemma.insert(0, combined_lemma)
+                self.refresh_compound_suggestions()
 
         LemmaSearchDialog(self, self.colors, self.engine.word_cache, callback)
 
-    def process_agglutination(self):
+    def swap_components(self):
         if not self.lemma_a_data or not self.lemma_b_data:
             return
 
-        lemma_a = self.lemma_a_data[0]
-        lemma_b = self.lemma_b_data[0]
+        self.lemma_a_data, self.lemma_b_data = self.lemma_b_data, self.lemma_a_data
 
-        final_word = self.engine.generate_compound([lemma_a, lemma_b])
+        txt_a = f"{self.lemma_a_data[0]} ({self.lemma_a_data[1]})"
+        txt_b = f"{self.lemma_b_data[0]} ({self.lemma_b_data[1]})"
 
-        if hasattr(self.engine, 'special_mechanics_handler') and self.engine.special_mechanics_handler and self.engine.special_mechanics_handler.enabled:
-            final_word = self.engine.special_mechanics_handler.apply_mechanics(
-                final_word, f"{lemma_a}-{lemma_b}", self.engine.global_seed)
+        self.lbl_part_a.config(text=txt_a)
+        self.lbl_part_b.config(text=txt_b)
 
-        self.entry_compound_word.delete(0, tk.END)
-        self.entry_compound_word.insert(0, final_word)
+        combined_lemma = f"{self.lemma_a_data[0]}-{self.lemma_b_data[0]}"
+        self.entry_compound_lemma.delete(0, tk.END)
+        self.entry_compound_lemma.insert(0, combined_lemma)
+        self.refresh_compound_suggestions()
+
+    def refresh_compound_suggestions(self):
+        if not self.lemma_a_data or not self.lemma_b_data:
+            return
+
+        self.suggestion_list.delete(0, tk.END)
+        self.compound_suggestions = []
+
+        suggestions = self.engine.suggest_compounds(
+            [self.lemma_a_data[0], self.lemma_b_data[0]])
+
+        for idx, sugg in enumerate(suggestions):
+            word = sugg.get('word', '')
+            desc = sugg.get('desc', '')
+            self.suggestion_list.insert(tk.END, f"{word} [{desc}]")
+            self.compound_suggestions.append(word)
+
+        if self.compound_suggestions:
+            self.suggestion_list.select_set(0)
+            self.entry_compound_word.delete(0, tk.END)
+            self.entry_compound_word.insert(0, self.compound_suggestions[0])
+
+    def on_suggestion_select(self, event):
+        selection = self.suggestion_list.curselection()
+        if selection:
+            idx = selection[0]
+            if idx < len(self.compound_suggestions):
+                word = self.compound_suggestions[idx]
+                self.entry_compound_word.delete(0, tk.END)
+                self.entry_compound_word.insert(0, word)
+
+    def process_agglutination(self):
+        self.refresh_compound_suggestions()
 
     def start_generation(self):
         if self.is_generating:
