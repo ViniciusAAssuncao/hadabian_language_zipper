@@ -9,47 +9,152 @@
       "shared_phonotactics": {
         "vowels": "aiuāīūeēoō",
         "consonants": "ʔbdgħhklmnpqrsṣštṭwxyzʕṛḷγčǧ",
-        "syllable_templates": ["CV", "CVC", "CVCC", "V", "VC", "CCV"],
-        "forbidden_initial_clusters": ["bd", "tṭ", "nm", "lr", "pw", "kg"],
-        "forbidden_final_consonants": ["ʔ", "ħ", "ʕ", "γ"],
+        "syllable_templates": [
+          "CV",
+          "CVC",
+          "CVCC",
+          "V",
+          "VC",
+          "CCV"
+        ],
+        "forbidden_initial_clusters": [
+          "bd",
+          "tṭ",
+          "nm",
+          "lr",
+          "pw",
+          "kg"
+        ],
+        "forbidden_final_consonants": [
+          "ʔ",
+          "ħ",
+          "ʕ",
+          "γ"
+        ],
         "max_consonant_cluster": 2,
-        "diphthongs": ["ai", "au", "ei", "ou", "ui"],
-        "triphthongs": ["aui", "eui"]
+        "diphthongs": [
+          "ai",
+          "au",
+          "ei",
+          "ou",
+          "ui"
+        ],
+        "triphthongs": [
+          "aui",
+          "eui"
+        ]
       },
       "shared_lexicon_strength": 0.18,
       "agglutination_strength": 0.88,
       "gender_system": {
         "enabled": true,
-        "genders": ["masculine", "feminine", "neuter", "divine"],
+        "genders": [
+          "masculine",
+          "feminine",
+          "neuter",
+          "divine"
+        ],
         "default": "masculine",
         "inference": [
-          {"suffix": "ul", "gender": "masculine"},
-          {"suffix": "ab", "gender": "masculine"},
-          {"suffix": "ata", "gender": "feminine"},
-          {"suffix": "ete", "gender": "feminine"},
-          {"suffix": "on", "gender": "neuter"},
-          {"suffix": "um", "gender": "neuter"},
-          {"suffix": "aab", "gender": "divine"},
-          {"suffix": "rahul", "gender": "divine"}
+          {
+            "suffix": "ul",
+            "gender": "masculine"
+          },
+          {
+            "suffix": "ab",
+            "gender": "masculine"
+          },
+          {
+            "suffix": "ata",
+            "gender": "feminine"
+          },
+          {
+            "suffix": "ete",
+            "gender": "feminine"
+          },
+          {
+            "suffix": "on",
+            "gender": "neuter"
+          },
+          {
+            "suffix": "um",
+            "gender": "neuter"
+          },
+          {
+            "suffix": "aab",
+            "gender": "divine"
+          },
+          {
+            "suffix": "rahul",
+            "gender": "divine"
+          }
         ]
       },
       "root_system": {
         "enabled": true,
         "type": "triconsonantal",
-        "patterns": ["CaCaC", "CaCīC", "CūCaC", "CeCeC", "CoCaC", "CāCūC", "CiCāC"],
+        "patterns": [
+          "CaCaC",
+          "CaCīC",
+          "CūCaC",
+          "CeCeC",
+          "CoCaC",
+          "CāCūC",
+          "CiCāC"
+        ],
         "binyanim": [
-          {"name": "qal", "pattern": "CaCaC", "meaning": "basic_active"},
-          {"name": "hafel", "pattern": "haCCaC", "meaning": "causative"},
-          {"name": "nitqal", "pattern": "nitCaCaC", "meaning": "passive_reflexive"},
-          {"name": "pael", "pattern": "CaCCeC", "meaning": "intensive"},
-          {"name": "etpaal", "pattern": "etCaCaC", "meaning": "reflexive"},
-          {"name": "šafel", "pattern": "šaCCeC", "meaning": "factitive"},
-          {"name": "ištafel", "pattern": "ištaCCaC", "meaning": "reciprocal"},
-          {"name": "afel", "pattern": "aCCiC", "meaning": "causative_light"}
+          {
+            "name": "qal",
+            "pattern": "CaCaC",
+            "meaning": "basic_active"
+          },
+          {
+            "name": "hafel",
+            "pattern": "haCCaC",
+            "meaning": "causative"
+          },
+          {
+            "name": "nitqal",
+            "pattern": "nitCaCaC",
+            "meaning": "passive_reflexive"
+          },
+          {
+            "name": "pael",
+            "pattern": "CaCCeC",
+            "meaning": "intensive"
+          },
+          {
+            "name": "etpaal",
+            "pattern": "etCaCaC",
+            "meaning": "reflexive"
+          },
+          {
+            "name": "šafel",
+            "pattern": "šaCCeC",
+            "meaning": "factitive"
+          },
+          {
+            "name": "ištafel",
+            "pattern": "ištaCCaC",
+            "meaning": "reciprocal"
+          },
+          {
+            "name": "afel",
+            "pattern": "aCCiC",
+            "meaning": "causative_light"
+          }
         ]
       },
       "case_system_proto": {
-        "cases": ["nominative", "accusative", "genitive", "dative", "locative", "ablative", "instrumental"],
+        "cases": [
+          "nominative",
+          "accusative",
+          "genitive",
+          "dative",
+          "locative",
+          "ablative",
+          "instrumental"
+        ],
         "markers": {
           "nominative": "ul",
           "accusative": "an",
@@ -61,44 +166,138 @@
         }
       },
       "verbal_system_proto": {
-        "aspects": ["perfective", "imperfective", "stative", "resultative"],
-        "moods": ["indicative", "subjunctive", "optative", "jussive", "imperative", "precative"],
-        "tenses_derived": ["past", "present", "future", "aorist"],
+        "aspects": [
+          "perfective",
+          "imperfective",
+          "stative",
+          "resultative"
+        ],
+        "moods": [
+          "indicative",
+          "subjunctive",
+          "optative",
+          "jussive",
+          "imperative",
+          "precative"
+        ],
+        "tenses_derived": [
+          "past",
+          "present",
+          "future",
+          "aorist"
+        ],
         "person_markers": {
-          "1sg": {"prefix": "a-", "suffix": "-ku"},
-          "2sg_m": {"prefix": "ta-", "suffix": "-ka"},
-          "2sg_f": {"prefix": "ta-", "suffix": "-ki"},
-          "3sg_m": {"prefix": "ha-", "suffix": "-Ø"},
-          "3sg_f": {"prefix": "ha-", "suffix": "-t"},
-          "1pl": {"prefix": "na-", "suffix": "-nu"},
-          "2pl": {"prefix": "ta-", "suffix": "-kum"},
-          "3pl": {"prefix": "ha-", "suffix": "-ū"}
+          "1sg": {
+            "prefix": "a-",
+            "suffix": "-ku"
+          },
+          "2sg_m": {
+            "prefix": "ta-",
+            "suffix": "-ka"
+          },
+          "2sg_f": {
+            "prefix": "ta-",
+            "suffix": "-ki"
+          },
+          "3sg_m": {
+            "prefix": "ha-",
+            "suffix": "-Ø"
+          },
+          "3sg_f": {
+            "prefix": "ha-",
+            "suffix": "-t"
+          },
+          "1pl": {
+            "prefix": "na-",
+            "suffix": "-nu"
+          },
+          "2pl": {
+            "prefix": "ta-",
+            "suffix": "-kum"
+          },
+          "3pl": {
+            "prefix": "ha-",
+            "suffix": "-ū"
+          }
         }
       },
       "nominal_patterns": [
-        {"pattern": "CaCaC", "type": "basic_noun"},
-        {"pattern": "CaCīC", "type": "active_participle"},
-        {"pattern": "maCCaC", "type": "place"},
-        {"pattern": "CāCiC", "type": "agent"},
-        {"pattern": "CuCūC", "type": "plural_pattern"},
-        {"pattern": "taCCīC", "type": "abstract"},
-        {"pattern": "CaCCān", "type": "intensive_quality"},
-        {"pattern": "CiCāCa", "type": "verbal_noun"}
+        {
+          "pattern": "CaCaC",
+          "type": "basic_noun"
+        },
+        {
+          "pattern": "CaCīC",
+          "type": "active_participle"
+        },
+        {
+          "pattern": "maCCaC",
+          "type": "place"
+        },
+        {
+          "pattern": "CāCiC",
+          "type": "agent"
+        },
+        {
+          "pattern": "CuCūC",
+          "type": "plural_pattern"
+        },
+        {
+          "pattern": "taCCīC",
+          "type": "abstract"
+        },
+        {
+          "pattern": "CaCCān",
+          "type": "intensive_quality"
+        },
+        {
+          "pattern": "CiCāCa",
+          "type": "verbal_noun"
+        }
       ],
       "construct_state": {
         "enabled": true,
         "head_initial": true,
         "phonological_changes": [
-          {"from": "ul$", "to": "u", "condition": "word_final"},
-          {"from": "ab$", "to": "a", "condition": "word_final"},
-          {"from": "ata$", "to": "at", "condition": "feminine"}
+          {
+            "from": "ul$",
+            "to": "u",
+            "condition": "word_final"
+          },
+          {
+            "from": "ab$",
+            "to": "a",
+            "condition": "word_final"
+          },
+          {
+            "from": "ata$",
+            "to": "at",
+            "condition": "feminine"
+          }
         ]
       },
-      "emphatic_consonants": ["ṣ", "ṭ", "ḍ", "ẓ"],
+      "emphatic_consonants": [
+        "ṣ",
+        "ṭ",
+        "ḍ",
+        "ẓ"
+      ],
       "pharyngealization": {
         "enabled": true,
-        "triggers": ["ṣ", "ṭ", "ʕ", "ħ", "q"],
-        "affected_vowels": ["a", "i", "u", "e", "o"],
+        "triggers": [
+          "ṣ",
+          "ṭ",
+          "ʕ",
+          "ħ",
+          "q"
+        ],
+        "affected_vowels": [
+          "a",
+          "i",
+          "u",
+          "e",
+          "o"
+        ],
         "lowering_effect": true
       },
       "stress_system_proto": {
@@ -107,7 +306,12 @@
         "superheavy_attracts": true
       },
       "number_system": {
-        "numbers": ["singular", "dual", "plural", "collective"],
+        "numbers": [
+          "singular",
+          "dual",
+          "plural",
+          "collective"
+        ],
         "dual_markers": {
           "nominative": "-āni",
           "accusative": "-aini",
@@ -124,10 +328,28 @@
       "shared_phonotactics": {
         "vowels": "aiuāīūeēoōə",
         "consonants": "ʔbdgħhklmnpqrsṣštṭwxyzʕṛγč",
-        "syllable_templates": ["CV", "CVC", "CVCC", "CCV", "V"],
-        "forbidden_initial_clusters": ["bd", "tṭ", "nm"],
-        "forbidden_final_consonants": ["ʔ", "ħ"],
-        "diphthongs": ["ai", "au", "ei", "ou"]
+        "syllable_templates": [
+          "CV",
+          "CVC",
+          "CVCC",
+          "CCV",
+          "V"
+        ],
+        "forbidden_initial_clusters": [
+          "bd",
+          "tṭ",
+          "nm"
+        ],
+        "forbidden_final_consonants": [
+          "ʔ",
+          "ħ"
+        ],
+        "diphthongs": [
+          "ai",
+          "au",
+          "ei",
+          "ou"
+        ]
       },
       "shared_lexicon_strength": 0.65,
       "agglutination_strength": 0.92,
@@ -144,14 +366,35 @@
         "triggers_assimilation": true
       },
       "sound_changes_from_parent": [
-        {"from": "ā", "to": "ā", "condition": "stressed"},
-        {"from": "ā", "to": "ə", "condition": "unstressed_non_final"},
-        {"from": "ai", "to": "ē", "condition": "word_final"},
-        {"from": "au", "to": "ō", "condition": "word_final"}
+        {
+          "from": "ā",
+          "to": "ā",
+          "condition": "stressed"
+        },
+        {
+          "from": "ā",
+          "to": "ə",
+          "condition": "unstressed_non_final"
+        },
+        {
+          "from": "ai",
+          "to": "ē",
+          "condition": "word_final"
+        },
+        {
+          "from": "au",
+          "to": "ō",
+          "condition": "word_final"
+        }
       ],
       "state_system": {
         "enabled": true,
-        "states": ["absolute", "construct", "emphatic", "predicative"],
+        "states": [
+          "absolute",
+          "construct",
+          "emphatic",
+          "predicative"
+        ],
         "markers": {
           "absolute": "-Ø",
           "construct": "-Ø_shortened",
@@ -168,10 +411,25 @@
       "shared_phonotactics": {
         "vowels": "aiuāīūeēoōə",
         "consonants": "ʔbdgħhklmnpqrsṣštṭwxyzʕṛč",
-        "syllable_templates": ["CV", "CVC", "CVCC", "CCV"],
-        "forbidden_initial_clusters": ["bd", "nm", "lr"],
-        "forbidden_final_consonants": ["ʔ"],
-        "diphthongs": ["ai", "au", "ei"]
+        "syllable_templates": [
+          "CV",
+          "CVC",
+          "CVCC",
+          "CCV"
+        ],
+        "forbidden_initial_clusters": [
+          "bd",
+          "nm",
+          "lr"
+        ],
+        "forbidden_final_consonants": [
+          "ʔ"
+        ],
+        "diphthongs": [
+          "ai",
+          "au",
+          "ei"
+        ]
       },
       "shared_lexicon_strength": 0.75,
       "agglutination_strength": 0.85,
@@ -184,7 +442,11 @@
       ],
       "dialectal_variation": {
         "enabled": true,
-        "variation_axes": ["geographical", "social", "temporal"],
+        "variation_axes": [
+          "geographical",
+          "social",
+          "temporal"
+        ],
         "major_dialects": [
           {
             "name": "amotic",
@@ -224,10 +486,21 @@
       "shared_phonotactics": {
         "vowels": "aiueāīūēō",
         "consonants": "bdfgħhklmnpqrsstṭwxyzʕ",
-        "syllable_templates": ["CV", "CVC", "CVCC", "CCV"],
-        "forbidden_initial_clusters": ["bd", "nm"],
+        "syllable_templates": [
+          "CV",
+          "CVC",
+          "CVCC",
+          "CCV"
+        ],
+        "forbidden_initial_clusters": [
+          "bd",
+          "nm"
+        ],
         "forbidden_final_consonants": [],
-        "diphthongs": ["ai", "au"]
+        "diphthongs": [
+          "ai",
+          "au"
+        ]
       },
       "shared_lexicon_strength": 0.70,
       "agglutination_strength": 0.78,
@@ -239,11 +512,31 @@
         "vowel_harmony_traces"
       ],
       "sound_changes_middle": [
-        {"from": "r", "to": "h", "condition": "word_initial"},
-        {"from": "ʕ", "to": "ʔ", "condition": "all_positions"},
-        {"from": "q", "to": "ʔ", "condition": "syllable_final"},
-        {"from": "ṭ", "to": "t", "condition": "unstressed"},
-        {"from": "aab", "to": "ab", "condition": "suffix_simplification"}
+        {
+          "from": "r",
+          "to": "h",
+          "condition": "word_initial"
+        },
+        {
+          "from": "ʕ",
+          "to": "ʔ",
+          "condition": "all_positions"
+        },
+        {
+          "from": "q",
+          "to": "ʔ",
+          "condition": "syllable_final"
+        },
+        {
+          "from": "ṭ",
+          "to": "t",
+          "condition": "unstressed"
+        },
+        {
+          "from": "aab",
+          "to": "ab",
+          "condition": "suffix_simplification"
+        }
       ]
     }
   ],
@@ -277,16 +570,339 @@
     },
     {
       "id": "neo-raabic",
-      "parent_id": "modern-raabic",
-      "description": "Ramo Neo-Raabiano, formas altamente inovadoras com influências externas massivas.",
-      "shared_lexicon_strength": 0.65,
-      "agglutination_strength": 0.60,
+      "parent_id": "vulgar-neoraabic",
+      "timeframe": "6.000 anos atrás - presente",
+      "description": "Ramo Neo-Raabico: Desenvolvimentos inovadores a partir do Neoraabico Vulgar. Caracterizado por ordem SVO, perda de casos, simplificação do sistema de raízes, e forte influência externa.",
+      "shared_lexicon_strength": 0.62,
+      "agglutination_strength": 0.55,
       "distinctive_features": [
         "svo_word_order_fixed",
-        "case_loss_complete",
-        "analytic_morphology",
-        "tonal_development_incipient"
-      ]
+        "case_loss_complete_or_vestigial",
+        "article_system_obligatory",
+        "triconsonantal_roots_weakened",
+        "analytic_morphology_dominant",
+        "dual_number_lost",
+        "gender_reduction_two_system",
+        "auxiliary_verb_complexes",
+        "preposition_reliance_high"
+      ],
+      "phonological_profile": {
+        "vowels": "aiueoäöü",
+        "base_consonants": "bdfghjklmnprstvwxyz",
+        "pharyngeals_status": "lost_or_vestigial",
+        "emphatics_status": "lost",
+        "glottal_stop_status": "lost_or_allophonic",
+        "vowel_length_distinctive": false,
+        "stress_system": "fixed_or_weight_sensitive",
+        "syllable_structure": "simplified_cv_cvc_dominant"
+      },
+      "morphological_profile": {
+        "word_order": "SVO",
+        "case_system": false,
+        "gender_system": "binary_masc_fem",
+        "number_system": "singular_plural",
+        "dual_number": false,
+        "broken_plurals": false,
+        "definite_article": true,
+        "indefinite_article": true,
+        "verb_conjugation_complexity": "medium_to_high",
+        "tense_aspect_system": "rich",
+        "mood_system": "simplified"
+      },
+      "external_influences": {
+        "description": "Forte influência de línguas de contato durante período de fluxo populacional intenso (33-10 mil anos atrás)",
+        "influence_types": [
+          "substrate_languages",
+          "adstrate_languages",
+          "superstrate_prestige_languages",
+          "trade_languages",
+          "transitional_dialects"
+        ],
+        "lexical_borrowing_rate": "high",
+        "structural_borrowing": [
+          "word_order_reinforcement",
+          "article_system_development",
+          "auxiliary_constructions",
+          "analytical_tendencies"
+        ]
+      },
+      "sociolinguistic_context": {
+        "emergence_context": "vernacular_koine",
+        "spread_mechanism": "trade_migration_conquest",
+        "prestige_level": "initially_low_later_standardized",
+        "literacy_tradition": "developed_independently",
+        "diglossia": "historical_with_classical_raabic"
+      }
+    },
+    {
+      "id": "western-neoraabic",
+      "parent_id": "neo-raabic",
+      "timeframe": "55.000 anos atrás - presente",
+      "description": "Sub-ramo Neo-Raabico Ocidental: Formado durante o Império Neoraabico Ocidental. Fortemente marcado pelo fenômeno de nurgatização.",
+      "shared_lexicon_strength": 0.58,
+      "agglutination_strength": 0.50,
+      "emergence_context": {
+        "timeframe": "~55.000 anos atrás",
+        "political_entity": "Império Neoraabico Ocidental",
+        "geographic_area": "Porções ocidentais de Aendur",
+        "contact_period_intense": "33.000-10.000 anos atrás",
+        "population_movements": "Extremo fluxo dos povos ocidentais"
+      },
+      "nurgatization_phenomenon": {
+        "name": "nurgatização",
+        "description": "Fenômeno linguístico central caracterizado pela suavização vocálica e perda de elementos guturais/desérticos típicos do raabico ancestral",
+        "phonological_changes": {
+          "glottal_stop_loss": {
+            "change": "ʔ → Ø / V_V",
+            "description": "Perda completa do glotal stop intervocálico",
+            "compensation": "alongamento vocálico ou formação de ditongo",
+            "examples": [
+              "qaʔala → qaala → kale (falar)",
+              "maʔakul → maakul → makul (comida)"
+            ]
+          },
+          "glottal_stop_loss_initial": {
+            "change": "ʔ → Ø / #_",
+            "description": "Perda de glotal inicial",
+            "compensation": "nenhuma ou prótese vocálica",
+            "examples": [
+              "ʔakala → akala → akal (comer)",
+              "ʔanta → anta → ante (tu)"
+            ]
+          },
+          "vowel_length_neutralization": {
+            "change": "V̄ → V",
+            "description": "Perda da distinção de quantidade vocálica (mácron)",
+            "affected": [
+              "ā",
+              "ī",
+              "ū",
+              "ē",
+              "ō"
+            ],
+            "result": [
+              "a",
+              "i",
+              "u",
+              "e",
+              "o"
+            ],
+            "exceptions": "Alguns mácron preservados em posição tônica ou compensatória",
+            "examples": [
+              "kitāb → kitab (livro)",
+              "ṣalāt → salat (oração)",
+              "qadīm → kadim (antigo)"
+            ]
+          },
+          "umlaut_development": {
+            "change": "V → V̈ / _Ci",
+            "description": "Desenvolvimento de trema/umlaut por assimilação regressiva",
+            "trigger": "vogais altas em sílabas seguintes",
+            "results": {
+              "a → ä": "em contextos palatais",
+              "o → ö": "antes de /i/ ou /j/",
+              "u → ü": "em harmonia frontal"
+            },
+            "examples": [
+              "ħabib → habib → häbib (amigo)",
+              "šukr → šukr → šükr (agradecimento)"
+            ]
+          },
+          "pharyngeal_softening": {
+            "changes": [
+              {
+                "from": "ħ",
+                "to": "h",
+                "description": "Faringal surda → glotal fricativa"
+              },
+              {
+                "from": "ʕ",
+                "to": "ʔ → Ø",
+                "description": "Faringal sonora → perda via glotal"
+              },
+              {
+                "from": "q",
+                "to": "k",
+                "description": "Uvular → velar"
+              }
+            ],
+            "description": "Suavização sistemática de consoantes guturais/faringais",
+            "timeframe": "Processo gradual ao longo de 20 mil anos"
+          },
+          "emphatic_deemphaticization": {
+            "changes": [
+              {
+                "from": "ṭ",
+                "to": "t"
+              },
+              {
+                "from": "ṣ",
+                "to": "s"
+              },
+              {
+                "from": "ḍ",
+                "to": "d"
+              }
+            ],
+            "description": "Perda da faringalização em consoantes enfáticas",
+            "result": "Sistema consonantal mais próximo de línguas europeias"
+          },
+          "vowel_enrichment": {
+            "description": "Expansão do inventário vocálico como compensação",
+            "additions": [
+              "ä",
+              "ö",
+              "ü",
+              "ə"
+            ],
+            "sources": [
+              "umlaut_processes",
+              "monophthongization_of_diphthongs",
+              "substrate_influence"
+            ]
+          }
+        },
+        "morphophonological_consequences": {
+          "root_system_weakening": {
+            "description": "Sistema triconsonantal enfraquecido pela perda de consoantes",
+            "strategies": [
+              "Compensação por alongamento vocálico",
+              "Fixação de padrões derivacionais",
+              "Redução de binyanim ativos",
+              "Tendência a raízes bi-consonantais"
+            ]
+          },
+          "template_restructuring": {
+            "description": "Padrões morfológicos reorganizados sem consoantes guturais",
+            "old_pattern": "CaCaC com C incluindo ʔ, ħ, ʕ, q",
+            "new_pattern": "CaCaC com inventário reduzido",
+            "adaptation": "Uso de alongamento e qualidade vocálica para compensar"
+          },
+          "suffix_phonology": {
+            "description": "Mudanças em sufixos devido à nurgatização",
+            "examples": [
+              "-aħ → -ah → -a (sufixo feminino)",
+              "-ayn → -ain → -en (dual)",
+              "-qum → -kum → -cum (2pl possessivo)"
+            ]
+          }
+        },
+        "transitional_dialects": {
+          "description": "Formas intermediárias entre Neoraabico Vulgar e Neo-Raabico Ocidental totalmente nurgatizado",
+          "characteristics": [
+            "Nurgatização parcial",
+            "Variação regional na taxa de mudança",
+            "Coexistência de formas conservadoras e inovadoras",
+            "Influência de línguas locais não-raabicas"
+          ],
+          "role": "Facilitaram a transição e difusão das mudanças"
+        }
+      },
+      "distinctive_features": [
+        "svo_word_order_rigid",
+        "no_case_system",
+        "obligatory_articles_definite_indefinite",
+        "two_gender_system_strict",
+        "no_dual_number",
+        "no_broken_plurals",
+        "regular_suffixal_plurals",
+        "complex_verb_conjugation_maintained",
+        "rich_tense_aspect_mood",
+        "extensive_auxiliary_usage",
+        "preposition_dependent_syntax",
+        "nurgatized_phonology_fully"
+      ],
+      "phonological_inventory_typical": {
+        "vowels": "a e i o u ä ö ü (ə)",
+        "consonants": "b d f g h j k l m n p r s t v w x z",
+        "absent_from_classical": [
+          "ʔ",
+          "ʕ",
+          "ħ",
+          "q",
+          "ṭ",
+          "ṣ",
+          "ḍ"
+        ],
+        "vowel_length": "non_distinctive_or_allophonic",
+        "stress": "typically_penultimate_or_fixed",
+        "syllable_structure": "CV, CVC, V - simplified"
+      },
+      "morphological_characteristics": {
+        "word_order": "SVO_strict",
+        "head_directionality": "head_initial_mostly",
+        "case_marking": "none",
+        "agreement": {
+          "subject_verb": true,
+          "noun_adjective_gender_number": true,
+          "determiner_noun": true
+        },
+        "articles": {
+          "definite": "obligatory_prenominal",
+          "indefinite": "present_optional_or_obligatory"
+        },
+        "number": {
+          "singular": "unmarked",
+          "plural": "regular_suffix_-s_or_-en_like"
+        },
+        "gender": {
+          "masculine": "unmarked_or_minimal",
+          "feminine": "marked_suffix_-a_or_-e"
+        },
+        "verb_conjugation": {
+          "complexity": "medium_high",
+          "tense_categories": [
+            "present",
+            "past",
+            "future"
+          ],
+          "aspect_categories": [
+            "perfective",
+            "imperfective",
+            "progressive"
+          ],
+          "mood_categories": [
+            "indicative",
+            "subjunctive",
+            "imperative"
+          ],
+          "person_marking": "suffix_and_prefix_depending_on_tam",
+          "auxiliary_verbs": "extensive_for_compound_tenses"
+        },
+        "derivation": {
+          "productivity": "high",
+          "strategies": [
+            "suffixation",
+            "prefixation",
+            "compounding"
+          ],
+          "root_system_status": "vestigial_or_reanalyzed"
+        }
+      },
+      "lexical_characteristics": {
+        "core_vocabulary_retention": "~55-65% from Vulgar Neo-Raabic",
+        "loanword_percentage": "35-45%",
+        "borrowing_sources": [
+          "western_aendur_substrate_languages",
+          "trade_languages",
+          "prestige_external_languages",
+          "neighboring_non_raabic_languages"
+        ],
+        "semantic_fields_borrowed": [
+          "technology",
+          "administration",
+          "cultural_concepts",
+          "flora_fauna_local",
+          "topography"
+        ],
+        "native_retention_high": [
+          "basic_kinship",
+          "body_parts",
+          "basic_verbs",
+          "numbers_low",
+          "pronouns"
+        ]
+      }
     }
   ],
   "intelligibility": {
@@ -295,19 +911,38 @@
     "middle-raabic:modern-raabic": 0.70,
     "modern-raabic:conservative-raabic": 0.55,
     "modern-raabic:neo-raabic": 0.60,
-    "conservative-raabic:neo-raabic": 0.30
+    "conservative-raabic:neo-raabic": 0.30,
+    "neo_raabic:western_neoraabic": 0.75
   },
   "diachronic_settings": {
     "default_divergence_factor": 0.22,
     "max_synonym_variants": 6,
     "semantic_drift_rate": 0.25,
     "grammaticalization_paths": [
-      {"lexical": "verb_give", "grammatical": "benefactive_marker"},
-      {"lexical": "verb_come", "grammatical": "future_marker"},
-      {"lexical": "verb_be", "grammatical": "copula_auxiliary"},
-      {"lexical": "noun_hand", "grammatical": "instrumental_preposition"},
-      {"lexical": "noun_face", "grammatical": "directional_marker"},
-      {"lexical": "demonstrative_this", "grammatical": "definite_article"}
+      {
+        "lexical": "verb_give",
+        "grammatical": "benefactive_marker"
+      },
+      {
+        "lexical": "verb_come",
+        "grammatical": "future_marker"
+      },
+      {
+        "lexical": "verb_be",
+        "grammatical": "copula_auxiliary"
+      },
+      {
+        "lexical": "noun_hand",
+        "grammatical": "instrumental_preposition"
+      },
+      {
+        "lexical": "noun_face",
+        "grammatical": "directional_marker"
+      },
+      {
+        "lexical": "demonstrative_this",
+        "grammatical": "definite_article"
+      }
     ],
     "sound_change_rates": {
       "vowel_mergers": 0.15,
@@ -398,7 +1033,12 @@
         "epenthetic_vowel": "a"
       }
     ],
-    "source_languages": ["greek_ancient", "egyptian_coptic", "akkadian", "sumerian"]
+    "source_languages": [
+      "greek_ancient",
+      "egyptian_coptic",
+      "akkadian",
+      "sumerian"
+    ]
   },
   "morphophonological_processes": {
     "assimilation": {
@@ -451,7 +1091,11 @@
     "metathesis": {
       "enabled": true,
       "patterns": [
-        {"input": "VC1C2", "output": "C1VC2", "condition": "C1_liquid_nasal"}
+        {
+          "input": "VC1C2",
+          "output": "C1VC2",
+          "condition": "C1_liquid_nasal"
+        }
       ]
     }
   },
@@ -461,8 +1105,19 @@
       "high_variety": "classical_standard",
       "low_variety": "vernacular_dialects",
       "domains": {
-        "high": ["literature", "religion", "academia", "formal_media", "law"],
-        "low": ["conversation", "family", "informal_media", "commerce"]
+        "high": [
+          "literature",
+          "religion",
+          "academia",
+          "formal_media",
+          "law"
+        ],
+        "low": [
+          "conversation",
+          "family",
+          "informal_media",
+          "commerce"
+        ]
       }
     },
     "prestige_hierarchy": {

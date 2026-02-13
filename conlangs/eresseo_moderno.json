@@ -938,7 +938,7 @@
                     "meaning": "em, dentro"
                 },
                 {
-                    "preposition": "ek",
+                    "preposition": "eik",
                     "case": "ablative",
                     "meaning": "de, fora de"
                 },
@@ -1144,7 +1144,7 @@
                 "en"
             ],
             "ablative_only": [
-                "ek",
+                "eik",
                 "apo"
             ],
             "instrumental_only": [
@@ -1169,7 +1169,7 @@
             "ana": "ana",
             "kata": "kata",
             "en": "en",
-            "ek": "ek",
+            "eik": "eik",
             "syn": "syn",
             "anti": "anti",
             "peri": "peri",
@@ -1307,7 +1307,7 @@
             },
             {
                 "type": "nominal_negation",
-                "marker": "oudeis",
+                "marker": "ausos",
                 "declines": true,
                 "description": "Nenhum, ninguém."
             }
@@ -1414,25 +1414,25 @@
         "enabled": true,
         "description": "Comparativo e superlativo sintéticos.",
         "comparative": {
-            "affix": "-teros",
+            "affix": "-enros",
             "position": "suffix",
             "triggers_umlaut": false,
             "description": "Comparativo: kalos → kalōteros (mais belo)."
         },
         "superlative": {
-            "affix": "-tatos",
+            "affix": "-anos",
             "position": "suffix",
             "triggers_umlaut": false,
             "description": "Superlativo: kalos → kalōtatos (belíssimo)."
         },
         "diminutive": {
-            "affix": "-áki",
+            "affix": "-áti",
             "position": "suffix",
             "gender": "neuter",
             "description": "Diminutivo: kallis → kalláki (cestinho)."
         },
         "augmentative": {
-            "affix": "-avlos",
+            "affix": "-avas",
             "position": "suffix",
             "gender": "animate",
             "description": "Aumentativo: ther → theravlos (caçador, lit. 'grande animal')."
@@ -1495,17 +1495,12 @@
             "phonetic_adaptation": 0.35,
             "semantic_extension": 0.15
         },
-        "calque_connector": "-",
-        "examples": {
-            "democracia": "dēmos-kratiā",
-            "filosofia": "philos-sophiā",
-            "teatro": "theā-tron"
-        }
+        "calque_connector": "-"
     },
     "abstract_concepts": {
         "enabled": true,
         "mappings": {
-            "de": "ek",
+            "de": "eni",
             "do": "para",
             "da": "para",
             "o": "at",
@@ -1653,15 +1648,14 @@
         }
     },
     "mappings": {
-        "de": "ek",
+        "de": "eni",
         "do": "para",
         "da": "para",
         "e": "kai",
         "que": "hoti",
         "em": "en",
         "ser": "esmi",
-        "fazer": "poieō",
-        "terra": "gāia"
+        "fazer": "poieō"
     },
     "phonological_processes": {
         "description": "Processos fonológicos do Eresseo Moderno.",

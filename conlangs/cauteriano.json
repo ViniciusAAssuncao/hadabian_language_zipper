@@ -1,0 +1,1077 @@
+{
+    "id": "cauteriano",
+    "name": "Cauteriano",
+    "native_name": "Cauterien",
+    "family_node": "western-neoraabic",
+    "linguistic_family": "raabic_trunk.json",
+    "shared_base_strength": 0.78,
+    "global_seed": 983457129,
+    "source_language_order": "SVO",
+    "word_order": "SVO",
+    "subordinate_word_order": "SVO",
+    "alignment": "nominative-accusative",
+    "agglutination_strength": 0.55,
+    "divergence_factor": 0.18,
+    "cultural_purism": 0.5,
+    "compounding": {
+        "enabled": true,
+        "productivity": "high",
+        "head_position": "final",
+        "linking_elements": {
+            "-": {
+                "after": [
+                    "a",
+                    "e",
+                    "i",
+                    "o",
+                    "u",
+                    "ã",
+                    "ẽ",
+                    "ĩ",
+                    "õ",
+                    "ũ",
+                    "ä",
+                    "ö",
+                    "ü"
+                ]
+            },
+            "s": {
+                "after": [
+                    "k",
+                    "p",
+                    "t"
+                ]
+            },
+            "z": {
+                "after": [
+                    "r"
+                ]
+            }
+        }
+    },
+    "phonotactics": {
+        "active_style": "standard",
+        "inventory_styles": {
+            "standard": {
+                "description": "Inventário padrão do Cauteriano Moderno – suave, com vogais nasais e ausência de guturais.",
+                "consonants": "pbtdkgfvszʃʒxhmnɲlrwj",
+                "vowels": "aeiouäöüãẽĩõũ"
+            },
+            "colloquial": {
+                "description": "Registro coloquial, com redução de vogais nasais e simplificação de encontros consonantais.",
+                "consonants": "pbtdkgfvszʃmnlrwj",
+                "vowels": "aeiouäöüãẽõ"
+            }
+        },
+        "vowels": "aeiouäöüãẽĩõũ",
+        "consonants": "pbtdkgfvszʃʒxhmnɲlrwj",
+        "syllable_templates": [
+            "CV",
+            "CVC",
+            "V",
+            "VC",
+            "CCV",
+            "CCVC",
+            "CVCC"
+        ],
+        "min_syllables": 1,
+        "max_syllables": 4,
+        "allowed_initial_clusters": [
+            "pl",
+            "pr",
+            "bl",
+            "br",
+            "tr",
+            "dr",
+            "kr",
+            "gr",
+            "kl",
+            "gl",
+            "fl",
+            "fr",
+            "vl",
+            "vr",
+            "sp",
+            "st",
+            "sk",
+            "sm",
+            "sn",
+            "sl",
+            "sw",
+            "tw",
+            "dw",
+            "kw",
+            "gw"
+        ],
+        "forbidden_initial_clusters": [
+            "tl",
+            "dl",
+            "sr",
+            "zr",
+            "nm",
+            "ɲm",
+            "kn",
+            "pn",
+            "tm"
+        ],
+        "allowed_final_clusters": [
+            "nt",
+            "nd",
+            "ns",
+            "nz",
+            "mp",
+            "mb",
+            "nk",
+            "ng",
+            "lt",
+            "ld",
+            "lk",
+            "lg",
+            "rt",
+            "rd",
+            "rk",
+            "rg",
+            "st",
+            "sk",
+            "ft",
+            "kt"
+        ],
+        "forbidden_final_consonants": [
+            "h",
+            "j",
+            "w",
+            "ɲ"
+        ],
+        "max_consonant_cluster": 2,
+        "diphthongs": [
+            "ai",
+            "au",
+            "ei",
+            "eu",
+            "oi",
+            "ou",
+            "ãi",
+            "ãu",
+            "ẽi",
+            "õi"
+        ],
+        "epenthesis_vowel": "e",
+        "sandhi": {
+            "enabled": true,
+            "description": "Regras de elisão (supressão de vogal) e liaison (inserção de consoante de ligação).",
+            "rules": [
+                {
+                    "pattern": "([aeiouäöüãẽĩõũ])\\s+([aeiouäöüãẽĩõũ])",
+                    "replacement": "\\1'\\2",
+                    "ignore_case": true,
+                    "description": "Elisão: vogal final é suprimida antes de vogal inicial, marcada por apóstrofo."
+                },
+                {
+                    "pattern": "([mnl])\\s+([aeiouäöüãẽĩõũ])",
+                    "replacement": "\\1-\\2",
+                    "ignore_case": true,
+                    "description": "Liaison: consoante nasal ou lateral é ligada à vogal seguinte com hífen (representação ortográfica)."
+                }
+            ]
+        },
+        "phonological_rules": [
+            {
+                "input": "VCV",
+                "output": "VCV",
+                "register": null,
+                "description": "Regra neutra."
+            },
+            {
+                "input": "VxV",
+                "output": "VvV",
+                "register": "colloquial",
+                "description": "Lenização de /x/ intervocálico em /v/ no registro coloquial."
+            },
+            {
+                "input": "ɲ$",
+                "output": "n",
+                "register": "colloquial",
+                "description": "Desnasalização de /ɲ/ final."
+            }
+        ]
+    },
+    "allomorphy": {
+        "enabled": true,
+        "feature_definitions": {
+            "labial": [
+                "p",
+                "b",
+                "f",
+                "v",
+                "m"
+            ],
+            "coronal": [
+                "t",
+                "d",
+                "s",
+                "z",
+                "ʃ",
+                "ʒ",
+                "n",
+                "l",
+                "r"
+            ],
+            "dorsal": [
+                "k",
+                "g",
+                "x",
+                "j"
+            ]
+        },
+        "rules": [
+            {
+                "target_word": "he",
+                "environment": "before_vowel",
+                "replacement": "t'"
+            },
+            {
+                "target_word": "ha",
+                "environment": "before_vowel",
+                "replacement": "t'"
+            }
+        ]
+    },
+    "root_system": {
+        "enabled": false,
+        "description": "Sistema de raízes desativado; vocabulário predominantemente derivado do Neoraabiano Ocidental e do Cáutico."
+    },
+    "morphological_derivation": {
+        "enabled": true,
+        "root_based": false,
+        "max_depth": 3,
+        "exceptions": [
+            "le",
+            "la",
+            "de",
+            "en",
+            "un",
+            "ce"
+        ],
+        "nominal_patterns": [
+            {
+                "pattern": "-tion",
+                "type": "abstract_noun",
+                "description": "Substantivo abstrato (ex: nation → nasion)"
+            },
+            {
+                "pattern": "-té",
+                "type": "quality_noun",
+                "description": "Substantivo de qualidade (ex: liberté → liberte)"
+            },
+            {
+                "pattern": "-eur",
+                "type": "agent_masculine",
+                "description": "Agente masculino (ex: chanteur)"
+            },
+            {
+                "pattern": "-euse",
+                "type": "agent_feminine",
+                "description": "Agente feminino (ex: chanteuse)"
+            },
+            {
+                "pattern": "-ien",
+                "type": "origin_adj",
+                "description": "Adjetivo de origem (ex: parisien)"
+            }
+        ],
+        "source_suffixes": [
+            {
+                "suffix": "ção",
+                "replacement": "sion",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 90,
+                "mode": "adapt",
+                "derivation_type": "abstract_noun",
+                "gender": "feminine",
+                "examples": "nação → nasion"
+            },
+            {
+                "suffix": "dade",
+                "replacement": "té",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 90,
+                "mode": "adapt",
+                "gender": "feminine",
+                "examples": "liberdade → liberte"
+            },
+            {
+                "suffix": "ismo",
+                "replacement": "isme",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 85,
+                "mode": "adapt",
+                "gender": "masculine",
+                "examples": "realismo → realisme"
+            },
+            {
+                "suffix": "ista",
+                "replacement": "iste",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 85,
+                "mode": "adapt",
+                "gender": "common",
+                "examples": "artista → artiste"
+            },
+            {
+                "suffix": "al",
+                "replacement": "el",
+                "input_pos": "ADJ",
+                "target_pos": "ADJ",
+                "priority": 80,
+                "mode": "adapt",
+                "examples": "nacional → nationel"
+            },
+            {
+                "suffix": "ico",
+                "replacement": "ique",
+                "input_pos": "ADJ",
+                "target_pos": "ADJ",
+                "priority": 80,
+                "mode": "adapt",
+                "examples": "clássico → classique"
+            },
+            {
+                "suffix": "ar",
+                "replacement": "er",
+                "input_pos": "VERB",
+                "target_pos": "VERB",
+                "priority": 70,
+                "mode": "adapt",
+                "examples": "falar → parler"
+            },
+            {
+                "suffix": "er",
+                "replacement": "re",
+                "input_pos": "VERB",
+                "target_pos": "VERB",
+                "priority": 70,
+                "mode": "adapt",
+                "examples": "vender → vendre"
+            },
+            {
+                "suffix": "ir",
+                "replacement": "ir",
+                "input_pos": "VERB",
+                "target_pos": "VERB",
+                "priority": 70,
+                "mode": "preserve",
+                "examples": "partir → partir"
+            }
+        ]
+    },
+    "affix_system": {
+        "enabled": true,
+        "description": "Sistema de afixação para derivação morfológica – sufixos produtivos.",
+        "derivation_rules": [
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "agent_masculine",
+                "affix": "-eur",
+                "position": "suffix",
+                "force": false,
+                "description": "Agente masculino: chant-er → chant-eur"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "agent_feminine",
+                "affix": "-euse",
+                "position": "suffix",
+                "force": false,
+                "description": "Agente feminino: chant-er → chant-euse"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "abstract_noun",
+                "affix": "-tion",
+                "position": "suffix",
+                "force": false,
+                "gender": "feminine",
+                "description": "Substantivo abstrato: cré-er → création"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "ADV",
+                "type": "adverbial",
+                "affix": "-ment",
+                "position": "suffix",
+                "force": false,
+                "description": "Advérbio de modo: lent → lentement"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "type": "relational",
+                "affix": "-el",
+                "position": "suffix",
+                "force": false,
+                "description": "Adjetivo relacional: nation → nationel"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "NOUN",
+                "type": "diminutive",
+                "affix": "-et",
+                "position": "suffix",
+                "force": false,
+                "gender": "masculine",
+                "description": "Diminutivo: livre → livret"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "NOUN",
+                "type": "diminutive_feminine",
+                "affix": "-ette",
+                "position": "suffix",
+                "force": false,
+                "gender": "feminine",
+                "description": "Diminutivo feminino: fille → fillette"
+            }
+        ]
+    },
+    "gender_system": {
+        "enabled": true,
+        "genders": [
+            "masculine",
+            "feminine"
+        ],
+        "default": "masculine",
+        "description": "Sistema binário de gênero gramatical, sem neutro.",
+        "inference": [
+            {
+                "suffix": "e",
+                "gender": "feminine",
+                "confidence": 0.7
+            },
+            {
+                "suffix": "a",
+                "gender": "feminine",
+                "confidence": 0.8
+            },
+            {
+                "suffix": "ã",
+                "gender": "feminine",
+                "confidence": 0.8
+            },
+            {
+                "suffix": "on",
+                "gender": "masculine",
+                "confidence": 0.6
+            },
+            {
+                "suffix": "er",
+                "gender": "masculine",
+                "confidence": 0.9
+            },
+            {
+                "suffix": "eur",
+                "gender": "masculine",
+                "confidence": 1.0
+            },
+            {
+                "suffix": "euse",
+                "gender": "feminine",
+                "confidence": 1.0
+            }
+        ],
+        "markers": {
+            "feminine": {
+                "marker": "e",
+                "position": "suffix",
+                "targets": [
+                    "ADJ",
+                    "DET"
+                ]
+            },
+            "masculine": {
+                "marker": "",
+                "position": "suffix",
+                "targets": [
+                    "ADJ",
+                    "DET"
+                ]
+            }
+        }
+    },
+    "number_system": {
+        "numbers": [
+            "singular",
+            "plural"
+        ],
+        "default": "singular",
+        "markers": {
+            "plural": {
+                "marker": "s",
+                "alternatives": [
+                    "es"
+                ]
+            },
+            "singular": {
+                "marker": ""
+            }
+        },
+        "broken_plurals": {
+            "enabled": false,
+            "description": "Plural regular por sufixação."
+        }
+    },
+    "case_system": {
+        "enabled": false,
+        "description": "Sem casos morfológicos; relações gramaticais expressas por ordem de palavras e preposições."
+    },
+    "determiner_system": {
+        "definite_article": {
+            "form": "le",
+            "variants": [
+                "t'"
+            ],
+            "procliticizes": true,
+            "sun_letter_assimilation": false,
+            "description": "Artigo definido: le (masc. sg.), la (fem. sg.), les (pl.). Variante l' antes de vogal."
+        },
+        "indefinite_article": {
+            "form": "un",
+            "variants": [
+                "une"
+            ],
+            "description": "Artigo indefinido: un (masc.), une (fem.)."
+        },
+        "demonstratives": {
+            "gender_inheritance_heuristic": true,
+            "proximal": {
+                "sg_m": "ce",
+                "sg_f": "cette",
+                "pl": "ces"
+            },
+            "distal": {
+                "sg_m": "celui",
+                "sg_f": "celle",
+                "pl": "ceux"
+            },
+            "source_mappings": {
+                "proximal": [
+                    "este",
+                    "esta",
+                    "isto",
+                    "esse",
+                    "essa",
+                    "isso",
+                    "estes",
+                    "estas",
+                    "esses",
+                    "essas"
+                ],
+                "distal": [
+                    "aquele",
+                    "aquela",
+                    "aquilo",
+                    "aqueles",
+                    "aquelas"
+                ]
+            }
+        },
+        "possessives": {
+            "pronominal_suffixes": false,
+            "suppress_article": true,
+            "independent_forms": {
+                "1sg_m": "mon",
+                "1sg_f": "ma",
+                "2sg_m": "ton",
+                "2sg_f": "ta",
+                "3sg_m": "son",
+                "3sg_f": "sa",
+                "1pl": "notre",
+                "2pl": "votre",
+                "3pl": "leur"
+            },
+            "plural_forms": {
+                "1pl": "nos",
+                "2pl": "vos",
+                "3pl": "leurs"
+            },
+            "possessive_lemmas": {
+                "meu": "1",
+                "minha": "1",
+                "teu": "2",
+                "tua": "2",
+                "seu": "3",
+                "sua": "3",
+                "nosso": "1",
+                "nossa": "1",
+                "vosso": "2",
+                "vossa": "2"
+            }
+        }
+    },
+    "pronominal_system": {
+        "independent_pronouns": {
+            "1sg": "je",
+            "2sg": "tu",
+            "3sg_m": "il",
+            "3sg_f": "elle",
+            "1pl": "nous",
+            "2pl": "vous",
+            "3pl_m": "ils",
+            "3pl_f": "elles"
+        },
+        "object_pronouns": {
+            "direct": {
+                "1sg": "me",
+                "2sg": "te",
+                "3sg_m": "le",
+                "3sg_f": "la",
+                "1pl": "nous",
+                "2pl": "vous",
+                "3pl": "les"
+            },
+            "indirect": {
+                "1sg": "me",
+                "2sg": "te",
+                "3sg": "lui",
+                "1pl": "nous",
+                "2pl": "vous",
+                "3pl": "leur"
+            }
+        },
+        "clitic_ordering": {
+            "enabled": false,
+            "description": "Pronomes objeto são palavras independentes (não clíticos) devido à complexidade da negação circunfixal."
+        }
+    },
+    "adposition_system": {
+        "inflected_prepositions": {
+            "enabled": false,
+            "description": "Preposições invariáveis."
+        },
+        "basic_prepositions": {
+            "sob": "ous"
+        }
+    },
+    "tam_system": {
+        "enabled": true,
+        "description": "Conjugação verbal com sufixos de pessoa, tempo e modo. Verbos regulares seguem padrões similares ao francês.",
+        "infer_imperative_from_context": true,
+        "person_marking": {
+            "enabled": true,
+            "prefixes": {},
+            "suffixes": {
+                "1sg": "-e",
+                "2sg": "-es",
+                "3sg": "-e",
+                "1pl": "-ons",
+                "2pl": "-ez",
+                "3pl": "-ent"
+            }
+        },
+        "rules": [
+            {
+                "features": [
+                    "Tense=Pres",
+                    "Mood=Ind"
+                ],
+                "marker": "",
+                "type": "suffix",
+                "person_agreement": true,
+                "description": "Presente do indicativo: radical + sufixos de pessoa."
+            },
+            {
+                "features": [
+                    "Tense=Past",
+                    "Mood=Ind",
+                    "Aspect=Imp"
+                ],
+                "marker": "-ais",
+                "type": "suffix",
+                "person_agreement": true,
+                "description": "Imperfeito: radical + -ais, -ais, -ait, -ions, -iez, -aient."
+            },
+            {
+                "features": [
+                    "Tense=Fut",
+                    "Mood=Ind"
+                ],
+                "marker": "-ai",
+                "type": "suffix",
+                "person_agreement": true,
+                "description": "Futuro simples: radical + -ai, -as, -a, -ons, -ez, -ont."
+            },
+            {
+                "features": [
+                    "Mood=Cnd"
+                ],
+                "marker": "-ais",
+                "type": "suffix",
+                "person_agreement": true,
+                "description": "Condicional: radical + -ais, -ais, -ait, -ions, -iez, -aient."
+            },
+            {
+                "features": [
+                    "Mood=Sub"
+                ],
+                "marker": "-e",
+                "type": "suffix",
+                "person_agreement": true,
+                "description": "Subjuntivo presente: radical + -e, -es, -e, -ions, -iez, -ent."
+            },
+            {
+                "features": [
+                    "Mood=Imp"
+                ],
+                "marker": "",
+                "type": "suffix",
+                "description": "Imperativo: 2ª pessoa singular (radical), 1ª e 2ª plural (radical + -ons, -ez)."
+            }
+        ]
+    },
+    "copula_system": {
+        "enabled": true,
+        "description": "Cópula irregular 'être'.",
+        "copulas": [
+            {
+                "type": "default",
+                "form": "être",
+                "conjugates": true,
+                "irregular": true,
+                "paradigm": {
+                    "1sg": "suis",
+                    "2sg": "es",
+                    "3sg": "est",
+                    "1pl": "sommes",
+                    "2pl": "êtes",
+                    "3pl": "sont"
+                },
+                "description": "Cópula existencial/identidade."
+            }
+        ]
+    },
+    "negation_system": {
+        "enabled": true,
+        "description": "Negação circunfixal: ne + verbo + pas.",
+        "strategies": [
+            {
+                "type": "verbal_negation",
+                "marker": "ne-",
+                "suffix": "-pas",
+                "description": "Negação verbal: ne- + verbo + -pas."
+            }
+        ]
+    },
+    "interrogative_system": {
+        "enabled": true,
+        "description": "Interrogação total com partícula 'est-ce que' ou inversão.",
+        "question_particles": [
+            {
+                "type": "yes_no",
+                "particle": "est-ce que",
+                "position": "initial",
+                "optional": true,
+                "description": "Partícula interrogativa para perguntas sim/não."
+            }
+        ],
+        "detection_rules": {
+            "wh_words": [
+                "qui",
+                "que",
+                "quoi",
+                "où",
+                "quand",
+                "comment",
+                "pourquoi",
+                "combien"
+            ],
+            "alternative_indicators": [
+                "ou"
+            ]
+        },
+        "particle_metadata": {
+            "pos": "PART",
+            "function": "INT",
+            "deprel": "discourse"
+        }
+    },
+    "vowel_harmony": {
+        "enabled": false,
+        "description": "Sem harmonia vocálica."
+    },
+    "consonant_mutation": {
+        "enabled": false,
+        "description": "Sem mutação consonantal produtiva."
+    },
+    "pharyngealization": {
+        "enabled": false,
+        "description": "Sem faringalização."
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "fixed",
+        "position": "ultimate",
+        "graphic_accent": false,
+        "description": "Acento tônico sempre na última sílaba."
+    },
+    "reduplication": {
+        "enabled": false,
+        "description": "Reduplicação não é produtiva."
+    },
+    "topicalization": {
+        "enabled": true,
+        "topic_marker": "quant à",
+        "position": "initial",
+        "reintroduce_articles": true,
+        "description": "Topicalização com 'quant à' + tópico."
+    },
+    "focus_structure": {
+        "enabled": false,
+        "description": "Foco não é marcado morfologicamente."
+    },
+    "agreement_rules": {
+        "gender_agreement": true,
+        "number_agreement": true,
+        "person_agreement": true,
+        "adjunct_position": "auto",
+        "description": "Adjetivos e determinantes concordam em gênero e número com o substantivo."
+    },
+    "pro_drop": {
+        "enabled": true,
+        "conditions": [
+            "verb_agreement"
+        ],
+        "description": "Sujeito pronominal pode ser omitido quando o verbo é conjugado (sujeito implícito)."
+    },
+    "drop_articles": false,
+    "degree_system": {
+        "enabled": true,
+        "description": "Comparativo e superlativo analíticos.",
+        "rules": {
+            "comparative": {
+                "affix": "plus ",
+                "position": "prefix",
+                "description": "Comparativo de superioridade: plus + adjetivo."
+            },
+            "superlative": {
+                "affix": "le plus ",
+                "position": "prefix",
+                "description": "Superlativo relativo: le plus + adjetivo."
+            },
+            "diminutive": {
+                "affix": "-et",
+                "position": "suffix",
+                "gender": "masculine",
+                "description": "Diminutivo: petit → pettet"
+            },
+            "diminutive_feminine": {
+                "affix": "-ette",
+                "position": "suffix",
+                "gender": "feminine",
+                "description": "Diminutivo feminino: petite → petitette"
+            }
+        },
+        "source_rules": [
+            {
+                "suffix": "inho",
+                "replacement": "",
+                "type": "diminutive"
+            },
+            {
+                "suffix": "ão",
+                "replacement": "",
+                "type": "augmentative"
+            },
+            {
+                "suffix": "íssimo",
+                "replacement": "",
+                "type": "superlative"
+            }
+        ]
+    },
+    "semantic_fields": {
+        "enabled": true,
+        "use_nltk": false,
+        "animate_domains": [
+            "kinship",
+            "occupation",
+            "fauna",
+            "divine"
+        ],
+        "manual_groups": {
+            "pai": "kinship",
+            "mãe": "kinship",
+            "filho": "kinship",
+            "cavalo": "fauna",
+            "deus": "divine"
+        }
+    },
+    "polysemy_rules": {
+        "enabled": false,
+        "description": "Sem regras de polissemia."
+    },
+    "false_cognates": {
+        "enabled": false,
+        "description": "Sem falsos cognatos intencionais."
+    },
+    "loanword_policy": {
+        "enabled": true,
+        "description": "Preferência por adaptação fonética, com calques ocasionais.",
+        "modes": {
+            "phonetic_adaptation": 0.7,
+            "calque": 0.2,
+            "semantic_extension": 0.1
+        },
+        "calque_connector": "-"
+    },
+    "abstract_concepts": {
+        "enabled": true,
+        "mappings": {},
+        "definitions": {}
+    },
+    "lexical_registers": {
+        "enabled": true,
+        "registers": [
+            {
+                "name": "formal",
+                "chance": 0.3,
+                "mutation_factor": 0.8,
+                "phonological_profile": "standard",
+                "description": "Registro formal escrito, com vocabulário mais próximo do Neoraabiano e menor influência coloquial."
+            },
+            {
+                "name": "colloquial",
+                "chance": 0.5,
+                "mutation_factor": 1.5,
+                "phonological_profile": "colloquial",
+                "description": "Registro coloquial falado, com reduções fonéticas e empréstimos do Cáutico."
+            },
+            {
+                "name": "archaic",
+                "chance": 0.1,
+                "mutation_factor": 0.4,
+                "phonological_profile": "standard",
+                "description": "Registro arcaico, preservando formas do Cauteriano Médio."
+            }
+        ]
+    },
+    "functional_particles": {
+        "muito": {
+            "adj_word": "très",
+            "adj_position": "pre_nominal",
+            "noun_word": "beaucoup de",
+            "noun_position": "pre_nominal",
+            "verb_word": "beaucoup",
+            "verb_position": "post_verbal"
+        },
+        "pouco": {
+            "adj_word": "peu",
+            "adj_position": "pre_nominal",
+            "noun_word": "peu de",
+            "noun_position": "pre_nominal"
+        },
+        "mais": {
+            "adj_word": "plus",
+            "adj_position": "pre_nominal"
+        },
+        "menos": {
+            "adj_word": "moins",
+            "adj_position": "pre_nominal"
+        },
+        "bem": {
+            "verb_word": "bien",
+            "verb_position": "post_verbal"
+        },
+        "já": {
+            "verb_word": "déjà",
+            "verb_position": "pre_verbal"
+        },
+        "ainda": {
+            "verb_word": "encore",
+            "verb_position": "pre_verbal"
+        }
+    },
+    "numeric_handling": {
+        "ignore_digits": true,
+        "description": "Números em dígitos são mantidos."
+    },
+    "style": {
+        "capitalization": true,
+        "sentence_terminators": [
+            ".",
+            "!",
+            "?"
+        ],
+        "secondary_terminators": [
+            ":",
+            ";"
+        ],
+        "punctuation_map": {
+            ",": ",",
+            ".": ".",
+            "!": "!",
+            "?": "?",
+            ":": ":",
+            ";": ";",
+            "...": "…",
+            "(": "(",
+            ")": ")",
+            "[": "[",
+            "]": "]",
+            "\"": "\"",
+            "'": "'"
+        }
+    },
+    "mappings": {
+        "de": "t'",
+        "do": "tu",
+        "da": "t'ha",
+        "dos": "her",
+        "das": "h's",
+        "o": "b'",
+        "a": "bre",
+        "os": "brer",
+        "as": "b'r",
+        "e": "aèt",
+        "que": "qu'",
+        "em": "hn",
+        "ser": "hère"
+    },
+    "phonological_processes": {
+        "description": "Processos fonológicos do Cauteriano.",
+        "final_devoicing": {
+            "enabled": false
+        },
+        "vowel_nasalization": {
+            "enabled": true,
+            "context": "before nasal consonant",
+            "not_marked_orthographically": false
+        },
+        "assimilation": {
+            "enabled": true,
+            "types": [
+                "nasal_place",
+                "voice"
+            ]
+        }
+    },
+    "design_notes": {
+        "inspiration": "Francês, Raabiano (via Neoraabiano Ocidental) e Cáutico (Garmânico Ocidental).",
+        "character": "Suave, contínuo, com vogais nasais e acento oxítono.",
+        "key_features": [
+            "75% vocabulário do Neoraabiano Ocidental (nurgatizado)",
+            "10% do Cáutico",
+            "Substrato 'cauterização' (15%)",
+            "Ordem SVO",
+            "Dois gêneros (masculino/feminino)",
+            "Conjugação verbal com tempos e modos (indicativo, subjuntivo, condicional)",
+            "Elisão e liaison",
+            "Registros formal e coloquial"
+        ]
+    }
+}
