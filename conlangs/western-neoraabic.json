@@ -1,0 +1,546 @@
+{
+    "id": "western-neoraabic",
+    "name": "Neoraabiano Ocidental Clássico",
+    "native_name": "Ür-Raäbat Ennwä Nulö",
+    "family_node": "neo-raabic",
+    "linguistic_family": "raabic_trunk.json",
+    "shared_base_strength": 0.65,
+    "global_seed": 983457129,
+    "source_language_order": "SVO",
+    "word_order": "SVO",
+    "subordinate_word_order": "SVO",
+    "alignment": "nominative-accusative",
+    "agglutination_strength": 0.55,
+    "divergence_factor": 0.35,
+    "cultural_purism": 0.5,
+    "lexical_confluence": {
+        "enabled": true,
+        "base_stability": 70,
+        "strata": [
+            {
+                "source_id": "rmp",
+                "weight": 30,
+                "type": "inheritance",
+                "description": "Base lexical do Raabiano Moderno Padrão"
+            }
+        ]
+    },
+    "aesthetic_profile": {
+        "description": "Uma língua de transição imperial. A aspereza do deserto foi polida pela 'Nurgatização'. Soa culta, imperial e levemente melancólica.",
+        "syllable_count_distribution": {
+            "1": 0.1,
+            "2": 0.5,
+            "3": 0.3,
+            "4": 0.1
+        },
+        "cluster_density": 0.25,
+        "vowel_consonant_ratio": 0.6
+    },
+    "phonotactics": {
+        "active_style": "nurgatized_imperial",
+        "inventory_styles": {
+            "nurgatized_imperial": {
+                "description": "Estilo Clássico Imperial: Perda de guturais, introdução de umlauts e suavização geral.",
+                "consonants": "bdfghjklmnprstvwzšž",
+                "vowels": "aeiouäöü"
+            }
+        },
+        "vowels": "aeiouäöü",
+        "consonants": "bdfghjklmnprstvwzšž",
+        "syllable_templates": [
+            "CV",
+            "CVC",
+            "CV",
+            "CVC",
+            "V",
+            "VC",
+            "CCV",
+            "CVn"
+        ],
+        "forbidden_initial_clusters": [
+            "bd",
+            "gd",
+            "kp",
+            "nm",
+            "pt",
+            "kt"
+        ],
+        "forbidden_final_consonants": [
+            "h",
+            "w",
+            "j",
+            "b",
+            "d",
+            "g"
+        ],
+        "max_consonant_cluster": 2,
+        "epenthesis_vowel": "e",
+        "phonological_rules": [
+            {
+                "input": "q",
+                "output": "k",
+                "description": "Nurgatização: Quvular vira Velar"
+            },
+            {
+                "input": "ħ",
+                "output": "h",
+                "description": "Nurgatização: Faringal vira Glotal"
+            },
+            {
+                "input": "ʕ",
+                "output": "",
+                "description": "Nurgatização: Perda total da faringal sonora (Ayin)"
+            },
+            {
+                "input": "aCi",
+                "output": "äCi",
+                "description": "Umlaut regressivo: A torna-se Ä antes de I"
+            },
+            {
+                "input": "uCi",
+                "output": "üCi",
+                "description": "Umlaut regressivo: U torna-se Ü antes de I"
+            },
+            {
+                "input": "aCu",
+                "output": "oCu",
+                "description": "Harmonia labial arcaica"
+            },
+            {
+                "input": "ā",
+                "output": "aa",
+                "description": "Perda de mácron para vogal dupla ou simples"
+            },
+            {
+                "input": "ī",
+                "output": "ii",
+                "description": "Perda de mácron"
+            },
+            {
+                "input": "ū",
+                "output": "uu",
+                "description": "Perda de mácron"
+            },
+            {
+                "input": "kh",
+                "output": "h",
+                "description": "Suavização de fricativas velares"
+            }
+        ],
+        "sonority_hierarchy": {
+            "enabled": true,
+            "scale": {
+                "p": 1,
+                "t": 1,
+                "k": 1,
+                "b": 1,
+                "d": 1,
+                "g": 1,
+                "f": 2,
+                "v": 2,
+                "s": 2,
+                "z": 2,
+                "š": 2,
+                "ž": 2,
+                "m": 3,
+                "n": 3,
+                "l": 4,
+                "r": 4,
+                "w": 5,
+                "j": 5,
+                "a": 6,
+                "e": 6,
+                "i": 6,
+                "o": 6,
+                "u": 6
+            },
+            "onset_rules": {
+                "min_distance": 2,
+                "allow_plateau": false,
+                "allow_reversal": false
+            },
+            "coda_rules": {
+                "min_distance": -1,
+                "allow_plateau": true
+            }
+        }
+    },
+    "root_system": {
+        "enabled": true,
+        "description": "Sistema de raízes semítico, mas 'congelado' em padrões que favorecem a estética ocidental.",
+        "root_generation": {
+            "preferred_initial_clusters": [
+                "pr",
+                "tr",
+                "kl",
+                "fr",
+                "sm",
+                "st"
+            ],
+            "preferred_final_clusters": [
+                "st",
+                "rm",
+                "rn",
+                "lt",
+                "ns"
+            ],
+            "preferred_nuclei": [
+                "a",
+                "e",
+                "o",
+                "ä",
+                "ö"
+            ]
+        },
+        "binyanim": [
+            {
+                "name": "basic_western",
+                "pattern": "1a2a3",
+                "meaning": "basic_active"
+            },
+            {
+                "name": "intensive_western",
+                "pattern": "1e22e3",
+                "meaning": "intensive"
+            },
+            {
+                "name": "causative_western",
+                "pattern": "ha12e3",
+                "meaning": "causative"
+            },
+            {
+                "name": "reflexive_western",
+                "pattern": "nit1a2a3",
+                "meaning": "reflexive"
+            }
+        ],
+        "nominal_patterns": [
+            {
+                "pattern": "1a2u3",
+                "type": "basic_noun"
+            },
+            {
+                "pattern": "ma12a3",
+                "type": "place_instrument"
+            },
+            {
+                "pattern": "1ä2i3",
+                "type": "agent_doer"
+            },
+            {
+                "pattern": "ta12i3",
+                "type": "abstract_noun"
+            }
+        ]
+    },
+    "affix_system": {
+        "enabled": true,
+        "description": "Morfologia fusional simplificada, transição para analítica.",
+        "derivation_rules": [
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "action",
+                "affix": "-ung",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "NOUN",
+                "type": "quality",
+                "affix": "-itāt",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "type": "relational",
+                "affix": "-ik",
+                "position": "suffix"
+            }
+        ]
+    },
+    "case_system": {
+        "enabled": false,
+        "description": "Casos perdidos. Apenas vestígios nos pronomes.",
+        "markers": {}
+    },
+    "gender_system": {
+        "enabled": true,
+        "genders": [
+            "masculine",
+            "feminine"
+        ],
+        "default": "masculine",
+        "description": "Perda do neutro e do 'divino'. Gênero binário estrito.",
+        "inference": [
+            {
+                "suffix": "a",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "ä",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "t",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "o",
+                "gender": "masculine"
+            },
+            {
+                "suffix": "u",
+                "gender": "masculine"
+            },
+            {
+                "suffix": "n",
+                "gender": "masculine"
+            }
+        ],
+        "markers": {
+            "feminine": {
+                "marker": "a",
+                "position": "suffix",
+                "targets": [
+                    "ADJ",
+                    "DET"
+                ]
+            },
+            "masculine": {
+                "marker": "",
+                "position": "suffix",
+                "targets": [
+                    "ADJ",
+                    "DET"
+                ]
+            }
+        }
+    },
+    "number_system": {
+        "numbers": [
+            "singular",
+            "plural"
+        ],
+        "default": "singular",
+        "broken_plurals": {
+            "enabled": true,
+            "description": "Manutenção parcial dos plurais quebrados (internos), mas competindo com sufixos.",
+            "patterns": [
+                {
+                    "singular_pattern": "CVCVC",
+                    "plural_pattern": "CVCCäC"
+                }
+            ]
+        },
+        "markers": {
+            "plural": {
+                "marker": "-im",
+                "alternatives": [
+                    "-in",
+                    "-s"
+                ]
+            }
+        }
+    },
+    "determiner_system": {
+        "definite_article": {
+            "form": "hal",
+            "variants": [
+                "al",
+                "el",
+                "l'"
+            ],
+            "procliticizes": true,
+            "description": "Artigo definido 'hal' evoluindo para 'al/el'. Assimilação solar ainda presente mas enfraquecendo."
+        },
+        "indefinite_article": {
+            "form": "wäh",
+            "declines": false
+        },
+        "possessives": {
+            "pronominal_suffixes": true,
+            "suffixes": {
+                "1sg": "-i",
+                "2sg": "-ak",
+                "3sg_m": "-u",
+                "3sg_f": "-ha",
+                "1pl": "-nu",
+                "2pl": "-kum",
+                "3pl": "-hum"
+            }
+        }
+    },
+    "pronominal_system": {
+        "independent_pronouns": {
+            "1sg": "Anä",
+            "2sg_m": "Anta",
+            "2sg_f": "Anti",
+            "3sg_m": "Hu",
+            "3sg_f": "Hi",
+            "1pl": "Nahn",
+            "2pl": "Antum",
+            "3pl": "Hum"
+        },
+        "clitic_ordering": {
+            "enabled": true,
+            "order": [
+                "verb",
+                "obj_direct"
+            ],
+            "encliticizes": true
+        }
+    },
+    "tam_system": {
+        "enabled": true,
+        "description": "Sistema verbal rico, herdado mas suavizado.",
+        "person_marking": {
+            "enabled": true,
+            "suffixes": {
+                "1sg": "-tu",
+                "2sg": "-ta",
+                "3sg": "-a",
+                "1pl": "-nu",
+                "2pl": "-tum",
+                "3pl": "-u"
+            },
+            "prefixes": {
+                "1sg": "a-",
+                "2sg": "t-",
+                "3sg": "y-",
+                "1pl": "n-",
+                "2pl": "t-",
+                "3pl": "y-"
+            }
+        },
+        "rules": [
+            {
+                "features": [
+                    "Tense=Past"
+                ],
+                "marker": "",
+                "type": "suffix",
+                "description": "Passado usa sufixos (Perfectivo)"
+            },
+            {
+                "features": [
+                    "Tense=Pres"
+                ],
+                "marker": "",
+                "type": "prefix",
+                "description": "Presente usa prefixos (Imperfectivo)"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "sa-",
+                "type": "prefix",
+                "description": "Futuro com partícula aglutinada"
+            },
+            {
+                "features": [
+                    "Mood=Cnd"
+                ],
+                "marker": "law-",
+                "type": "prefix"
+            }
+        ]
+    },
+    "copula_system": {
+        "enabled": true,
+        "copulas": [
+            {
+                "type": "default",
+                "form": "kän",
+                "conjugates": true,
+                "description": "Verbo 'ser/estar' (Raiz K-W-N nurgatizada)"
+            }
+        ]
+    },
+    "negation_system": {
+        "enabled": true,
+        "strategies": [
+            {
+                "type": "verbal_negation",
+                "marker": "mä ",
+                "description": "Negação pré-verbal padrão"
+            },
+            {
+                "type": "nominal_negation",
+                "marker": "lä",
+                "description": "Negação existencial/nominal"
+            }
+        ]
+    },
+    "semantic_fields": {
+        "enabled": true,
+        "manual_groups": {
+            "água": "nature",
+            "terra": "nature",
+            "fogo": "nature",
+            "homem": "human",
+            "mulher": "human",
+            "rei": "noble",
+            "império": "political"
+        }
+    },
+    "loanword_policy": {
+        "enabled": true,
+        "modes": {
+            "phonetic_adaptation": 0.7,
+            "calque": 0.2,
+            "semantic_extension": 0.1
+        },
+        "description": "Alta taxa de absorção fonética devido à expansão imperial."
+    },
+    "functional_particles": {
+        "muito": {
+            "adj_word": "kethir",
+            "noun_word": "kethir"
+        },
+        "pouco": {
+            "adj_word": "qalil"
+        },
+        "mas": {
+            "verb_word": "läkin"
+        },
+        "e": {
+            "verb_word": "wä"
+        }
+    },
+    "style": {
+        "capitalization": true,
+        "sentence_terminators": [
+            ".",
+            "!",
+            "?"
+        ],
+        "punctuation_map": {
+            ",": ",",
+            ".": ".",
+            ";": ";"
+        }
+    },
+    "abstract_concepts": {
+        "enabled": true,
+        "mappings": {
+            "de": "min",
+            "para": "li",
+            "em": "fi",
+            "com": "ma",
+            "o": "hal",
+            "a": "hal",
+            "e": "hi",
+            "à": "hal-i",
+            "ao": "hal-e",
+            "que": "kë",
+            "ser": "kän",
+            "fazer": "fäl",
+            "ter": "hidmä",
+            "teriam": "hidam",
+            "tivessem": "hidmoolüm"
+        }
+    }
+}
