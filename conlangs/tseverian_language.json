@@ -1,7 +1,6 @@
 {
     "id": "tseverian",
     "name": "Tsevério",
-    "family_node": "slavic_nordic_fusion",
     "global_seed": 1917,
     "word_order": "SVO",
     "alignment": "nominative-accusative",
