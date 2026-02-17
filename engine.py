@@ -2944,7 +2944,9 @@ class OriginalLanguageEngine:
         if self.confluence_handler.enabled:
             stratum = self.confluence_handler.determine_stratum(
                 clean_word, self.global_seed)
-            if stratum and stratum['type'] != 'native':
+            stratum_type = stratum.get(
+                'type', 'foreign') if stratum else 'native'
+            if stratum and stratum_type != 'native':
                 source_id = stratum.get('source_id')
                 source_word = self._fetch_source_word(source_id, clean_word)
                 nativized = self.phonology_handler.nativize_word(source_word)

@@ -1,0 +1,601 @@
+{
+    "id": "midorian_language",
+    "metadata": {
+        "name": "Midoriano",
+        "author": "ConHab Generator",
+        "version": "1.0",
+        "description": "Língua oficial do Reino de Midoria e falada por 300 milhões de pessoas em Hadab. Conhecida por sua suavidade fonética, gramática regular SVO e uso extensivo de auxiliares."
+    },
+    "global_seed": 19842025,
+    "word_order": "SVO",
+    "subordinate_word_order": "SVO",
+    "source_language_order": "SVO",
+    "drop_articles": false,
+    "family_node": "west_anbvogn",
+    "alignment": "nominative-accusative",
+    "aesthetic_profile": {
+        "syllable_count_distribution": {
+            "1": 0.15,
+            "2": 0.50,
+            "3": 0.25,
+            "4": 0.10
+        },
+        "cluster_density": 0.2,
+        "vowel_consonant_ratio": 0.55
+    },
+    "phonotactics": {
+        "vowels": "aeiou",
+        "consonants": "bcdfghjklmnpqrstvwxz",
+        "syllable_templates": [
+            "CV",
+            "CVC",
+            "V",
+            "VC",
+            "CVV"
+        ],
+        "min_syllables": 1,
+        "max_syllables": 4,
+        "forbidden_initial_clusters": [
+            "ts",
+            "ks",
+            "ps",
+            "db",
+            "gd"
+        ],
+        "forbidden_final_consonants": [
+            "h",
+            "w",
+            "j",
+            "q",
+            "v"
+        ],
+        "sonority_hierarchy": {
+            "enabled": true,
+            "scale": {
+                "b": 1,
+                "d": 1,
+                "g": 1,
+                "p": 0,
+                "t": 0,
+                "k": 0,
+                "f": 2,
+                "v": 2,
+                "s": 2,
+                "z": 2,
+                "m": 3,
+                "n": 3,
+                "l": 4,
+                "r": 4,
+                "w": 4,
+                "j": 4
+            },
+            "onset_rules": {
+                "min_distance": 2,
+                "allow_plateau": false
+            },
+            "coda_rules": {
+                "min_distance": 0,
+                "allow_plateau": true
+            }
+        },
+        "sandhi": {
+            "enabled": true,
+            "rules": [
+                {
+                    "pattern": "n p",
+                    "replacement": "m p",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "n b",
+                    "replacement": "m b",
+                    "ignore_case": true
+                }
+            ]
+        }
+    },
+    "style": {
+        "capitalization": true,
+        "sentence_terminators": [
+            ".",
+            "!",
+            "?"
+        ],
+        "secondary_terminators": [
+            ",",
+            ";",
+            ":"
+        ],
+        "punctuation_map": {
+            ".": ".",
+            ",": ",",
+            "!": "!",
+            "?": "?"
+        }
+    },
+    "vocabulary": {
+        "eu": "y",
+        "tu": "ab",
+        "você": "tab",
+        "ele": "en",
+        "ela": "en",
+        "nós": "not",
+        "vós": "anwot",
+        "eles": "ent",
+        "elas": "ents",
+        "o": "e",
+        "a": "ea",
+        "os": "es",
+        "as": "eas",
+        "um": "ont",
+        "uma": "onta",
+        "fazer": "am",
+        "ser": "eb",
+        "estar": "hid",
+        "ter": "aude",
+        "haver": "aud",
+        "ir": "vad",
+        "vir": "kad",
+        "não": "nor",
+        "sim": "eah",
+        "e": "int",
+        "ou": "vel",
+        "mas": "sed",
+        "porque": "kar",
+        "quando": "wen",
+        "isso": "thir",
+        "esta": "thed",
+        "essa": "thed",
+        "esse": "thed",
+        "este": "thed"
+    },
+    "grammar": {
+        "description": "Gramática isolante-fusional com ordem SVO estrita."
+    },
+    "gender_system": {
+        "enabled": false,
+        "default": "neutro",
+        "inference": [],
+        "markers": {}
+    },
+    "number_system": {
+        "enabled": true,
+        "plural_marker": "yi",
+        "markers": {
+            "plural": {
+                "marker": "yi",
+                "type": "suffix"
+            }
+        },
+        "broken_plurals": {
+            "enabled": false
+        }
+    },
+    "case_system": {
+        "enabled": false
+    },
+    "copula_system": {
+        "enabled": true,
+        "copulas": [
+            {
+                "form": "hed",
+                "type": "default",
+                "conditions": []
+            }
+        ]
+    },
+    "tam_system": {
+        "enabled": true,
+        "description": "Sistema com 3 tempos e 4 aspectos, usando sufixos e auxiliares.",
+        "rules": [
+            {
+                "features": [
+                    "Tense=Past"
+                ],
+                "marker": "or",
+                "type": "suffix",
+                "pos": [
+                    "VERB"
+                ]
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "an",
+                "type": "suffix",
+                "pos": [
+                    "VERB"
+                ]
+            },
+            {
+                "features": [
+                    "Tense=Pres"
+                ],
+                "marker": "",
+                "type": "suffix",
+                "pos": [
+                    "VERB"
+                ]
+            },
+            {
+                "features": [
+                    "Aspect=Prog"
+                ],
+                "marker": "in",
+                "type": "suffix",
+                "pos": [
+                    "VERB"
+                ]
+            },
+            {
+                "features": [
+                    "Aspect=Perf"
+                ],
+                "marker": "el",
+                "type": "suffix",
+                "pos": [
+                    "VERB"
+                ]
+            },
+            {
+                "features": [
+                    "Aspect=Prog"
+                ],
+                "marker": "eb",
+                "type": "particle_before",
+                "pos": [
+                    "VERB"
+                ]
+            },
+            {
+                "features": [
+                    "Aspect=Perf"
+                ],
+                "marker": "aude",
+                "type": "particle_before",
+                "pos": [
+                    "VERB"
+                ]
+            },
+            {
+                "features": [
+                    "Mood=Imp"
+                ],
+                "marker": "!",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Cnd"
+                ],
+                "marker": "us",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Sub"
+                ],
+                "marker": "ke",
+                "type": "particle_before"
+            }
+        ]
+    },
+    "negation_system": {
+        "enabled": true,
+        "strategies": [
+            {
+                "type": "verbal_negation",
+                "marker": "am py",
+                "position": "before"
+            },
+            {
+                "type": "nominal_negation",
+                "marker": "prit",
+                "position": "before"
+            },
+            {
+                "type": "emphatic_negation",
+                "marker": "hude",
+                "suffix": "!"
+            }
+        ]
+    },
+    "interrogative_system": {
+        "enabled": true,
+        "question_particles": [
+            {
+                "type": "yes_no",
+                "particle": "am"
+            }
+        ],
+        "detection_rules": {
+            "wh_words": [
+                "que",
+                "quem",
+                "onde",
+                "quando",
+                "como",
+                "porque"
+            ],
+            "alternative_indicators": [
+                "ou"
+            ]
+        }
+    },
+    "determiner_system": {
+        "definite_article": {
+            "form": "thy",
+            "variants": [
+                "tha",
+                "theb",
+                "thus"
+            ]
+        },
+        "possessives": {
+            "pronominal_suffixes": false,
+            "independent_forms": {
+                "1sg": "med",
+                "2sg": "tuo",
+                "3sg": "wed",
+                "1pl": "nor",
+                "2pl": "vostro",
+                "3pl": "loro"
+            },
+            "possessive_lemmas": {
+                "meu": "1sg",
+                "minha": "1sg",
+                "meus": "1sg",
+                "minhas": "1sg",
+                "teu": "2sg",
+                "tua": "2sg",
+                "teus": "2sg",
+                "tuas": "2sg",
+                "seu": "3sg",
+                "sua": "3sg",
+                "seus": "3sg",
+                "suas": "3sg",
+                "nosso": "1pl",
+                "nossa": "1pl",
+                "nossos": "1pl",
+                "nossas": "1pl",
+                "vosso": "2pl",
+                "vossa": "2pl",
+                "vossos": "2pl",
+                "vossas": "2pl"
+            }
+        },
+        "demonstratives": {
+            "proximal": {
+                "sg": "hic",
+                "pl": "hic"
+            },
+            "distal": {
+                "sg": "il",
+                "pl": "il"
+            },
+            "source_mappings": {
+                "proximal": [
+                    "este",
+                    "esta",
+                    "isto",
+                    "esse",
+                    "essa",
+                    "aqui"
+                ],
+                "distal": [
+                    "aquele",
+                    "aquela",
+                    "aquilo",
+                    "lá",
+                    "ali"
+                ]
+            }
+        }
+    },
+    "pronominal_system": {
+        "independent_pronouns": {
+            "1sg": "mi",
+            "2sg": "tu",
+            "3sg_m": "el",
+            "3sg_f": "el",
+            "1pl": "nos",
+            "2pl": "vos",
+            "3pl": "los"
+        },
+        "clitic_ordering": {
+            "enabled": false
+        }
+    },
+    "adposition_system": {
+        "basic_prepositions": {
+            "de": "atf",
+            "em": "iy",
+            "para": "njod",
+            "por": "var",
+            "com": "vitt",
+            "sem": "nis"
+        },
+        "inflected_prepositions": {
+            "enabled": false
+        }
+    },
+    "affix_system": {
+        "enabled": true,
+        "agglutination_strength": 0.1,
+        "derivation_rules": [
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "agent",
+                "affix": "or",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "ADV",
+                "affix": "men",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "affix": "al",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "type": "privative",
+                "affix": "nis",
+                "position": "suffix"
+            }
+        ],
+        "source_suffixes": [
+            {
+                "input_pos": "ADV",
+                "suffix": "mente",
+                "replacement": "men",
+                "target_pos": "ADV",
+                "priority": 10
+            },
+            {
+                "input_pos": "NOUN",
+                "suffix": "dade",
+                "replacement": "tat",
+                "target_pos": "NOUN",
+                "priority": 5
+            },
+            {
+                "input_pos": "NOUN",
+                "suffix": "ção",
+                "replacement": "tion",
+                "target_pos": "NOUN",
+                "priority": 5
+            }
+        ]
+    },
+    "compounding": {
+        "enabled": true,
+        "head_position": "initial",
+        "linking_elements": {
+            "o": {
+                "after": [
+                    "c",
+                    "t",
+                    "m",
+                    "n",
+                    "l",
+                    "r",
+                    "s"
+                ]
+            }
+        }
+    },
+    "functional_particles": {
+        "muito": {
+            "noun_word": "taug",
+            "noun_position": "pre_nominal",
+            "adj_word": "taug",
+            "adj_position": "pre_nominal",
+            "verb_word": "taug",
+            "verb_position": "post_verbal"
+        },
+        "pouco": {
+            "noun_word": "inle",
+            "noun_position": "pre_nominal"
+        },
+        "todo": {
+            "noun_word": "omn",
+            "noun_position": "pre_nominal"
+        }
+    },
+    "degree_system": {
+        "enabled": true,
+        "rules": {
+            "diminutive": {
+                "affix": "et",
+                "position": "suffix"
+            },
+            "augmentative": {
+                "affix": "on",
+                "position": "suffix"
+            },
+            "superlative": {
+                "affix": "isim",
+                "position": "suffix"
+            }
+        },
+        "source_rules": [
+            {
+                "type": "diminutive",
+                "suffix": "inho",
+                "replacement": ""
+            },
+            {
+                "type": "diminutive",
+                "suffix": "inha",
+                "replacement": ""
+            },
+            {
+                "type": "augmentative",
+                "suffix": "ão",
+                "replacement": ""
+            },
+            {
+                "type": "superlative",
+                "suffix": "íssimo",
+                "replacement": ""
+            }
+        ]
+    },
+    "false_cognates": {
+        "enabled": false
+    },
+    "loanword_policy": {
+        "enabled": true,
+        "modes": {
+            "phonetic_adaptation": 0.9,
+            "calque": 0.1,
+            "semantic_extension": 0.0
+        }
+    },
+    "lexical_confluence": {
+        "enabled": true,
+        "base_stability": 25,
+        "strata": [
+            {
+                "source_id": "cauteriano",
+                "weight": 50,
+                "mutation_intensity": 0.1
+            },
+            {
+                "source_id": "western-neoraabic",
+                "weight": 15,
+                "mutation_intensity": 0.2
+            },
+            {
+                "source_id": "corimean_modern",
+                "weight": 8,
+                "mutation_intensity": 0.1
+            },
+            {
+                "source_id": "general_language",
+                "weight": 2,
+                "mutation_intensity": 0.1
+            }
+        ]
+    },
+    "root_system": {
+        "enabled": false
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "fixed",
+        "position": "penultimate",
+        "graphic_accent": false
+    },
+    "vowel_harmony": {
+        "enabled": false
+    }
+}

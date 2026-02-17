@@ -220,6 +220,9 @@ class WordOrderMapper:
                     if target_head_idx != -1 and target_head_idx in index_to_chunk:
                         parent_chunk = index_to_chunk[target_head_idx]
                         if parent_chunk is not chunk:
+                            if not parent_chunk.words:
+                                continue
+
                             parent_head_token_idx = parent_chunk.words[parent_chunk.head_index][1]
 
                             combined_words = parent_chunk.words + chunk.words
@@ -602,37 +605,38 @@ class WordOrderMapper:
         return Chunk(vp_words, verb_func['function'], 0, 'VP')
 
     def _build_prepositional_phrase_chunk(self, functions: List[Dict], prep_index: int, processed_indices: Set[int]) -> Optional[Any]:
-            if prep_index >= len(functions):
-                return None
+        if prep_index >= len(functions):
+            return None
 
-            prep_func = functions[prep_index]
-            pp_words = [(prep_func['word'], prep_func['index'])]
-            processed_indices.add(prep_index)
+        prep_func = functions[prep_index]
+        pp_words = [(prep_func['word'], prep_func['index'])]
+        processed_indices.add(prep_index)
 
-            i = prep_index + 1
-            
-            while i < len(functions) and i not in processed_indices:
-                func = functions[i]
-                if func['function'] in {SyntacticFunction.SUBJECT, SyntacticFunction.VERB, SyntacticFunction.PUNCT}:
+        i = prep_index + 1
+
+        while i < len(functions) and i not in processed_indices:
+            func = functions[i]
+            if func['function'] in {SyntacticFunction.SUBJECT, SyntacticFunction.VERB, SyntacticFunction.PUNCT}:
+                break
+
+            pp_words.append((func['word'], func['index']))
+            processed_indices.add(i)
+            i += 1
+
+        chunk_head_index = 0
+        chunk_indices = set(w[1] for w in pp_words)
+
+        for idx_in_chunk, (word_str, word_real_idx) in enumerate(pp_words):
+            token_data = next(
+                (f for f in functions if f['index'] == word_real_idx), None)
+
+            if token_data and token_data['dependencies']:
+                head_ptr = token_data['dependencies'][0]
+                if head_ptr != -1 and head_ptr not in chunk_indices:
+                    chunk_head_index = idx_in_chunk
                     break
-                
-                pp_words.append((func['word'], func['index']))
-                processed_indices.add(i)
-                i += 1
-            
-            chunk_head_index = 0
-            chunk_indices = set(w[1] for w in pp_words)
-            
-            for idx_in_chunk, (word_str, word_real_idx) in enumerate(pp_words):
-                token_data = next((f for f in functions if f['index'] == word_real_idx), None)
-                
-                if token_data and token_data['dependencies']:
-                    head_ptr = token_data['dependencies'][0]
-                    if head_ptr != -1 and head_ptr not in chunk_indices:
-                        chunk_head_index = idx_in_chunk
-                        break
 
-            return Chunk(pp_words, prep_func['function'], chunk_head_index, 'PP')
+        return Chunk(pp_words, prep_func['function'], chunk_head_index, 'PP')
 
     def _build_adjective_phrase_chunk(self, functions: List[Dict], adj_index: int, processed_indices: Set[int]) -> Optional[Any]:
         if adj_index >= len(functions):

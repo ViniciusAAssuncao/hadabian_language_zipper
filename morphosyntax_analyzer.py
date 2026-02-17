@@ -270,6 +270,8 @@ class TAMHandler:
 
         result = word
         for rule in self.rules:
+            if 'type' not in rule:
+                continue
             rule_feats = set(rule.get('features', []))
             if rule_feats.issubset(feats):
                 marker = rule.get('marker', '')
