@@ -1,0 +1,709 @@
+{
+    "id": "miranian_language",
+    "name": "Mirãniano (Mirazniano)",
+    "description": "Variedade Padrão Aenduriana do Mirãniano Moderno. Quarta língua de Hadab, originária do Reino de Miraz. Caracteriza-se por uma fonologia suave, sistema pronominal complexo e natureza fusional.",
+    "linguistic_family": "raabic_trunk.json",
+    "family_node": "western_neoraabic",
+    "source_language_order": "SVO",
+    "word_order": "VSO",
+    "subordinate_word_order": "SVO",
+    "drop_articles": false,
+    "agglutination_strength": 0.15,
+    "shared_base_strength": 0.4,
+    "cultural_purism": 0.6,
+    "pro_drop": {
+        "enabled": true,
+        "conditions": [
+            "verb_agreement",
+            "topic_context"
+        ]
+    },
+    "lexical_confluence": {
+        "enabled": true,
+        "base_stability": 25,
+        "strata": [
+            {
+                "source_id": "old_miranian",
+                "weight": 45,
+                "mutation_intensity": 0.2,
+                "type": "substrate"
+            },
+            {
+                "source_id": "cauterian",
+                "weight": 30,
+                "mutation_intensity": 0.5,
+                "type": "adstrate"
+            }
+        ]
+    },
+    "aesthetic_profile": {
+        "syllable_count_distribution": {
+            "1": 0.05,
+            "2": 0.45,
+            "3": 0.35,
+            "4": 0.15
+        },
+        "cluster_density": 0.3,
+        "vowel_consonant_ratio": 0.55
+    },
+    "alignment": "nominative-accusative",
+    "global_seed": 8741215,
+    "phonotactics": {
+        "vowels": "aeiou",
+        "consonants": "pbtdkgfvszmnlrhjw",
+        "active_style": "melodic_standard",
+        "inventory_styles": {
+            "melodic_standard": {
+                "consonants": "pbtdkgfvszmnlrhjw",
+                "vowels": "aeiou"
+            }
+        },
+        "syllable_templates": [
+            "CV",
+            "CV",
+            "CVC",
+            "V",
+            "CVV"
+        ],
+        "min_syllables": 2,
+        "max_syllables": 5,
+        "max_consonant_cluster": 2,
+        "max_vowel_cluster": 2,
+        "forbidden_initial_clusters": [
+            "tl",
+            "dl",
+            "zm",
+            "zn",
+            "mr",
+            "nr",
+            "pt",
+            "kt",
+            "bd",
+            "gd"
+        ],
+        "forbidden_final_consonants": [
+            "p",
+            "t",
+            "k",
+            "b",
+            "d",
+            "g",
+            "f",
+            "v",
+            "j",
+            "w",
+            "h"
+        ],
+        "epenthesis_vowel": "e",
+        "diphthongs": [
+            "ai",
+            "ei",
+            "oi",
+            "au",
+            "eu",
+            "ou",
+            "ia",
+            "ie",
+            "io",
+            "ua",
+            "ue",
+            "uo"
+        ],
+        "sonority_hierarchy": {
+            "enabled": true,
+            "scale": {
+                "p": 0,
+                "t": 0,
+                "k": 0,
+                "b": 1,
+                "d": 1,
+                "g": 1,
+                "f": 2,
+                "v": 2,
+                "s": 2,
+                "z": 2,
+                "h": 2,
+                "m": 3,
+                "n": 3,
+                "l": 4,
+                "r": 4,
+                "j": 5,
+                "w": 5
+            },
+            "onset_rules": {
+                "min_distance": 2,
+                "allow_plateau": false,
+                "allow_reversal": false
+            },
+            "coda_rules": {
+                "min_distance": 0,
+                "allow_plateau": true,
+                "allow_reversal": false
+            },
+            "contact_rules": {
+                "min_distance": -2,
+                "allow_plateau": true,
+                "allow_reversal": true
+            }
+        },
+        "sandhi": {
+            "enabled": true,
+            "rules": [
+                {
+                    "pattern": "([aeiou])\\s+([aeiou])",
+                    "replacement": "\\1'\\2",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "n\\s+([bp])",
+                    "replacement": "m \\1",
+                    "ignore_case": true
+                }
+            ]
+        },
+        "monophthongization": {
+            "enabled": true,
+            "rules": [
+                {
+                    "input": "aa",
+                    "output": "á"
+                },
+                {
+                    "input": "ii",
+                    "output": "í"
+                },
+                {
+                    "input": "ee",
+                    "output": "ê"
+                },
+                {
+                    "input": "oo",
+                    "output": "ô"
+                }
+            ]
+        }
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "weight",
+        "position": "penultimate",
+        "graphic_accent": true,
+        "accent_map": {
+            "a": "á",
+            "e": "é",
+            "i": "í",
+            "o": "ásm",
+            "u": "ú"
+        }
+    },
+    "gender_system": {
+        "enabled": true,
+        "default": "masculine",
+        "inference": [
+            {
+                "suffix": "a",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "e",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "ão",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "dade",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "o",
+                "gender": "masculine"
+            },
+            {
+                "suffix": "u",
+                "gender": "masculine"
+            },
+            {
+                "suffix": "r",
+                "gender": "masculine"
+            },
+            {
+                "suffix": "l",
+                "gender": "masculine"
+            }
+        ],
+        "markers": {
+            "masculine": {
+                "targets": [
+                    "ADJ",
+                    "DET"
+                ],
+                "marker": "o",
+                "position": "suffix"
+            },
+            "feminine": {
+                "targets": [
+                    "ADJ",
+                    "DET"
+                ],
+                "marker": "a",
+                "position": "suffix"
+            }
+        }
+    },
+    "number_system": {
+        "numbers": [
+            "singular",
+            "plural"
+        ],
+        "markers": {
+            "plural": {
+                "marker": "s",
+                "alternatives": [
+                    "es",
+                    "is"
+                ]
+            }
+        }
+    },
+    "case_system": {
+        "enabled": true,
+        "preposition_handling": "coexist",
+        "markers": {
+            "nominative": "",
+            "accusative": "",
+            "dative": {
+                "marker": "a",
+                "type": "particle_before",
+                "shift_to_determiner": false
+            },
+            "genitive": {
+                "marker": "de",
+                "type": "particle_before"
+            },
+            "locative": {
+                "marker": "en",
+                "type": "particle_before"
+            }
+        },
+        "marker_position": "suffix"
+    },
+    "pronominal_system": {
+        "independent_pronouns": {
+            "1sg": "eu",
+            "2sg": "tu",
+            "3sg_m": "el",
+            "3sg_f": "ela",
+            "1pl": "nos",
+            "2pl": "vos",
+            "3pl_m": "eles",
+            "3pl_f": "elas"
+        },
+        "object_pronouns": {
+            "direct": {
+                "1sg": "me",
+                "2sg": "te",
+                "3sg_m": "lo",
+                "3sg_f": "la",
+                "1pl": "nos",
+                "2pl": "vos",
+                "3pl_m": "los",
+                "3pl_f": "las",
+                "refl": "se"
+            },
+            "indirect": {
+                "1sg": "mi",
+                "2sg": "ti",
+                "3sg": "lhe",
+                "1pl": "nos",
+                "2pl": "vos",
+                "3pl": "lhes",
+                "refl": "si"
+            }
+        },
+        "clitic_ordering": {
+            "enabled": true,
+            "order": [
+                "neg",
+                "obj_indirect",
+                "obj_direct",
+                "verb"
+            ],
+            "procliticizes": true,
+            "encliticizes": false
+        }
+    },
+    "determiner_system": {
+        "definite_article": {
+            "form": "en",
+            "variants": [
+                "a",
+                "os",
+                "as"
+            ],
+            "procliticizes": false
+        },
+        "possessives": {
+            "pronominal_suffixes": false,
+            "independent_forms": {
+                "1sg": "meu",
+                "2sg": "teu",
+                "3sg": "seu",
+                "1pl": "noso",
+                "2pl": "voso",
+                "3pl": "seu"
+            },
+            "possessive_lemmas": {
+                "meu": "1sg",
+                "minha": "1sg",
+                "nosso": "1pl",
+                "seu": "3sg"
+            }
+        },
+        "demonstratives": {
+            "source_mappings": {
+                "proximal": [
+                    "este",
+                    "esta",
+                    "isto"
+                ],
+                "distal": [
+                    "aquele",
+                    "aquela",
+                    "aquilo"
+                ]
+            },
+            "proximal": {
+                "sg_m": "mir",
+                "sg_f": "mira",
+                "pl": "miros"
+            },
+            "distal": {
+                "sg_m": "dar",
+                "sg_f": "dara",
+                "pl": "daros"
+            }
+        }
+    },
+    "tam_system": {
+        "enabled": true,
+        "infer_imperative_from_context": true,
+        "person_marking": {
+            "enabled": true,
+            "suffixes": {
+                "1sg": "ot",
+                "2sg": "as",
+                "3sg": "a",
+                "1pl": "amos",
+                "2pl": "ais",
+                "3pl": "am"
+            }
+        },
+        "rules": [
+            {
+                "features": [
+                    "VerbForm=Inf"
+                ],
+                "marker": "ar",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "VerbForm=Part"
+                ],
+                "marker": "do",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "VerbForm=Ger"
+                ],
+                "marker": "ndo",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Past",
+                    "Aspect=Imp"
+                ],
+                "marker": "va",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Past",
+                    "Aspect=Perf"
+                ],
+                "marker": "zi",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "ra",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Sub"
+                ],
+                "marker": "nit",
+                "type": "particle_before"
+            },
+            {
+                "features": [
+                    "Mood=Cnd"
+                ],
+                "marker": "ria",
+                "type": "suffix"
+            }
+        ]
+    },
+    "affix_system": {
+        "enabled": true,
+        "source_suffixes": [
+            {
+                "input_pos": "ADJ",
+                "suffix": "vel",
+                "replacement": "vil",
+                "target_pos": "ADJ",
+                "priority": 1
+            },
+            {
+                "input_pos": "NOUN",
+                "suffix": "ção",
+                "replacement": "sion",
+                "target_pos": "NOUN",
+                "priority": 1
+            },
+            {
+                "input_pos": "NOUN",
+                "suffix": "dade",
+                "replacement": "dad",
+                "target_pos": "NOUN",
+                "priority": 1
+            }
+        ],
+        "derivation_rules": [
+            {
+                "from_pos": "ADJ",
+                "to_pos": "VERB",
+                "type": "inchoative",
+                "affix": "escer",
+                "position": "suffix",
+                "description": "Verbo de mudança de estado (tornar-se X)"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "VERB",
+                "type": "instrumental",
+                "affix": "izar",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "abstract_noun",
+                "affix": "mento",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "ADJ",
+                "type": "passive_potential",
+                "affix": "vel",
+                "position": "suffix"
+            }
+        ]
+    },
+    "degree_system": {
+        "enabled": true,
+        "source_rules": [
+            {
+                "type": "diminutive",
+                "suffix": "inho",
+                "replacement": "el"
+            },
+            {
+                "type": "augmentative",
+                "suffix": "ão",
+                "replacement": "on"
+            },
+            {
+                "type": "superlative",
+                "suffix": "íssimo",
+                "replacement": "isimo"
+            }
+        ],
+        "rules": {
+            "diminutive": {
+                "affix": "ino",
+                "position": "suffix"
+            },
+            "augmentative": {
+                "affix": "one",
+                "position": "suffix"
+            },
+            "superlative": {
+                "affix": "isimo",
+                "position": "suffix"
+            }
+        }
+    },
+    "negation_system": {
+        "enabled": true,
+        "strategies": [
+            {
+                "type": "verbal_negation",
+                "marker": "non",
+                "suffix": ""
+            },
+            {
+                "type": "nominal_negation",
+                "marker": "sen",
+                "suffix": ""
+            },
+            {
+                "type": "emphatic_negation",
+                "marker": "jamais",
+                "suffix": ""
+            }
+        ]
+    },
+    "copula_system": {
+        "enabled": true,
+        "copulas": [
+            {
+                "type": "present_default",
+                "form": "esd",
+                "conjugates": true,
+                "conditions": [
+                    "Tense=Pres"
+                ]
+            },
+            {
+                "type": "past_default",
+                "form": "enan",
+                "conjugates": true,
+                "conditions": [
+                    "Tense=Past"
+                ]
+            },
+            {
+                "type": "change_of_state",
+                "form": "xet",
+                "conjugates": true,
+                "conditions": [
+                    "Aspect=Inch"
+                ]
+            }
+        ]
+    },
+    "interrogative_system": {
+        "enabled": true,
+        "question_particles": [
+            {
+                "type": "yes_no",
+                "particle": "ka"
+            }
+        ],
+        "detection_rules": {
+            "wh_words": [
+                "quem",
+                "onde",
+                "quando",
+                "como",
+                "porque",
+                "qual"
+            ],
+            "alternative_indicators": [
+                "ou"
+            ]
+        }
+    },
+    "consonant_mutation": {
+        "enabled": true,
+        "rules": [
+            {
+                "name": "Softening",
+                "description": "Leniza oclusivas intervocálicas em contextos pronominais",
+                "triggers": {
+                    "pos": [
+                        "PRON"
+                    ]
+                },
+                "mutations": {
+                    "p": "b",
+                    "t": "d",
+                    "k": "g"
+                }
+            }
+        ]
+    },
+    "vowel_harmony": {
+        "enabled": true,
+        "groups": {
+            "bright": "ei",
+            "dark": "aou"
+        },
+        "rules": [
+            {
+                "input": "o",
+                "map": {
+                    "bright": "e",
+                    "dark": "o"
+                }
+            }
+        ]
+    },
+    "functional_particles": {
+        "muito": {
+            "noun_position": "pre_nominal",
+            "adj_position": "pre_nominal",
+            "verb_position": "post_verbal"
+        },
+        "sempre": {
+            "verb_position": "pre_verbal"
+        },
+        "já": {
+            "verb_position": "pre_verbal"
+        }
+    },
+    "special_mechanics": {
+        "enabled": true,
+        "mechanics": {
+            "reflexive_emphasis": {
+                "description": "Reforça o uso de verbos reflexivos para mudança de estado",
+                "enabled": true
+            }
+        }
+    },
+    "style": {
+        "capitalization": true,
+        "punctuation_map": {
+            ".": ".",
+            ",": ",",
+            ";": ";",
+            "!": "!",
+            "?": "?"
+        },
+        "sentence_terminators": [
+            ".",
+            "!",
+            "?"
+        ],
+        "secondary_terminators": [
+            ";",
+            ":"
+        ]
+    },
+    "abstract_concepts": {
+        "enabled": true,
+        "mappings": {
+            "que": "niife"
+        },
+        "definitions": {}
+    }
+}

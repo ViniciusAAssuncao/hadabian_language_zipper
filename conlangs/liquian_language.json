@@ -1,0 +1,632 @@
+{
+    "id": "liquian",
+    "name": "Líquio",
+    "native_name": "Il-Lizia, il-Teqoia",
+    "description": "Língua levínica ocidental falada em Lízis. Historicamente um 'primo distante' do RMP, o Líquio sofreu intensa influência cultural das línguas raabianas, resultando em uma gramática enkiana arcaica revestida por um léxico híbrido.",
+    "family_node": "western-levinic",
+    "linguistic_family": "ordo_enkian_family.json",
+    "shared_base_strength": 0.45,
+    "global_seed": 998244353,
+    "source_language_order": "SVO",
+    "word_order": "VSO",
+    "subordinate_word_order": "SVO",
+    "alignment": "nominative-accusative",
+    "agglutination_strength": 0.75,
+    "divergence_factor": 0.25,
+    "cultural_purism": 0.55,
+    "lexical_confluence": {
+        "enabled": true,
+        "base_stability": 45,
+        "strata": [
+            {
+                "source_id": "rmp",
+                "weight": 30,
+                "mutation_intensity": 0.15,
+                "description": "Forte superestrato litúrgico e formal do Raabiano Moderno Padrão"
+            },
+            {
+                "source_id": "mabadi",
+                "weight": 20,
+                "mutation_intensity": 0.1,
+                "description": "Influência comercial e coloquial do Mabádi vizinho"
+            },
+            {
+                "source_id": "eresseo",
+                "weight": 5,
+                "mutation_intensity": 0.4,
+                "description": "Empréstimos antigos de contato distante"
+            }
+        ]
+    },
+    "phonotactics": {
+        "active_style": "lizian_standard",
+        "inventory_styles": {
+            "lizian_standard": {
+                "description": "Padrão culto de Lízis, preserva enfáticas mas suaviza faringais extremas",
+                "consonants": "bdfghħjklmnpqrrsṣtṭvwxzʔʕ",
+                "vowels": "aeiouāīūēō"
+            },
+            "lizian_vulgar": {
+                "description": "Dialeto de rua, perdeu as enfáticas por influência do Mabádi",
+                "consonants": "bdfghjklmnprstvwxzʔ",
+                "vowels": "aeiou"
+            }
+        },
+        "vowels": "aeiouāīūēō",
+        "consonants": "bdfghħjklmnpqrrsṣtṭvwxzʔʕ",
+        "syllable_templates": [
+            "CV",
+            "CVC",
+            "CVCC",
+            "CCV",
+            "CCVC",
+            "V"
+        ],
+        "forbidden_initial_clusters": [
+            "bd",
+            "kp",
+            "td",
+            "nm",
+            "lr",
+            "dt"
+        ],
+        "forbidden_final_consonants": [
+            "h",
+            "w",
+            "j"
+        ],
+        "max_consonant_cluster": 2,
+        "diphthongs": [
+            "ai",
+            "au",
+            "ei",
+            "oi",
+            "ou"
+        ],
+        "epenthesis_vowel": "e",
+        "sonority_hierarchy": {
+            "enabled": true,
+            "scale": {
+                "p": 1,
+                "b": 1,
+                "t": 1,
+                "d": 1,
+                "k": 1,
+                "g": 1,
+                "q": 1,
+                "ʔ": 1,
+                "f": 2,
+                "v": 2,
+                "s": 2,
+                "z": 2,
+                "ṣ": 2,
+                "ħ": 2,
+                "ʕ": 2,
+                "h": 2,
+                "m": 3,
+                "n": 3,
+                "l": 4,
+                "r": 5,
+                "w": 6,
+                "j": 6,
+                "i": 7,
+                "u": 7,
+                "e": 8,
+                "o": 8,
+                "a": 9
+            },
+            "onset_rules": {
+                "min_distance": 1,
+                "allow_plateau": false,
+                "allow_reversal": false
+            }
+        },
+        "sandhi": {
+            "enabled": true,
+            "rules": [
+                {
+                    "pattern": "([aeiou])\\s+([aeiou])",
+                    "replacement": "\\1'\\2",
+                    "description": "Glotalização entre vogais em hiato externo"
+                },
+                {
+                    "pattern": "n\\s+([bmkp])",
+                    "replacement": "m \\1",
+                    "description": "Assimilação nasal labial"
+                },
+                {
+                    "pattern": "l\\s+([tṭdsṣrzln])",
+                    "replacement": "\\1-\\1",
+                    "description": "Assimilação total do artigo 'al' (Letras Solares)"
+                }
+            ]
+        }
+    },
+    "root_system": {
+        "enabled": true,
+        "type": "triconsonantal",
+        "description": "Sistema de raízes Ordo Enkiano clássico, mas com vocalização influenciada pelo RMP",
+        "root_registry": {
+            "escrever": "ktb",
+            "falar": "qwl",
+            "comer": "akl",
+            "beber": "šrb",
+            "lizis": "lzn",
+            "água": "mwh",
+            "fogo": "nwr",
+            "terra": "arḍ"
+        },
+        "binyanim": [
+            {
+                "name": "qal",
+                "form": "I",
+                "pattern": "CaCaC",
+                "meaning": "basic_active"
+            },
+            {
+                "name": "fa'al",
+                "form": "II",
+                "pattern": "CaCCaC",
+                "meaning": "intensive"
+            },
+            {
+                "name": "af'al",
+                "form": "IV",
+                "pattern": "aCCaC",
+                "meaning": "causative"
+            },
+            {
+                "name": "tafa'al",
+                "form": "V",
+                "pattern": "taCaCCaC",
+                "meaning": "reflexive"
+            }
+        ]
+    },
+    "morphological_derivation": {
+        "enabled": true,
+        "root_based": true,
+        "max_depth": 3,
+        "nominal_patterns": [
+            {
+                "pattern": "CaCC",
+                "type": "basic_noun"
+            },
+            {
+                "pattern": "CaCīC",
+                "type": "adjective"
+            },
+            {
+                "pattern": "maCCaC",
+                "type": "place_instrument"
+            },
+            {
+                "pattern": "CāCiC",
+                "type": "active_participle"
+            },
+            {
+                "pattern": "maCCūC",
+                "type": "passive_participle"
+            },
+            {
+                "pattern": "CiCāCa",
+                "type": "verbal_noun"
+            }
+        ]
+    },
+    "determiner_system": {
+        "definite_article": {
+            "form": "il-",
+            "procliticizes": true,
+            "sun_letter_assimilation": true,
+            "sun_letters": [
+                "t",
+                "ṭ",
+                "d",
+                "ḍ",
+                "r",
+                "z",
+                "s",
+                "ṣ",
+                "n",
+                "l"
+            ],
+            "moon_letters": [
+                "b",
+                "g",
+                "h",
+                "ħ",
+                "j",
+                "k",
+                "m",
+                "q",
+                "f",
+                "v",
+                "w",
+                "x",
+                "ʕ",
+                "ʔ"
+            ]
+        },
+        "demonstratives": {
+            "proximal": {
+                "sg_m": "hāḏā",
+                "sg_f": "hāḏi",
+                "pl": "hāʔulā"
+            },
+            "distal": {
+                "sg_m": "ḏālik",
+                "sg_f": "tilk",
+                "pl": "ulāʔik"
+            }
+        },
+        "possessives": {
+            "pronominal_suffixes": true,
+            "suffixes": {
+                "1sg": "-ī",
+                "2sg_m": "-ak",
+                "2sg_f": "-ik",
+                "3sg_m": "-hu",
+                "3sg_f": "-ha",
+                "1pl": "-nā",
+                "2pl": "-kum",
+                "3pl": "-hum"
+            }
+        }
+    },
+    "pronominal_system": {
+        "independent_pronouns": {
+            "1sg": "anā",
+            "2sg_m": "anta",
+            "2sg_f": "anti",
+            "3sg_m": "huwa",
+            "3sg_f": "hiya",
+            "1pl": "naħnu",
+            "2pl": "antum",
+            "3pl": "hum"
+        },
+        "clitic_ordering": {
+            "enabled": true,
+            "order": [
+                "verb",
+                "obj_direct",
+                "obj_indirect"
+            ],
+            "encliticizes": true
+        }
+    },
+    "case_system": {
+        "enabled": true,
+        "description": "Sistema de casos residual do RMP, mantendo distinção Nom/Acc em formalidades",
+        "preposition_handling": "coexist",
+        "markers": {
+            "nominative": {
+                "marker": "-u",
+                "type": "suffix",
+                "conditions": [
+                    "definite"
+                ]
+            },
+            "accusative": {
+                "marker": "-a",
+                "type": "suffix",
+                "conditions": [
+                    "definite"
+                ]
+            },
+            "genitive": {
+                "marker": "-i",
+                "type": "suffix",
+                "conditions": [
+                    "definite"
+                ]
+            }
+        },
+        "construct_state": {
+            "enabled": true,
+            "trigger_dependencies": [
+                "nmod",
+                "nmod:poss"
+            ],
+            "suppress_article_on_head": true,
+            "phonological_changes": [
+                {
+                    "pattern": "a$",
+                    "replacement": "",
+                    "condition": "feminine"
+                },
+                {
+                    "pattern": "at$",
+                    "replacement": "at",
+                    "condition": "feminine"
+                }
+            ]
+        }
+    },
+    "number_system": {
+        "numbers": [
+            "singular",
+            "dual",
+            "plural"
+        ],
+        "default": "singular",
+        "markers": {
+            "plural": {
+                "marker": "-ūn",
+                "alternatives": [
+                    "-īn",
+                    "-āt"
+                ]
+            },
+            "singular": {
+                "marker": ""
+            }
+        },
+        "dual_markers": {
+            "nominative": "-āni",
+            "accusative": "-ayni"
+        },
+        "broken_plurals": {
+            "enabled": true,
+            "patterns": [
+                {
+                    "singular_pattern": "CaCaC",
+                    "plural_pattern": "aCCāC"
+                },
+                {
+                    "singular_pattern": "CaCīC",
+                    "plural_pattern": "CiCāC"
+                },
+                {
+                    "singular_pattern": "maCCaC",
+                    "plural_pattern": "maCāCiC"
+                }
+            ]
+        }
+    },
+    "gender_system": {
+        "enabled": true,
+        "genders": [
+            "masculine",
+            "feminine"
+        ],
+        "default": "masculine",
+        "inference": [
+            {
+                "suffix": "a",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "at",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "īja",
+                "gender": "feminine"
+            }
+        ],
+        "markers": {
+            "feminine": {
+                "marker": "at",
+                "position": "suffix",
+                "targets": [
+                    "ADJ",
+                    "VERB"
+                ]
+            },
+            "masculine": {
+                "marker": "",
+                "position": "suffix",
+                "targets": [
+                    "ADJ",
+                    "VERB"
+                ]
+            }
+        }
+    },
+    "tam_system": {
+        "enabled": true,
+        "person_marking": {
+            "enabled": true,
+            "prefixes": {
+                "1sg": "a-",
+                "2sg_m": "ta-",
+                "2sg_f": "ta-",
+                "3sg_m": "ya-",
+                "3sg_f": "ta-",
+                "1pl": "na-",
+                "2pl": "ta-",
+                "3pl": "ya-"
+            },
+            "suffixes": {
+                "1sg": "-tu",
+                "2sg_m": "-ta",
+                "2sg_f": "-ti",
+                "3sg_m": "-a",
+                "3sg_f": "-at",
+                "1pl": "-nā",
+                "2pl": "-tum",
+                "3pl": "-ū"
+            }
+        },
+        "rules": [
+            {
+                "features": [
+                    "Aspect=Perf"
+                ],
+                "marker": "",
+                "type": "suffix",
+                "description": "Aspecto perfectivo usa sufixos de pessoa"
+            },
+            {
+                "features": [
+                    "Aspect=Imp"
+                ],
+                "marker": "",
+                "type": "prefix",
+                "description": "Aspecto imperfeito usa prefixos de pessoa"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "sa-",
+                "type": "prefix",
+                "description": "Futuro com prefixo sa- (Influência RMP)"
+            },
+            {
+                "features": [
+                    "Mood=Sub"
+                ],
+                "marker": "li-",
+                "type": "prefix",
+                "description": "Subjuntivo/Jussivo"
+            }
+        ]
+    },
+    "adposition_system": {
+        "inflected_prepositions": {
+            "enabled": true,
+            "forms": {
+                "li": {
+                    "1sg": "lī",
+                    "2sg_m": "laka",
+                    "3sg_m": "lahu"
+                },
+                "bi": {
+                    "1sg": "bī",
+                    "2sg_m": "bika",
+                    "3sg_m": "bihu"
+                },
+                "min": {
+                    "1sg": "minnī",
+                    "2sg_m": "minka",
+                    "3sg_m": "minhu"
+                },
+                "ma'a": {
+                    "1sg": "ma'ī",
+                    "2sg_m": "ma'aka",
+                    "3sg_m": "ma'ahu"
+                }
+            }
+        }
+    },
+    "negation_system": {
+        "enabled": true,
+        "strategies": [
+            {
+                "type": "verbal_negation",
+                "marker": "lā",
+                "suffix": "",
+                "description": "Negação verbal padrão (lā + imperfeito)"
+            },
+            {
+                "type": "verbal_negation",
+                "marker": "mā",
+                "suffix": "",
+                "description": "Negação verbal passado (mā + perfeito)"
+            },
+            {
+                "type": "nominal_negation",
+                "marker": "laysa",
+                "suffix": "",
+                "description": "Negação de frases nominais"
+            }
+        ]
+    },
+    "consonant_mutation": {
+        "enabled": true,
+        "rules": [
+            {
+                "triggers": {
+                    "words": [
+                        "al"
+                    ],
+                    "pos": [
+                        "DET"
+                    ]
+                },
+                "mutations": {
+                    "t": "t",
+                    "d": "d",
+                    "r": "r",
+                    "s": "s",
+                    "z": "z",
+                    "ṣ": "ṣ",
+                    "ṭ": "ṭ",
+                    "n": "n",
+                    "l": "l"
+                },
+                "description": "Assimilação de letras solares (Enkiano Clássico)"
+            }
+        ]
+    },
+    "pharyngealization": {
+        "enabled": true,
+        "triggers": [
+            "ṣ",
+            "ṭ",
+            "ḍ",
+            "ẓ",
+            "q"
+        ],
+        "affected_vowels": [
+            "a",
+            "i",
+            "u"
+        ],
+        "lowering_effect": true
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "weight",
+        "position": "penultimate",
+        "description": "Acento na penúltima se pesada (CVC, CVV), senão na antepenúltima"
+    },
+    "agreement_rules": {
+        "gender_agreement": true,
+        "number_agreement": true,
+        "person_agreement": true,
+        "adjunct_position": "after_core"
+    },
+    "lexical_registers": {
+        "enabled": true,
+        "registers": [
+            {
+                "name": "formal",
+                "chance": 0.4,
+                "mutation_factor": 0.2,
+                "description": "Líquio Clássico, muito próximo do RMP"
+            },
+            {
+                "name": "colloquial",
+                "chance": 0.6,
+                "mutation_factor": 1.5,
+                "description": "Líziano Vulgar, influência fonética do Mabádi (perda de q/emphatics)"
+            }
+        ]
+    },
+    "functional_particles": {
+        "muito": {
+            "adj_word": "jiddan",
+            "adj_position": "post_nominal"
+        },
+        "e": {
+            "noun_word": "wa",
+            "noun_position": "pre_nominal"
+        }
+    },
+    "style": {
+        "capitalization": true,
+        "sentence_terminators": [
+            ".",
+            "!",
+            "?"
+        ],
+        "punctuation_map": {
+            ",": "،",
+            "?": "؟",
+            ";": "؛"
+        }
+    }
+}

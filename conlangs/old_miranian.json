@@ -1,0 +1,607 @@
+{
+    "id": "old_miranian",
+    "name": "Mirãniano Antigo",
+    "native_name": "Zabān-i Mirāz al-Qadīm",
+    "family_node": "western_neoraabic",
+    "linguistic_family": "raabic_trunk.json",
+    "shared_base_strength": 0.4,
+    "global_seed": 8741215,
+    "source_language_order": "SVO",
+    "word_order": "VSO",
+    "subordinate_word_order": "SVO",
+    "alignment": "nominative-accusative",
+    "agglutination_strength": 0.7,
+    "divergence_factor": 0.45,
+    "cultural_purism": 0.6,
+    "lexical_confluence": {
+        "enabled": true,
+        "base_stability": 0,
+        "strata": [
+            {
+                "source_id": "mabadi_language",
+                "weight": 65,
+                "type": "substratum",
+                "mutation_intensity": 0.2,
+                "description": "Base semítica pesada do pidgin original"
+            },
+            {
+                "source_id": "western_neoraabic",
+                "weight": 35,
+                "type": "superstratum",
+                "mutation_intensity": 0.1,
+                "description": "Influência ocidental/imperial"
+            }
+        ]
+    },
+    "aesthetic_profile": {
+        "description": "Uma língua sonora e gutural, com alta densidade de sibilantes e distinções de ênfase. Soa arcaica, litúrgica e marcial.",
+        "syllable_count_distribution": {
+            "1": 0.15,
+            "2": 0.45,
+            "3": 0.30,
+            "4": 0.10
+        },
+        "cluster_density": 0.4,
+        "vowel_consonant_ratio": 0.45
+    },
+    "phonotactics": {
+        "active_style": "archaic_miraz",
+        "inventory_styles": {
+            "archaic_miraz": {
+                "description": "Inventário rico em sibilantes e oclusivas sonoras que precedem o ensurdecimento histórico.",
+                "consonants": "bdfghjklmnpqrstvwxzšžśźṣẓʔʕ",
+                "vowels": "aiuāīū"
+            }
+        },
+        "vowels": "aiuāīū",
+        "consonants": "bdfghjklmnpqrstvwxzšžśźṣẓʔʕ",
+        "syllable_templates": [
+            "CV",
+            "CVC",
+            "CVCC",
+            "CV",
+            "CVC"
+        ],
+        "forbidden_initial_clusters": [
+            "nt",
+            "mp",
+            "nk",
+            "rt",
+            "lt"
+        ],
+        "forbidden_final_consonants": [
+            "h",
+            "w",
+            "j"
+        ],
+        "max_consonant_cluster": 2,
+        "epenthesis_vowel": "i",
+        "phonological_rules": [
+            {
+                "input": "sš",
+                "output": "šš",
+                "description": "Assimilação de sibilantes"
+            },
+            {
+                "input": "zž",
+                "output": "žž",
+                "description": "Assimilação de sibilantes sonoras"
+            },
+            {
+                "input": "dt",
+                "output": "tt",
+                "description": "Assimilação de sonoridade regressiva"
+            },
+            {
+                "input": "nC",
+                "output": "mC",
+                "condition": "C_is_labial",
+                "description": "Assimilação nasal labial"
+            },
+            {
+                "input": "āi",
+                "output": "aj",
+                "description": "Quebra de ditongo longo"
+            }
+        ],
+        "sonority_hierarchy": {
+            "enabled": true,
+            "scale": {
+                "p": 1,
+                "t": 1,
+                "k": 1,
+                "q": 1,
+                "b": 1,
+                "d": 1,
+                "g": 1,
+                "f": 2,
+                "v": 2,
+                "s": 2,
+                "z": 2,
+                "š": 2,
+                "ž": 2,
+                "ś": 2,
+                "ź": 2,
+                "ṣ": 2,
+                "ẓ": 2,
+                "m": 3,
+                "n": 3,
+                "l": 4,
+                "r": 4,
+                "w": 5,
+                "j": 5,
+                "a": 6,
+                "i": 6,
+                "u": 6,
+                "ā": 7,
+                "ī": 7,
+                "ū": 7
+            },
+            "onset_rules": {
+                "min_distance": 1,
+                "allow_plateau": false,
+                "allow_reversal": false
+            },
+            "coda_rules": {
+                "min_distance": 0,
+                "allow_plateau": true
+            }
+        }
+    },
+    "root_system": {
+        "enabled": true,
+        "type": "triconsonantal",
+        "description": "Sistema de raízes herdado do Mabádi, fundamental para a estrutura lexical.",
+        "root_generation": {
+            "preferred_initial_clusters": [
+                "kt",
+                "sb",
+                "šm",
+                "zr",
+                "bḥ",
+                "qṭ"
+            ],
+            "preferred_final_clusters": [
+                "rb",
+                "lq",
+                "zm",
+                "nś"
+            ],
+            "preferred_nuclei": [
+                "a",
+                "i",
+                "u"
+            ]
+        },
+        "binyanim": [
+            {
+                "name": "form_i_basic",
+                "form": "I",
+                "pattern": "1a2a3",
+                "meaning": "basic_active"
+            },
+            {
+                "name": "form_ii_intensive",
+                "form": "II",
+                "pattern": "1a22a3",
+                "meaning": "intensive_causative"
+            },
+            {
+                "name": "form_iii_conative",
+                "form": "III",
+                "pattern": "1ā2a3",
+                "meaning": "associative_effort"
+            },
+            {
+                "name": "form_iv_causative",
+                "form": "IV",
+                "pattern": "a12a3",
+                "meaning": "causative"
+            },
+            {
+                "name": "form_v_reflexive",
+                "form": "V",
+                "pattern": "ta122a3",
+                "meaning": "reflexive_intensive"
+            },
+            {
+                "name": "form_vii_passive",
+                "form": "VII",
+                "pattern": "in1a2a3",
+                "meaning": "passive_reflexive"
+            },
+            {
+                "name": "form_x_request",
+                "form": "X",
+                "pattern": "ista12a3",
+                "meaning": "request_inchoative"
+            }
+        ],
+        "nominal_patterns": [
+            {
+                "pattern": "1a22ā3",
+                "type": "occupation_agent"
+            },
+            {
+                "pattern": "ma12a3",
+                "type": "place_instrument"
+            },
+            {
+                "pattern": "1ā2i3",
+                "type": "active_participle"
+            },
+            {
+                "pattern": "ma12ū3",
+                "type": "passive_participle"
+            },
+            {
+                "pattern": "1u23",
+                "type": "abstract_quality"
+            }
+        ],
+        "root_registry": {
+            "água": "m-y-h",
+            "fogo": "n-w-r",
+            "terra": "ʔ-r-ḍ",
+            "rei": "m-l-k",
+            "escrever": "k-t-b",
+            "falar": "q-w-l",
+            "saber": "ʕ-l-m",
+            "ser": "k-w-n",
+            "matar": "q-t-l",
+            "beber": "š-r-b"
+        }
+    },
+    "morphological_derivation": {
+        "enabled": true,
+        "root_based": true,
+        "max_depth": 2
+    },
+    "case_system": {
+        "enabled": true,
+        "alignment": "nominative-accusative",
+        "marker_position": "suffix",
+        "markers": {
+            "nominative": {
+                "marker": "-u",
+                "type": "suffix"
+            },
+            "accusative": {
+                "marker": "-a",
+                "type": "suffix"
+            },
+            "genitive": {
+                "marker": "-i",
+                "type": "suffix"
+            }
+        },
+        "construct_state": {
+            "enabled": true,
+            "description": "Estado construto (Idafa) para posse.",
+            "suppress_article_on_head": true,
+            "trigger_dependencies": [
+                "nmod",
+                "nmod:poss"
+            ],
+            "phonological_changes": [
+                {
+                    "pattern": "u$",
+                    "replacement": "u",
+                    "condition": "always"
+                },
+                {
+                    "pattern": "n$",
+                    "replacement": "",
+                    "condition": "dual_or_plural_masc"
+                },
+                {
+                    "pattern": "ah$",
+                    "replacement": "at",
+                    "condition": "feminine_marker"
+                }
+            ]
+        }
+    },
+    "gender_system": {
+        "enabled": true,
+        "genders": [
+            "masculine",
+            "feminine"
+        ],
+        "default": "masculine",
+        "inference": [
+            {
+                "suffix": "at",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "ah",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "ā",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "i",
+                "gender": "feminine"
+            }
+        ],
+        "markers": {
+            "feminine": {
+                "marker": "at",
+                "position": "suffix",
+                "targets": [
+                    "ADJ",
+                    "VERB",
+                    "NOUN"
+                ]
+            },
+            "masculine": {
+                "marker": "",
+                "position": "suffix",
+                "targets": [
+                    "ADJ",
+                    "VERB",
+                    "NOUN"
+                ]
+            }
+        }
+    },
+    "number_system": {
+        "numbers": [
+            "singular",
+            "dual",
+            "plural"
+        ],
+        "default": "singular",
+        "markers": {
+            "dual": {
+                "marker": "-āni",
+                "alternatives": [
+                    "-ayni"
+                ]
+            },
+            "plural": {
+                "marker": "-ūna",
+                "alternatives": [
+                    "-īna"
+                ]
+            }
+        },
+        "broken_plurals": {
+            "enabled": true,
+            "description": "Plurais internos não-concatenativos (i'rab al-taksir), herança direta do Mabádi.",
+            "patterns": [
+                {
+                    "singular_pattern": "CaCaC",
+                    "plural_pattern": "aCCāC"
+                },
+                {
+                    "singular_pattern": "CaCīC",
+                    "plural_pattern": "CuCaCā"
+                },
+                {
+                    "singular_pattern": "CāCiC",
+                    "plural_pattern": "CuCCāC"
+                },
+                {
+                    "singular_pattern": "CiCāC",
+                    "plural_pattern": "CuCuC"
+                }
+            ]
+        }
+    },
+    "determiner_system": {
+        "definite_article": {
+            "form": "ha-",
+            "variants": [
+                "han-",
+                "ham-"
+            ],
+            "procliticizes": true,
+            "sun_letter_assimilation": true,
+            "sun_letters": [
+                "t",
+                "d",
+                "r",
+                "z",
+                "s",
+                "š",
+                "ṣ",
+                "ẓ",
+                "n",
+                "l",
+                "ś",
+                "ź"
+            ],
+            "description": "Artigo definido 'ha-' que assimila a consoantes solares (sibilantes e dentais)."
+        },
+        "possessives": {
+            "pronominal_suffixes": true,
+            "suffixes": {
+                "1sg": "-ī",
+                "2sg_m": "-ka",
+                "2sg_f": "-ki",
+                "3sg_m": "-hu",
+                "3sg_f": "-hā",
+                "1pl": "-nā",
+                "2pl": "-kum",
+                "3pl": "-hum"
+            }
+        }
+    },
+    "pronominal_system": {
+        "independent_pronouns": {
+            "1sg": "anā",
+            "2sg_m": "anta",
+            "2sg_f": "anti",
+            "3sg_m": "huwa",
+            "3sg_f": "hiya",
+            "1pl": "naḥnu",
+            "2pl": "antum",
+            "3pl": "hum"
+        },
+        "clitic_ordering": {
+            "enabled": true,
+            "order": [
+                "verb",
+                "obj_direct",
+                "obj_indirect"
+            ],
+            "encliticizes": true
+        }
+    },
+    "tam_system": {
+        "enabled": true,
+        "description": "Sistema Aspectual misto. Aspectos imperfeitos usam prefixos. Aspectos perfeitos e tempos compostos usam o verbo auxiliar 'kān' (ser/estar).",
+        "person_marking": {
+            "enabled": true,
+            "prefixes": {
+                "1sg": "a-",
+                "2sg": "ta-",
+                "3sg_m": "ya-",
+                "3sg_f": "ta-",
+                "1pl": "na-"
+            },
+            "suffixes": {
+                "1sg": "-tu",
+                "2sg_m": "-ta",
+                "3sg_m": "-a",
+                "3pl": "-ū"
+            }
+        },
+        "rules": [
+            {
+                "features": [
+                    "Aspect=Imp",
+                    "Tense=Pres"
+                ],
+                "marker": "",
+                "type": "prefix",
+                "description": "Imperfectivo padrão (presente)"
+            },
+            {
+                "features": [
+                    "Aspect=Perf"
+                ],
+                "marker": "kāna ",
+                "type": "particle_before",
+                "description": "Perfeito Composto: Auxiliar 'kāna' (ser) + Verbo Principal. Diferença chave do western_neoraabic."
+            },
+            {
+                "features": [
+                    "Tense=Past",
+                    "Aspect=Prog"
+                ],
+                "marker": "kāna ya-",
+                "type": "prefix",
+                "description": "Passado Progressivo (estava fazendo): Auxiliar conjugado + Imperfectivo"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "sawfa ",
+                "type": "particle_before",
+                "description": "Futuro analítico"
+            }
+        ]
+    },
+    "copula_system": {
+        "enabled": true,
+        "copulas": [
+            {
+                "type": "default",
+                "form": "kāna",
+                "conjugates": true,
+                "conditions": [
+                    "Tense=Past"
+                ],
+                "description": "Cópula passada (era/foi)"
+            },
+            {
+                "type": "present_default",
+                "form": "zero",
+                "conjugates": false,
+                "conditions": [
+                    "Tense=Pres"
+                ],
+                "description": "Cópula zero no presente (frases nominais)"
+            }
+        ]
+    },
+    "negation_system": {
+        "enabled": true,
+        "strategies": [
+            {
+                "type": "verbal_negation",
+                "marker": "lā ",
+                "description": "Negação para imperfectivo"
+            },
+            {
+                "type": "verbal_negation_past",
+                "marker": "mā ",
+                "description": "Negação para perfeito/passado"
+            },
+            {
+                "type": "nominal_negation",
+                "marker": "laysa ",
+                "description": "Negação existencial/nominal (não é)"
+            }
+        ]
+    },
+    "functional_particles": {
+        "e": {
+            "verb_word": "wa"
+        },
+        "mas": {
+            "verb_word": "lākin"
+        },
+        "ou": {
+            "verb_word": "aw"
+        },
+        "porque": {
+            "verb_word": "li'anna"
+        },
+        "que": {
+            "verb_word": "an"
+        },
+        "se": {
+            "verb_word": "in"
+        }
+    },
+    "semantic_fields": {
+        "enabled": true,
+        "manual_groups": {
+            "espada": "war",
+            "escudo": "war",
+            "lança": "war",
+            "areia": "nature",
+            "deserto": "nature",
+            "oásis": "nature",
+            "camelo": "fauna",
+            "cavalo": "fauna",
+            "deus": "religion",
+            "templo": "religion"
+        }
+    },
+    "loanword_policy": {
+        "enabled": true,
+        "modes": {
+            "phonetic_adaptation": 0.85,
+            "calque": 0.1,
+            "semantic_extension": 0.05
+        },
+        "description": "Forte tendência a 'semitizar' empréstimos, encaixando consoantes em raízes triliterais."
+    },
+    "abstract_concepts": {
+        "enabled": true,
+        "mappings": {
+            "isso": "halāẓ",
+            "dos": "éne'a"
+        },
+        "definitions": {}
+    },
+    "vocabulary": {}
+}

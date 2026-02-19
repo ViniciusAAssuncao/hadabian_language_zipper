@@ -130,11 +130,11 @@
         "um": "ont",
         "uma": "onta",
         "fazer": "am",
-        "ser": "eb",
+        "ser": "eb ",
         "estar": "hid",
         "ter": "aude",
         "haver": "aud",
-        "ir": "vad",
+        "ir": "viee",
         "vir": "kad",
         "não": "nor",
         "sim": "eah",
@@ -565,12 +565,12 @@
         "base_stability": 25,
         "strata": [
             {
-                "source_id": "cauteriano",
+                "source_id": "cauterian",
                 "weight": 50,
                 "mutation_intensity": 0.1
             },
             {
-                "source_id": "western-neoraabic",
+                "source_id": "western_neoraabic",
                 "weight": 15,
                 "mutation_intensity": 0.2
             },

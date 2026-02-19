@@ -1938,6 +1938,16 @@ class OriginalLanguageEngine:
                 def __init__(self, c_path):
                     with open(c_path, 'r', encoding='utf-8') as f:
                         self.word_cache = json.load(f)
+
+                def _get_word_form(self, lemma: str, *args, **kwargs) -> str:
+                    lemma = lemma.lower().strip()
+                    if lemma in self.word_cache:
+                        entry = self.word_cache[lemma]
+                        if isinstance(entry, dict):
+                            return entry.get('default', lemma)
+                        return str(entry)
+                    return lemma
+
             return DummyEngine(cache_path)
 
         return None

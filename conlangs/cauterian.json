@@ -1,8 +1,8 @@
 {
-    "id": "cauteriano",
+    "id": "cauterian",
     "name": "Cauteriano",
     "native_name": "Cauterien",
-    "family_node": "western-neoraabic",
+    "family_node": "western_neoraabic",
     "linguistic_family": "raabic_trunk.json",
     "shared_base_strength": 0.60,
     "global_seed": 983457129,
@@ -18,7 +18,7 @@
         "base_stability": 11,
         "strata": [
             {
-                "source_id": "western-neoraabic",
+                "source_id": "western_neoraabic",
                 "weight": 75,
                 "type": "inheritance",
                 "description": "Base lexical do Raabiano Moderno Padrão"
@@ -740,7 +740,7 @@
             "noun_word": "peu de"
         },
         "mais": {
-            "adj_word": "plus"
+            "adj_word": "mani"
         },
         "menos": {
             "adj_word": "moins"

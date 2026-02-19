@@ -1,0 +1,384 @@
+{
+    "id": "western_neoraabic",
+    "name": "Western Neoraabic",
+    "description": "Uma língua de alto registro estilístico, caracterizada por sua fonologia melodiosa, distinção de vogais longas, rotacismo e um rico sistema de casos. Usada principalmente em literatura e documentos oficiais.",
+    "word_order": "SVO",
+    "subordinate_word_order": "SVO",
+    "source_language_order": "SVO",
+    "drop_articles": true,
+    "lexical_confluence": {
+        "enabled": true,
+        "base_stability": 70,
+        "strata": [
+            {
+                "source_id": "rmp",
+                "weight": 30,
+                "type": "inheritance",
+                "description": "Base lexical do Raabiano Moderno Padrão"
+            }
+        ]
+    },
+    "pro_drop": {
+        "enabled": true,
+        "conditions": [
+            "verb_agreement"
+        ]
+    },
+    "aesthetic_profile": {
+        "syllable_count_distribution": {
+            "1": 0.05,
+            "2": 0.45,
+            "3": 0.35,
+            "4": 0.15
+        },
+        "cluster_density": 0.15,
+        "vowel_consonant_ratio": 0.65
+    },
+    "alignment": "nominative-accusative",
+    "global_seed": 983457129,
+    "phonotactics": {
+        "vowels": "aeiouāēīōū",
+        "consonants": "bdfhlmnprstvzhð",
+        "syllable_templates": [
+            "CV",
+            "CVC",
+            "CVV",
+            "V",
+            "VC"
+        ],
+        "min_syllables": 2,
+        "max_syllables": 4,
+        "max_consonant_cluster": 1,
+        "max_vowel_cluster": 2,
+        "forbidden_initial_clusters": [
+            "rt",
+            "lt",
+            "nt",
+            "mt"
+        ],
+        "forbidden_final_consonants": [
+            "b",
+            "d",
+            "g",
+            "v",
+            "z"
+        ],
+        "epenthesis_vowel": "e",
+        "diphthongs": [
+            "ae",
+            "au",
+            "oe",
+            "ai"
+        ],
+        "phonological_rules": [
+            {
+                "input": "VsV",
+                "output": "VrV",
+                "description": "Rotacismo: S intervocálico torna-se R"
+            },
+            {
+                "input": "VtV",
+                "output": "VdV",
+                "description": "Lenir T intervocálico para D para suavidade"
+            }
+        ],
+        "sonority_hierarchy": {
+            "enabled": true,
+            "scale": {
+                "b": 1,
+                "d": 1,
+                "f": 2,
+                "v": 2,
+                "th": 2,
+                "dh": 2,
+                "s": 2,
+                "z": 2,
+                "h": 2,
+                "m": 3,
+                "n": 3,
+                "l": 4,
+                "r": 5
+            },
+            "onset_rules": {
+                "min_distance": 2,
+                "allow_plateau": false,
+                "allow_reversal": false
+            },
+            "coda_rules": {
+                "min_distance": 1,
+                "allow_plateau": true,
+                "allow_reversal": true
+            }
+        }
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "weight",
+        "position": "penultimate",
+        "graphic_accent": true,
+        "accent_map": {
+            "a": "á",
+            "e": "é",
+            "i": "í",
+            "o": "ó",
+            "u": "ú",
+            "ā": "â",
+            "ē": "ê",
+            "ī": "î",
+            "ō": "ô",
+            "ū": "û"
+        }
+    },
+    "case_system": {
+        "enabled": true,
+        "preposition_handling": "coexist",
+        "marker_position": "suffix",
+        "markers": {
+            "nominative": {
+                "marker": "os",
+                "type": "suffix"
+            },
+            "genitive": {
+                "marker": "ir",
+                "type": "suffix"
+            },
+            "dative": {
+                "marker": "el",
+                "type": "suffix"
+            },
+            "accusative": {
+                "marker": "am",
+                "type": "suffix"
+            },
+            "vocative": {
+                "marker": "e",
+                "type": "suffix"
+            },
+            "ablative": {
+                "marker": "ud",
+                "type": "suffix"
+            },
+            "locative": {
+                "marker": "ud",
+                "type": "suffix",
+                "description": "Mapeia funções oblíquas para o Ablativo (-ud)"
+            }
+        },
+        "preposition_case_mapping": {
+            "de": "genitive",
+            "para": "dative",
+            "com": "ablative",
+            "por": "ablative",
+            "em": "ablative"
+        }
+    },
+    "gender_system": {
+        "enabled": true,
+        "default": "masculino",
+        "inference": [
+            {
+                "suffix": "a",
+                "gender": "feminino"
+            },
+            {
+                "suffix": "ā",
+                "gender": "feminino"
+            },
+            {
+                "suffix": "e",
+                "gender": "neutro"
+            },
+            {
+                "suffix": "os",
+                "gender": "masculino"
+            },
+            {
+                "suffix": "us",
+                "gender": "masculino"
+            }
+        ],
+        "markers": {
+            "masculino": {
+                "targets": [
+                    "ADJ",
+                    "VERB"
+                ],
+                "marker": "os",
+                "position": "suffix"
+            },
+            "feminino": {
+                "targets": [
+                    "ADJ",
+                    "VERB"
+                ],
+                "marker": "as",
+                "position": "suffix"
+            },
+            "neutro": {
+                "targets": [
+                    "ADJ",
+                    "VERB"
+                ],
+                "marker": "um",
+                "position": "suffix"
+            }
+        }
+    },
+    "agreement_rules": {
+        "gender_agreement": true,
+        "number_agreement": true,
+        "person_agreement": true,
+        "adjunct_position": "after_core"
+    },
+    "number_system": {
+        "numbers": [
+            "singular",
+            "plural"
+        ],
+        "markers": {
+            "plural": {
+                "marker": "ī",
+                "alternatives": [
+                    "ae"
+                ]
+            }
+        }
+    },
+    "tam_system": {
+        "enabled": true,
+        "infer_imperative_from_context": true,
+        "person_marking": {
+            "enabled": true,
+            "suffixes": {
+                "1sg": "o",
+                "2sg": "is",
+                "3sg": "it",
+                "1pl": "mus",
+                "2pl": "tis",
+                "3pl": "unt"
+            }
+        },
+        "rules": [
+            {
+                "features": [
+                    "VerbForm=Inf"
+                ],
+                "marker": "are",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Past"
+                ],
+                "marker": "av",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "b",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Sub"
+                ],
+                "marker": "im",
+                "type": "suffix"
+            }
+        ]
+    },
+    "vowel_harmony": {
+        "enabled": true,
+        "groups": {
+            "long": "āēīōū",
+            "short": "aeiou"
+        },
+        "rules": [
+            {
+                "input": "a",
+                "map": {
+                    "long": "ā",
+                    "short": "a"
+                }
+            },
+            {
+                "input": "e",
+                "map": {
+                    "long": "ē",
+                    "short": "e"
+                }
+            }
+        ]
+    },
+    "affix_system": {
+        "enabled": true,
+        "derivation_rules": [
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "affix": "alis",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "ADV",
+                "affix": "iter",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "agent",
+                "affix": "tor",
+                "position": "suffix"
+            }
+        ]
+    },
+    "lexical_registers": {
+        "enabled": true,
+        "registers": [
+            {
+                "name": "Poetico",
+                "chance": 0.4,
+                "mutation_factor": 1,
+                "description": "Alongamento vocálico para fins métricos e poéticos"
+            },
+            {
+                "name": "Arcaico",
+                "chance": 0.1,
+                "mutation_factor": 0,
+                "description": "Preservação de formas antigas"
+            }
+        ]
+    },
+    "style": {
+        "capitalization": true,
+        "punctuation_map": {
+            ".": ".",
+            ",": ",",
+            ";": ";",
+            ":": ":",
+            "!": "!",
+            "?": "?"
+        }
+    },
+    "semantic_fields": {
+        "enabled": true,
+        "manual_groups": {
+            "sol": "celestial",
+            "lua": "celestial",
+            "estrela": "celestial",
+            "rei": "nobreza",
+            "rainha": "nobreza"
+        }
+    },
+    "polysemy_rules": {
+        "enabled": true,
+        "merges": {
+            "canção": "poesia",
+            "espada": "guerra"
+        }
+    }
+}

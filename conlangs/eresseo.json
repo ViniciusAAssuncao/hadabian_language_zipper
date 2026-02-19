@@ -1,1693 +1,541 @@
 {
     "id": "eresseo",
     "name": "Eresseo Moderno",
-    "native_name": "Eārenikijak",
-    "family_node": "western-eressean",
-    "linguistic_family": "ereniki_trunk.json",
-    "shared_base_strength": 0.85,
-    "global_seed": 10032498576120938,
+    "native_name": "Hēréssos",
+    "description": "Língua de prestígio do Reino de Eressa, considerada a quinta língua de Hadab. Caracteriza-se por estética 'Erênica', rica composição lexical para fins científicos, declinação fusional complexa e purismo linguístico.",
+    "global_seed": 918273645,
+    "word_order": "SVO",
+    "subordinate_word_order": "SOV",
     "source_language_order": "SVO",
-    "word_order": "VSO",
-    "subordinate_word_order": "VSO",
     "alignment": "nominative-accusative",
-    "agglutination_strength": 0.42,
-    "divergence_factor": 0.15,
-    "cultural_purism": 0.72,
-    "aesthetic_profile": {
-        "description": "Estética suave, evitando guturais; predomínio de vogais claras, fricativas brandas, líquidas e nasais.",
-        "preferred_consonants": [
-            "m",
-            "n",
-            "l",
-            "r",
-            "v",
-            "ð",
-            "s",
-            "z",
-            "j",
-            "w",
-            "p",
-            "b",
-            "t",
-            "d",
-            "k",
-            "ɡ"
-        ],
-        "avoided_consonants": [
-            "χ",
-            "ʁ",
-            "ħ",
-            "ʕ",
-            "q",
-            "ʔ"
-        ],
-        "syllable_weight": "light_preferred",
-        "euphony_rules": [
-            "avoid_hiatus",
-            "prefer_open_syllables"
+    "agglutination_strength": 0.15,
+    "cultural_purism": 0.95,
+    "drop_articles": false,
+    "pro_drop": {
+        "enabled": true,
+        "conditions": [
+            "verb_agreement",
+            "emphatic_subject_absent"
         ]
     },
-    "compounding": {
-        "enabled": true,
-        "productivity": "very_high",
-        "max_components": 4,
-        "head_position": "final",
-        "description": "Composição extremamente produtiva, núcleo à direita, elementos de ligação -s-, -o-, -i-.",
-        "linking_elements": {
-            "s": {
-                "after": [
-                    "t",
-                    "d",
-                    "n",
-                    "l"
-                ],
-                "examples": "eressē-s-nōva"
-            },
-            "o": {
-                "after": [
-                    "k",
-                    "g",
-                    "p",
-                    "b"
-                ],
-                "examples": "philos-o-sophia"
-            },
-            "i": {
-                "after": [
-                    "a",
-                    "e",
-                    "i"
-                ],
-                "examples": "kalli-i-graphia"
-            }
+    "aesthetic_profile": {
+        "syllable_count_distribution": {
+            "1": 0.05,
+            "2": 0.35,
+            "3": 0.40,
+            "4": 0.15,
+            "5": 0.05
         },
-        "noun_noun": {
-            "productivity": "very_high",
-            "head": "final",
-            "examples": "ain-ōrā (água-vida), ther-avlos (caçador)"
-        },
-        "adj_noun": {
-            "productivity": "high",
-            "examples": "mega-polis (grande-cidade), nea-ōda (nova-canção)"
-        },
-        "verb_noun": {
-            "productivity": "medium",
-            "stem_form": "present_stem",
-            "examples": "dēk-sis (ação de construir), fer-tor (carregador)"
-        }
+        "cluster_density": 0.6,
+        "vowel_consonant_ratio": 0.55
     },
     "phonotactics": {
-        "active_style": "modern_standard",
+        "active_style": "erenic_prestige",
         "inventory_styles": {
-            "modern_standard": {
-                "description": "Inventário padrão do Eresseo Moderno – suave, sem guturais.",
-                "consonants": "pbtdkɡfvðszʃʒmnɲlrwj",
-                "vowels": "aeiouāēīōū"
-            },
-            "classical": {
-                "description": "Inventário do Eresseo Clássico, preservado em registros formais.",
-                "consonants": "pbtdkɡfvθðszʃʒmnɲlrwj",
-                "vowels": "aeiouāēīōū"
-            },
-            "colloquial": {
-                "description": "Forma coloquial simplificada, perda de θ e ð, monoptongação.",
-                "consonants": "pbtdkɡfvszʃmnlrwj",
-                "vowels": "aeiouāēīō"
+            "erenic_prestige": {
+                "consonants": "ptkbdgmnlrszθφχψξh",
+                "vowels": "aeiouāēīōūy"
             }
         },
-        "vowels": "aeiouāēīōū",
-        "consonants": "pbtdkɡfvðszʃʒmnɲlrwj",
+        "vowels": "aeiouāēīōūy",
+        "consonants": "ptkbdgmnlrszθφχψξh",
         "syllable_templates": [
             "CV",
             "CVC",
-            "CVCC",
             "CCV",
             "CCVC",
+            "CVCC",
             "V",
             "VC"
         ],
-        "min_syllables": 1,
-        "max_syllables": 4,
-        "allowed_initial_clusters": [
-            "pl",
-            "pr",
-            "bl",
-            "br",
-            "tr",
-            "dr",
-            "kr",
-            "gr",
-            "kl",
-            "gl",
-            "fl",
-            "fr",
-            "vl",
-            "vr",
-            "θl",
-            "θr",
-            "ðr",
-            "sp",
-            "st",
-            "sk",
-            "sm",
-            "sn",
-            "sl",
-            "sw",
-            "tw",
-            "dw",
-            "kw",
-            "gw"
-        ],
+        "min_syllables": 2,
+        "max_syllables": 5,
         "forbidden_initial_clusters": [
+            "nm",
+            "mr",
+            "nl",
             "tl",
             "dl",
-            "θl",
-            "ðl",
-            "sr",
-            "zr",
-            "nm",
-            "ɲm",
-            "kn",
-            "pn",
-            "tm"
-        ],
-        "allowed_final_clusters": [
-            "nt",
-            "nd",
-            "ns",
-            "nz",
-            "mp",
-            "mb",
-            "nk",
-            "ng",
-            "lt",
-            "ld",
-            "lk",
-            "lg",
-            "rt",
-            "rd",
-            "rk",
-            "rg",
-            "st",
-            "sk",
-            "ft",
-            "kt"
+            "bm"
         ],
         "forbidden_final_consonants": [
+            "p",
+            "t",
+            "k",
+            "b",
+            "d",
+            "g",
+            "m",
             "h",
-            "j",
-            "w",
-            "ɲ"
+            "θ",
+            "φ",
+            "χ"
         ],
-        "max_consonant_cluster": 2,
+        "max_consonant_cluster": 3,
+        "epenthesis_vowel": "e",
         "diphthongs": [
             "ai",
-            "au",
             "ei",
-            "eu",
             "oi",
+            "au",
+            "eu",
             "ou"
         ],
-        "epenthesis_vowel": "e",
-        "sandhi": {
+        "sonority_hierarchy": {
             "enabled": true,
-            "description": "Regras de ligação eufônica entre palavras.",
-            "rules": [
-                {
-                    "pattern": "([aeiouāēīōū])\\s+([aeiouāēīōū])",
-                    "replacement": "\\1j\\2",
-                    "ignore_case": true,
-                    "description": "Inserção de /j/ entre vogais."
-                },
-                {
-                    "pattern": "n\\s+([pb])",
-                    "replacement": "m \\1",
-                    "ignore_case": true,
-                    "description": "Assimilação nasal labial."
-                },
-                {
-                    "pattern": "s\\s+([ʃʒ])",
-                    "replacement": "ʃ \\1",
-                    "ignore_case": true,
-                    "description": "Assimilação de sibilantes."
-                }
-            ]
-        },
-        "phonological_rules": [
-            {
-                "input": "VθV",
-                "output": "VðV",
-                "register": null,
-                "description": "Vozeamento de θ intervocálico (norma culta)."
-            },
-            {
-                "input": "θ$",
-                "output": "t",
-                "register": "colloquial",
-                "description": "Desvozeamento e oclusivização de θ final."
-            },
-            {
-                "input": "ð$",
-                "output": "d",
-                "register": "colloquial",
-                "description": "Oclusivização de ð final."
-            },
-            {
-                "input": "VɲV",
-                "output": "VjnV",
-                "register": null,
-                "description": "Desnasalização de ɲ em hiato."
-            }
-        ]
-    },
-    "allomorphy": {
-        "enabled": true,
-        "feature_definitions": {
-            "labial": [
-                "p",
-                "b",
-                "f",
-                "v",
-                "m"
-            ],
-            "coronal": [
-                "t",
-                "d",
-                "θ",
-                "ð",
-                "s",
-                "z",
-                "ʃ",
-                "ʒ",
-                "n",
-                "l",
-                "r"
-            ],
-            "dorsal": [
-                "k",
-                "g",
-                "j",
-                "k"
-            ]
-        },
-        "rules": [
-            {
-                "target_word": "en",
-                "environment": "before_labial",
-                "replacement": "em"
-            },
-            {
-                "target_word": "en",
-                "environment": "before_dorsal",
-                "replacement": "eŋ"
-            },
-            {
-                "target_word": "s",
-                "environment": "before_vowel",
-                "replacement": "z"
-            }
-        ]
-    },
-    "root_system": {
-        "enabled": false,
-        "description": "Eresseo não utiliza sistema de raízes triconsonantais; a morfologia é predominantemente sufixal fusional."
-    },
-    "morphological_derivation": {
-        "enabled": true,
-        "root_based": false,
-        "strategy": "affixation_and_compounding",
-        "max_depth": 3,
-        "exceptions": [
-            "e",
-            "en",
-            "para",
-            "ana",
-            "pro",
-            "anti"
-        ],
-        "nominal_patterns": [
-            {
-                "pattern": "-os",
-                "type": "masculine_noun",
-                "description": "Substantivo masculino regular (2ª decl.)"
-            },
-            {
-                "pattern": "-a",
-                "type": "feminine_noun",
-                "description": "Substantivo feminino regular (1ª decl.)"
-            },
-            {
-                "pattern": "-on",
-                "type": "neuter_noun",
-                "description": "Substantivo neutro regular (3ª decl.)"
-            },
-            {
-                "pattern": "-ēs",
-                "type": "animate_noun",
-                "description": "Substantivo animado (4ª decl.)"
-            },
-            {
-                "pattern": "-tā",
-                "type": "abstract_noun",
-                "description": "Substantivo abstrato (ex: libertā)"
-            },
-            {
-                "pattern": "-tor",
-                "type": "agent_masculine",
-                "description": "Agente masculino (ex: scriptor)"
-            },
-            {
-                "pattern": "-trī",
-                "type": "agent_feminine",
-                "description": "Agente feminino (ex: scriptrī)"
-            },
-            {
-                "pattern": "-ilis",
-                "type": "adjective_relational",
-                "description": "Adjetivo relacional (ex: kōsmilis)"
-            },
-            {
-                "pattern": "-ātos",
-                "type": "adjective_derived",
-                "description": "Adjetivo de qualidade (ex: amātos)"
-            }
-        ],
-        "source_suffixes": [
-            {
-                "suffix": "ção",
-                "replacement": "tā",
-                "input_pos": "NOUN",
-                "target_pos": "NOUN",
-                "priority": 90,
-                "mode": "derive",
-                "derivation_type": "abstract_noun",
-                "gender": "feminine",
-                "examples": "fundação → fundatā"
-            },
-            {
-                "suffix": "dade",
-                "replacement": "tā",
-                "input_pos": "NOUN",
-                "target_pos": "NOUN",
-                "priority": 90,
-                "mode": "derive",
-                "gender": "feminine"
-            },
-            {
-                "suffix": "dor",
-                "replacement": "tor",
-                "input_pos": "NOUN",
-                "target_pos": "NOUN",
-                "priority": 85,
-                "mode": "derive",
-                "gender": "masculine",
-                "examples": "trabalhador → laborator"
-            },
-            {
-                "suffix": "dora",
-                "replacement": "trī",
-                "input_pos": "NOUN",
-                "target_pos": "NOUN",
-                "priority": 85,
-                "mode": "derive",
-                "gender": "feminine"
-            },
-            {
-                "suffix": "al",
-                "replacement": "ilis",
-                "input_pos": "ADJ",
-                "target_pos": "ADJ",
-                "priority": 80,
-                "mode": "derive",
-                "examples": "nacional → nātiōnilis"
-            },
-            {
-                "suffix": "vel",
-                "replacement": "bilis",
-                "input_pos": "ADJ",
-                "target_pos": "ADJ",
-                "priority": 80,
-                "mode": "derive"
-            },
-            {
-                "suffix": "ismo",
-                "replacement": "ismus",
-                "input_pos": "NOUN",
-                "target_pos": "NOUN",
-                "priority": 75,
-                "mode": "adapt",
-                "gender": "masculine",
-                "examples": "platonismo → Platōnismus"
-            },
-            {
-                "suffix": "ista",
-                "replacement": "istēs",
-                "input_pos": "NOUN",
-                "target_pos": "NOUN",
-                "priority": 75,
-                "mode": "adapt",
-                "gender": "animate"
-            },
-            {
-                "suffix": "ico",
-                "replacement": "ikos",
-                "input_pos": "ADJ",
-                "target_pos": "ADJ",
-                "priority": 70,
-                "mode": "adapt",
-                "examples": "clássico → klassikos"
-            },
-            {
-                "suffix": "oso",
-                "replacement": "ōsos",
-                "input_pos": "ADJ",
-                "target_pos": "ADJ",
-                "priority": 70,
-                "mode": "derive"
-            }
-        ]
-    },
-    "affix_system": {
-        "enabled": true,
-        "description": "Sistema de afixação fusional – sufixos portmanteau de caso, número e gênero; derivação transparente.",
-        "derivation_rules": [
-            {
-                "from_pos": "VERB",
-                "to_pos": "NOUN",
-                "type": "abstract_noun",
-                "affix": "tā",
-                "position": "suffix",
-                "force": false,
-                "gender": "feminine",
-                "examples": "dēkō (construir) → dēktā (construção)"
-            },
-            {
-                "from_pos": "VERB",
-                "to_pos": "NOUN",
-                "type": "agent_masculine",
-                "affix": "tor",
-                "position": "suffix",
-                "force": false,
-                "gender": "masculine",
-                "examples": "skribō (escrever) → skribtor (escriba)"
-            },
-            {
-                "from_pos": "VERB",
-                "to_pos": "NOUN",
-                "type": "agent_feminine",
-                "affix": "trī",
-                "position": "suffix",
-                "force": false,
-                "gender": "feminine"
-            },
-            {
-                "from_pos": "NOUN",
-                "to_pos": "ADJ",
-                "type": "relational",
-                "affix": "ilis",
-                "position": "suffix",
-                "force": false,
-                "examples": "nātiō (nação) → nātiōnilis (nacional)"
-            },
-            {
-                "from_pos": "NOUN",
-                "to_pos": "NOUN",
-                "type": "diminutive",
-                "affix": "áki",
-                "position": "suffix",
-                "force": false,
-                "triggers_umlaut": false,
-                "gender": "neuter",
-                "examples": "kallis (cesto) → kalláki (cestinho)"
-            },
-            {
-                "from_pos": "NOUN",
-                "to_pos": "NOUN",
-                "type": "augmentative",
-                "affix": "avlos",
-                "position": "suffix",
-                "force": false,
-                "gender": "animate",
-                "examples": "ther (animal) → theravlos (caçador, lit. 'grande animal')"
-            },
-            {
-                "from_pos": "VERB",
-                "to_pos": "NOUN",
-                "type": "result_noun",
-                "affix": "atnos",
-                "position": "suffix",
-                "force": false,
-                "gender": "neuter",
-                "examples": "amō (amar) → amatnos (amor, como estado)"
-            },
-            {
-                "from_pos": "ADJ",
-                "to_pos": "ADV",
-                "type": "adverbial",
-                "affix": "ē",
-                "position": "suffix",
-                "force": false,
-                "examples": "kalos (belo) → kalē (belamente)"
-            }
-        ],
-        "source_suffixes": [
-            {
-                "suffix": "para",
-                "replacement": "",
-                "input_pos": "ADP",
-                "target_pos": "ADP",
-                "priority": 100,
-                "mode": "preserve",
-                "description": "Preposição nativa -para (para, em direção a)."
-            },
-            {
-                "suffix": "atnos",
-                "replacement": "",
-                "input_pos": "NOUN",
-                "target_pos": "NOUN",
-                "priority": 100,
-                "mode": "preserve"
-            },
-            {
-                "suffix": "avlos",
-                "replacement": "",
-                "input_pos": "NOUN",
-                "target_pos": "NOUN",
-                "priority": 100,
-                "mode": "preserve"
-            },
-            {
-                "suffix": "ík",
-                "replacement": "ikos",
-                "input_pos": "ADJ",
-                "target_pos": "ADJ",
-                "priority": 100,
-                "mode": "adapt"
-            },
-            {
-                "suffix": "áki",
-                "replacement": "áki",
-                "input_pos": "NOUN",
-                "target_pos": "NOUN",
-                "priority": 100,
-                "mode": "preserve"
-            }
-        ]
-    },
-    "gender_system": {
-        "enabled": true,
-        "genders": [
-            "masculine",
-            "feminine",
-            "neuter",
-            "animate"
-        ],
-        "default": "masculine",
-        "description": "Quatro gêneros gramaticais plenamente produtivos. O gênero animado aplica-se a seres vivos, divindades e entidades personificadas.",
-        "inference": [
-            {
-                "suffix": "os",
-                "gender": "masculine",
-                "confidence": 0.95
-            },
-            {
-                "suffix": "us",
-                "gender": "masculine",
-                "confidence": 0.9
-            },
-            {
-                "suffix": "tor",
-                "gender": "masculine",
-                "confidence": 1.0
-            },
-            {
-                "suffix": "a",
-                "gender": "feminine",
-                "confidence": 0.95
-            },
-            {
-                "suffix": "ā",
-                "gender": "feminine",
-                "confidence": 0.98
-            },
-            {
-                "suffix": "tā",
-                "gender": "feminine",
-                "confidence": 1.0
-            },
-            {
-                "suffix": "trī",
-                "gender": "feminine",
-                "confidence": 1.0
-            },
-            {
-                "suffix": "on",
-                "gender": "neuter",
-                "confidence": 0.92
-            },
-            {
-                "suffix": "um",
-                "gender": "neuter",
-                "confidence": 0.9
-            },
-            {
-                "suffix": "atnos",
-                "gender": "neuter",
-                "confidence": 1.0
-            },
-            {
-                "suffix": "ēs",
-                "gender": "animate",
-                "confidence": 0.96
-            },
-            {
-                "suffix": "ōn",
-                "gender": "animate",
-                "confidence": 0.88
-            },
-            {
-                "suffix": "avlos",
-                "gender": "animate",
-                "confidence": 1.0
-            }
-        ],
-        "semantic_rules": {
-            "male_humans": "masculine",
-            "female_humans": "feminine",
-            "animals": "animate",
-            "divine_entities": "animate",
-            "abstract_concepts": "feminine (if -tā) or neuter (if -atnos)",
-            "inanimates": "masculine/feminine/neuter by declension"
-        },
-        "markers": {
-            "masculine": {
-                "marker": "os",
-                "position": "suffix",
-                "targets": [
-                    "ADJ",
-                    "DET"
-                ]
-            },
-            "feminine": {
-                "marker": "a",
-                "position": "suffix",
-                "targets": [
-                    "ADJ",
-                    "DET"
-                ]
-            },
-            "neuter": {
-                "marker": "on",
-                "position": "suffix",
-                "targets": [
-                    "ADJ",
-                    "DET"
-                ]
-            },
-            "animate": {
-                "marker": "ēs",
-                "position": "suffix",
-                "targets": [
-                    "ADJ",
-                    "DET"
-                ]
+            "scale": {
+                "p": 1,
+                "t": 1,
+                "k": 1,
+                "b": 1,
+                "d": 1,
+                "g": 1,
+                "φ": 2,
+                "θ": 2,
+                "χ": 2,
+                "s": 3,
+                "z": 3,
+                "h": 3,
+                "ψ": 3,
+                "ξ": 3,
+                "m": 4,
+                "n": 4,
+                "l": 5,
+                "r": 5
             }
         }
-    },
-    "number_system": {
-        "numbers": [
-            "singular",
-            "dual",
-            "plural"
-        ],
-        "default": "singular",
-        "description": "Dual produtivo, obrigatório para pares naturais (olhos, mãos, pais) e opcional para outros pares.",
-        "dual_markers": {
-            "nominative": "-ō",
-            "accusative": "-ō",
-            "genitive": "-ous",
-            "dative": "-ob",
-            "locative": "-oi",
-            "ablative": "-ōt",
-            "vocative": "-ō",
-            "instrumental": "-ōb"
-        },
-        "plural_markers": {
-            "masculine": "-oi",
-            "feminine": "-ai",
-            "neuter": "-a",
-            "animate": "-ēs"
-        },
-        "umlaut_plurals": {
-            "enabled": false,
-            "description": "Eresseo não utiliza metafonia para plural; usa sufixação."
-        }
-    },
-    "case_system": {
-        "enabled": true,
-        "cases": [
-            "nominative",
-            "accusative",
-            "genitive",
-            "dative",
-            "locative",
-            "ablative",
-            "vocative",
-            "instrumental"
-        ],
-        "marker_position": "suffix",
-        "preposition_handling": "coexist",
-        "description": "Sistema fusional de 8 casos, com 4 declinações principais (uma por gênero). Casos locativo e ablativo são sincretizados na fala coloquial, mas mantidos na escrita formal.",
-        "declension_paradigms": {
-            "first_declension": {
-                "gender": "feminine",
-                "paradigm": {
-                    "singular": {
-                        "nominative": "-a",
-                        "accusative": "-an",
-                        "genitive": "-ās",
-                        "dative": "-ai",
-                        "locative": "-āi",
-                        "ablative": "-ād",
-                        "vocative": "-a",
-                        "instrumental": "-ā"
-                    },
-                    "dual": {
-                        "nominative": "-ai",
-                        "accusative": "-ai",
-                        "genitive": "-aum",
-                        "dative": "-aib",
-                        "locative": "-aib",
-                        "ablative": "-aib",
-                        "vocative": "-ai",
-                        "instrumental": "-aib"
-                    },
-                    "plural": {
-                        "nominative": "-ai",
-                        "accusative": "-ās",
-                        "genitive": "-ār",
-                        "dative": "-īs",
-                        "locative": "-īs",
-                        "ablative": "-īs",
-                        "vocative": "-ai",
-                        "instrumental": "-īs"
-                    }
-                },
-                "examples": "mūsa → mūsan (ac.sg), mūsās (ac.pl)"
-            },
-            "second_declension": {
-                "gender": "masculine",
-                "paradigm": {
-                    "singular": {
-                        "nominative": "-os",
-                        "accusative": "-on",
-                        "genitive": "-ou",
-                        "dative": "-ōi",
-                        "locative": "-oi",
-                        "ablative": "-ōd",
-                        "vocative": "-e",
-                        "instrumental": "-ō"
-                    },
-                    "dual": {
-                        "nominative": "-ō",
-                        "accusative": "-ō",
-                        "genitive": "-ous",
-                        "dative": "-oib",
-                        "locative": "-oib",
-                        "ablative": "-oib",
-                        "vocative": "-ō",
-                        "instrumental": "-oib"
-                    },
-                    "plural": {
-                        "nominative": "-oi",
-                        "accusative": "-ous",
-                        "genitive": "-ōn",
-                        "dative": "-ois",
-                        "locative": "-ois",
-                        "ablative": "-ois",
-                        "vocative": "-oi",
-                        "instrumental": "-ois"
-                    }
-                },
-                "examples": "logos → logon (ac.sg), logoi (nom.pl)"
-            },
-            "third_declension": {
-                "gender": "neuter",
-                "paradigm": {
-                    "singular": {
-                        "nominative": "-on",
-                        "accusative": "-on",
-                        "genitive": "-ous",
-                        "dative": "-oi",
-                        "locative": "-ei",
-                        "ablative": "-od",
-                        "vocative": "-on",
-                        "instrumental": "-ō"
-                    },
-                    "dual": {
-                        "nominative": "-ō",
-                        "accusative": "-ō",
-                        "genitive": "-ous",
-                        "dative": "-oib",
-                        "locative": "-oib",
-                        "ablative": "-oib",
-                        "vocative": "-ō",
-                        "instrumental": "-oib"
-                    },
-                    "plural": {
-                        "nominative": "-a",
-                        "accusative": "-a",
-                        "genitive": "-ōn",
-                        "dative": "-ois",
-                        "locative": "-ois",
-                        "ablative": "-ois",
-                        "vocative": "-a",
-                        "instrumental": "-ois"
-                    }
-                },
-                "examples": "dōron → dōra (nom.pl)"
-            },
-            "fourth_declension": {
-                "gender": "animate",
-                "paradigm": {
-                    "singular": {
-                        "nominative": "-ēs",
-                        "accusative": "-ēn",
-                        "genitive": "-ēs",
-                        "dative": "-ēi",
-                        "locative": "-ēi",
-                        "ablative": "-ēd",
-                        "vocative": "-ē",
-                        "instrumental": "-ē"
-                    },
-                    "dual": {
-                        "nominative": "-ē",
-                        "accusative": "-ē",
-                        "genitive": "-ēun",
-                        "dative": "-ēb",
-                        "locative": "-ēb",
-                        "ablative": "-ēb",
-                        "vocative": "-ē",
-                        "instrumental": "-ēb"
-                    },
-                    "plural": {
-                        "nominative": "-ēs",
-                        "accusative": "-ēs",
-                        "genitive": "-ēn",
-                        "dative": "-ēs",
-                        "locative": "-ēs",
-                        "ablative": "-ēs",
-                        "vocative": "-ēs",
-                        "instrumental": "-ēs"
-                    }
-                },
-                "examples": "hippēs (cavalo animado) → hippēn (ac.sg)"
-            }
-        },
-        "construct_state": {
-            "enabled": false,
-            "description": "Eresseo não utiliza estado construto; posse é expressa por genitivo ou preposição."
-        },
-        "prepositional_government": {
-            "enabled": true,
-            "description": "Preposições regem casos específicos (acusativo, genitivo, dativo).",
-            "rules": [
-                {
-                    "preposition": "para",
-                    "case": "accusative",
-                    "meaning": "movimento/direção"
-                },
-                {
-                    "preposition": "pro",
-                    "case": "ablative",
-                    "meaning": "em favor de"
-                },
-                {
-                    "preposition": "ana",
-                    "case": "accusative",
-                    "meaning": "ao longo de, sobre"
-                },
-                {
-                    "preposition": "kata",
-                    "case": "genitive",
-                    "meaning": "contra, abaixo"
-                },
-                {
-                    "preposition": "en",
-                    "case": "locative",
-                    "meaning": "em, dentro"
-                },
-                {
-                    "preposition": "eik",
-                    "case": "ablative",
-                    "meaning": "de, fora de"
-                },
-                {
-                    "preposition": "syn",
-                    "case": "instrumental",
-                    "meaning": "com, junto"
-                },
-                {
-                    "preposition": "anti",
-                    "case": "genitive",
-                    "meaning": "contra, oposto"
-                },
-                {
-                    "preposition": "peri",
-                    "case": "accusative",
-                    "meaning": "em torno de"
-                },
-                {
-                    "preposition": "dia",
-                    "case": "genitive",
-                    "meaning": "através de"
-                }
-            ]
-        }
-    },
-    "determiner_system": {
-        "definite_article": {
-            "form": "hē",
-            "variants": [
-                "hē",
-                "to"
-            ],
-            "declines": true,
-            "description": "Artigo definido declinado por gênero, número e caso.",
-            "paradigm": {
-                "masculine": {
-                    "nom_sg": "hē",
-                    "acc_sg": "ton",
-                    "gen_sg": "tou",
-                    "dat_sg": "tōi",
-                    "loc_sg": "toi",
-                    "abl_sg": "tōd",
-                    "nom_pl": "hoi",
-                    "acc_pl": "tous",
-                    "gen_pl": "tōn",
-                    "dat_pl": "tois"
-                },
-                "feminine": {
-                    "nom_sg": "hē",
-                    "acc_sg": "tēn",
-                    "gen_sg": "tēs",
-                    "dat_sg": "tēi",
-                    "loc_sg": "tēi",
-                    "abl_sg": "tēd",
-                    "nom_pl": "hai",
-                    "acc_pl": "tās",
-                    "gen_pl": "tōn",
-                    "dat_pl": "tais"
-                },
-                "neuter": {
-                    "nom_sg": "to",
-                    "acc_sg": "to",
-                    "gen_sg": "tou",
-                    "dat_sg": "tōi",
-                    "loc_sg": "toi",
-                    "abl_sg": "tōd",
-                    "nom_pl": "ta",
-                    "acc_pl": "ta",
-                    "gen_pl": "tōn",
-                    "dat_pl": "tois"
-                },
-                "animate": {
-                    "nom_sg": "hō",
-                    "acc_sg": "tōn",
-                    "gen_sg": "tōs",
-                    "dat_sg": "tōi",
-                    "loc_sg": "tōi",
-                    "abl_sg": "tōd",
-                    "nom_pl": "hōs",
-                    "acc_pl": "tōs",
-                    "gen_pl": "tōn",
-                    "dat_pl": "tōs"
-                }
-            }
-        },
-        "indefinite_article": {
-            "form": "heis",
-            "declines": true,
-            "no_plural": true,
-            "paradigm": {
-                "masculine": "heis, hena, henos, henī...",
-                "feminine": "mia, mian, miās, miāi...",
-                "neuter": "hen, hen, henos, henī...",
-                "animate": "heis, hena, henos, henī..."
-            }
-        },
-        "demonstratives": {
-            "gender_inheritance_heuristic": true,
-            "decline_like_definite": true,
-            "proximal": {
-                "sg_m": "hode",
-                "sg_f": "hēde",
-                "sg_n": "tode",
-                "sg_an": "hōde",
-                "pl_m": "hoide",
-                "pl_f": "haide",
-                "pl_n": "tade",
-                "pl_an": "hōde"
-            },
-            "distal": {
-                "sg_m": "ekeinos",
-                "sg_f": "ekeinē",
-                "sg_n": "ekeino",
-                "sg_an": "ekeinōs",
-                "pl": "ekeinoi / ekeinai / ekeina"
-            }
-        },
-        "possessives": {
-            "pronominal_suffixes": false,
-            "suppress_article": true,
-            "independent_forms": {
-                "1sg": "emos",
-                "2sg": "sos",
-                "3sg_m": "hadan",
-                "3sg_f": "hā",
-                "3sg_n": "hon",
-                "3sg_an": "hōs",
-                "1pl": "hēmos",
-                "2pl": "hūmos",
-                "3pl": "hōn"
-            },
-            "decline": true
-        }
-    },
-    "pronominal_system": {
-        "independent_pronouns": {
-            "1sg": "egō",
-            "2sg": "tū",
-            "3sg_m": "is",
-            "3sg_f": "ea",
-            "3sg_n": "id",
-            "3sg_an": "īs",
-            "1du": "nō",
-            "2du": "sphō",
-            "3du": "tō",
-            "1pl": "nōs",
-            "2pl": "vōs",
-            "3pl": "eoi / eai / ea / ēs"
-        },
-        "object_pronouns": {
-            "accusative": {
-                "1sg": "mē",
-                "2sg": "tē",
-                "3sg_m": "is",
-                "3sg_f": "eam",
-                "3sg_n": "id",
-                "3sg_an": "īn"
-            },
-            "dative": {
-                "1sg": "moi",
-                "2sg": "toi",
-                "3sg_m": "ei",
-                "3sg_f": "eai",
-                "3sg_n": "ei",
-                "3sg_an": "ēi"
-            }
-        },
-        "reflexive_pronouns": {
-            "1sg": "eme",
-            "2sg": "te",
-            "3sg": "se",
-            "1pl": "nōs",
-            "2pl": "vōs",
-            "3pl": "sē"
-        },
-        "clitic_ordering": {
-            "enabled": false,
-            "description": "Eresseo não utiliza clíticos pronominais; usa pronomes independentes ou sufixos possessivos."
-        }
-    },
-    "adposition_system": {
-        "type": "prepositions",
-        "case_government": {
-            "enabled": true,
-            "strict": true,
-            "description": "Preposições regem caso específico, sem exceções.",
-            "dative_only": [
-                "pros",
-                "para"
-            ],
-            "accusative_only": [
-                "ana",
-                "eis",
-                "para"
-            ],
-            "genitive_only": [
-                "anti",
-                "hyper",
-                "kata"
-            ],
-            "locative_only": [
-                "en"
-            ],
-            "ablative_only": [
-                "eik",
-                "apo"
-            ],
-            "instrumental_only": [
-                "syn"
-            ],
-            "two_way": {
-                "prepositions": [
-                    "dia",
-                    "peri"
-                ],
-                "accusative_when": "motion_through",
-                "genitive_when": "static_through"
-            }
-        },
-        "inflected_prepositions": {
-            "enabled": false,
-            "description": "Preposições não se flexionam em Eresseo."
-        },
-        "basic_prepositions": {
-            "para": "para",
-            "pro": "pro",
-            "ana": "ana",
-            "kata": "kata",
-            "en": "en",
-            "eik": "eik",
-            "syn": "syn",
-            "anti": "anti",
-            "peri": "peri",
-            "dia": "dia"
-        }
-    },
-    "tam_system": {
-        "enabled": true,
-        "description": "Sistema verbal fusional, com conjugação por pessoa, número, tempo, modo e voz.",
-        "infer_imperative_from_context": false,
-        "person_marking": {
-            "enabled": true,
-            "position": "suffix",
-            "suffixes": {
-                "1sg": "-ō",
-                "2sg": "-eis",
-                "3sg": "-ei",
-                "1pl": "-omen",
-                "2pl": "-ete",
-                "3pl": "-onti",
-                "1du": "-owon",
-                "2du": "-eton",
-                "3du": "-eton"
-            }
-        },
-        "tense_aspect_markers": {
-            "present": "",
-            "imperfect": "-sk-",
-            "future": "-s-",
-            "aorist": "-s- (diferente)",
-            "perfect": "-k-",
-            "pluperfect": "-k- + augmento"
-        },
-        "mood_markers": {
-            "indicative": "",
-            "subjunctive": "-ē- / -ā-",
-            "optative": "-oi-",
-            "imperative": "-Ø"
-        },
-        "voice_markers": {
-            "active": "",
-            "middle": "-mi-",
-            "passive": "-thē-"
-        },
-        "augment": {
-            "past": "e-",
-            "condition": "indicative_past"
-        },
-        "rules": [
-            {
-                "features": [
-                    "Tense=Pres",
-                    "Mood=Ind",
-                    "Voice=Act"
-                ],
-                "marker": "",
-                "type": "suffix",
-                "person_agreement": true,
-                "description": "Presente do indicativo ativo."
-            },
-            {
-                "features": [
-                    "Tense=Past",
-                    "Mood=Ind",
-                    "Aspect=Perf"
-                ],
-                "marker": "augment",
-                "type": "prefix",
-                "description": "Aoristo (passado perfectivo) com aumento."
-            },
-            {
-                "features": [
-                    "Tense=Fut",
-                    "Mood=Ind"
-                ],
-                "marker": "-s-",
-                "type": "infix",
-                "description": "Futuro sigmático."
-            },
-            {
-                "features": [
-                    "Mood=Sub"
-                ],
-                "marker": "-ē-",
-                "type": "infix",
-                "description": "Subjuntivo (vogal temática alongada)."
-            }
-        ]
-    },
-    "copula_system": {
-        "enabled": true,
-        "obligatory": true,
-        "copulas": [
-            {
-                "type": "default",
-                "form": "esmi",
-                "conjugates": true,
-                "irregular": true,
-                "paradigm": {
-                    "1sg": "esmi",
-                    "2sg": "essi",
-                    "3sg": "esti",
-                    "1pl": "esmen",
-                    "2pl": "este",
-                    "3pl": "esonti",
-                    "1du": "eswos",
-                    "2du": "estos",
-                    "3du": "eston"
-                },
-                "description": "Cópula existencial/identidade."
-            },
-            {
-                "type": "becoming",
-                "form": "ginomai",
-                "conjugates": true,
-                "description": "Tornar-se."
-            }
-        ]
-    },
-    "negation_system": {
-        "enabled": true,
-        "description": "Negação proclítica invariável 'ou' para verbos e 'mē' para imperativo/subjuntivo.",
-        "strategies": [
-            {
-                "type": "verbal_negation",
-                "marker": "ou",
-                "position": "pre_verbal",
-                "description": "Negação padrão: ou legō (não digo)."
-            },
-            {
-                "type": "prohibitive",
-                "marker": "mē",
-                "position": "pre_verbal",
-                "description": "Negação de imperativo/subjuntivo: mē legēs (não fales)."
-            },
-            {
-                "type": "nominal_negation",
-                "marker": "ausos",
-                "declines": true,
-                "description": "Nenhum, ninguém."
-            }
-        ]
-    },
-    "interrogative_system": {
-        "enabled": true,
-        "v2_inversion": true,
-        "description": "Interrogação total por partícula 'ā' ou entonação; parcial por pronomes interrogativos.",
-        "yes_no_questions": {
-            "strategy": "particle",
-            "particle": "ā",
-            "position": "initial"
-        },
-        "wh_questions": {
-            "wh_fronting": true,
-            "verb_position": 2,
-            "pronouns": {
-                "who": "tis",
-                "what": "ti",
-                "where": "pou",
-                "when": "pote",
-                "why": "diati",
-                "how": "pōs",
-                "which": "poteros"
-            }
-        }
-    },
-    "vowel_harmony": {
-        "enabled": false
-    },
-    "consonant_mutation": {
-        "enabled": false
-    },
-    "pharyngealization": {
-        "enabled": false
     },
     "stress_system": {
         "enabled": true,
-        "type": "pitch_accent",
-        "position": "recessive",
+        "type": "weight",
+        "position": "antepenultimate",
         "graphic_accent": true,
-        "description": "Acento musical, limitado às três últimas sílabas, regido pela lei do acento recessivo (sobe o máximo que as regras permitem).",
         "accent_map": {
             "a": "á",
             "e": "é",
             "i": "í",
             "o": "ó",
             "u": "ú",
-            "ā": "ā́",
-            "ē": "ḗ",
-            "ī": "ī́",
-            "ō": "ṓ",
-            "ū": "ū́"
+            "ā": "â",
+            "ē": "ê",
+            "ī": "î",
+            "ō": "ô",
+            "ū": "û"
+        }
+    },
+    "case_system": {
+        "enabled": true,
+        "marker_position": "suffix",
+        "preposition_handling": "coexist",
+        "markers": {
+            "nominative": {
+                "marker": "-os",
+                "type": "suffix",
+                "conditions": [
+                    "masculine",
+                    "singular"
+                ]
+            },
+            "nominative_fem": {
+                "marker": "-a",
+                "type": "suffix",
+                "conditions": [
+                    "feminine",
+                    "singular"
+                ]
+            },
+            "nominative_neut": {
+                "marker": "-on",
+                "type": "suffix",
+                "conditions": [
+                    "neuter",
+                    "singular"
+                ]
+            },
+            "vocative": {
+                "marker": "-e",
+                "type": "suffix",
+                "conditions": [
+                    "masculine",
+                    "singular"
+                ]
+            },
+            "accusative": {
+                "marker": "-on",
+                "type": "suffix",
+                "conditions": [
+                    "masculine",
+                    "singular"
+                ]
+            },
+            "accusative_fem": {
+                "marker": "-an",
+                "type": "suffix",
+                "conditions": [
+                    "feminine",
+                    "singular"
+                ]
+            },
+            "genitive": {
+                "marker": "-io",
+                "type": "suffix"
+            },
+            "dative": {
+                "marker": "-ei",
+                "type": "suffix"
+            }
+        }
+    },
+    "gender_system": {
+        "enabled": true,
+        "genders": [
+            "masculine",
+            "feminine",
+            "neuter"
+        ],
+        "default": "neuter",
+        "inference": [
+            {
+                "suffix": "os",
+                "gender": "masculine"
+            },
+            {
+                "suffix": "as",
+                "gender": "masculine"
+            },
+            {
+                "suffix": "es",
+                "gender": "masculine"
+            },
+            {
+                "suffix": "a",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "ē",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "is",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "on",
+                "gender": "neuter"
+            },
+            {
+                "suffix": "ma",
+                "gender": "neuter"
+            }
+        ],
+        "markers": {
+            "masculine": {
+                "marker": "o",
+                "position": "suffix",
+                "targets": [
+                    "DET",
+                    "ADJ"
+                ]
+            },
+            "feminine": {
+                "marker": "a",
+                "position": "suffix",
+                "targets": [
+                    "DET",
+                    "ADJ"
+                ]
+            },
+            "neuter": {
+                "marker": "on",
+                "position": "suffix",
+                "targets": [
+                    "DET",
+                    "ADJ"
+                ]
+            }
+        }
+    },
+    "tam_system": {
+        "enabled": true,
+        "description": "Sistema complexo com aumento temporal e reduplicação perfeita",
+        "rules": [
+            {
+                "features": [
+                    "Tense=Past"
+                ],
+                "marker": "e-",
+                "type": "prefix",
+                "description": "Aumento silábico para tempos passados"
+            },
+            {
+                "features": [
+                    "Aspect=Perf"
+                ],
+                "marker": "ke-",
+                "type": "prefix",
+                "description": "Reduplicação padrão para perfeito (simplificada)"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "-sō",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Sub"
+                ],
+                "marker": "-ōi",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Opt"
+                ],
+                "marker": "-oim",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Pres",
+                    "Number=Sing",
+                    "Person=1"
+                ],
+                "marker": "-ō",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Pres",
+                    "Number=Sing",
+                    "Person=2"
+                ],
+                "marker": "-eis",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Pres",
+                    "Number=Sing",
+                    "Person=3"
+                ],
+                "marker": "-ei",
+                "type": "suffix"
+            }
+        ]
+    },
+    "compounding": {
+        "enabled": true,
+        "head_position": "final",
+        "linking_elements": {
+            "o": {
+                "after": [
+                    "b",
+                    "d",
+                    "g",
+                    "p",
+                    "t",
+                    "k",
+                    "m",
+                    "n",
+                    "l",
+                    "r",
+                    "s",
+                    "z",
+                    "x"
+                ],
+                "words": []
+            }
+        },
+        "vocabulary": {
+            "biologia": "bioslogos",
+            "astronomia": "astronnomos",
+            "filosofia": "filosofia",
+            "geologia": "kthonlogos",
+            "tecnologia": "tekhnelogos"
         }
     },
     "reduplication": {
         "enabled": true,
-        "description": "Reduplicação do perfeito: prefixo CV-.",
         "epenthesis_vowel": "e",
         "rules": [
             {
                 "features": [
-                    "Tense=Past",
-                    "Aspect=Perf",
-                    "Voice=Act"
+                    "Aspect=Perf"
                 ],
-                "method": "first_consonant_vowel",
-                "separator": "",
                 "pos": [
                     "VERB"
                 ],
-                "description": "Perfeito: leipō → leloipa (deixar)."
+                "method": "first_syllable",
+                "separator": ""
             }
         ]
     },
-    "topicalization": {
+    "affix_system": {
         "enabled": true,
-        "topic_marker": "de",
-        "position": "initial",
-        "triggers_v2": false,
-        "description": "Topicalização com partícula enclítica 'de'."
-    },
-    "focus_structure": {
-        "enabled": false
-    },
-    "agreement_rules": {
-        "gender_agreement": true,
-        "number_agreement": true,
-        "person_agreement": true,
-        "case_agreement": true,
-        "adjunct_position": "auto",
-        "description": "Adjetivos, artigos e pronomes concordam em gênero, número e caso com o substantivo."
-    },
-    "pro_drop": {
-        "enabled": true,
-        "conditions": [
-            "verb_agreement"
+        "source_suffixes": [
+            {
+                "suffix": "logia",
+                "replacement": "logos",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "mode": "adapt",
+                "priority": 100
+            },
+            {
+                "suffix": "grafia",
+                "replacement": "graphos",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "mode": "adapt",
+                "priority": 100
+            },
+            {
+                "suffix": "ismo",
+                "replacement": "ismos",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "mode": "adapt",
+                "priority": 90
+            },
+            {
+                "suffix": "ista",
+                "replacement": "istēs",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "mode": "adapt",
+                "priority": 90
+            },
+            {
+                "suffix": "iano",
+                "replacement": "eias",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "mode": "adapt",
+                "priority": 90
+            }
         ],
-        "description": "Sujeito pronominal é omitido quando o verbo é finito."
+        "derivation_rules": [
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "agent_doer",
+                "affix": "-tēr",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "verbal_noun",
+                "affix": "-sis",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "NOUN",
+                "type": "abstract_noun",
+                "affix": "-ia",
+                "position": "suffix"
+            }
+        ]
     },
-    "drop_articles": false,
-    "degree_system": {
+    "morphological_derivation": {
         "enabled": true,
-        "description": "Comparativo e superlativo sintéticos.",
-        "comparative": {
-            "affix": "-enros",
-            "position": "suffix",
-            "triggers_umlaut": false,
-            "description": "Comparativo: kalos → kalōteros (mais belo)."
-        },
-        "superlative": {
-            "affix": "-anos",
-            "position": "suffix",
-            "triggers_umlaut": false,
-            "description": "Superlativo: kalos → kalōtatos (belíssimo)."
-        },
-        "diminutive": {
-            "affix": "-áti",
-            "position": "suffix",
-            "gender": "neuter",
-            "description": "Diminutivo: kallis → kalláki (cestinho)."
-        },
-        "augmentative": {
-            "affix": "-avas",
-            "position": "suffix",
-            "gender": "animate",
-            "description": "Aumentativo: ther → theravlos (caçador, lit. 'grande animal')."
-        }
+        "max_depth": 1,
+        "exceptions": [
+            "maçã",
+            "macieira",
+            "sol",
+            "luz"
+        ]
     },
     "semantic_fields": {
         "enabled": true,
-        "use_nltk": false,
-        "animate_domains": [
-            "kinship",
-            "occupation",
-            "fauna",
-            "divine"
-        ],
         "manual_groups": {
-            "pai": "kinship",
-            "mãe": "kinship",
-            "filho": "kinship",
-            "cavalo": "fauna",
-            "deus": "divine",
-            "profeta": "divine"
+            "maçã": "fruta",
+            "macieira": "árvore",
+            "sol": "celeste",
+            "fogo": "elemento",
+            "água": "elemento",
+            "terra": "elemento",
+            "ar": "elemento"
         }
     },
     "polysemy_rules": {
         "enabled": true,
         "splits": {
-            "logos": [
+            "maçã": [
                 {
-                    "target_suffix": "_palavra",
+                    "target_suffix": "",
                     "rules": {
-                        "feats": [
-                            "Number=Sing"
-                        ],
-                        "deprel": [
-                            "nsubj",
-                            "obj"
-                        ]
+                        "feats": []
                     }
-                },
+                }
+            ],
+            "macieira": [
                 {
-                    "target_suffix": "_razão",
+                    "target_suffix": "",
                     "rules": {
-                        "feats": [],
-                        "deprel": [
-                            "obl"
-                        ]
+                        "feats": []
                     }
                 }
             ]
         }
     },
-    "false_cognates": {
-        "enabled": false
-    },
-    "loanword_policy": {
-        "enabled": true,
-        "description": "Preferência por calques e adaptação fonética suave; empréstimos raabianos integrados via sufixos nativos.",
-        "modes": {
-            "calque": 0.5,
-            "phonetic_adaptation": 0.35,
-            "semantic_extension": 0.15
-        },
-        "calque_connector": "-"
-    },
     "abstract_concepts": {
         "enabled": true,
         "mappings": {
-            "de": "eni",
-            "do": "para",
-            "da": "para",
-            "o": "at",
-            "a": "ata",
-            "os": "atoi",
-            "as": "atai",
-            "e": "kai",
-            "que": "hoti",
-            "em": "en",
-            "ser": "esmi",
-            "fazer": "poieō",
-            "terra": "eāia",
-            "para": "bībi"
+            "ou": "ihlē",
+            "sou": "ihlē"
         },
-        "definitions": {}
+        "local_overrides": {
+            "maçã": "mēlon",
+            "macieira": "dendron-mēlon"
+        }
+    },
+    "functional_particles": {
+        "muito": {
+            "adj_word": "polys",
+            "adj_position": "pre_nominal"
+        },
+        "não": {
+            "verb_word": "ou",
+            "verb_position": "pre_verbal"
+        },
+        "e": {
+            "noun_word": "kai",
+            "noun_position": "pre_nominal"
+        },
+        "mas": {
+            "noun_word": "alla",
+            "noun_position": "pre_nominal"
+        }
     },
     "lexical_registers": {
         "enabled": true,
         "registers": [
             {
-                "name": "archaic_liturgical",
-                "chance": 0.06,
-                "mutation_factor": 0.2,
-                "phonological_profile": "classical",
-                "description": "Preserva formas do Eresseo Clássico, inclusive -θ- e -ð-.",
-                "features": [
-                    "vocabulário arcaico",
-                    "dual obrigatório",
-                    "conjugação plena"
-                ]
-            },
-            {
-                "name": "formal_standard",
-                "chance": 0.3,
-                "mutation_factor": 0.7,
-                "phonological_profile": "modern_standard",
-                "description": "Norma culta contemporânea.",
-                "features": [
-                    "casos plenos",
-                    "dual produtivo",
-                    "compostos eruditos"
-                ]
-            },
-            {
-                "name": "colloquial",
+                "name": "acadêmico",
                 "chance": 0.4,
-                "mutation_factor": 1.4,
-                "phonological_profile": "colloquial",
-                "description": "Fala cotidiana, simplificação de casos e perda do dual.",
-                "features": [
-                    "locativo = ablativo",
-                    "θ > t",
-                    "ð > d",
-                    "empréstimos frequentes"
-                ]
+                "mutation_factor": 0.2,
+                "description": "Uso formal científico, preferência por compostos clássicos"
             },
             {
-                "name": "technical",
-                "chance": 0.12,
-                "mutation_factor": 0.85,
-                "phonological_profile": "modern_standard",
-                "description": "Jargão científico e filosófico, neologismos compostos.",
-                "features": [
-                    "compostos longos",
-                    "sufixos -ismos, -ikē"
-                ]
-            },
-            {
-                "name": "poetic",
-                "chance": 0.12,
+                "name": "poético",
+                "chance": 0.2,
                 "mutation_factor": 0.5,
-                "phonological_profile": "classical",
-                "description": "Licença poética, arcaísmos, ordem de palavras livre.",
-                "features": [
-                    "V2 opcional",
-                    "vocabulário épico",
-                    "elipses"
-                ]
+                "description": "Uso arcaico com referências à mitologia de Eressa"
             }
         ]
     },
-    "functional_particles": {
-        "muito": {
-            "adj_word": "polys",
-            "adj_position": "pre_nominal",
-            "noun_word": "plēthos",
-            "noun_position": "post_nominal",
-            "verb_word": "polla",
-            "verb_position": "post_verbal"
+    "loanword_policy": {
+        "enabled": true,
+        "modes": {
+            "phonetic_adaptation": 0.2,
+            "calque": 0.7,
+            "semantic_extension": 0.1
         },
-        "pouco": {
-            "adj_word": "oligos",
-            "adj_position": "pre_nominal",
-            "noun_word": "oligon",
-            "noun_position": "pre_nominal"
-        },
-        "mais": {
-            "adj_word": "mallon",
-            "adj_position": "pre_adjectival"
-        },
-        "menos": {
-            "adj_word": "hētton",
-            "adj_position": "pre_adjectival"
-        },
-        "bem": {
-            "verb_word": "eu",
-            "verb_position": "pre_verbal"
-        },
-        "já": {
-            "verb_word": "ēdē",
-            "verb_position": "pre_verbal"
-        },
-        "ainda": {
-            "verb_word": "eti",
-            "verb_position": "pre_verbal"
-        }
-    },
-    "numeric_handling": {
-        "ignore_digits": true
-    },
-    "style": {
-        "capitalization": true,
-        "sentence_terminators": [
-            ".",
-            "!",
-            "?"
-        ],
-        "secondary_terminators": [
-            ":",
-            ";"
-        ],
-        "punctuation_map": {
-            ",": ",",
-            ".": ".",
-            "!": "!",
-            "?": "?",
-            ":": ":",
-            ";": ";",
-            "...": "…",
-            "(": "(",
-            ")": ")",
-            "[": "[",
-            "]": "]",
-            "\"": "\"",
-            "'": "'"
-        }
-    },
-    "mappings": {
-        "de": "eni",
-        "do": "para",
-        "da": "para",
-        "e": "kai",
-        "que": "hoti",
-        "em": "en",
-        "ser": "esmi",
-        "fazer": "poieō"
-    },
-    "phonological_processes": {
-        "description": "Processos fonológicos do Eresseo Moderno.",
-        "final_devoicing": {
-            "enabled": false,
-            "description": "Não ocorre desvozeamento final."
-        },
-        "vowel_lengthening": {
-            "enabled": true,
-            "context": "stressed_open_syllable",
-            "not_marked_orthographically": false
-        },
-        "assimilation": {
-            "enabled": true,
-            "types": [
-                "nasal_place",
-                "voice"
-            ]
-        }
-    },
-    "design_notes": {
-        "inspiration": "Grego Antigo, Latim, mas com originalidade e suavidade fonética.",
-        "character": "Melódico, preciso, erudito, fluido.",
-        "key_features": [
-            "Fusional com 4 gêneros e 8 casos",
-            "Dual produtivo",
-            "Composição aglutinativa com núcleo à direita",
-            "Preposições regentes de caso",
-            "Ausência de guturais",
-            "Verbos com aumento, reduplicação, sufixos modais",
-            "Declinação completa de artigos"
-        ]
+        "calque_connector": "o"
     }
 }

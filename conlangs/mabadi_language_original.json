@@ -1,5 +1,5 @@
 {
-    "id": "mabadi",
+    "id": "mabadi_test",
     "name": "Mabádi (Ta-Mabádi)",
     "description": "Língua mabádi, membro do ramo mabádico das línguas levínicas ocidentais. Inspirada fortemente no árabe clássico e moderno com influências do maltês. Sistema fonológico simplificado em relação ao proto-levínico mas mantendo características semíticas. Rico sistema de raízes triconsonantais, morfologia derivacional complexa, e sintaxe VSO com tendências SVO. Possui um artigo definido distinto 'Ta-' e sufixos de abstração únicos '-ijjie'.",
     "linguistic_family": "linguistic_trunk_ordo_enkian.json",
