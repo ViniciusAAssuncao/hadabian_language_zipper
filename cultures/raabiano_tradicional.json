@@ -1,30 +1,35 @@
 {
     "culture_id": "raabiano_tradicional",
     "linked_profile": "rmp",
-    "description": "Sistema de nomenclatura tradicional do povo Hadabi, fortemente baseado em linhagem (patronímico) e origem geográfica.",
+    "description": "Sistema onomástico tricameral Hadabiano, focado no coletivo sobre o individual (Angarikiirom, Antitukirom e Domom-min). O sistema é data-driven e suporta configurações agnósticas de gênero.",
     "formulas": {
-        "default": [
-            "given_name",
-            "patronymic"
+        "cotidiano": [
+            "angarikiirom",
+            "domom_min"
         ],
         "formal": [
-            "given_name",
-            "patronymic",
-            "toponymic"
+            "angarikiirom",
+            "antitukirom",
+            "domom_min"
         ],
-        "noble": [
-            "given_name",
-            "patronymic",
-            "toponymic",
-            "nickname"
+        "formal_krimlog": [
+            "angarikiirom",
+            "krimlog_connector",
+            "domom_min"
         ],
-        "informal": [
-            "given_name",
-            "nickname"
+        "completo_krimlog": [
+            "angarikiirom",
+            "hetu_min_connector",
+            "antitukirom",
+            "domom_min"
+        ],
+        "terrestre_tradicional": [
+            "angarikiirom",
+            "patronimico_terrestre"
         ]
     },
     "components_rules": {
-        "given_name": {
+        "angarikiirom": {
             "generation_strategies": [
                 {
                     "type": "compound",
@@ -47,27 +52,34 @@
                     "derivation_type": "abstract_noun"
                 }
             ],
-            "gender_inflection": true
+            "gender_inflection": false
         },
-        "patronymic": {
+        "antitukirom": {
+            "type": "pool_selection",
+            "pool": "ancestor_names"
+        },
+        "domom_min": {
+            "type": "pool_selection",
+            "pool": "house_names"
+        },
+        "krimlog_connector": {
+            "type": "relational",
+            "connector": "ned",
+            "target": "domom_min"
+        },
+        "hetu_min_connector": {
+            "type": "relational",
+            "connector": "hetu-min",
+            "target": "antitukirom"
+        },
+        "patronimico_terrestre": {
             "type": "relational",
             "connector": "bin",
-            "connector_female": "bint",
-            "target": "given_name"
-        },
-        "toponymic": {
-            "type": "affixation",
-            "target": "location_concept",
-            "affix_rule": {
-                "affix": "-ī",
-                "position": "suffix",
-                "description": "Sufixo nisba (relacional) para indicar origem"
-            }
-        },
-        "nickname": {
-            "type": "trait_derivation",
-            "target": "concept_adjective",
-            "degree": "augmentative"
+            "gender_connectors": {
+                "Masculino": "bin",
+                "Feminino": "bint"
+            },
+            "target": "antitukirom"
         }
     },
     "semantic_pools": {
@@ -114,7 +126,28 @@
             "Criador",
             "Luz",
             "Raab",
-            "Hadab"
+            "Hadab",
+            "Äuris"
+        ],
+        "house_names": [
+            "Airos",
+            "Staber",
+            "Varn",
+            "Kaelen",
+            "Morath",
+            "Tessar",
+            "Lend",
+            "Garr"
+        ],
+        "ancestor_names": [
+            "Kevin",
+            "Staber",
+            "Jorn",
+            "Bael",
+            "Torn",
+            "Vael",
+            "Kael",
+            "Morn"
         ],
         "location_concept": [
             "deserto",

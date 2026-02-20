@@ -1734,6 +1734,141 @@ class GramatakiManager:
             self.dictionary[lemma] = entry
             self.save_dictionary()
 
+    def generate_onomastic_name(self, culture: Dict, formula_id: str, gender: str) -> Dict:
+        formula = culture.get('formulas', {}).get(formula_id, [])
+        components_rules = culture.get('components_rules', {})
+        filters = culture.get('phonological_filters', {})
+        generated_parts = []
+        etymology = []
+        for comp_name in formula:
+            rule = components_rules.get(comp_name)
+            if not rule:
+                continue
+            comp_result = self._generate_component(
+                comp_name, rule, culture, gender)
+            if comp_result and comp_result.get('word'):
+                generated_parts.append(comp_result['word'])
+                etymology.append({
+                    'component': comp_result['word'],
+                    'meaning': comp_result.get('meaning', ''),
+                    'type': comp_name
+                })
+        final_name = self._apply_phonological_filters(generated_parts, filters)
+        return {
+            'name': final_name,
+            'etymology': etymology
+        }
+
+    def _generate_component(self, comp_name: str, rule: Dict, culture: Dict, gender: str) -> Dict:
+        strategies = rule.get('generation_strategies', [])
+        pools = culture.get('semantic_pools', {})
+        if strategies:
+            import random
+            weights = [s.get('weight', 1.0) for s in strategies]
+            strategy = random.choices(strategies, weights=weights, k=1)[0]
+            stype = strategy.get('type')
+            if stype == 'compound':
+                pool1_key = strategy.get('pool_1')
+                pool2_key = strategy.get('pool_2')
+                p1_words = pools.get(pool1_key, [])
+                p2_words = pools.get(pool2_key, [])
+                if p1_words and p2_words:
+                    w1 = random.choice(p1_words)
+                    w2 = random.choice(p2_words)
+                    cw1 = self.engine._get_word_form(w1)
+                    cw2 = self.engine._get_word_form(w2)
+                    if self.engine.compounding_handler.enabled:
+                        final_w = self.engine.compounding_handler.construct_compound(
+                            [cw1, cw2], self.engine)
+                    else:
+                        final_w = cw1 + cw2
+                    return {'word': final_w, 'meaning': f"{w1} + {w2}"}
+            elif stype == 'verbal_sentence':
+                pattern = strategy.get('pattern', [])
+                if len(pattern) >= 2:
+                    p1_words = pools.get(pattern[0], [])
+                    p2_words = pools.get(pattern[1], [])
+                    if p1_words and p2_words:
+                        w1 = random.choice(p1_words)
+                        w2 = random.choice(p2_words)
+                        cw1 = self.engine._get_word_form(w1, pos='VERB')
+                        cw2 = self.engine._get_word_form(w2, pos='NOUN')
+                        return {'word': cw1 + cw2, 'meaning': f"{w1} {w2}"}
+            elif stype == 'abstract_derivation':
+                pool_key = strategy.get('pool', 'concept_noun')
+                p_words = pools.get(pool_key, [])
+                if p_words:
+                    w1 = random.choice(p_words)
+                    cw1 = self.engine._get_word_form(w1)
+                    if self.engine.affix_handler.enabled:
+                        der_rule = self.engine.affix_handler.get_derivation_rule(
+                            "NOUN", "NOUN", strategy.get('derivation_type', 'abstract_noun'))
+                        if der_rule:
+                            cw1 = self.engine.affix_handler.apply_affix(
+                                cw1, der_rule)
+                    return {'word': cw1, 'meaning': f"{w1} (Abstrato)"}
+        rel_type = rule.get('type')
+        if rel_type == 'relational':
+            target = rule.get('target')
+            connector = rule.get('connector', '')
+            if gender == 'Feminino' and 'connector_female' in rule:
+                connector = rule.get('connector_female')
+            target_rule = culture.get('components_rules', {}).get(target)
+            if target_rule:
+                target_res = self._generate_component(
+                    target, target_rule, culture, "Masculino")
+                if target_res and target_res.get('word'):
+                    final_w = f"{connector} {target_res['word']}" if connector else target_res['word']
+                    return {'word': final_w, 'meaning': f"{connector} ({target_res['meaning']})"}
+        elif rel_type == 'affixation':
+            target_pool = rule.get('target')
+            affix_rule = rule.get('affix_rule', {})
+            p_words = pools.get(target_pool, [])
+            if p_words:
+                import random
+                w1 = random.choice(p_words)
+                cw1 = self.engine._get_word_form(w1)
+                final_w = cw1
+                if affix_rule:
+                    affix = affix_rule.get('affix', '')
+                    pos = affix_rule.get('position', 'suffix')
+                    if pos == 'suffix':
+                        final_w = cw1 + affix.replace('-', '')
+                    else:
+                        final_w = affix.replace('-', '') + cw1
+                return {'word': final_w, 'meaning': f"{w1} ({affix_rule.get('description', '')})"}
+        elif rel_type == 'trait_derivation':
+            target_pool = rule.get('target')
+            degree = rule.get('degree')
+            p_words = pools.get(target_pool, [])
+            if p_words:
+                import random
+                w1 = random.choice(p_words)
+                cw1 = self.engine._get_word_form(w1)
+                if self.engine.degree_handler.enabled and degree:
+                    cw1 = self.engine.degree_handler.apply_degree(cw1, degree)
+                return {'word': cw1, 'meaning': f"{w1} ({degree})"}
+        all_words = []
+        for p in pools.values():
+            all_words.extend(p)
+        if all_words:
+            import random
+            w1 = random.choice(all_words)
+            return {'word': self.engine._get_word_form(w1), 'meaning': w1}
+        import random
+        return {'word': self.engine._generate_word_from_seed(comp_name, self.engine.global_seed + random.randint(1, 1000)), 'meaning': 'Desconhecido'}
+
+    def _apply_phonological_filters(self, name_parts: List[str], filters: Dict) -> str:
+        raw_name = " ".join(name_parts)
+        if filters.get('apply_sandhi_between_components', False) and self.engine.sandhi_handler.enabled:
+            final_name = self.engine.sandhi_handler.apply_sandhi(raw_name)
+        else:
+            final_name = raw_name
+        if filters.get('force_capitalization', True):
+            final_name = " ".join(part.capitalize()
+                                  for part in final_name.split())
+        return final_name
+
     def generate_candidates(self, meaning: str, options: Dict) -> List[Dict]:
         candidates = []
         is_abstract = options.get('abstract', False)

@@ -17,6 +17,8 @@ class GramatakiTab(ttk.Frame):
         self.engine = new_engine
 
     def setup_ui(self):
+        self.option_add('*TCombobox*Listbox.foreground', self.colors['text'])
+
         self.main_container = ttk.Frame(self, padding=20)
         self.main_container.pack(fill=tk.BOTH, expand=True)
 
@@ -28,7 +30,7 @@ class GramatakiTab(ttk.Frame):
             row=0, column=0, sticky=tk.W, pady=5, padx=5)
         self.culture_var = tk.StringVar()
         self.culture_cb = ttk.Combobox(
-            control_frame, textvariable=self.culture_var, state="readonly")
+            control_frame, textvariable=self.culture_var, state="readonly", foreground=self.colors["text"])
         self.culture_cb.grid(row=0, column=1, sticky=tk.EW, pady=5, padx=5)
         self.culture_cb.bind("<<ComboboxSelected>>", self.on_culture_select)
 
@@ -36,14 +38,14 @@ class GramatakiTab(ttk.Frame):
             row=1, column=0, sticky=tk.W, pady=5, padx=5)
         self.formula_var = tk.StringVar()
         self.formula_cb = ttk.Combobox(
-            control_frame, textvariable=self.formula_var, state="readonly")
+            control_frame, textvariable=self.formula_var, state="readonly", foreground=self.colors["text"])
         self.formula_cb.grid(row=1, column=1, sticky=tk.EW, pady=5, padx=5)
 
         ttk.Label(control_frame, text="Gênero:", foreground=self.colors["fg_secondary"]).grid(
             row=2, column=0, sticky=tk.W, pady=5, padx=5)
         self.gender_var = tk.StringVar(value="Masculino")
-        self.gender_cb = ttk.Combobox(control_frame, textvariable=self.gender_var, values=[
-                                      "Masculino", "Feminino", "Neutro"], state="readonly")
+        self.gender_cb = ttk.Combobox(
+            control_frame, textvariable=self.gender_var, values=["Masculino", "Feminino", "Neutro"], state="readonly", foreground=self.colors["text"])
         self.gender_cb.grid(row=2, column=1, sticky=tk.EW, pady=5, padx=5)
 
         control_frame.columnconfigure(1, weight=1)
@@ -56,9 +58,9 @@ class GramatakiTab(ttk.Frame):
             self.main_container, text="Registro", padding=15)
         output_frame.pack(fill=tk.BOTH, expand=True)
 
-        self.lbl_name = ttk.Label(output_frame, text="", font=(
-            "Segoe UI", 26, "bold"), foreground=self.colors["accent"], anchor="center")
-        self.lbl_name.pack(fill=tk.X, pady=15)
+        self.entry_name = tk.Entry(
+            output_frame, font=("Segoe UI", 26, "bold"), fg=self.colors["accent"], bg=self.colors["input_bg"], justify="center", relief="flat")
+        self.entry_name.pack(fill=tk.X, pady=15)
 
         ttk.Label(output_frame, text="Glossário Etimológico:", font=(
             "Segoe UI", 11, "bold"), foreground=self.colors["fg_primary"]).pack(anchor="w", pady=(10, 5))
@@ -113,7 +115,8 @@ class GramatakiTab(ttk.Frame):
         result = self.engine.gramataki_manager.generate_onomastic_name(
             data, formula, gender)
 
-        self.lbl_name.config(text=result['name'])
+        self.entry_name.delete(0, tk.END)
+        self.entry_name.insert(0, result['name'])
 
         self.text_etymology.configure(state="normal")
         self.text_etymology.delete("1.0", tk.END)
