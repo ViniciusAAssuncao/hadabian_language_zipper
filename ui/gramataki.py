@@ -18,7 +18,8 @@ class GramatakiTab(ttk.Frame):
         self.load_current_culture()
 
     def setup_ui(self):
-        self.option_add('*TCombobox*Listbox.foreground', self.colors['text'])
+        self.option_add('*TCombobox*Listbox.foreground',
+                        self.colors.get("text", "black"))
 
         self.main_container = ttk.Frame(self, padding=20)
         self.main_container.pack(fill=tk.BOTH, expand=True)
@@ -26,13 +27,13 @@ class GramatakiTab(ttk.Frame):
         self.notebook = ttk.Notebook(self.main_container)
         self.notebook.pack(fill=tk.BOTH, expand=True)
 
-        self.tab_generator = ttk.Frame(self.notebook)
+        self.tab_generator = ttk.Frame(self.notebook, padding=10)
         self.notebook.add(self.tab_generator, text="Gerador Onomástico")
 
-        self.tab_nativizer = ttk.Frame(self.notebook)
+        self.tab_nativizer = ttk.Frame(self.notebook, padding=10)
         self.notebook.add(self.tab_nativizer, text="Nativização & Livre")
 
-        self.tab_editor = ttk.Frame(self.notebook)
+        self.tab_editor = ttk.Frame(self.notebook, padding=10)
         self.notebook.add(self.tab_editor, text="Editor Cultural")
 
         self._build_generator_tab()
@@ -40,110 +41,152 @@ class GramatakiTab(ttk.Frame):
         self._build_editor_tab()
 
     def _build_generator_tab(self):
-        control_frame = ttk.LabelFrame(
-            self.tab_generator, text="Fórmula Onomástica", padding=15)
-        control_frame.pack(fill=tk.X, pady=(0, 20))
+        main_pane = ttk.PanedWindow(self.tab_generator, orient=tk.HORIZONTAL)
+        main_pane.pack(fill=tk.BOTH, expand=True)
 
-        ttk.Label(control_frame, text="Fórmula:", foreground=self.colors["fg_secondary"]).grid(
-            row=0, column=0, sticky=tk.W, pady=5, padx=5)
+        left_frame = ttk.LabelFrame(
+            main_pane, text="Configurações e Parâmetros", padding=20)
+        main_pane.add(left_frame, weight=1)
+
+        ttk.Label(left_frame, text="Fórmula Onomástica:", font=("Segoe UI", 10, "bold"),
+                  foreground=self.colors["fg_secondary"]).pack(anchor="w", pady=(0, 5))
         self.formula_var = tk.StringVar()
-        self.formula_cb = ttk.Combobox(
-            control_frame, textvariable=self.formula_var, state="readonly", foreground=self.colors["text"])
-        self.formula_cb.grid(row=0, column=1, sticky=tk.EW, pady=5, padx=5)
+        self.formula_cb = ttk.Combobox(left_frame, textvariable=self.formula_var, state="readonly", font=(
+            "Segoe UI", 11), foreground=self.colors.get("text", "black"))
+        self.formula_cb.pack(fill=tk.X, pady=(0, 20))
 
-        ttk.Label(control_frame, text="Gênero:", foreground=self.colors["fg_secondary"]).grid(
-            row=1, column=0, sticky=tk.W, pady=5, padx=5)
+        ttk.Label(left_frame, text="Gênero:", font=("Segoe UI", 10, "bold"),
+                  foreground=self.colors["fg_secondary"]).pack(anchor="w", pady=(0, 5))
         self.gender_var = tk.StringVar(value="Masculino")
-        self.gender_cb = ttk.Combobox(control_frame, textvariable=self.gender_var, values=[
-                                      "Masculino", "Feminino", "Neutro"], state="readonly", foreground=self.colors["text"])
-        self.gender_cb.grid(row=1, column=1, sticky=tk.EW, pady=5, padx=5)
-
-        control_frame.columnconfigure(1, weight=1)
+        self.gender_cb = ttk.Combobox(left_frame, textvariable=self.gender_var, values=[
+                                      "Masculino", "Feminino", "Neutro"], state="readonly", font=("Segoe UI", 11), foreground=self.colors.get("text", "black"))
+        self.gender_cb.pack(fill=tk.X, pady=(0, 30))
 
         self.btn_generate = ttk.Button(
-            control_frame, text="Gerar Nome Nativo", style="Accent.TButton", command=self.generate_name)
-        self.btn_generate.grid(row=2, column=0, columnspan=2, pady=15)
+            left_frame, text="✨ Gerar Nome Nativo", style="Accent.TButton", command=self.generate_name)
+        self.btn_generate.pack(fill=tk.X, pady=(10, 0))
 
-        output_frame = ttk.LabelFrame(
-            self.tab_generator, text="Registro", padding=15)
-        output_frame.pack(fill=tk.BOTH, expand=True)
+        right_frame = ttk.LabelFrame(
+            main_pane, text="Resultado e Etimologia", padding=20)
+        main_pane.add(right_frame, weight=2)
 
-        self.entry_name = tk.Entry(output_frame, font=(
-            "Segoe UI", 26, "bold"), fg=self.colors["accent"], bg=self.colors["input_bg"], justify="center", relief="flat")
-        self.entry_name.pack(fill=tk.X, pady=15)
+        ttk.Label(right_frame, text="Nome Gerado:", font=("Segoe UI", 10, "bold"),
+                  foreground=self.colors["fg_secondary"]).pack(anchor="w", pady=(0, 5))
+        self.entry_name = tk.Entry(right_frame, font=("Segoe UI", 32, "bold"), fg=self.colors.get(
+            "text", "black"), bg=self.colors.get("input_bg", "#ffffff"), justify="center", relief="solid", borderwidth=1)
+        self.entry_name.pack(fill=tk.X, pady=(0, 20))
 
-        ttk.Label(output_frame, text="Glossário Etimológico:", font=(
-            "Segoe UI", 11, "bold"), foreground=self.colors["fg_primary"]).pack(anchor="w", pady=(10, 5))
+        ttk.Label(right_frame, text="Glossário Etimológico:", font=("Segoe UI", 10, "bold"),
+                  foreground=self.colors["fg_secondary"]).pack(anchor="w", pady=(0, 5))
 
-        self.text_etymology = tk.Text(output_frame, height=12, bg=self.colors["input_bg"], fg=self.colors["fg_primary"], font=(
-            "Consolas", 11), borderwidth=0, relief="flat", padx=10, pady=10)
-        self.text_etymology.pack(fill=tk.BOTH, expand=True)
+        text_frame = ttk.Frame(right_frame)
+        text_frame.pack(fill=tk.BOTH, expand=True)
+
+        self.text_etymology = tk.Text(text_frame, height=12, bg=self.colors.get("input_bg", "#ffffff"), fg=self.colors.get(
+            "text", "black"), font=("Consolas", 11), borderwidth=1, relief="solid", padx=10, pady=10)
+        self.text_etymology.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        scrollbar = ttk.Scrollbar(
+            text_frame, orient="vertical", command=self.text_etymology.yview)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        self.text_etymology.config(yscrollcommand=scrollbar.set)
         self.text_etymology.configure(state="disabled")
 
     def _build_nativizer_tab(self):
-        frame = ttk.Frame(self.tab_nativizer, padding=20)
-        frame.pack(fill=tk.BOTH, expand=True)
+        container = ttk.Frame(self.tab_nativizer, padding=40)
+        container.pack(fill=tk.BOTH, expand=True)
 
-        ttk.Label(frame, text="Nome Terrestre (Base):",
+        input_frame = ttk.LabelFrame(
+            container, text="Ajuste e Nativização", padding=25)
+        input_frame.pack(fill=tk.X, pady=(0, 30))
+
+        ttk.Label(input_frame, text="Nome Terrestre (Base):", font=("Segoe UI", 11, "bold"),
                   foreground=self.colors["fg_secondary"]).pack(anchor="w", pady=(0, 5))
-        self.entry_nativize_base = ttk.Entry(frame, font=("Segoe UI", 12))
-        self.entry_nativize_base.pack(fill=tk.X, pady=(0, 15))
+        self.entry_nativize_base = ttk.Entry(input_frame, font=(
+            "Segoe UI", 14), foreground=self.colors.get("text", "black"))
+        self.entry_nativize_base.pack(fill=tk.X, pady=(0, 20))
 
-        btn_frame = ttk.Frame(frame)
-        btn_frame.pack(fill=tk.X, pady=10)
-        ttk.Button(btn_frame, text="Nativizar Nome", style="Accent.TButton",
-                   command=self.nativize_name).pack(side=tk.LEFT, expand=True, fill=tk.X, padx=5)
-        ttk.Button(btn_frame, text="Gerar Aleatório (Sem Significado)",
-                   command=self.generate_random_name).pack(side=tk.LEFT, expand=True, fill=tk.X, padx=5)
+        btn_frame = ttk.Frame(input_frame)
+        btn_frame.pack(fill=tk.X)
+        ttk.Button(btn_frame, text="🔄 Nativizar Nome", style="Accent.TButton",
+                   command=self.nativize_name).pack(side=tk.LEFT, expand=True, fill=tk.X, padx=(0, 10))
+        ttk.Button(btn_frame, text="🎲 Gerar Aleatório (Sem Significado)", command=self.generate_random_name).pack(
+            side=tk.LEFT, expand=True, fill=tk.X, padx=(10, 0))
 
-        ttk.Label(frame, text="Resultado:", foreground=self.colors["fg_secondary"]).pack(
-            anchor="w", pady=(20, 5))
-        self.entry_nativize_result = tk.Entry(frame, font=(
-            "Segoe UI", 26, "bold"), fg=self.colors["accent"], bg=self.colors["input_bg"], justify="center", relief="flat")
-        self.entry_nativize_result.pack(fill=tk.X, pady=5)
+        output_frame = ttk.LabelFrame(container, text="Resultado", padding=25)
+        output_frame.pack(fill=tk.BOTH, expand=True)
+
+        ttk.Label(output_frame, text="Nome Adaptado / Gerado:", font=("Segoe UI", 11,
+                  "bold"), foreground=self.colors["fg_secondary"]).pack(anchor="w", pady=(0, 10))
+        self.entry_nativize_result = tk.Entry(output_frame, font=("Segoe UI", 36, "bold"), fg=self.colors.get(
+            "text", "black"), bg=self.colors.get("input_bg", "#ffffff"), justify="center", relief="solid", borderwidth=1)
+        self.entry_nativize_result.pack(fill=tk.X, expand=True)
 
     def _build_editor_tab(self):
         editor_notebook = ttk.Notebook(self.tab_editor)
-        editor_notebook.pack(fill=tk.BOTH, expand=True, pady=(10, 0))
+        editor_notebook.pack(fill=tk.BOTH, expand=True, pady=5)
 
-        self.pool_tab = ttk.Frame(editor_notebook, padding=10)
-        editor_notebook.add(self.pool_tab, text="Gerenciador de Pools")
+        self.pool_tab = ttk.Frame(editor_notebook, padding=20)
+        editor_notebook.add(
+            self.pool_tab, text="Gerenciador de Pools Semânticos")
 
         pool_top = ttk.Frame(self.pool_tab)
-        pool_top.pack(fill=tk.X, pady=(0, 10))
-        ttk.Label(pool_top, text="Pool Selecionado:").pack(side=tk.LEFT)
+        pool_top.pack(fill=tk.X, pady=(0, 15))
+        ttk.Label(pool_top, text="Pool Selecionado:", font=(
+            "Segoe UI", 11, "bold"), foreground=self.colors["fg_secondary"]).pack(side=tk.LEFT)
+
         self.pool_var = tk.StringVar()
-        self.pool_cb = ttk.Combobox(
-            pool_top, textvariable=self.pool_var, state="readonly")
-        self.pool_cb.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=5)
+        self.pool_cb = ttk.Combobox(pool_top, textvariable=self.pool_var, state="readonly", font=(
+            "Segoe UI", 11), foreground=self.colors.get("fg_secondary", "black"))
+        self.pool_cb.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=15)
         self.pool_cb.bind("<<ComboboxSelected>>", self.on_pool_select)
 
-        ttk.Button(pool_top, text="Novo Pool",
+        ttk.Button(pool_top, text="➕ Novo Pool",
                    command=self.create_new_pool).pack(side=tk.RIGHT)
 
-        self.pool_listbox = tk.Listbox(
-            self.pool_tab, bg=self.colors["input_bg"], fg=self.colors["text"], selectbackground=self.colors["accent"])
-        self.pool_listbox.pack(fill=tk.BOTH, expand=True, pady=5)
+        list_frame = ttk.Frame(self.pool_tab)
+        list_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 15))
+
+        self.pool_listbox = tk.Listbox(list_frame, bg=self.colors.get("input_bg", "#ffffff"), fg=self.colors.get(
+            "text", "black"), selectbackground=self.colors.get("accent", "#0078D7"), font=("Segoe UI", 12), relief="solid", borderwidth=1)
+        self.pool_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        scrollbar = ttk.Scrollbar(
+            list_frame, orient="vertical", command=self.pool_listbox.yview)
+        scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        self.pool_listbox.config(yscrollcommand=scrollbar.set)
 
         pool_bot = ttk.Frame(self.pool_tab)
         pool_bot.pack(fill=tk.X)
         self.new_word_var = tk.StringVar()
-        entry_new_word = ttk.Entry(pool_bot, textvariable=self.new_word_var)
-        entry_new_word.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 5))
-        ttk.Button(pool_bot, text="Adicionar",
-                   command=self.add_to_pool).pack(side=tk.LEFT, padx=2)
-        ttk.Button(pool_bot, text="Remover", command=self.remove_from_pool).pack(
-            side=tk.LEFT, padx=2)
-        ttk.Button(pool_bot, text="Salvar Cultura", style="Accent.TButton",
-                   command=self.save_culture_file).pack(side=tk.RIGHT, padx=5)
+        entry_new_word = ttk.Entry(pool_bot, textvariable=self.new_word_var, font=(
+            "Segoe UI", 12), foreground=self.colors.get("text", "black"))
+        entry_new_word.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 10))
 
-        self.json_tab = ttk.Frame(editor_notebook, padding=10)
+        ttk.Button(pool_bot, text="Adicionar",
+                   command=self.add_to_pool).pack(side=tk.LEFT, padx=5)
+        ttk.Button(pool_bot, text="Remover Selecionado",
+                   command=self.remove_from_pool).pack(side=tk.LEFT, padx=5)
+        ttk.Button(pool_bot, text="💾 Salvar Cultura", style="Accent.TButton",
+                   command=self.save_culture_file).pack(side=tk.RIGHT, padx=(20, 0))
+
+        self.json_tab = ttk.Frame(editor_notebook, padding=20)
         editor_notebook.add(self.json_tab, text="Avançado (JSON Completo)")
-        self.json_text = tk.Text(self.json_tab, bg=self.colors["input_bg"], fg=self.colors["text"], font=(
-            "Consolas", 10), insertbackground=self.colors["text"])
-        self.json_text.pack(fill=tk.BOTH, expand=True, pady=5)
-        ttk.Button(self.json_tab, text="Validar e Salvar JSON",
-                   style="Accent.TButton", command=self.save_json_file).pack(pady=5)
+
+        json_frame = ttk.Frame(self.json_tab)
+        json_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 15))
+
+        self.json_text = tk.Text(json_frame, bg=self.colors.get("input_bg", "#ffffff"), fg=self.colors.get("text", "black"), font=(
+            "Consolas", 11), insertbackground=self.colors.get("text", "black"), relief="solid", borderwidth=1, padx=10, pady=10)
+        self.json_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        json_scroll = ttk.Scrollbar(
+            json_frame, orient="vertical", command=self.json_text.yview)
+        json_scroll.pack(side=tk.RIGHT, fill=tk.Y)
+        self.json_text.config(yscrollcommand=json_scroll.set)
+
+        ttk.Button(self.json_tab, text="✔️ Validar e Salvar JSON",
+                   style="Accent.TButton", command=self.save_json_file).pack(pady=10, ipadx=20)
 
     def load_current_culture(self):
         if not self.engine:
