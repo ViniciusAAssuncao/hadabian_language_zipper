@@ -1,5 +1,5 @@
 {
-    "culture_id": "raabiano_tradicional",
+    "culture_id": "rmp_culture",
     "linked_profile": "rmp",
     "description": "Sistema onomástico tricameral Hadabiano, focado no coletivo sobre o individual (Angarikiirom, Antitukirom e Domom-min). O sistema é data-driven e suporta configurações agnósticas de gênero.",
     "formulas": {

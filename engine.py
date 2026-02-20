@@ -927,7 +927,7 @@ class ConceptHandler:
                     continue
         return {"concepts": {}, "mappings_ln": {}}
 
-    def resolve_concept(self, lemma: str, engine_instance, word_form: str = None, pos: str = None) -> Optional[Tuple[str, str, Dict]]:
+    def resolve_concept(self, lemma: str, engine_instance, word_form: str = None, pos: str = None, skip_cache: bool = False) -> Optional[Tuple[str, str, Dict]]:
         if not self.enabled:
             return None
 
@@ -962,7 +962,7 @@ class ConceptHandler:
             definition = self.definitions[concept_id]
             if isinstance(definition, str):
                 generated_word = engine_instance._generate_deterministic_word(
-                    concept_id)
+                    concept_id, skip_cache=skip_cache)
                 return generated_word, 'unique', {'description': definition}
 
             concept_type = definition.get('type', 'unique')
@@ -971,7 +971,8 @@ class ConceptHandler:
                 connector = definition.get('connector', '')
                 composed_parts = []
                 for comp in components:
-                    translated_part = engine_instance._get_word_form(comp)
+                    translated_part = engine_instance._get_word_form(
+                        comp, skip_cache=skip_cache)
                     composed_parts.append(translated_part)
                 final_word = connector.join(composed_parts)
                 return final_word, 'composition', {}
@@ -992,7 +993,7 @@ class ConceptHandler:
                         entry, dict) else entry
                     return word, 'unique', {'description': explanation}
                 generated_word = engine_instance._generate_deterministic_word(
-                    concept_id)
+                    concept_id, skip_cache=skip_cache)
                 return generated_word, 'unique', {'description': explanation}
 
         if concept_id in self.universal_registry.get('concepts', {}):
@@ -1237,7 +1238,7 @@ class AffixHandler:
             return f"{word[:mid]}{affix}{word[mid:]}"
         return word
 
-    def try_derive_from_source(self, lemma: str, pos: Optional[str], engine_ref, current_depth: int = 0) -> Optional[str]:
+    def try_derive_from_source(self, lemma: str, pos: Optional[str], engine_ref, current_depth: int = 0, skip_cache: bool = False) -> Optional[str]:
         if not self.morph_derivation_enabled:
             return None
         if current_depth >= self.max_derivation_depth:
@@ -1266,7 +1267,7 @@ class AffixHandler:
                 target_pos = rule.get('target_pos', 'NOUN')
                 effective_to_pos = input_pos if input_pos else pos
                 base_conlang_word = engine_ref._get_word_form(
-                    base_source_lemma, tags=None, pos=target_pos, derivation_depth=current_depth + 1)
+                    base_source_lemma, tags=None, pos=target_pos, derivation_depth=current_depth + 1, skip_cache=skip_cache)
                 derivation_rule = None
                 if effective_to_pos:
                     derivation_rule = self.get_derivation_rule(
@@ -1285,7 +1286,7 @@ class AffixHandler:
                 if replacement and not derivation_rule:
                     source_stem = lemma[:-len(suf)]
                     base_stem_word = engine_ref._get_word_form(
-                        source_stem, tags=['stem'], pos=target_pos, derivation_depth=current_depth + 1)
+                        source_stem, tags=['stem'], pos=target_pos, derivation_depth=current_depth + 1, skip_cache=skip_cache)
                     return self.apply_affix(base_stem_word, {'affix': replacement, 'position': 'suffix', 'force': True})
         return None
 
@@ -1775,8 +1776,8 @@ class GramatakiManager:
                 if p1_words and p2_words:
                     w1 = random.choice(p1_words)
                     w2 = random.choice(p2_words)
-                    cw1 = self.engine._get_word_form(w1)
-                    cw2 = self.engine._get_word_form(w2)
+                    cw1 = self.engine._get_word_form(w1, skip_cache=True)
+                    cw2 = self.engine._get_word_form(w2, skip_cache=True)
                     if self.engine.compounding_handler.enabled:
                         final_w = self.engine.compounding_handler.construct_compound(
                             [cw1, cw2], self.engine)
@@ -1791,15 +1792,17 @@ class GramatakiManager:
                     if p1_words and p2_words:
                         w1 = random.choice(p1_words)
                         w2 = random.choice(p2_words)
-                        cw1 = self.engine._get_word_form(w1, pos='VERB')
-                        cw2 = self.engine._get_word_form(w2, pos='NOUN')
+                        cw1 = self.engine._get_word_form(
+                            w1, pos='VERB', skip_cache=True)
+                        cw2 = self.engine._get_word_form(
+                            w2, pos='NOUN', skip_cache=True)
                         return {'word': cw1 + cw2, 'meaning': f"{w1} {w2}"}
             elif stype == 'abstract_derivation':
                 pool_key = strategy.get('pool', 'concept_noun')
                 p_words = pools.get(pool_key, [])
                 if p_words:
                     w1 = random.choice(p_words)
-                    cw1 = self.engine._get_word_form(w1)
+                    cw1 = self.engine._get_word_form(w1, skip_cache=True)
                     if self.engine.affix_handler.enabled:
                         der_rule = self.engine.affix_handler.get_derivation_rule(
                             "NOUN", "NOUN", strategy.get('derivation_type', 'abstract_noun'))
@@ -1807,19 +1810,36 @@ class GramatakiManager:
                             cw1 = self.engine.affix_handler.apply_affix(
                                 cw1, der_rule)
                     return {'word': cw1, 'meaning': f"{w1} (Abstrato)"}
+
         rel_type = rule.get('type')
         if rel_type == 'relational':
             target = rule.get('target')
             connector = rule.get('connector', '')
-            if gender == 'Feminino' and 'connector_female' in rule:
+
+            gender_connectors = rule.get('gender_connectors', {})
+            if gender and gender in gender_connectors:
+                connector = gender_connectors[gender]
+            elif gender == 'Feminino' and 'connector_female' in rule:
                 connector = rule.get('connector_female')
+
             target_rule = culture.get('components_rules', {}).get(target)
             if target_rule:
                 target_res = self._generate_component(
-                    target, target_rule, culture, "Masculino")
+                    target, target_rule, culture, gender)
                 if target_res and target_res.get('word'):
                     final_w = f"{connector} {target_res['word']}" if connector else target_res['word']
-                    return {'word': final_w, 'meaning': f"{connector} ({target_res['meaning']})"}
+                    meaning_str = f"{connector} ({target_res['meaning']})" if connector else target_res['meaning']
+                    return {'word': final_w.strip(), 'meaning': meaning_str.strip()}
+
+        elif rel_type == 'pool_selection':
+            target_pool = rule.get('pool')
+            p_words = pools.get(target_pool, [])
+            if p_words:
+                import random
+                w1 = random.choice(p_words)
+                cw1 = self.engine._get_word_form(w1, skip_cache=True)
+                return {'word': cw1, 'meaning': w1}
+
         elif rel_type == 'affixation':
             target_pool = rule.get('target')
             affix_rule = rule.get('affix_rule', {})
@@ -1827,7 +1847,7 @@ class GramatakiManager:
             if p_words:
                 import random
                 w1 = random.choice(p_words)
-                cw1 = self.engine._get_word_form(w1)
+                cw1 = self.engine._get_word_form(w1, skip_cache=True)
                 final_w = cw1
                 if affix_rule:
                     affix = affix_rule.get('affix', '')
@@ -1844,7 +1864,7 @@ class GramatakiManager:
             if p_words:
                 import random
                 w1 = random.choice(p_words)
-                cw1 = self.engine._get_word_form(w1)
+                cw1 = self.engine._get_word_form(w1, skip_cache=True)
                 if self.engine.degree_handler.enabled and degree:
                     cw1 = self.engine.degree_handler.apply_degree(cw1, degree)
                 return {'word': cw1, 'meaning': f"{w1} ({degree})"}
@@ -1854,7 +1874,7 @@ class GramatakiManager:
         if all_words:
             import random
             w1 = random.choice(all_words)
-            return {'word': self.engine._get_word_form(w1), 'meaning': w1}
+            return {'word': self.engine._get_word_form(w1, skip_cache=True), 'meaning': w1}
         import random
         return {'word': self.engine._generate_word_from_seed(comp_name, self.engine.global_seed + random.randint(1, 1000)), 'meaning': 'Desconhecido'}
 
@@ -2289,7 +2309,7 @@ class OriginalLanguageEngine:
 
         return suggestions
 
-    def _get_word_form(self, lemma: str, tags: List[str] = None, force_word: str = None, meta: Dict = None, pos: str = None, derivation_depth: int = 0, word_form: str = None) -> str:
+    def _get_word_form(self, lemma: str, tags: List[str] = None, force_word: str = None, meta: Dict = None, pos: str = None, derivation_depth: int = 0, word_form: str = None, skip_cache: bool = False) -> str:
         lemma = lemma.lower().strip()
 
         if lemma in self.vocabulary_override:
@@ -2298,12 +2318,12 @@ class OriginalLanguageEngine:
             return self.vocabulary_override[lemma.lower()]
 
         if lemma in self.processing_stack:
-            return self._generate_deterministic_word(lemma, depth=100)
+            return self._generate_deterministic_word(lemma, depth=100, skip_cache=skip_cache)
         self.processing_stack.add(lemma)
         try:
             if word_form:
                 res = self.concept_handler.resolve_concept(
-                    lemma, self, word_form=word_form, pos=pos)
+                    lemma, self, word_form=word_form, pos=pos, skip_cache=skip_cache)
                 if res and res[2].get('origin') == 'mapping_table_surface':
                     return res[0]
 
@@ -2332,7 +2352,8 @@ class OriginalLanguageEngine:
                 }
                 if meta:
                     entry.update(meta)
-                self.word_cache[lemma] = entry
+                if not skip_cache:
+                    self.word_cache[lemma] = entry
                 return force_word
             if entry:
                 if isinstance(entry, str):
@@ -2349,10 +2370,10 @@ class OriginalLanguageEngine:
                 return str(entry)
 
             concept_result = self.concept_handler.resolve_concept(
-                lemma, self, word_form=word_form, pos=pos)
+                lemma, self, word_form=word_form, pos=pos, skip_cache=skip_cache)
             if concept_result:
                 word, c_type, c_meta = concept_result
-                return self._get_word_form(lemma, tags=['concept'], force_word=word, meta=c_meta)
+                return self._get_word_form(lemma, tags=['concept'], force_word=word, meta=c_meta, skip_cache=skip_cache)
 
             if self.root_handler.enabled and (pos == 'VERB' or pos == 'NOUN'):
                 root = self.root_handler.generate_root(lemma)
@@ -2377,12 +2398,13 @@ class OriginalLanguageEngine:
                         "origin": "triconsonantal_system",
                         "root": "".join(root)
                     }
-                    self.word_cache[lemma] = entry
+                    if not skip_cache:
+                        self.word_cache[lemma] = entry
                     return generated_word
 
             if self.affix_handler.morph_derivation_enabled:
                 derived_word = self.affix_handler.try_derive_from_source(
-                    lemma, pos, self, current_depth=derivation_depth)
+                    lemma, pos, self, current_depth=derivation_depth, skip_cache=skip_cache)
                 if derived_word:
                     if self.special_mechanics_handler.enabled:
                         derived_word = self.special_mechanics_handler.apply_mechanics(
@@ -2393,9 +2415,10 @@ class OriginalLanguageEngine:
                         "synsets": [{"word": derived_word, "tags": ["derived", "morphology"], "affinity": 1.0}],
                         "origin": "derived"
                     }
-                    self.word_cache[lemma] = entry
+                    if not skip_cache:
+                        self.word_cache[lemma] = entry
                     return derived_word
-            return self._generate_deterministic_word(lemma, depth=0)
+            return self._generate_deterministic_word(lemma, depth=0, skip_cache=skip_cache)
         finally:
             self.processing_stack.remove(lemma)
 
@@ -2936,11 +2959,11 @@ class OriginalLanguageEngine:
                     chars[idx_to_mutate] = new_char
         return "".join(chars)
 
-    def _fetch_source_word(self, source_id: str, lemma: str) -> str:
+    def _fetch_source_word(self, source_id: str, lemma: str, skip_cache: bool = False) -> str:
         engine = self.get_source_engine(source_id)
         if engine:
-            word = engine._get_word_form(lemma)
-            if hasattr(engine, 'save_word_cache'):
+            word = engine._get_word_form(lemma, skip_cache=skip_cache)
+            if hasattr(engine, 'save_word_cache') and not skip_cache:
                 engine.save_word_cache()
             return word
 
@@ -3072,7 +3095,7 @@ class OriginalLanguageEngine:
                     prev_consonant = None
         return generated_word
 
-    def _generate_deterministic_word(self, word: str, depth: int = 0) -> str:
+    def _generate_deterministic_word(self, word: str, depth: int = 0, skip_cache: bool = False) -> str:
         clean_word = "".join(filter(str.isalpha, word.lower()))
         if not clean_word:
             return word
@@ -3093,7 +3116,8 @@ class OriginalLanguageEngine:
                 'type', 'foreign') if stratum else 'native'
             if stratum and stratum_type != 'native':
                 source_id = stratum.get('source_id')
-                source_word = self._fetch_source_word(source_id, clean_word)
+                source_word = self._fetch_source_word(
+                    source_id, clean_word, skip_cache=skip_cache)
                 nativized = self.phonology_handler.nativize_word(source_word)
 
                 mutation_intensity = stratum.get('mutation_intensity', 0)
@@ -3112,8 +3136,9 @@ class OriginalLanguageEngine:
                 entry["synsets"].append({"word": nativized, "tags": [
                                         "loanword", f"source:{source_id}"], "affinity": 1.0})
                 entry["origin"] = f"confluence_{source_id}"
-                self.word_cache[clean_word] = entry
-                self.save_word_cache()
+                if not skip_cache:
+                    self.word_cache[clean_word] = entry
+                    self.save_word_cache()
                 return nativized
 
         manual_target = self.false_cognate_handler.get_manual_target(
@@ -3131,7 +3156,7 @@ class OriginalLanguageEngine:
                     base_word = target_entry
             else:
                 base_word = self._generate_deterministic_word(
-                    manual_target, depth + 1)
+                    manual_target, depth + 1, skip_cache=skip_cache)
                 if manual_target in self.word_cache:
                     target_entry = self.word_cache[manual_target]
                     if isinstance(target_entry, dict):
@@ -3152,7 +3177,7 @@ class OriginalLanguageEngine:
                     base_word = phantom_entry
             else:
                 base_word = self._generate_deterministic_word(
-                    phantom_base_key, depth + 1)
+                    phantom_base_key, depth + 1, skip_cache=skip_cache)
                 if phantom_base_key in self.word_cache:
                     phantom_entry = self.word_cache[phantom_base_key]
                     if isinstance(phantom_entry, dict):
@@ -3176,7 +3201,8 @@ class OriginalLanguageEngine:
                     else:
                         base_conlang_word = root_entry
                 else:
-                    self._generate_deterministic_word(root_semantic, depth + 1)
+                    self._generate_deterministic_word(
+                        root_semantic, depth + 1, skip_cache=skip_cache)
                     if root_semantic in self.word_cache:
                         root_entry = self.word_cache[root_semantic]
                         if isinstance(root_entry, dict):
@@ -3244,7 +3270,8 @@ class OriginalLanguageEngine:
                             "tags": [name],
                             "affinity": 0.9 - (mutation_factor * 0.1)
                         })
-        self.word_cache[clean_word] = entry
+        if not skip_cache:
+            self.word_cache[clean_word] = entry
         return base_word
 
     def analyze_sentence_structure(self, text: str) -> Dict:
