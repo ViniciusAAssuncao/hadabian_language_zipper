@@ -1975,6 +1975,29 @@ class GramatakiManager:
 
         return candidates
 
+    def nativize_external_name(self, name: str) -> str:
+        if not name:
+            return ""
+        parts = name.split()
+        nativized_parts = []
+        for part in parts:
+            nativized = self.engine.phonology_handler.nativize_word(part)
+            if nativized:
+                nativized_parts.append(nativized.capitalize())
+        final_name = " ".join(nativized_parts)
+        if self.engine.sandhi_handler.enabled:
+            final_name = self.engine.sandhi_handler.apply_sandhi(final_name)
+        return final_name
+
+    def generate_random_name(self) -> str:
+        import random
+        seed = random.randint(0, 9999999)
+        word = self.engine._generate_word_from_seed(
+            f"rand_{seed}", seed, is_derived=False)
+        if word and self.engine.sandhi_handler.enabled:
+            word = self.engine.sandhi_handler.apply_sandhi(word)
+        return word.capitalize() if word else ""
+
 
 class OriginalLanguageEngine:
     def __init__(self, profile_path: str):
@@ -2906,13 +2929,32 @@ class OriginalLanguageEngine:
 
     def process_with_analysis(self, text: str) -> Dict:
         reordered_text, functions_info = self.syntax_engine.process_text(text)
+        words = reordered_text.split()
+        tagged = self.syntax_engine.pos_tagger.tag_sentence(
+            words) if hasattr(self.syntax_engine, 'pos_tagger') else []
+        dependencies = self.dependency_parser.parse(tagged)
+        constituents = self.constituent_analyzer.identify_constituents(tagged)
+        clauses = self.clause_segmenter.segment(words)
+        functions = []
+        if functions_info:
+            for info in functions_info:
+                if 'functions' in info:
+                    functions.extend(info['functions'])
+        agreement_violations = self.agreement_checker.check_agreement(
+            functions)
+        complexity_metrics = self.complexity_analyzer.analyze(
+            functions, dependencies)
         return {
-            'original': text,
-            'reordered': reordered_text,
-            'translated': self.process_text(text),
-            'syntax_info': functions_info,
-            'word_order': self.syntax_engine.word_order,
-            'cache_size': len(self.word_cache)
+            "original_text": text,
+            "reordered_text": reordered_text,
+            "tagged_words": tagged,
+            "dependencies": dependencies,
+            "constituents": constituents,
+            "clauses": clauses,
+            "functions": functions,
+            "agreement_violations": agreement_violations,
+            "complexity": complexity_metrics,
+            "word_order": self.syntax_engine.word_order
         }
 
     def _clean_word(self, word: str) -> str:
