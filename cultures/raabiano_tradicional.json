@@ -1,0 +1,135 @@
+{
+    "culture_id": "raabiano_tradicional",
+    "linked_profile": "rmp",
+    "description": "Sistema de nomenclatura tradicional do povo Hadabi, fortemente baseado em linhagem (patronímico) e origem geográfica.",
+    "formulas": {
+        "default": [
+            "given_name",
+            "patronymic"
+        ],
+        "formal": [
+            "given_name",
+            "patronymic",
+            "toponymic"
+        ],
+        "noble": [
+            "given_name",
+            "patronymic",
+            "toponymic",
+            "nickname"
+        ],
+        "informal": [
+            "given_name",
+            "nickname"
+        ]
+    },
+    "components_rules": {
+        "given_name": {
+            "generation_strategies": [
+                {
+                    "type": "compound",
+                    "weight": 0.5,
+                    "pool_1": "concept_adjective",
+                    "pool_2": "concept_noun"
+                },
+                {
+                    "type": "verbal_sentence",
+                    "weight": 0.3,
+                    "pattern": [
+                        "concept_verb",
+                        "concept_divine"
+                    ]
+                },
+                {
+                    "type": "abstract_derivation",
+                    "weight": 0.2,
+                    "pool": "concept_noun",
+                    "derivation_type": "abstract_noun"
+                }
+            ],
+            "gender_inflection": true
+        },
+        "patronymic": {
+            "type": "relational",
+            "connector": "bin",
+            "connector_female": "bint",
+            "target": "given_name"
+        },
+        "toponymic": {
+            "type": "affixation",
+            "target": "location_concept",
+            "affix_rule": {
+                "affix": "-ī",
+                "position": "suffix",
+                "description": "Sufixo nisba (relacional) para indicar origem"
+            }
+        },
+        "nickname": {
+            "type": "trait_derivation",
+            "target": "concept_adjective",
+            "degree": "augmentative"
+        }
+    },
+    "semantic_pools": {
+        "concept_noun": [
+            "leão",
+            "urso",
+            "lobo",
+            "fogo",
+            "pedra",
+            "ferro",
+            "sangue",
+            "honra",
+            "sabedoria",
+            "paz",
+            "escudo",
+            "espada"
+        ],
+        "concept_adjective": [
+            "forte",
+            "bravo",
+            "leal",
+            "justo",
+            "rápido",
+            "sábio",
+            "puro",
+            "feroz",
+            "digno",
+            "sagrado"
+        ],
+        "concept_verb": [
+            "protege",
+            "salva",
+            "guia",
+            "abençoa",
+            "ouve",
+            "fala",
+            "vê",
+            "conhece",
+            "ama"
+        ],
+        "concept_divine": [
+            "Deus",
+            "Senhor",
+            "Criador",
+            "Luz",
+            "Raab",
+            "Hadab"
+        ],
+        "location_concept": [
+            "deserto",
+            "montanha",
+            "rio",
+            "cidade",
+            "vale",
+            "oásis",
+            "areia",
+            "pedreira"
+        ]
+    },
+    "phonological_filters": {
+        "force_capitalization": true,
+        "apply_sandhi_between_components": true,
+        "max_length_per_name": 40
+    }
+}
