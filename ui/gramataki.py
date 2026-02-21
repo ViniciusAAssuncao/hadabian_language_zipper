@@ -92,6 +92,22 @@ class GramatakiTab(ttk.Frame):
         self.text_etymology.config(yscrollcommand=scrollbar.set)
         self.text_etymology.configure(state="disabled")
 
+        save_frame = ttk.Frame(right_frame)
+        save_frame.pack(fill=tk.X, pady=(15, 0))
+
+        ttk.Label(save_frame, text="Classificação Cultural:", font=("Segoe UI", 9),
+                  foreground=self.colors["fg_secondary"]).pack(side=tk.LEFT, padx=(0, 5))
+
+        self.name_type_var = tk.StringVar(value="nome_proprio")
+        self.name_type_cb = ttk.Combobox(save_frame, textvariable=self.name_type_var,
+                                         values=[
+                                             "nome_proprio", "nome_e_sobrenome", "sobrenome", "alcunha", "ancestor_names", "house_names"],
+                                         state="normal", width=15)
+        self.name_type_cb.pack(side=tk.LEFT, padx=(0, 10))
+
+        ttk.Button(save_frame, text="💾 Salvar no Cachê",
+                   command=self.save_generated_name).pack(side=tk.LEFT)
+
     def _build_nativizer_tab(self):
         container = ttk.Frame(self.tab_nativizer, padding=40)
         container.pack(fill=tk.BOTH, expand=True)
@@ -128,7 +144,7 @@ class GramatakiTab(ttk.Frame):
 
         self.pool_tab = ttk.Frame(editor_notebook, padding=20)
         editor_notebook.add(
-            self.pool_tab, text="Gerenciador de Pools Semânticos")
+            self.pool_tab, text="Gerenciador de Pools Unificados")
 
         pool_top = ttk.Frame(self.pool_tab)
         pool_top.pack(fill=tk.X, pady=(0, 15))
@@ -213,7 +229,6 @@ class GramatakiTab(ttk.Frame):
             "description": "Sistema onomástico auto-gerado.",
             "formulas": {},
             "components_rules": {},
-            "semantic_pools": {},
             "phonological_filters": {
                 "force_capitalization": True,
                 "apply_sandhi_between_components": True
@@ -228,12 +243,13 @@ class GramatakiTab(ttk.Frame):
         else:
             self.formula_var.set("")
 
-        pools = list(self.culture_data.get("semantic_pools", {}).keys())
-        self.pool_cb['values'] = pools
-        if pools:
-            self.pool_cb.current(0)
-        else:
-            self.pool_var.set("")
+        if self.engine and hasattr(self.engine.gramataki_manager, 'unified_pools'):
+            pools = list(self.engine.gramataki_manager.unified_pools.keys())
+            self.pool_cb['values'] = pools
+            if pools:
+                self.pool_cb.current(0)
+            else:
+                self.pool_var.set("")
         self.on_pool_select()
 
         self.json_text.delete("1.0", tk.END)
@@ -243,46 +259,49 @@ class GramatakiTab(ttk.Frame):
     def on_pool_select(self, event=None):
         self.pool_listbox.delete(0, tk.END)
         pool_name = self.pool_var.get()
-        if pool_name and pool_name in self.culture_data.get("semantic_pools", {}):
-            items = self.culture_data["semantic_pools"][pool_name]
-            for item in items:
-                self.pool_listbox.insert(tk.END, item)
+        if pool_name and self.engine and hasattr(self.engine.gramataki_manager, 'unified_pools'):
+            if pool_name in self.engine.gramataki_manager.unified_pools:
+                items = self.engine.gramataki_manager.unified_pools[pool_name]
+                for item in items:
+                    self.pool_listbox.insert(tk.END, item)
 
     def create_new_pool(self):
+        if not self.engine:
+            return
         new_pool = simpledialog.askstring(
             "Novo Pool", "Nome do novo pool semântico:")
         if new_pool:
-            if "semantic_pools" not in self.culture_data:
-                self.culture_data["semantic_pools"] = {}
-            if new_pool not in self.culture_data["semantic_pools"]:
-                self.culture_data["semantic_pools"][new_pool] = []
+            if new_pool not in self.engine.gramataki_manager.unified_pools:
+                self.engine.gramataki_manager.unified_pools[new_pool] = []
+                self.engine.gramataki_manager.save_unified_pools()
                 self.update_ui_from_culture()
                 self.pool_var.set(new_pool)
                 self.on_pool_select()
 
     def add_to_pool(self):
+        if not self.engine:
+            return
         pool_name = self.pool_var.get()
         word = self.new_word_var.get().strip()
         if pool_name and word:
-            if word not in self.culture_data["semantic_pools"][pool_name]:
-                self.culture_data["semantic_pools"][pool_name].append(word)
+            if word not in self.engine.gramataki_manager.unified_pools[pool_name]:
+                self.engine.gramataki_manager.unified_pools[pool_name].append(
+                    word)
+                self.engine.gramataki_manager.save_unified_pools()
                 self.on_pool_select()
                 self.new_word_var.set("")
-                self.json_text.delete("1.0", tk.END)
-                self.json_text.insert("1.0", json.dumps(
-                    self.culture_data, indent=4, ensure_ascii=False))
 
     def remove_from_pool(self):
+        if not self.engine:
+            return
         pool_name = self.pool_var.get()
         selection = self.pool_listbox.curselection()
         if pool_name and selection:
             idx = selection[0]
             word = self.pool_listbox.get(idx)
-            self.culture_data["semantic_pools"][pool_name].remove(word)
+            self.engine.gramataki_manager.unified_pools[pool_name].remove(word)
+            self.engine.gramataki_manager.save_unified_pools()
             self.on_pool_select()
-            self.json_text.delete("1.0", tk.END)
-            self.json_text.insert("1.0", json.dumps(
-                self.culture_data, indent=4, ensure_ascii=False))
 
     def save_culture_file(self, from_json_editor=False):
         if not self.engine:
@@ -338,6 +357,16 @@ class GramatakiTab(ttk.Frame):
             self.text_etymology.insert(tk.END, line)
 
         self.text_etymology.configure(state="disabled")
+
+    def save_generated_name(self):
+        if not self.engine:
+            return
+        name = self.entry_name.get().strip()
+        name_type = self.name_type_var.get().strip()
+        if name and name_type:
+            self.engine.gramataki_manager.save_culture_name(name, name_type)
+            messagebox.showinfo(
+                "Sucesso", f"Nome '{name}' salvo no cachê como '{name_type}'.")
 
     def nativize_name(self):
         if not self.engine:

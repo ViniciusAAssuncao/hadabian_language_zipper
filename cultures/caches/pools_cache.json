@@ -1,0 +1,60 @@
+{
+    "rmp": {
+        "concept_noun": [
+            "leão",
+            "urso",
+            "lobo",
+            "fogo",
+            "pedra",
+            "ferro",
+            "sangue",
+            "honra",
+            "sabedoria",
+            "paz",
+            "escudo",
+            "espada"
+        ],
+        "concept_adjective": [
+            "forte",
+            "bravo",
+            "leal",
+            "justo",
+            "rápido",
+            "sábio",
+            "puro",
+            "feroz",
+            "digno",
+            "sagrado"
+        ],
+        "concept_verb": [
+            "protege",
+            "salva",
+            "guia",
+            "abençoa",
+            "ouve",
+            "fala",
+            "vê",
+            "conhece",
+            "ama"
+        ],
+        "concept_divine": [
+            "Deus",
+            "Senhor",
+            "Criador",
+            "Luz",
+            "Raab",
+            "Hadab",
+            "Äuris"
+        ],
+        "location_concept": [
+            "deserto",
+            "montanha",
+            "rio",
+            "cidade",
+            "vale",
+            "oásis",
+            "areia",
+            "pedreira"
+        ]
+    }
+}

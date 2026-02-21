@@ -1711,7 +1711,17 @@ class GramatakiManager:
         self.dictionary: Dict[str, Dict] = {}
         self.storage_path = Path(
             f"./gramatakis/{self.profile_id}_gramataki.json")
+
+        self.caches_dir = Path("./cultures/caches")
+        self.caches_dir.mkdir(parents=True, exist_ok=True)
+        self.unified_pools_path = self.caches_dir / f"{self.profile_id}_pools_cache.json"
+        self.culture_names_path = self.caches_dir / \
+            f"{self.profile_id}_names.json"
+        self.unified_pools = {}
+        self.culture_names = {}
+
         self.load_dictionary()
+        self.load_culture_caches()
 
     def load_dictionary(self):
         if self.storage_path.exists():
@@ -1723,17 +1733,63 @@ class GramatakiManager:
         else:
             self.dictionary = {}
 
+    def load_culture_caches(self):
+        self.unified_pools = {}
+        if self.unified_pools_path.exists():
+            try:
+                with open(self.unified_pools_path, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    self.unified_pools = data.get(self.profile_id, {})
+            except:
+                pass
+        if self.culture_names_path.exists():
+            try:
+                with open(self.culture_names_path, 'r', encoding='utf-8') as f:
+                    self.culture_names = json.load(f)
+            except:
+                pass
+
     def save_dictionary(self):
         if not self.storage_path.parent.exists():
             self.storage_path.parent.mkdir(parents=True, exist_ok=True)
         with open(self.storage_path, 'w', encoding='utf-8') as f:
             json.dump(self.dictionary, f, indent=2, ensure_ascii=False)
 
+    def save_unified_pools(self):
+        all_pools = {}
+        if self.unified_pools_path.exists():
+            try:
+                with open(self.unified_pools_path, 'r', encoding='utf-8') as f:
+                    all_pools = json.load(f)
+            except:
+                pass
+        all_pools[self.profile_id] = self.unified_pools
+        with open(self.unified_pools_path, 'w', encoding='utf-8') as f:
+            json.dump(all_pools, f, indent=4, ensure_ascii=False)
+
+    def save_culture_name(self, name: str, name_type: str):
+        if name_type not in self.culture_names:
+            self.culture_names[name_type] = []
+        if name not in self.culture_names[name_type]:
+            self.culture_names[name_type].append(name)
+            with open(self.culture_names_path, 'w', encoding='utf-8') as f:
+                json.dump(self.culture_names, f, indent=4, ensure_ascii=False)
+
     def save_entry(self, entry: Dict):
         lemma = entry.get('lemma')
         if lemma:
             self.dictionary[lemma] = entry
             self.save_dictionary()
+
+    def _get_pool_words(self, pool_key: str, culture: Dict) -> List[str]:
+        words = set()
+        if pool_key in culture.get('semantic_pools', {}):
+            words.update(culture['semantic_pools'][pool_key])
+        if pool_key in self.unified_pools:
+            words.update(self.unified_pools[pool_key])
+        if pool_key in self.culture_names:
+            words.update(self.culture_names[pool_key])
+        return list(words)
 
     def generate_onomastic_name(self, culture: Dict, formula_id: str, gender: str) -> Dict:
         formula = culture.get('formulas', {}).get(formula_id, [])
@@ -1761,18 +1817,22 @@ class GramatakiManager:
         }
 
     def _generate_component(self, comp_name: str, rule: Dict, culture: Dict, gender: str) -> Dict:
+        import random
+
+        if comp_name in self.culture_names and random.random() < 0.25:
+            w1 = random.choice(self.culture_names[comp_name])
+            return {'word': w1, 'meaning': f"{w1} (Tradicional)"}
+
         strategies = rule.get('generation_strategies', [])
-        pools = culture.get('semantic_pools', {})
         if strategies:
-            import random
             weights = [s.get('weight', 1.0) for s in strategies]
             strategy = random.choices(strategies, weights=weights, k=1)[0]
             stype = strategy.get('type')
             if stype == 'compound':
-                pool1_key = strategy.get('pool_1')
-                pool2_key = strategy.get('pool_2')
-                p1_words = pools.get(pool1_key, [])
-                p2_words = pools.get(pool2_key, [])
+                p1_words = self._get_pool_words(
+                    strategy.get('pool_1'), culture)
+                p2_words = self._get_pool_words(
+                    strategy.get('pool_2'), culture)
                 if p1_words and p2_words:
                     w1 = random.choice(p1_words)
                     w2 = random.choice(p2_words)
@@ -1787,8 +1847,8 @@ class GramatakiManager:
             elif stype == 'verbal_sentence':
                 pattern = strategy.get('pattern', [])
                 if len(pattern) >= 2:
-                    p1_words = pools.get(pattern[0], [])
-                    p2_words = pools.get(pattern[1], [])
+                    p1_words = self._get_pool_words(pattern[0], culture)
+                    p2_words = self._get_pool_words(pattern[1], culture)
                     if p1_words and p2_words:
                         w1 = random.choice(p1_words)
                         w2 = random.choice(p2_words)
@@ -1799,7 +1859,7 @@ class GramatakiManager:
                         return {'word': cw1 + cw2, 'meaning': f"{w1} {w2}"}
             elif stype == 'abstract_derivation':
                 pool_key = strategy.get('pool', 'concept_noun')
-                p_words = pools.get(pool_key, [])
+                p_words = self._get_pool_words(pool_key, culture)
                 if p_words:
                     w1 = random.choice(p_words)
                     cw1 = self.engine._get_word_form(w1, skip_cache=True)
@@ -1833,9 +1893,8 @@ class GramatakiManager:
 
         elif rel_type == 'pool_selection':
             target_pool = rule.get('pool')
-            p_words = pools.get(target_pool, [])
+            p_words = self._get_pool_words(target_pool, culture)
             if p_words:
-                import random
                 w1 = random.choice(p_words)
                 cw1 = self.engine._get_word_form(w1, skip_cache=True)
                 return {'word': cw1, 'meaning': w1}
@@ -1843,9 +1902,8 @@ class GramatakiManager:
         elif rel_type == 'affixation':
             target_pool = rule.get('target')
             affix_rule = rule.get('affix_rule', {})
-            p_words = pools.get(target_pool, [])
+            p_words = self._get_pool_words(target_pool, culture)
             if p_words:
-                import random
                 w1 = random.choice(p_words)
                 cw1 = self.engine._get_word_form(w1, skip_cache=True)
                 final_w = cw1
@@ -1857,25 +1915,28 @@ class GramatakiManager:
                     else:
                         final_w = affix.replace('-', '') + cw1
                 return {'word': final_w, 'meaning': f"{w1} ({affix_rule.get('description', '')})"}
+
         elif rel_type == 'trait_derivation':
             target_pool = rule.get('target')
             degree = rule.get('degree')
-            p_words = pools.get(target_pool, [])
+            p_words = self._get_pool_words(target_pool, culture)
             if p_words:
-                import random
                 w1 = random.choice(p_words)
                 cw1 = self.engine._get_word_form(w1, skip_cache=True)
                 if self.engine.degree_handler.enabled and degree:
                     cw1 = self.engine.degree_handler.apply_degree(cw1, degree)
                 return {'word': cw1, 'meaning': f"{w1} ({degree})"}
+
         all_words = []
-        for p in pools.values():
-            all_words.extend(p)
+        for pool_key in self.unified_pools:
+            all_words.extend(self.unified_pools[pool_key])
+        if 'semantic_pools' in culture:
+            for p in culture['semantic_pools'].values():
+                all_words.extend(p)
         if all_words:
-            import random
             w1 = random.choice(all_words)
             return {'word': self.engine._get_word_form(w1, skip_cache=True), 'meaning': w1}
-        import random
+
         return {'word': self.engine._generate_word_from_seed(comp_name, self.engine.global_seed + random.randint(1, 1000)), 'meaning': 'Desconhecido'}
 
     def _apply_phonological_filters(self, name_parts: List[str], filters: Dict) -> str:
@@ -3015,6 +3076,7 @@ class OriginalLanguageEngine:
         return fallback
 
     def _generate_word_from_seed(self, clean_word: str, seed: int, is_derived: bool = False, base_conlang_word: str = "") -> str:
+        import random
         random.seed(seed)
         if is_derived and base_conlang_word:
             split_idx = max(1, int(len(base_conlang_word) * 0.6))
