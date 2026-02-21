@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import ttk, messagebox, simpledialog
 import json
 from pathlib import Path
+import random
+import hashlib
 
 
 class GramatakiTab(ttk.Frame):
@@ -79,6 +81,10 @@ class GramatakiTab(ttk.Frame):
             left_frame, text="✨ Gerar Nome Nativo", style="Accent.TButton", command=self.generate_name)
         self.btn_generate.pack(fill=tk.X, pady=(10, 0))
 
+        ttk.Button(
+            left_frame, text="🔍 Montar / Derivar Nome", command=self.open_name_assembly_modal
+        ).pack(fill=tk.X, pady=(10, 0))
+
         right_frame = ttk.LabelFrame(
             main_pane, text="Resultado e Etimologia", padding=20)
         main_pane.add(right_frame, weight=2)
@@ -139,17 +145,63 @@ class GramatakiTab(ttk.Frame):
         btn_frame.pack(fill=tk.X)
         ttk.Button(btn_frame, text="🔄 Nativizar Nome", style="Accent.TButton",
                    command=self.nativize_name).pack(side=tk.LEFT, expand=True, fill=tk.X, padx=(0, 10))
+        ttk.Button(btn_frame, text="➕ Gerar Mais Variantes",
+                   command=self.nativize_name_more).pack(side=tk.LEFT, expand=True, fill=tk.X, padx=(0, 10))
         ttk.Button(btn_frame, text="🎲 Gerar Aleatório (Sem Significado)", command=self.generate_random_name).pack(
             side=tk.LEFT, expand=True, fill=tk.X, padx=(10, 0))
 
-        output_frame = ttk.LabelFrame(container, text="Resultado", padding=25)
+        output_frame = ttk.LabelFrame(
+            container, text="Sugestões Nativizadas", padding=25)
         output_frame.pack(fill=tk.BOTH, expand=True)
 
-        ttk.Label(output_frame, text="Nome Adaptado / Gerado:", font=("Segoe UI", 11,
+        ttk.Label(output_frame, text="Variantes Geradas (duplo-clique para usar):", font=("Segoe UI", 11,
                   "bold"), foreground=self.colors["fg_secondary"]).pack(anchor="w", pady=(0, 10))
-        self.entry_nativize_result = tk.Entry(output_frame, font=("Segoe UI", 36, "bold"), fg=self.colors.get(
-            "text", "black"), bg=self.colors.get("input_bg", "#ffffff"), justify="center", relief="solid", borderwidth=1)
-        self.entry_nativize_result.pack(fill=tk.X, expand=True)
+
+        list_frame = ttk.Frame(output_frame)
+        list_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 15))
+
+        self.listbox_nativize_results = tk.Listbox(
+            list_frame,
+            font=("Segoe UI", 16, "bold"),
+            fg=self.colors.get("text", "black"),
+            bg=self.colors.get("input_bg", "#ffffff"),
+            selectbackground=self.colors.get("accent", "#0078D7"),
+            relief="solid",
+            borderwidth=1,
+            height=10
+        )
+        self.listbox_nativize_results.pack(
+            side=tk.LEFT, fill=tk.BOTH, expand=True)
+        self.listbox_nativize_results.bind(
+            "<Double-Button-1>", self._on_nativize_double_click)
+
+        nativize_scroll = ttk.Scrollbar(
+            list_frame, orient="vertical", command=self.listbox_nativize_results.yview)
+        nativize_scroll.pack(side=tk.RIGHT, fill=tk.Y)
+        self.listbox_nativize_results.config(
+            yscrollcommand=nativize_scroll.set)
+
+        nativize_action_frame = ttk.Frame(output_frame)
+        nativize_action_frame.pack(fill=tk.X)
+
+        ttk.Label(nativize_action_frame, text="Classificação:", font=("Segoe UI", 9),
+                  foreground=self.colors["fg_secondary"]).pack(side=tk.LEFT, padx=(0, 5))
+
+        self.nativize_save_type_var = tk.StringVar(value="nome_proprio")
+        nativize_type_cb = ttk.Combobox(
+            nativize_action_frame,
+            textvariable=self.nativize_save_type_var,
+            values=["nome_proprio", "nome_e_sobrenome", "sobrenome",
+                    "alcunha", "ancestor_names", "house_names"],
+            state="normal",
+            width=15
+        )
+        nativize_type_cb.pack(side=tk.LEFT, padx=(0, 10))
+
+        ttk.Button(nativize_action_frame, text="💾 Salvar Selecionado",
+                   command=self._save_nativize_selection).pack(side=tk.LEFT, padx=(0, 10))
+        ttk.Button(nativize_action_frame, text="🗑 Limpar Lista",
+                   command=self._clear_nativize_results).pack(side=tk.LEFT)
 
     def _build_editor_tab(self):
         editor_notebook = ttk.Notebook(self.tab_editor)
@@ -390,11 +442,61 @@ class GramatakiTab(ttk.Frame):
         if not base_name:
             return
 
-        nativized = self.engine.gramataki_manager.nativize_external_name(
-            base_name)
+        self._clear_nativize_results()
+        variants = self.engine.gramataki_manager.nativize_external_name_multiple(
+            base_name, count=20)
+        for v in variants:
+            if v:
+                self.listbox_nativize_results.insert(tk.END, v)
 
-        self.entry_nativize_result.delete(0, tk.END)
-        self.entry_nativize_result.insert(0, nativized)
+    def nativize_name_more(self):
+        if not self.engine:
+            return
+        base_name = self.entry_nativize_base.get().strip()
+        if not base_name:
+            return
+
+        existing = set(self.listbox_nativize_results.get(0, tk.END))
+        variants = self.engine.gramataki_manager.nativize_external_name_multiple(
+            base_name, count=20)
+        added = 0
+        for v in variants:
+            if v and v not in existing:
+                self.listbox_nativize_results.insert(tk.END, v)
+                existing.add(v)
+                added += 1
+        if added > 0:
+            self.show_status(f"{added} novas variantes adicionadas.")
+        else:
+            self.show_status(
+                "Nenhuma nova variante encontrada. Tente novamente.")
+
+    def _on_nativize_double_click(self, event):
+        selection = self.listbox_nativize_results.curselection()
+        if not selection:
+            return
+        name = self.listbox_nativize_results.get(selection[0])
+        self.entry_name.delete(0, tk.END)
+        self.entry_name.insert(0, name)
+        self.notebook.select(0)
+        self.show_status(f"'{name}' copiado para o campo de nome gerado.")
+
+    def _save_nativize_selection(self):
+        if not self.engine:
+            return
+        selection = self.listbox_nativize_results.curselection()
+        if not selection:
+            messagebox.showwarning(
+                "Aviso", "Selecione uma variante para salvar.")
+            return
+        name = self.listbox_nativize_results.get(selection[0])
+        name_type = self.nativize_save_type_var.get().strip()
+        if name and name_type:
+            self.engine.gramataki_manager.save_culture_name(name, name_type)
+            self.show_status(f"'{name}' salvo no cachê como '{name_type}'.")
+
+    def _clear_nativize_results(self):
+        self.listbox_nativize_results.delete(0, tk.END)
 
     def generate_random_name(self):
         if not self.engine:
@@ -402,5 +504,899 @@ class GramatakiTab(ttk.Frame):
 
         random_name = self.engine.gramataki_manager.generate_random_name()
 
-        self.entry_nativize_result.delete(0, tk.END)
-        self.entry_nativize_result.insert(0, random_name)
+        self.listbox_nativize_results.insert(0, random_name)
+        self.listbox_nativize_results.selection_clear(0, tk.END)
+        self.listbox_nativize_results.selection_set(0)
+        self.listbox_nativize_results.see(0)
+
+    def open_name_assembly_modal(self):
+        if not self.engine:
+            messagebox.showwarning("Aviso", "Motor linguístico não carregado.")
+            return
+
+        modal = tk.Toplevel(self)
+        modal.title("Montagem e Derivação de Nomes")
+        modal.geometry("960x680")
+        modal.resizable(True, True)
+        modal.grab_set()
+
+        modal.configure(bg=self.colors.get("bg", "#f0f0f0"))
+
+        title_lbl = tk.Label(modal, text="Montagem e Derivação de Nomes",
+                             font=("Segoe UI", 13, "bold"),
+                             fg=self.colors.get("accent", "#0078D7"),
+                             bg=self.colors.get("bg", "#f0f0f0"))
+        title_lbl.pack(pady=(15, 5))
+
+        pane = ttk.PanedWindow(modal, orient=tk.HORIZONTAL)
+        pane.pack(fill=tk.BOTH, expand=True, padx=15, pady=10)
+
+        left_panel = ttk.LabelFrame(pane, text="Cachê de Nomes", padding=12)
+        pane.add(left_panel, weight=1)
+
+        filter_frame = ttk.Frame(left_panel)
+        filter_frame.pack(fill=tk.X, pady=(0, 8))
+
+        ttk.Label(filter_frame, text="Tipo:", font=("Segoe UI", 9),
+                  foreground=self.colors["fg_secondary"]).pack(side=tk.LEFT)
+
+        modal_type_var = tk.StringVar(value="(todos)")
+        all_types = ["(todos)", "nome_proprio", "nome_e_sobrenome", "sobrenome",
+                     "alcunha", "ancestor_names", "house_names"]
+        modal_type_cb = ttk.Combobox(filter_frame, textvariable=modal_type_var,
+                                     values=all_types, state="readonly", width=14)
+        modal_type_cb.pack(side=tk.LEFT, padx=(5, 8))
+
+        ttk.Label(filter_frame, text="Busca:", font=("Segoe UI", 9),
+                  foreground=self.colors["fg_secondary"]).pack(side=tk.LEFT)
+        modal_search_var = tk.StringVar()
+        modal_search_entry = ttk.Entry(
+            filter_frame, textvariable=modal_search_var, width=14)
+        modal_search_entry.pack(side=tk.LEFT, padx=(5, 0))
+
+        cache_list_frame = ttk.Frame(left_panel)
+        cache_list_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 8))
+
+        cache_listbox = tk.Listbox(
+            cache_list_frame,
+            bg=self.colors.get("input_bg", "#ffffff"),
+            fg=self.colors.get("text", "black"),
+            selectbackground=self.colors.get("accent", "#0078D7"),
+            font=("Segoe UI", 11),
+            relief="solid",
+            borderwidth=1,
+            height=18
+        )
+        cache_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        cache_scroll = ttk.Scrollbar(
+            cache_list_frame, orient="vertical", command=cache_listbox.yview)
+        cache_scroll.pack(side=tk.RIGHT, fill=tk.Y)
+        cache_listbox.config(yscrollcommand=cache_scroll.set)
+
+        def refresh_cache_list(*args):
+            cache_listbox.delete(0, tk.END)
+            search_str = modal_search_var.get().strip().lower()
+            type_filter = modal_type_var.get()
+            names_data = self.engine.gramataki_manager.culture_names
+            for n_type, names in names_data.items():
+                if type_filter not in ("(todos)", n_type):
+                    continue
+                for name in names:
+                    if search_str and search_str not in name.lower():
+                        continue
+                    cache_listbox.insert(tk.END, f"{name}  [{n_type}]")
+
+        modal_type_var.trace_add("write", refresh_cache_list)
+        modal_search_var.trace_add("write", refresh_cache_list)
+        refresh_cache_list()
+
+        right_panel = ttk.Frame(pane, padding=5)
+        pane.add(right_panel, weight=2)
+
+        assembly_lf = ttk.LabelFrame(
+            right_panel, text="Componentes Selecionados", padding=12)
+        assembly_lf.pack(fill=tk.X, pady=(0, 10))
+
+        selected_components = []
+
+        comp_list_frame = ttk.Frame(assembly_lf)
+        comp_list_frame.pack(fill=tk.X, pady=(0, 8))
+
+        comp_listbox = tk.Listbox(
+            comp_list_frame,
+            bg=self.colors.get("input_bg", "#ffffff"),
+            fg=self.colors.get("text", "black"),
+            selectbackground=self.colors.get("accent", "#0078D7"),
+            font=("Segoe UI", 12),
+            relief="solid",
+            borderwidth=1,
+            height=4
+        )
+        comp_listbox.pack(side=tk.LEFT, fill=tk.X, expand=True)
+
+        comp_scroll = ttk.Scrollbar(
+            comp_list_frame, orient="vertical", command=comp_listbox.yview)
+        comp_scroll.pack(side=tk.RIGHT, fill=tk.Y)
+        comp_listbox.config(yscrollcommand=comp_scroll.set)
+
+        comp_btn_frame = ttk.Frame(assembly_lf)
+        comp_btn_frame.pack(fill=tk.X)
+
+        def add_from_cache():
+            sel = cache_listbox.curselection()
+            if not sel:
+                return
+            raw = cache_listbox.get(sel[0])
+            name_only = raw.split("  [")[0].strip()
+            selected_components.append(name_only)
+            comp_listbox.insert(tk.END, name_only)
+            update_assembled()
+
+        def remove_from_comp():
+            sel = comp_listbox.curselection()
+            if not sel:
+                return
+            idx = sel[0]
+            comp_listbox.delete(idx)
+            if idx < len(selected_components):
+                selected_components.pop(idx)
+            update_assembled()
+
+        def clear_components():
+            selected_components.clear()
+            comp_listbox.delete(0, tk.END)
+            update_assembled()
+
+        ttk.Button(comp_btn_frame, text="➕ Adicionar do Cachê",
+                   command=add_from_cache).pack(side=tk.LEFT, padx=(0, 5))
+        ttk.Button(comp_btn_frame, text="✖ Remover Selecionado",
+                   command=remove_from_comp).pack(side=tk.LEFT, padx=(0, 5))
+        ttk.Button(comp_btn_frame, text="🗑 Limpar Tudo",
+                   command=clear_components).pack(side=tk.LEFT)
+
+        assembled_lf = ttk.LabelFrame(
+            right_panel, text="Nome Montado", padding=12)
+        assembled_lf.pack(fill=tk.X, pady=(0, 10))
+
+        assembled_var = tk.StringVar()
+        assembled_entry = tk.Entry(
+            assembled_lf,
+            textvariable=assembled_var,
+            font=("Segoe UI", 22, "bold"),
+            fg=self.colors.get("text", "black"),
+            bg=self.colors.get("input_bg", "#ffffff"),
+            justify="center",
+            relief="solid",
+            borderwidth=1
+        )
+        assembled_entry.pack(fill=tk.X, pady=(0, 10))
+
+        def update_assembled():
+            assembled_var.set(" ".join(selected_components))
+
+        assembled_save_frame = ttk.Frame(assembled_lf)
+        assembled_save_frame.pack(fill=tk.X)
+
+        ttk.Label(assembled_save_frame, text="Salvar como:",
+                  font=("Segoe UI", 9),
+                  foreground=self.colors["fg_secondary"]).pack(side=tk.LEFT, padx=(0, 5))
+
+        assembled_type_var = tk.StringVar(value="nome_e_sobrenome")
+        assembled_type_cb = ttk.Combobox(
+            assembled_save_frame,
+            textvariable=assembled_type_var,
+            values=["nome_proprio", "nome_e_sobrenome", "sobrenome",
+                    "alcunha", "ancestor_names", "house_names"],
+            state="normal",
+            width=15
+        )
+        assembled_type_cb.pack(side=tk.LEFT, padx=(0, 10))
+
+        def save_assembled():
+            name = assembled_var.get().strip()
+            n_type = assembled_type_var.get().strip()
+            if not name:
+                messagebox.showwarning(
+                    "Aviso", "Nenhum nome montado para salvar.", parent=modal)
+                return
+            self.engine.gramataki_manager.save_culture_name(name, n_type)
+            self.show_status(f"'{name}' salvo como '{n_type}'.")
+            refresh_cache_list()
+
+        def use_as_generated():
+            name = assembled_var.get().strip()
+            if name:
+                self.entry_name.delete(0, tk.END)
+                self.entry_name.insert(0, name)
+                self.show_status(f"'{name}' definido como nome gerado.")
+
+        ttk.Button(assembled_save_frame, text="💾 Salvar no Cachê",
+                   command=save_assembled).pack(side=tk.LEFT, padx=(0, 10))
+        ttk.Button(assembled_save_frame, text="📋 Usar como Nome Gerado",
+                   command=use_as_generated).pack(side=tk.LEFT)
+
+        derivation_lf = ttk.LabelFrame(
+            right_panel, text="Derivação de Formas", padding=12)
+        derivation_lf.pack(fill=tk.BOTH, expand=True)
+
+        deriv_top = ttk.Frame(derivation_lf)
+        deriv_top.pack(fill=tk.X, pady=(0, 8))
+
+        ttk.Label(deriv_top, text="Base para derivação:", font=("Segoe UI", 9),
+                  foreground=self.colors["fg_secondary"]).pack(side=tk.LEFT, padx=(0, 5))
+
+        deriv_base_var = tk.StringVar()
+        deriv_base_entry = ttk.Entry(deriv_top, textvariable=deriv_base_var, width=20,
+                                     font=("Segoe UI", 11))
+        deriv_base_entry.pack(side=tk.LEFT, padx=(0, 8))
+
+        def fill_deriv_from_cache():
+            sel = cache_listbox.curselection()
+            if not sel:
+                return
+            raw = cache_listbox.get(sel[0])
+            name_only = raw.split("  [")[0].strip()
+            deriv_base_var.set(name_only)
+
+        def fill_deriv_from_assembled():
+            name = assembled_var.get().strip()
+            if name:
+                deriv_base_var.set(name)
+
+        ttk.Button(deriv_top, text="← Do Cachê",
+                   command=fill_deriv_from_cache).pack(side=tk.LEFT, padx=(0, 5))
+        ttk.Button(deriv_top, text="← Do Montado",
+                   command=fill_deriv_from_assembled).pack(side=tk.LEFT)
+
+        deriv_result_frame = ttk.Frame(derivation_lf)
+        deriv_result_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 8))
+
+        deriv_listbox = tk.Listbox(
+            deriv_result_frame,
+            bg=self.colors.get("input_bg", "#ffffff"),
+            fg=self.colors.get("text", "black"),
+            selectbackground=self.colors.get("accent", "#0078D7"),
+            font=("Segoe UI", 14, "bold"),
+            relief="solid",
+            borderwidth=1,
+            height=6
+        )
+        deriv_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
+
+        deriv_scroll = ttk.Scrollbar(
+            deriv_result_frame, orient="vertical", command=deriv_listbox.yview)
+        deriv_scroll.pack(side=tk.RIGHT, fill=tk.Y)
+        deriv_listbox.config(yscrollcommand=deriv_scroll.set)
+
+        def generate_derivations():
+            base = deriv_base_var.get().strip()
+            if not base:
+                messagebox.showwarning(
+                    "Aviso", "Informe uma base para derivar.", parent=modal)
+                return
+            deriv_listbox.delete(0, tk.END)
+            results = self.engine.gramataki_manager.generate_derived_forms(
+                base, count=15)
+            for r in results:
+                deriv_listbox.insert(tk.END, r)
+
+        def generate_more_derivations():
+            base = deriv_base_var.get().strip()
+            if not base:
+                return
+            existing = set(deriv_listbox.get(0, tk.END))
+            results = self.engine.gramataki_manager.generate_derived_forms(
+                base, count=15)
+            added = 0
+            for r in results:
+                if r not in existing:
+                    deriv_listbox.insert(tk.END, r)
+                    existing.add(r)
+                    added += 1
+
+        deriv_action_frame = ttk.Frame(derivation_lf)
+        deriv_action_frame.pack(fill=tk.X)
+
+        ttk.Button(deriv_action_frame, text="✨ Gerar Derivadas", style="Accent.TButton",
+                   command=generate_derivations).pack(side=tk.LEFT, padx=(0, 5))
+        ttk.Button(deriv_action_frame, text="➕ Mais Derivadas",
+                   command=generate_more_derivations).pack(side=tk.LEFT, padx=(0, 15))
+
+        ttk.Label(deriv_action_frame, text="Salvar derivada como:",
+                  font=("Segoe UI", 9),
+                  foreground=self.colors["fg_secondary"]).pack(side=tk.LEFT, padx=(0, 5))
+
+        deriv_save_type_var = tk.StringVar(value="nome_proprio")
+        deriv_save_type_cb = ttk.Combobox(
+            deriv_action_frame,
+            textvariable=deriv_save_type_var,
+            values=["nome_proprio", "nome_e_sobrenome", "sobrenome",
+                    "alcunha", "ancestor_names", "house_names"],
+            state="normal",
+            width=14
+        )
+        deriv_save_type_cb.pack(side=tk.LEFT, padx=(0, 8))
+
+        def save_derivation():
+            sel = deriv_listbox.curselection()
+            if not sel:
+                messagebox.showwarning(
+                    "Aviso", "Selecione uma forma derivada.", parent=modal)
+                return
+            name = deriv_listbox.get(sel[0])
+            n_type = deriv_save_type_var.get().strip()
+            self.engine.gramataki_manager.save_culture_name(name, n_type)
+            self.show_status(f"Derivada '{name}' salva como '{n_type}'.")
+            refresh_cache_list()
+
+        def use_derivation_as_component():
+            sel = deriv_listbox.curselection()
+            if not sel:
+                return
+            name = deriv_listbox.get(sel[0])
+            selected_components.append(name)
+            comp_listbox.insert(tk.END, name)
+            update_assembled()
+
+        ttk.Button(deriv_action_frame, text="💾 Salvar Selecionada",
+                   command=save_derivation).pack(side=tk.LEFT, padx=(0, 5))
+        ttk.Button(deriv_action_frame, text="➕ Usar como Componente",
+                   command=use_derivation_as_component).pack(side=tk.LEFT)
+
+        bottom_bar = ttk.Frame(modal, padding=(15, 8))
+        bottom_bar.pack(fill=tk.X, side=tk.BOTTOM)
+
+        ttk.Button(bottom_bar, text="Fechar",
+                   command=modal.destroy).pack(side=tk.RIGHT)
+
+
+class GramatakiManager:
+    def __init__(self, profile, engine_ref):
+        self.profile = profile
+        self.engine = engine_ref
+        self.profile_id = profile.get('id', 'unknown')
+        self.dictionary = {}
+        self.storage_path = Path(
+            f"./gramatakis/{self.profile_id}_gramataki.json")
+
+        self.caches_dir = Path("./cultures/caches")
+        self.caches_dir.mkdir(parents=True, exist_ok=True)
+        self.unified_pools_path = self.caches_dir / \
+            f"{self.profile_id}_pools_cache.json"
+        self.culture_names_path = self.caches_dir / \
+            f"{self.profile_id}_names.json"
+        self.unified_pools = {}
+        self.culture_names = {}
+
+        self.load_dictionary()
+        self.load_culture_caches()
+
+    def load_dictionary(self):
+        if self.storage_path.exists():
+            try:
+                with open(self.storage_path, 'r', encoding='utf-8') as f:
+                    self.dictionary = json.load(f)
+            except Exception:
+                self.dictionary = {}
+        else:
+            self.dictionary = {}
+
+    def load_culture_caches(self):
+        self.unified_pools = {}
+        if self.unified_pools_path.exists():
+            try:
+                with open(self.unified_pools_path, 'r', encoding='utf-8') as f:
+                    data = json.load(f)
+                    self.unified_pools = data.get(self.profile_id, {})
+            except:
+                pass
+        if self.culture_names_path.exists():
+            try:
+                with open(self.culture_names_path, 'r', encoding='utf-8') as f:
+                    self.culture_names = json.load(f)
+            except:
+                pass
+
+    def save_dictionary(self):
+        if not self.storage_path.parent.exists():
+            self.storage_path.parent.mkdir(parents=True, exist_ok=True)
+        with open(self.storage_path, 'w', encoding='utf-8') as f:
+            json.dump(self.dictionary, f, indent=2, ensure_ascii=False)
+
+    def save_unified_pools(self):
+        all_pools = {}
+        if self.unified_pools_path.exists():
+            try:
+                with open(self.unified_pools_path, 'r', encoding='utf-8') as f:
+                    all_pools = json.load(f)
+            except:
+                pass
+        all_pools[self.profile_id] = self.unified_pools
+        with open(self.unified_pools_path, 'w', encoding='utf-8') as f:
+            json.dump(all_pools, f, indent=4, ensure_ascii=False)
+
+    def save_culture_name(self, name, name_type):
+        if name_type not in self.culture_names:
+            self.culture_names[name_type] = []
+        if name not in self.culture_names[name_type]:
+            self.culture_names[name_type].append(name)
+            with open(self.culture_names_path, 'w', encoding='utf-8') as f:
+                json.dump(self.culture_names, f, indent=4, ensure_ascii=False)
+
+    def save_entry(self, entry):
+        lemma = entry.get('lemma')
+        if lemma:
+            self.dictionary[lemma] = entry
+            self.save_dictionary()
+
+    def _get_pool_words(self, pool_key, culture):
+        words = set()
+        if pool_key in culture.get('semantic_pools', {}):
+            words.update(culture['semantic_pools'][pool_key])
+        if pool_key in self.unified_pools:
+            words.update(self.unified_pools[pool_key])
+        if pool_key in self.culture_names:
+            words.update(self.culture_names[pool_key])
+        return list(words)
+
+    def generate_onomastic_name(self, culture, formula_id, gender):
+        formula = culture.get('formulas', {}).get(formula_id, [])
+        components_rules = culture.get('components_rules', {})
+        filters = culture.get('phonological_filters', {})
+        generated_parts = []
+        etymology = []
+        for comp_name in formula:
+            rule = components_rules.get(comp_name)
+            if not rule:
+                continue
+            comp_result = self._generate_component(
+                comp_name, rule, culture, gender)
+            if comp_result and comp_result.get('word'):
+                generated_parts.append(comp_result['word'])
+                etymology.append({
+                    'component': comp_result['word'],
+                    'meaning': comp_result.get('meaning', ''),
+                    'type': comp_name
+                })
+        final_name = self._apply_phonological_filters(generated_parts, filters)
+        return {
+            'name': final_name,
+            'etymology': etymology
+        }
+
+    def _generate_component(self, comp_name, rule, culture, gender):
+        if comp_name in self.culture_names and random.random() < 0.25:
+            w1 = random.choice(self.culture_names[comp_name])
+            return {'word': w1, 'meaning': f"{w1} (Tradicional)"}
+
+        strategies = rule.get('generation_strategies', [])
+        if strategies:
+            weights = [s.get('weight', 1.0) for s in strategies]
+            strategy = random.choices(strategies, weights=weights, k=1)[0]
+            stype = strategy.get('type')
+            if stype == 'compound':
+                p1_words = self._get_pool_words(
+                    strategy.get('pool_1'), culture)
+                p2_words = self._get_pool_words(
+                    strategy.get('pool_2'), culture)
+                if p1_words and p2_words:
+                    w1 = random.choice(p1_words)
+                    w2 = random.choice(p2_words)
+                    cw1 = self.engine._get_word_form(w1, skip_cache=True)
+                    cw2 = self.engine._get_word_form(w2, skip_cache=True)
+                    if self.engine.compounding_handler.enabled:
+                        final_w = self.engine.compounding_handler.construct_compound(
+                            [cw1, cw2], self.engine)
+                    else:
+                        final_w = cw1 + cw2
+                    return {'word': final_w, 'meaning': f"{w1} + {w2}"}
+            elif stype == 'verbal_sentence':
+                pattern = strategy.get('pattern', [])
+                if len(pattern) >= 2:
+                    p1_words = self._get_pool_words(pattern[0], culture)
+                    p2_words = self._get_pool_words(pattern[1], culture)
+                    if p1_words and p2_words:
+                        w1 = random.choice(p1_words)
+                        w2 = random.choice(p2_words)
+                        cw1 = self.engine._get_word_form(
+                            w1, pos='VERB', skip_cache=True)
+                        cw2 = self.engine._get_word_form(
+                            w2, pos='NOUN', skip_cache=True)
+                        return {'word': cw1 + cw2, 'meaning': f"{w1} {w2}"}
+            elif stype == 'abstract_derivation':
+                pool_key = strategy.get('pool', 'concept_noun')
+                p_words = self._get_pool_words(pool_key, culture)
+                if p_words:
+                    w1 = random.choice(p_words)
+                    cw1 = self.engine._get_word_form(w1, skip_cache=True)
+                    if self.engine.affix_handler.enabled:
+                        der_rule = self.engine.affix_handler.get_derivation_rule(
+                            "NOUN", "NOUN", strategy.get('derivation_type', 'abstract_noun'))
+                        if der_rule:
+                            cw1 = self.engine.affix_handler.apply_affix(
+                                cw1, der_rule)
+                    return {'word': cw1, 'meaning': f"{w1} (Abstrato)"}
+
+        rel_type = rule.get('type')
+        if rel_type == 'relational':
+            target = rule.get('target')
+            connector = rule.get('connector', '')
+
+            gender_connectors = rule.get('gender_connectors', {})
+            if gender and gender in gender_connectors:
+                connector = gender_connectors[gender]
+            elif gender == 'Feminino' and 'connector_female' in rule:
+                connector = rule.get('connector_female')
+
+            target_rule = culture.get('components_rules', {}).get(target)
+            if target_rule:
+                target_res = self._generate_component(
+                    target, target_rule, culture, gender)
+                if target_res and target_res.get('word'):
+                    final_w = f"{connector} {target_res['word']}" if connector else target_res['word']
+                    meaning_str = f"{connector} ({target_res['meaning']})" if connector else target_res['meaning']
+                    return {'word': final_w.strip(), 'meaning': meaning_str.strip()}
+
+        elif rel_type == 'pool_selection':
+            target_pool = rule.get('pool')
+            p_words = self._get_pool_words(target_pool, culture)
+            if p_words:
+                w1 = random.choice(p_words)
+                cw1 = self.engine._get_word_form(w1, skip_cache=True)
+                return {'word': cw1, 'meaning': w1}
+
+        elif rel_type == 'affixation':
+            target_pool = rule.get('target')
+            affix_rule = rule.get('affix_rule', {})
+            p_words = self._get_pool_words(target_pool, culture)
+            if p_words:
+                w1 = random.choice(p_words)
+                cw1 = self.engine._get_word_form(w1, skip_cache=True)
+                final_w = cw1
+                if affix_rule:
+                    affix = affix_rule.get('affix', '')
+                    pos = affix_rule.get('position', 'suffix')
+                    if pos == 'suffix':
+                        final_w = cw1 + affix.replace('-', '')
+                    else:
+                        final_w = affix.replace('-', '') + cw1
+                return {'word': final_w, 'meaning': f"{w1} ({affix_rule.get('description', '')})"}
+
+        elif rel_type == 'trait_derivation':
+            target_pool = rule.get('target')
+            degree = rule.get('degree')
+            p_words = self._get_pool_words(target_pool, culture)
+            if p_words:
+                w1 = random.choice(p_words)
+                cw1 = self.engine._get_word_form(w1, skip_cache=True)
+                if self.engine.degree_handler.enabled and degree:
+                    cw1 = self.engine.degree_handler.apply_degree(cw1, degree)
+                return {'word': cw1, 'meaning': f"{w1} ({degree})"}
+
+        all_words = []
+        for pool_key in self.unified_pools:
+            all_words.extend(self.unified_pools[pool_key])
+        if 'semantic_pools' in culture:
+            for p in culture['semantic_pools'].values():
+                all_words.extend(p)
+        if all_words:
+            w1 = random.choice(all_words)
+            return {'word': self.engine._get_word_form(w1, skip_cache=True), 'meaning': w1}
+
+        return {'word': self.engine._generate_word_from_seed(comp_name, self.engine.global_seed + random.randint(1, 1000)), 'meaning': 'Desconhecido'}
+
+    def _apply_phonological_filters(self, name_parts, filters):
+        raw_name = " ".join(name_parts)
+        if filters.get('apply_sandhi_between_components', False) and self.engine.sandhi_handler.enabled:
+            final_name = self.engine.sandhi_handler.apply_sandhi(raw_name)
+        else:
+            final_name = raw_name
+        if filters.get('force_capitalization', True):
+            final_name = " ".join(part.capitalize()
+                                  for part in final_name.split())
+        return final_name
+
+    def generate_candidates(self, meaning, options):
+        candidates = []
+        is_abstract = options.get('abstract', False)
+        force_loan = options.get('force_loan', False)
+        register = options.get('register', 'Neutro')
+
+        clean_meaning = "".join(
+            c for c in meaning if c.isalnum() or c.isspace()).strip()
+
+        salt = options.get('salt', '')
+        seed_str = f"{clean_meaning}_{self.engine.global_seed}_gramataki_{salt}"
+        seed = int(hashlib.sha256(seed_str.encode()).hexdigest(), 16)
+
+        generated_word = ""
+        gloss = meaning
+
+        if force_loan:
+            generated_word = self.engine.loanword_handler.nativize_reserved_term(
+                clean_meaning.split()[0])
+            gloss = f"Empréstimo de: {clean_meaning}"
+
+        elif self.engine.compounding_handler.enabled and " " in clean_meaning:
+            parts = clean_meaning.split()
+            keywords = [w for w in parts if len(w) > 3]
+            if len(keywords) < 2:
+                keywords = parts[:2]
+
+            sub_words = []
+            for kw in keywords:
+                sub_word = self.engine._generate_word_from_seed(
+                    kw,
+                    int(hashlib.sha256(
+                        f"{kw}_{seed}".encode()).hexdigest(), 16)
+                )
+                sub_words.append(sub_word)
+
+            generated_word = self.engine.compounding_handler.construct_compound(
+                sub_words, self.engine)
+            if self.engine.sandhi_handler.enabled:
+                generated_word = self.engine.sandhi_handler.apply_sandhi(
+                    generated_word)
+            gloss = f"Composto de: {', '.join(keywords)}"
+
+        else:
+            if self.engine.root_handler.enabled:
+                root = self.engine.root_handler.generate_root(clean_meaning)
+                pattern = self.engine.root_handler.get_binyan_by_meaning(
+                    'basic')
+                generated_word = self.engine.root_handler.apply_pattern(
+                    root, pattern)
+                gloss = f"Raiz: {'-'.join(root)}"
+            else:
+                generated_word = self.engine._generate_word_from_seed(
+                    clean_meaning, seed)
+                gloss = "Geração fonotática simples"
+
+        if is_abstract and self.engine.affix_handler.enabled:
+            rule = self.engine.affix_handler.get_derivation_rule(
+                "ADJ", "NOUN", "abstract_noun")
+            if not rule:
+                rule = self.engine.affix_handler.get_derivation_rule(
+                    "VERB", "NOUN", "verbal_noun")
+
+            if rule:
+                generated_word = self.engine.affix_handler.apply_affix(
+                    generated_word, rule)
+                gloss += " + Derivação Abstrata"
+
+        if register != "Neutro":
+            generated_word = self.engine.phonology_handler.apply_rules(
+                generated_word, register.lower())
+            gloss += f" ({register})"
+
+        if self.engine.special_mechanics_handler.enabled:
+            generated_word = self.engine.special_mechanics_handler.apply_mechanics(
+                generated_word, clean_meaning, self.engine.global_seed)
+
+        candidates.append({
+            'lemma': generated_word,
+            'pos': 'NOUN' if is_abstract else 'UNK',
+            'score': 100,
+            'gloss': gloss
+        })
+
+        return candidates
+
+    def nativize_external_name(self, name):
+        if not name:
+            return ""
+        parts = name.split()
+        nativized_parts = []
+        for part in parts:
+            nativized = self.engine.phonology_handler.nativize_word(part)
+            if nativized:
+                nativized_parts.append(nativized.capitalize())
+        final_name = " ".join(nativized_parts)
+        if self.engine.sandhi_handler.enabled:
+            final_name = self.engine.sandhi_handler.apply_sandhi(final_name)
+        return final_name
+
+    def nativize_external_name_multiple(self, name, count=20):
+        if not name:
+            return []
+
+        ph = self.engine.phonology_handler
+        parts = name.strip().split()
+        results = []
+        seen = set()
+
+        base = self.nativize_external_name(name)
+        if base and base not in seen:
+            results.append(base)
+            seen.add(base)
+
+        vowels_list = list(ph.vowels) if ph.vowels else list("aeiou")
+        consonants_list = list(ph.consonants) if ph.consonants else []
+
+        attempts = 0
+        max_attempts = count * 8
+
+        while len(results) < count and attempts < max_attempts:
+            attempts += 1
+            seed_val = int(hashlib.sha256(
+                f"{name}_multi_{attempts}_{len(results)}".encode()
+            ).hexdigest(), 16)
+            rng = random.Random(seed_val)
+
+            deviation = 0.15 + (attempts / max_attempts) * 0.55
+
+            nativized_parts = []
+            for part in parts:
+                nativized_chars = []
+                for char in part.lower():
+                    char_norm = char
+                    is_vowel = char_norm in "aeiouyäëïöü"
+
+                    base_phoneme = ph.get_closest_phoneme(char_norm)
+
+                    if rng.random() < deviation:
+                        pool = vowels_list if is_vowel else consonants_list
+                        if pool:
+                            chosen = rng.choice(pool)
+                        else:
+                            chosen = base_phoneme
+                    else:
+                        chosen = base_phoneme
+
+                    nativized_chars.append(chosen)
+
+                raw = "".join(nativized_chars)
+                raw = ph.apply_monophthongization(raw)
+
+                if raw and not ph.is_valid_final(raw[-1]):
+                    valid_finals = [
+                        c for c in consonants_list if ph.is_valid_final(c)] + vowels_list
+                    if valid_finals:
+                        raw = raw[:-1] + rng.choice(valid_finals)
+
+                if raw:
+                    nativized_parts.append(raw.capitalize())
+
+            candidate = " ".join(nativized_parts)
+            if self.engine.sandhi_handler.enabled:
+                candidate = self.engine.sandhi_handler.apply_sandhi(candidate)
+
+            if candidate and candidate not in seen:
+                results.append(candidate)
+                seen.add(candidate)
+
+        return results
+
+    def generate_derived_forms(self, name, count=15):
+        if not name:
+            return []
+
+        ph = self.engine.phonology_handler
+        vowels_list = list(ph.vowels) if ph.vowels else list("aeiou")
+        consonants_list = list(ph.consonants) if ph.consonants else []
+
+        results = []
+        seen = set()
+        seen.add(name)
+
+        strategies = [
+            "change_suffix_vowel",
+            "change_suffix_consonant",
+            "swap_internal_vowel",
+            "add_vowel_suffix",
+            "add_consonant_suffix",
+            "truncate_and_extend",
+            "swap_final_consonant",
+            "insert_medial_vowel",
+            "change_initial_cluster",
+            "double_final_vowel",
+        ]
+
+        attempts = 0
+        max_attempts = count * 10
+
+        while len(results) < count and attempts < max_attempts:
+            attempts += 1
+            seed_val = int(hashlib.sha256(
+                f"{name}_deriv_{attempts}".encode()
+            ).hexdigest(), 16)
+            rng = random.Random(seed_val)
+
+            strategy = rng.choice(strategies)
+            base = name.lower().strip()
+            candidate = base
+
+            if strategy == "change_suffix_vowel" and len(base) >= 2:
+                stem = base[:-1]
+                if vowels_list:
+                    new_end = rng.choice(vowels_list)
+                    candidate = stem + new_end
+
+            elif strategy == "change_suffix_consonant" and len(base) >= 2:
+                if consonants_list:
+                    valid = [
+                        c for c in consonants_list if ph.is_valid_final(c)]
+                    if valid:
+                        candidate = base[:-1] + rng.choice(valid)
+
+            elif strategy == "swap_internal_vowel" and len(base) >= 3:
+                vowel_idxs = [i for i, c in enumerate(
+                    base) if c in (ph.vowels or "aeiou")]
+                if vowel_idxs and vowels_list and len(vowels_list) > 1:
+                    idx = rng.choice(vowel_idxs)
+                    current = base[idx]
+                    options = [v for v in vowels_list if v != current]
+                    if options:
+                        chars = list(base)
+                        chars[idx] = rng.choice(options)
+                        candidate = "".join(chars)
+
+            elif strategy == "add_vowel_suffix" and vowels_list:
+                candidate = base + rng.choice(vowels_list)
+
+            elif strategy == "add_consonant_suffix" and consonants_list:
+                valid = [c for c in consonants_list if ph.is_valid_final(c)]
+                if valid and not (base and base[-1] in (ph.consonants or "")):
+                    candidate = base + rng.choice(valid)
+
+            elif strategy == "truncate_and_extend" and len(base) >= 3:
+                trunc_at = rng.randint(max(1, len(base) - 2), len(base) - 1)
+                stem = base[:trunc_at]
+                if vowels_list:
+                    candidate = stem + rng.choice(vowels_list)
+                    if consonants_list and rng.random() < 0.4:
+                        valid = [
+                            c for c in consonants_list if ph.is_valid_final(c)]
+                        if valid:
+                            candidate = candidate + rng.choice(valid)
+
+            elif strategy == "swap_final_consonant" and len(base) >= 2:
+                if base[-1] in (ph.consonants or "") and consonants_list:
+                    valid = [c for c in consonants_list if ph.is_valid_final(
+                        c) and c != base[-1]]
+                    if valid:
+                        candidate = base[:-1] + rng.choice(valid)
+
+            elif strategy == "insert_medial_vowel" and len(base) >= 2 and vowels_list:
+                insert_pos = rng.randint(1, len(base) - 1)
+                candidate = base[:insert_pos] + \
+                    rng.choice(vowels_list) + base[insert_pos:]
+
+            elif strategy == "change_initial_cluster" and len(base) >= 2 and consonants_list:
+                if base[0] in (ph.consonants or ""):
+                    options = [c for c in consonants_list if c != base[0]]
+                    if options:
+                        candidate = rng.choice(options) + base[1:]
+
+            elif strategy == "double_final_vowel" and len(base) >= 1:
+                if base[-1] in (ph.vowels or "") and vowels_list:
+                    candidate = base + base[-1]
+
+            candidate = ph.apply_monophthongization(candidate)
+
+            if candidate and not ph.is_valid_final(candidate[-1]):
+                valid_finals = [
+                    c for c in consonants_list if ph.is_valid_final(c)] + vowels_list
+                if valid_finals:
+                    candidate = candidate[:-1] + rng.choice(valid_finals)
+
+            if candidate:
+                candidate = candidate.capitalize()
+                if self.engine.sandhi_handler.enabled:
+                    candidate = self.engine.sandhi_handler.apply_sandhi(
+                        candidate)
+
+            if candidate and candidate not in seen and len(candidate) >= 2:
+                results.append(candidate)
+                seen.add(candidate)
+
+        return results
+
+    def generate_random_name(self):
+        seed = random.randint(0, 9999999)
+        word = self.engine._generate_word_from_seed(
+            f"rand_{seed}", seed, is_derived=False)
+        if word and self.engine.sandhi_handler.enabled:
+            word = self.engine.sandhi_handler.apply_sandhi(word)
+        return word.capitalize() if word else ""
