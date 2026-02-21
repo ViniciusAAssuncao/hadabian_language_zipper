@@ -21,7 +21,8 @@ class GramatakiTab(ttk.Frame):
         self.load_current_culture()
 
     def setup_ui(self):
-        self.option_add('*TCombobox*Listbox.foreground', self.colors.get("text", "black"))
+        self.option_add('*TCombobox*Listbox.foreground',
+                        self.colors.get("text", "black"))
         self.main_container = ttk.Frame(self, padding=20)
         self.main_container.pack(fill=tk.BOTH, expand=True)
         self.status_var = tk.StringVar()
@@ -55,14 +56,17 @@ class GramatakiTab(ttk.Frame):
         left_outer = ttk.Frame(main_pane)
         main_pane.add(left_outer, weight=1)
 
-        canvas = tk.Canvas(left_outer, bg=self.colors.get("bg", "#f0f0f0"), highlightthickness=0)
-        scrollbar = ttk.Scrollbar(left_outer, orient="vertical", command=canvas.yview)
+        canvas = tk.Canvas(left_outer, bg=self.colors.get(
+            "bg", "#f0f0f0"), highlightthickness=0)
+        scrollbar = ttk.Scrollbar(
+            left_outer, orient="vertical", command=canvas.yview)
         canvas.configure(yscrollcommand=scrollbar.set)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         canvas.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
 
         left_frame = ttk.Frame(canvas, padding=15)
-        canvas_window = canvas.create_window((0, 0), window=left_frame, anchor="nw")
+        canvas_window = canvas.create_window(
+            (0, 0), window=left_frame, anchor="nw")
 
         def on_frame_configure(event):
             canvas.configure(scrollregion=canvas.bbox("all"))
@@ -87,7 +91,8 @@ class GramatakiTab(ttk.Frame):
         ttk.Label(gender_frame, text="Gênero:", font=("Segoe UI", 9),
                   foreground=self.colors["fg_secondary"]).pack(side=tk.LEFT, padx=(0, 6))
         self.gender_cb = ttk.Combobox(gender_frame, textvariable=self.gender_var,
-                                      values=["Masculino", "Feminino", "Neutro"],
+                                      values=["Masculino",
+                                              "Feminino", "Neutro"],
                                       state="readonly", font=("Segoe UI", 11),
                                       foreground=self.colors.get("text", "black"), width=12)
         self.gender_cb.pack(side=tk.LEFT)
@@ -161,10 +166,12 @@ class GramatakiTab(ttk.Frame):
         self.cache_browse_type_var = tk.StringVar(value="(todos)")
         self.cache_browse_type_cb = ttk.Combobox(
             left_frame, textvariable=self.cache_browse_type_var,
-            values=["(todos)", "nome_proprio", "nome_e_sobrenome", "sobrenome", "alcunha", "ancestor_names", "house_names"],
+            values=["(todos)", "nome_proprio", "nome_e_sobrenome", "sobrenome", "alcunha",
+                    "toponimo", "cidade", "regiao", "geografico", "ancestor_names", "house_names"],
             state="readonly", font=("Segoe UI", 10), foreground=self.colors.get("text", "black"))
         self.cache_browse_type_cb.pack(fill=tk.X, pady=(2, 6))
-        self.cache_browse_type_var.trace_add("write", lambda *a: self._refresh_cache_suggestions())
+        self.cache_browse_type_var.trace_add(
+            "write", lambda *a: self._refresh_cache_suggestions())
 
         cache_list_frame = ttk.Frame(left_frame)
         cache_list_frame.pack(fill=tk.X, pady=(0, 4))
@@ -178,9 +185,11 @@ class GramatakiTab(ttk.Frame):
                                          command=self.cache_suggest_listbox.yview)
         cache_scroll_sug.pack(side=tk.RIGHT, fill=tk.Y)
         self.cache_suggest_listbox.config(yscrollcommand=cache_scroll_sug.set)
-        self.cache_suggest_listbox.bind("<Double-Button-1>", self._on_cache_suggest_double_click)
+        self.cache_suggest_listbox.bind(
+            "<Double-Button-1>", self._on_cache_suggest_double_click)
 
-        right_frame = ttk.LabelFrame(main_pane, text="Resultado e Etimologia", padding=20)
+        right_frame = ttk.LabelFrame(
+            main_pane, text="Resultado e Etimologia", padding=20)
         main_pane.add(right_frame, weight=2)
 
         ttk.Label(right_frame, text="Nome Gerado:", font=("Segoe UI", 10, "bold"),
@@ -207,7 +216,8 @@ class GramatakiTab(ttk.Frame):
                                     command=self.candidates_listbox.yview)
         cand_scroll.pack(side=tk.RIGHT, fill=tk.Y)
         self.candidates_listbox.config(yscrollcommand=cand_scroll.set)
-        self.candidates_listbox.bind("<Double-Button-1>", self._on_candidate_double_click)
+        self.candidates_listbox.bind(
+            "<Double-Button-1>", self._on_candidate_double_click)
 
         ttk.Label(right_frame, text="Glossário Etimológico:", font=("Segoe UI", 10, "bold"),
                   foreground=self.colors["fg_secondary"]).pack(anchor="w", pady=(0, 5))
@@ -218,7 +228,8 @@ class GramatakiTab(ttk.Frame):
                                       font=("Consolas", 11), borderwidth=1, relief="solid",
                                       padx=10, pady=10)
         self.text_etymology.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        scrollbar = ttk.Scrollbar(text_frame, orient="vertical", command=self.text_etymology.yview)
+        scrollbar = ttk.Scrollbar(
+            text_frame, orient="vertical", command=self.text_etymology.yview)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.text_etymology.config(yscrollcommand=scrollbar.set)
         self.text_etymology.configure(state="disabled")
@@ -230,7 +241,8 @@ class GramatakiTab(ttk.Frame):
         self.name_type_var = tk.StringVar(value="nome_proprio")
         self.name_type_cb = ttk.Combobox(
             save_frame, textvariable=self.name_type_var,
-            values=["nome_proprio", "nome_e_sobrenome", "sobrenome", "alcunha", "ancestor_names", "house_names"],
+            values=["nome_proprio", "nome_e_sobrenome", "sobrenome", "alcunha", "toponimo",
+                    "cidade", "regiao", "geografico", "ancestor_names", "house_names"],
             state="normal", width=15)
         self.name_type_cb.pack(side=tk.LEFT, padx=(0, 10))
         ttk.Button(save_frame, text="💾 Salvar no Cachê",
@@ -241,7 +253,8 @@ class GramatakiTab(ttk.Frame):
     def _build_nativizer_tab(self):
         container = ttk.Frame(self.tab_nativizer, padding=40)
         container.pack(fill=tk.BOTH, expand=True)
-        input_frame = ttk.LabelFrame(container, text="Ajuste e Nativização", padding=25)
+        input_frame = ttk.LabelFrame(
+            container, text="Ajuste e Nativização", padding=25)
         input_frame.pack(fill=tk.X, pady=(0, 30))
         ttk.Label(input_frame, text="Nome Terrestre (Base):", font=("Segoe UI", 11, "bold"),
                   foreground=self.colors["fg_secondary"]).pack(anchor="w", pady=(0, 5))
@@ -256,7 +269,8 @@ class GramatakiTab(ttk.Frame):
                    command=self.nativize_name_more).pack(side=tk.LEFT, expand=True, fill=tk.X, padx=(0, 10))
         ttk.Button(btn_frame, text="🎲 Gerar Aleatório (Sem Significado)",
                    command=self.generate_random_name).pack(side=tk.LEFT, expand=True, fill=tk.X, padx=(10, 0))
-        output_frame = ttk.LabelFrame(container, text="Sugestões Nativizadas", padding=25)
+        output_frame = ttk.LabelFrame(
+            container, text="Sugestões Nativizadas", padding=25)
         output_frame.pack(fill=tk.BOTH, expand=True)
         ttk.Label(output_frame, text="Variantes Geradas (duplo-clique para usar):",
                   font=("Segoe UI", 11, "bold"),
@@ -269,12 +283,15 @@ class GramatakiTab(ttk.Frame):
             bg=self.colors.get("input_bg", "#ffffff"),
             selectbackground=self.colors.get("accent", "#0078D7"),
             relief="solid", borderwidth=1, height=10)
-        self.listbox_nativize_results.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        self.listbox_nativize_results.bind("<Double-Button-1>", self._on_nativize_double_click)
+        self.listbox_nativize_results.pack(
+            side=tk.LEFT, fill=tk.BOTH, expand=True)
+        self.listbox_nativize_results.bind(
+            "<Double-Button-1>", self._on_nativize_double_click)
         nativize_scroll = ttk.Scrollbar(list_frame, orient="vertical",
                                         command=self.listbox_nativize_results.yview)
         nativize_scroll.pack(side=tk.RIGHT, fill=tk.Y)
-        self.listbox_nativize_results.config(yscrollcommand=nativize_scroll.set)
+        self.listbox_nativize_results.config(
+            yscrollcommand=nativize_scroll.set)
         nativize_action_frame = ttk.Frame(output_frame)
         nativize_action_frame.pack(fill=tk.X)
         ttk.Label(nativize_action_frame, text="Classificação:", font=("Segoe UI", 9),
@@ -282,7 +299,8 @@ class GramatakiTab(ttk.Frame):
         self.nativize_save_type_var = tk.StringVar(value="nome_proprio")
         nativize_type_cb = ttk.Combobox(
             nativize_action_frame, textvariable=self.nativize_save_type_var,
-            values=["nome_proprio", "nome_e_sobrenome", "sobrenome", "alcunha", "ancestor_names", "house_names"],
+            values=["nome_proprio", "nome_e_sobrenome", "sobrenome", "alcunha", "toponimo",
+                    "cidade", "regiao", "geografico", "ancestor_names", "house_names"],
             state="normal", width=15)
         nativize_type_cb.pack(side=tk.LEFT, padx=(0, 10))
         ttk.Button(nativize_action_frame, text="💾 Salvar Selecionado",
@@ -294,7 +312,8 @@ class GramatakiTab(ttk.Frame):
         editor_notebook = ttk.Notebook(self.tab_editor)
         editor_notebook.pack(fill=tk.BOTH, expand=True, pady=5)
         self.pool_tab = ttk.Frame(editor_notebook, padding=20)
-        editor_notebook.add(self.pool_tab, text="Gerenciador de Pools Unificados")
+        editor_notebook.add(
+            self.pool_tab, text="Gerenciador de Pools Unificados")
         pool_top = ttk.Frame(self.pool_tab)
         pool_top.pack(fill=tk.X, pady=(0, 15))
         ttk.Label(pool_top, text="Pool Selecionado:", font=("Segoe UI", 11, "bold"),
@@ -305,7 +324,8 @@ class GramatakiTab(ttk.Frame):
                                     foreground=self.colors.get("fg_secondary", "black"))
         self.pool_cb.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=15)
         self.pool_cb.bind("<<ComboboxSelected>>", self.on_pool_select)
-        ttk.Button(pool_top, text="➕ Novo Pool", command=self.create_new_pool).pack(side=tk.RIGHT)
+        ttk.Button(pool_top, text="➕ Novo Pool",
+                   command=self.create_new_pool).pack(side=tk.RIGHT)
         list_frame = ttk.Frame(self.pool_tab)
         list_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 15))
         self.pool_listbox = tk.Listbox(
@@ -314,7 +334,8 @@ class GramatakiTab(ttk.Frame):
             selectbackground=self.colors.get("accent", "#0078D7"),
             font=("Segoe UI", 12), relief="solid", borderwidth=1)
         self.pool_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        scrollbar = ttk.Scrollbar(list_frame, orient="vertical", command=self.pool_listbox.yview)
+        scrollbar = ttk.Scrollbar(
+            list_frame, orient="vertical", command=self.pool_listbox.yview)
         scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         self.pool_listbox.config(yscrollcommand=scrollbar.set)
         pool_bot = ttk.Frame(self.pool_tab)
@@ -324,7 +345,8 @@ class GramatakiTab(ttk.Frame):
                                    font=("Segoe UI", 12),
                                    foreground=self.colors.get("text", "black"))
         entry_new_word.pack(side=tk.LEFT, fill=tk.X, expand=True, padx=(0, 10))
-        ttk.Button(pool_bot, text="Adicionar", command=self.add_to_pool).pack(side=tk.LEFT, padx=5)
+        ttk.Button(pool_bot, text="Adicionar",
+                   command=self.add_to_pool).pack(side=tk.LEFT, padx=5)
         ttk.Button(pool_bot, text="Remover Selecionado",
                    command=self.remove_from_pool).pack(side=tk.LEFT, padx=5)
         ttk.Button(pool_bot, text="💾 Salvar Cultura", style="Accent.TButton",
@@ -339,7 +361,8 @@ class GramatakiTab(ttk.Frame):
             insertbackground=self.colors.get("text", "black"),
             relief="solid", borderwidth=1, padx=10, pady=10)
         self.json_text.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        json_scroll = ttk.Scrollbar(json_frame, orient="vertical", command=self.json_text.yview)
+        json_scroll = ttk.Scrollbar(
+            json_frame, orient="vertical", command=self.json_text.yview)
         json_scroll.pack(side=tk.RIGHT, fill=tk.Y)
         self.json_text.config(yscrollcommand=json_scroll.set)
         ttk.Button(self.json_tab, text="✔️ Validar e Salvar JSON", style="Accent.TButton",
@@ -401,7 +424,8 @@ class GramatakiTab(ttk.Frame):
         self._refresh_cache_suggestions()
 
         self.json_text.delete("1.0", tk.END)
-        self.json_text.insert("1.0", json.dumps(self.culture_data, indent=4, ensure_ascii=False))
+        self.json_text.insert("1.0", json.dumps(
+            self.culture_data, indent=4, ensure_ascii=False))
 
     def on_pool_select(self, event=None):
         self.pool_listbox.delete(0, tk.END)
@@ -424,7 +448,8 @@ class GramatakiTab(ttk.Frame):
             if type_filter not in ("(todos)", n_type):
                 continue
             for name in names:
-                self.cache_suggest_listbox.insert(tk.END, f"{name}  [{n_type}]")
+                self.cache_suggest_listbox.insert(
+                    tk.END, f"{name}  [{n_type}]")
 
     def _on_cache_suggest_double_click(self, event):
         sel = self.cache_suggest_listbox.curselection()
@@ -452,12 +477,14 @@ class GramatakiTab(ttk.Frame):
     def create_new_pool(self):
         if not self.engine:
             return
-        new_pool = simpledialog.askstring("Novo Pool", "Nome do novo pool semântico:")
+        new_pool = simpledialog.askstring(
+            "Novo Pool", "Nome do novo pool semântico:")
         if new_pool:
             if new_pool not in self.engine.gramataki_manager.unified_pools:
                 self.engine.gramataki_manager.unified_pools[new_pool] = []
                 self.engine.gramataki_manager.save_unified_pools()
-                pools = list(self.engine.gramataki_manager.unified_pools.keys())
+                pools = list(
+                    self.engine.gramataki_manager.unified_pools.keys())
                 self.pool_cb['values'] = pools
                 self.blend_pool1_cb['values'] = pools
                 self.blend_pool2_cb['values'] = pools
@@ -472,7 +499,8 @@ class GramatakiTab(ttk.Frame):
         word = self.new_word_var.get().strip()
         if pool_name and word:
             if word not in self.engine.gramataki_manager.unified_pools[pool_name]:
-                self.engine.gramataki_manager.unified_pools[pool_name].append(word)
+                self.engine.gramataki_manager.unified_pools[pool_name].append(
+                    word)
                 self.engine.gramataki_manager.save_unified_pools()
                 self.on_pool_select()
                 self.new_word_var.set("")
@@ -517,13 +545,15 @@ class GramatakiTab(ttk.Frame):
             messagebox.showwarning("Aviso", "Motor linguístico não carregado.")
             return
         if not self.culture_data or not self.culture_data.get("formulas"):
-            messagebox.showwarning("Aviso", "A cultura não possui fórmulas onomásticas definidas.")
+            messagebox.showwarning(
+                "Aviso", "A cultura não possui fórmulas onomásticas definidas.")
             return
         formula = self.formula_var.get()
         gender = self.gender_var.get()
         if not formula:
             return
-        result = self.engine.gramataki_manager.generate_onomastic_name(self.culture_data, formula, gender)
+        result = self.engine.gramataki_manager.generate_onomastic_name(
+            self.culture_data, formula, gender)
         self.entry_name.delete(0, tk.END)
         self.entry_name.insert(0, result['name'])
         self.text_etymology.configure(state="normal")
@@ -533,9 +563,11 @@ class GramatakiTab(ttk.Frame):
             self.text_etymology.insert(tk.END, line)
         self.text_etymology.configure(state="disabled")
         if result['name'] and result['name'] not in [self.candidates_listbox.get(i).split("  —")[0].strip()
-                                                      for i in range(self.candidates_listbox.size())]:
-            etym_summary = " + ".join(e['meaning'] for e in result['etymology'][:3])
-            self.candidates_listbox.insert(0, f"{result['name']}  — {etym_summary}")
+                                                     for i in range(self.candidates_listbox.size())]:
+            etym_summary = " + ".join(e['meaning']
+                                      for e in result['etymology'][:3])
+            self.candidates_listbox.insert(
+                0, f"{result['name']}  — {etym_summary}")
 
     def generate_from_concept(self, more=False):
         if not self.engine:
@@ -543,17 +575,20 @@ class GramatakiTab(ttk.Frame):
             return
         concept = self.concept_var.get().strip()
         if not concept:
-            messagebox.showwarning("Aviso", "Digite um conceito para gerar o nome.")
+            messagebox.showwarning(
+                "Aviso", "Digite um conceito para gerar o nome.")
             return
         existing = set(self.candidates_listbox.get(i).split("  —")[0].strip()
                        for i in range(self.candidates_listbox.size()))
-        results = self.engine.gramataki_manager.generate_names_from_concept(concept, count=8)
+        results = self.engine.gramataki_manager.generate_names_from_concept(
+            concept, culture=self.culture_data, count=8)
         added = 0
         first_new = None
         for r in results:
             name = r['name']
             if name and name not in existing:
-                self.candidates_listbox.insert(tk.END, f"{name}  — {r.get('etymology', concept)}")
+                self.candidates_listbox.insert(
+                    tk.END, f"{name}  — {r.get('etymology', concept)}")
                 existing.add(name)
                 added += 1
                 if first_new is None:
@@ -564,15 +599,19 @@ class GramatakiTab(ttk.Frame):
             self.text_etymology.configure(state="normal")
             self.text_etymology.delete("1.0", tk.END)
             self.text_etymology.insert(tk.END, f"Conceito: \"{concept}\"\n")
-            first_result = next((r for r in results if r['name'] == first_new), None)
+            first_result = next(
+                (r for r in results if r['name'] == first_new), None)
             if first_result and first_result.get('components'):
                 for comp in first_result['components']:
-                    self.text_etymology.insert(tk.END, f"  {comp['keyword']} → {comp['form']}\n")
+                    self.text_etymology.insert(
+                        tk.END, f"  {comp['keyword']} → {comp['form']}\n")
             self.text_etymology.configure(state="disabled")
         if added > 0:
-            self.show_status(f"{added} nome(s) gerado(s) do conceito '{concept}'.")
+            self.show_status(
+                f"{added} nome(s) gerado(s) do conceito '{concept}'.")
         else:
-            self.show_status("Nenhum novo nome gerado. Tente reformular o conceito.")
+            self.show_status(
+                "Nenhum novo nome gerado. Tente reformular o conceito.")
 
     def generate_blend_names(self, more=False):
         if not self.engine:
@@ -589,7 +628,8 @@ class GramatakiTab(ttk.Frame):
         if mode == "basesuffixe":
             results_raw = self.engine.gramataki_manager.generate_basesuffixe_style_names(
                 pool1, pool2, self.culture_data, count=12)
-            results = [{'name': n, 'etymology': f"{pool1} + {pool2}"} for n in results_raw]
+            results = [{'name': n, 'etymology': f"{pool1} + {pool2}"}
+                       for n in results_raw]
         else:
             pools = [pool1]
             if pool2 and pool2 != pool1:
@@ -612,12 +652,14 @@ class GramatakiTab(ttk.Frame):
             self.entry_name.insert(0, first_new)
             self.text_etymology.configure(state="normal")
             self.text_etymology.delete("1.0", tk.END)
-            self.text_etymology.insert(tk.END, f"Modo: {mode}\nPool base: {pool1}\nPool secundário: {pool2}\n")
+            self.text_etymology.insert(
+                tk.END, f"Modo: {mode}\nPool base: {pool1}\nPool secundário: {pool2}\n")
             self.text_etymology.configure(state="disabled")
         if added > 0:
             self.show_status(f"{added} nome(s) gerado(s) por mesclagem.")
         else:
-            self.show_status("Nenhum novo nome gerado. Tente pools diferentes.")
+            self.show_status(
+                "Nenhum novo nome gerado. Tente pools diferentes.")
 
     def save_generated_name(self):
         if not self.engine:
@@ -627,7 +669,8 @@ class GramatakiTab(ttk.Frame):
         if name and name_type:
             self.engine.gramataki_manager.save_culture_name(name, name_type)
             self._refresh_cache_suggestions()
-            self.show_status(f"Nome '{name}' salvo no cachê como '{name_type}'.")
+            self.show_status(
+                f"Nome '{name}' salvo no cachê como '{name_type}'.")
 
     def nativize_name(self):
         if not self.engine:
@@ -636,7 +679,8 @@ class GramatakiTab(ttk.Frame):
         if not base_name:
             return
         self._clear_nativize_results()
-        variants = self.engine.gramataki_manager.nativize_external_name_multiple(base_name, count=20)
+        variants = self.engine.gramataki_manager.nativize_external_name_multiple(
+            base_name, count=20)
         for v in variants:
             if v:
                 self.listbox_nativize_results.insert(tk.END, v)
@@ -648,7 +692,8 @@ class GramatakiTab(ttk.Frame):
         if not base_name:
             return
         existing = set(self.listbox_nativize_results.get(0, tk.END))
-        variants = self.engine.gramataki_manager.nativize_external_name_multiple(base_name, count=20)
+        variants = self.engine.gramataki_manager.nativize_external_name_multiple(
+            base_name, count=20)
         added = 0
         for v in variants:
             if v and v not in existing:
@@ -658,7 +703,8 @@ class GramatakiTab(ttk.Frame):
         if added > 0:
             self.show_status(f"{added} novas variantes adicionadas.")
         else:
-            self.show_status("Nenhuma nova variante encontrada. Tente novamente.")
+            self.show_status(
+                "Nenhuma nova variante encontrada. Tente novamente.")
 
     def _on_nativize_double_click(self, event):
         selection = self.listbox_nativize_results.curselection()
@@ -675,7 +721,8 @@ class GramatakiTab(ttk.Frame):
             return
         selection = self.listbox_nativize_results.curselection()
         if not selection:
-            messagebox.showwarning("Aviso", "Selecione uma variante para salvar.")
+            messagebox.showwarning(
+                "Aviso", "Selecione uma variante para salvar.")
             return
         name = self.listbox_nativize_results.get(selection[0])
         name_type = self.nativize_save_type_var.get().strip()
@@ -726,14 +773,15 @@ class GramatakiTab(ttk.Frame):
                   foreground=self.colors["fg_secondary"]).pack(side=tk.LEFT)
         modal_type_var = tk.StringVar(value="(todos)")
         all_types = ["(todos)", "nome_proprio", "nome_e_sobrenome", "sobrenome",
-                     "alcunha", "ancestor_names", "house_names"]
+                     "alcunha", "toponimo", "cidade", "regiao", "geografico", "ancestor_names", "house_names"]
         modal_type_cb = ttk.Combobox(filter_frame, textvariable=modal_type_var,
                                      values=all_types, state="readonly", width=14)
         modal_type_cb.pack(side=tk.LEFT, padx=(5, 8))
         ttk.Label(filter_frame, text="Busca:", font=("Segoe UI", 9),
                   foreground=self.colors["fg_secondary"]).pack(side=tk.LEFT)
         modal_search_var = tk.StringVar()
-        modal_search_entry = ttk.Entry(filter_frame, textvariable=modal_search_var, width=14)
+        modal_search_entry = ttk.Entry(
+            filter_frame, textvariable=modal_search_var, width=14)
         modal_search_entry.pack(side=tk.LEFT, padx=(5, 0))
 
         cache_list_frame = ttk.Frame(left_panel)
@@ -744,7 +792,8 @@ class GramatakiTab(ttk.Frame):
             selectbackground=self.colors.get("accent", "#0078D7"),
             font=("Segoe UI", 11), relief="solid", borderwidth=1, height=18)
         cache_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        cache_scroll = ttk.Scrollbar(cache_list_frame, orient="vertical", command=cache_listbox.yview)
+        cache_scroll = ttk.Scrollbar(
+            cache_list_frame, orient="vertical", command=cache_listbox.yview)
         cache_scroll.pack(side=tk.RIGHT, fill=tk.Y)
         cache_listbox.config(yscrollcommand=cache_scroll.set)
 
@@ -777,7 +826,8 @@ class GramatakiTab(ttk.Frame):
         gender_tab = ttk.Frame(right_notebook, padding=10)
         right_notebook.add(gender_tab, text="Derivação de Gênero / Forma")
 
-        assembly_lf = ttk.LabelFrame(assembly_tab, text="Componentes Selecionados", padding=12)
+        assembly_lf = ttk.LabelFrame(
+            assembly_tab, text="Componentes Selecionados", padding=12)
         assembly_lf.pack(fill=tk.X, pady=(0, 10))
         selected_components = []
         comp_list_frame = ttk.Frame(assembly_lf)
@@ -788,17 +838,20 @@ class GramatakiTab(ttk.Frame):
             selectbackground=self.colors.get("accent", "#0078D7"),
             font=("Segoe UI", 12), relief="solid", borderwidth=1, height=4)
         comp_listbox.pack(side=tk.LEFT, fill=tk.X, expand=True)
-        comp_scroll = ttk.Scrollbar(comp_list_frame, orient="vertical", command=comp_listbox.yview)
+        comp_scroll = ttk.Scrollbar(
+            comp_list_frame, orient="vertical", command=comp_listbox.yview)
         comp_scroll.pack(side=tk.RIGHT, fill=tk.Y)
         comp_listbox.config(yscrollcommand=comp_scroll.set)
         comp_btn_frame = ttk.Frame(assembly_lf)
         comp_btn_frame.pack(fill=tk.X)
 
-        assembled_lf = ttk.LabelFrame(assembly_tab, text="Nome Montado", padding=12)
+        assembled_lf = ttk.LabelFrame(
+            assembly_tab, text="Nome Montado", padding=12)
         assembled_lf.pack(fill=tk.X, pady=(0, 10))
         assembled_var = tk.StringVar()
         assembled_entry = tk.Entry(
-            assembled_lf, textvariable=assembled_var, font=("Segoe UI", 22, "bold"),
+            assembled_lf, textvariable=assembled_var, font=(
+                "Segoe UI", 22, "bold"),
             fg=self.colors.get("text", "black"), bg=self.colors.get("input_bg", "#ffffff"),
             justify="center", relief="solid", borderwidth=1)
         assembled_entry.pack(fill=tk.X, pady=(0, 10))
@@ -845,7 +898,8 @@ class GramatakiTab(ttk.Frame):
         assembled_type_var = tk.StringVar(value="nome_e_sobrenome")
         assembled_type_cb = ttk.Combobox(
             assembled_save_frame, textvariable=assembled_type_var,
-            values=["nome_proprio", "nome_e_sobrenome", "sobrenome", "alcunha", "ancestor_names", "house_names"],
+            values=["nome_proprio", "nome_e_sobrenome", "sobrenome", "alcunha", "toponimo",
+                    "cidade", "regiao", "geografico", "ancestor_names", "house_names"],
             state="normal", width=15)
         assembled_type_cb.pack(side=tk.LEFT, padx=(0, 10))
 
@@ -853,7 +907,8 @@ class GramatakiTab(ttk.Frame):
             name = assembled_var.get().strip()
             n_type = assembled_type_var.get().strip()
             if not name:
-                messagebox.showwarning("Aviso", "Nenhum nome montado para salvar.", parent=modal)
+                messagebox.showwarning(
+                    "Aviso", "Nenhum nome montado para salvar.", parent=modal)
                 return
             self.engine.gramataki_manager.save_culture_name(name, n_type)
             self._refresh_cache_suggestions()
@@ -872,14 +927,16 @@ class GramatakiTab(ttk.Frame):
         ttk.Button(assembled_save_frame, text="📋 Usar como Nome Gerado",
                    command=use_as_generated).pack(side=tk.LEFT)
 
-        derivation_lf = ttk.LabelFrame(assembly_tab, text="Derivação de Formas Fonológicas", padding=12)
+        derivation_lf = ttk.LabelFrame(
+            assembly_tab, text="Derivação de Formas Fonológicas", padding=12)
         derivation_lf.pack(fill=tk.BOTH, expand=True)
         deriv_top = ttk.Frame(derivation_lf)
         deriv_top.pack(fill=tk.X, pady=(0, 8))
         ttk.Label(deriv_top, text="Base para derivação:", font=("Segoe UI", 9),
                   foreground=self.colors["fg_secondary"]).pack(side=tk.LEFT, padx=(0, 5))
         deriv_base_var = tk.StringVar()
-        deriv_base_entry = ttk.Entry(deriv_top, textvariable=deriv_base_var, width=20, font=("Segoe UI", 11))
+        deriv_base_entry = ttk.Entry(
+            deriv_top, textvariable=deriv_base_var, width=20, font=("Segoe UI", 11))
         deriv_base_entry.pack(side=tk.LEFT, padx=(0, 8))
 
         def fill_deriv_from_cache():
@@ -895,8 +952,10 @@ class GramatakiTab(ttk.Frame):
             if name:
                 deriv_base_var.set(name)
 
-        ttk.Button(deriv_top, text="← Do Cachê", command=fill_deriv_from_cache).pack(side=tk.LEFT, padx=(0, 5))
-        ttk.Button(deriv_top, text="← Do Montado", command=fill_deriv_from_assembled).pack(side=tk.LEFT)
+        ttk.Button(deriv_top, text="← Do Cachê", command=fill_deriv_from_cache).pack(
+            side=tk.LEFT, padx=(0, 5))
+        ttk.Button(deriv_top, text="← Do Montado",
+                   command=fill_deriv_from_assembled).pack(side=tk.LEFT)
 
         deriv_result_frame = ttk.Frame(derivation_lf)
         deriv_result_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 8))
@@ -906,17 +965,20 @@ class GramatakiTab(ttk.Frame):
             selectbackground=self.colors.get("accent", "#0078D7"),
             font=("Segoe UI", 14, "bold"), relief="solid", borderwidth=1, height=5)
         deriv_listbox.pack(side=tk.LEFT, fill=tk.BOTH, expand=True)
-        deriv_scroll = ttk.Scrollbar(deriv_result_frame, orient="vertical", command=deriv_listbox.yview)
+        deriv_scroll = ttk.Scrollbar(
+            deriv_result_frame, orient="vertical", command=deriv_listbox.yview)
         deriv_scroll.pack(side=tk.RIGHT, fill=tk.Y)
         deriv_listbox.config(yscrollcommand=deriv_scroll.set)
 
         def generate_derivations():
             base = deriv_base_var.get().strip()
             if not base:
-                messagebox.showwarning("Aviso", "Informe uma base para derivar.", parent=modal)
+                messagebox.showwarning(
+                    "Aviso", "Informe uma base para derivar.", parent=modal)
                 return
             deriv_listbox.delete(0, tk.END)
-            results = self.engine.gramataki_manager.generate_derived_forms(base, count=15)
+            results = self.engine.gramataki_manager.generate_derived_forms(
+                base, count=15)
             for r in results:
                 deriv_listbox.insert(tk.END, r)
 
@@ -925,7 +987,8 @@ class GramatakiTab(ttk.Frame):
             if not base:
                 return
             existing = set(deriv_listbox.get(0, tk.END))
-            results = self.engine.gramataki_manager.generate_derived_forms(base, count=15)
+            results = self.engine.gramataki_manager.generate_derived_forms(
+                base, count=15)
             added = 0
             for r in results:
                 if r not in existing:
@@ -944,14 +1007,16 @@ class GramatakiTab(ttk.Frame):
         deriv_save_type_var = tk.StringVar(value="nome_proprio")
         deriv_save_type_cb = ttk.Combobox(
             deriv_action_frame, textvariable=deriv_save_type_var,
-            values=["nome_proprio", "nome_e_sobrenome", "sobrenome", "alcunha", "ancestor_names", "house_names"],
+            values=["nome_proprio", "nome_e_sobrenome", "sobrenome", "alcunha", "toponimo",
+                    "cidade", "regiao", "geografico", "ancestor_names", "house_names"],
             state="normal", width=14)
         deriv_save_type_cb.pack(side=tk.LEFT, padx=(0, 8))
 
         def save_derivation():
             sel = deriv_listbox.curselection()
             if not sel:
-                messagebox.showwarning("Aviso", "Selecione uma forma derivada.", parent=modal)
+                messagebox.showwarning(
+                    "Aviso", "Selecione uma forma derivada.", parent=modal)
                 return
             name = deriv_listbox.get(sel[0])
             n_type = deriv_save_type_var.get().strip()
@@ -974,7 +1039,8 @@ class GramatakiTab(ttk.Frame):
         ttk.Button(deriv_action_frame, text="➕ Usar como Componente",
                    command=use_derivation_as_component).pack(side=tk.LEFT)
 
-        gender_top_frame = ttk.LabelFrame(gender_tab, text="Base para Derivação de Gênero", padding=12)
+        gender_top_frame = ttk.LabelFrame(
+            gender_tab, text="Base para Derivação de Gênero", padding=12)
         gender_top_frame.pack(fill=tk.X, pady=(0, 10))
 
         gender_base_row = ttk.Frame(gender_top_frame)
@@ -1010,7 +1076,8 @@ class GramatakiTab(ttk.Frame):
         ttk.Button(gender_base_row, text="← Nome Gerado",
                    command=fill_gender_from_main).pack(side=tk.LEFT)
 
-        gender_rules_info = ttk.LabelFrame(gender_top_frame, text="Regras de Gênero da Cultura", padding=8)
+        gender_rules_info = ttk.LabelFrame(
+            gender_top_frame, text="Regras de Gênero da Cultura", padding=8)
         gender_rules_info.pack(fill=tk.X, pady=(4, 0))
         self._gender_rules_text = tk.Text(
             gender_rules_info, height=3, bg=self.colors.get("input_bg", "#ffffff"),
@@ -1019,7 +1086,8 @@ class GramatakiTab(ttk.Frame):
         self._gender_rules_text.pack(fill=tk.X)
         self._update_gender_rules_display()
 
-        gender_buttons_lf = ttk.LabelFrame(gender_tab, text="Gerar Formas", padding=12)
+        gender_buttons_lf = ttk.LabelFrame(
+            gender_tab, text="Gerar Formas", padding=12)
         gender_buttons_lf.pack(fill=tk.X, pady=(0, 10))
 
         gender_btn_row = ttk.Frame(gender_buttons_lf)
@@ -1030,7 +1098,8 @@ class GramatakiTab(ttk.Frame):
         def generate_gender_form(target_gender):
             base = gender_base_var.get().strip()
             if not base:
-                messagebox.showwarning("Aviso", "Informe um nome base.", parent=modal)
+                messagebox.showwarning(
+                    "Aviso", "Informe um nome base.", parent=modal)
                 return
             lb = gender_result_listbox_ref[0]
             if lb is None:
@@ -1068,10 +1137,13 @@ class GramatakiTab(ttk.Frame):
         ttk.Label(suffix_row, text="Aplicar sufixo direto:", font=("Segoe UI", 9),
                   foreground=self.colors["fg_secondary"]).pack(side=tk.LEFT, padx=(0, 6))
         suffix_input_var = tk.StringVar()
-        ttk.Entry(suffix_row, textvariable=suffix_input_var, font=("Segoe UI", 11), width=10).pack(side=tk.LEFT, padx=(0, 6))
+        ttk.Entry(suffix_row, textvariable=suffix_input_var, font=(
+            "Segoe UI", 11), width=10).pack(side=tk.LEFT, padx=(0, 6))
         suffix_pos_var = tk.StringVar(value="suffix")
-        ttk.Radiobutton(suffix_row, text="Sufixo", variable=suffix_pos_var, value="suffix").pack(side=tk.LEFT, padx=(0, 4))
-        ttk.Radiobutton(suffix_row, text="Prefixo", variable=suffix_pos_var, value="prefix").pack(side=tk.LEFT, padx=(0, 8))
+        ttk.Radiobutton(suffix_row, text="Sufixo", variable=suffix_pos_var,
+                        value="suffix").pack(side=tk.LEFT, padx=(0, 4))
+        ttk.Radiobutton(suffix_row, text="Prefixo", variable=suffix_pos_var,
+                        value="prefix").pack(side=tk.LEFT, padx=(0, 8))
 
         def apply_direct_suffix():
             base = gender_base_var.get().strip()
@@ -1095,9 +1167,11 @@ class GramatakiTab(ttk.Frame):
                 lb.insert(tk.END, tag)
                 self.show_status(f"'{result}' adicionado.")
 
-        ttk.Button(suffix_row, text="Aplicar", command=apply_direct_suffix).pack(side=tk.LEFT)
+        ttk.Button(suffix_row, text="Aplicar",
+                   command=apply_direct_suffix).pack(side=tk.LEFT)
 
-        gender_result_lf = ttk.LabelFrame(gender_tab, text="Formas Derivadas", padding=12)
+        gender_result_lf = ttk.LabelFrame(
+            gender_tab, text="Formas Derivadas", padding=12)
         gender_result_lf.pack(fill=tk.BOTH, expand=True, pady=(0, 8))
         gender_res_frame = ttk.Frame(gender_result_lf)
         gender_res_frame.pack(fill=tk.BOTH, expand=True, pady=(0, 8))
@@ -1120,13 +1194,15 @@ class GramatakiTab(ttk.Frame):
         gender_save_type_var = tk.StringVar(value="nome_proprio")
         ttk.Combobox(
             gender_action_frame, textvariable=gender_save_type_var,
-            values=["nome_proprio", "nome_e_sobrenome", "sobrenome", "alcunha", "ancestor_names", "house_names"],
+            values=["nome_proprio", "nome_e_sobrenome", "sobrenome", "alcunha", "toponimo",
+                    "cidade", "regiao", "geografico", "ancestor_names", "house_names"],
             state="normal", width=14).pack(side=tk.LEFT, padx=(0, 8))
 
         def save_gender_form():
             sel = gender_result_listbox.curselection()
             if not sel:
-                messagebox.showwarning("Aviso", "Selecione uma forma derivada.", parent=modal)
+                messagebox.showwarning(
+                    "Aviso", "Selecione uma forma derivada.", parent=modal)
                 return
             raw = gender_result_listbox.get(sel[0])
             name = raw.split("  [")[0].strip()
@@ -1168,7 +1244,8 @@ class GramatakiTab(ttk.Frame):
 
         bottom_bar = ttk.Frame(modal, padding=(15, 8))
         bottom_bar.pack(fill=tk.X, side=tk.BOTTOM)
-        ttk.Button(bottom_bar, text="Fechar", command=modal.destroy).pack(side=tk.RIGHT)
+        ttk.Button(bottom_bar, text="Fechar",
+                   command=modal.destroy).pack(side=tk.RIGHT)
 
     def _update_gender_rules_display(self):
         if not hasattr(self, '_gender_rules_text'):
@@ -1201,11 +1278,14 @@ class GramatakiManager:
         self.engine = engine_ref
         self.profile_id = profile.get('id', 'unknown')
         self.dictionary = {}
-        self.storage_path = Path(f"./gramatakis/{self.profile_id}_gramataki.json")
+        self.storage_path = Path(
+            f"./gramatakis/{self.profile_id}_gramataki.json")
         self.caches_dir = Path("./cultures/caches")
         self.caches_dir.mkdir(parents=True, exist_ok=True)
-        self.unified_pools_path = self.caches_dir / f"{self.profile_id}_pools_cache.json"
-        self.culture_names_path = self.caches_dir / f"{self.profile_id}_names.json"
+        self.unified_pools_path = self.caches_dir / \
+            f"{self.profile_id}_pools_cache.json"
+        self.culture_names_path = self.caches_dir / \
+            f"{self.profile_id}_names.json"
         self.unified_pools = {}
         self.culture_names = {}
         self.load_dictionary()
@@ -1289,7 +1369,8 @@ class GramatakiManager:
             rule = components_rules.get(comp_name)
             if not rule:
                 continue
-            comp_result = self._generate_component(comp_name, rule, culture, gender)
+            comp_result = self._generate_component(
+                comp_name, rule, culture, gender)
             if comp_result and comp_result.get('word'):
                 generated_parts.append(comp_result['word'])
                 etymology.append({
@@ -1310,15 +1391,18 @@ class GramatakiManager:
             strategy = random.choices(strategies, weights=weights, k=1)[0]
             stype = strategy.get('type')
             if stype == 'compound':
-                p1_words = self._get_pool_words(strategy.get('pool_1'), culture)
-                p2_words = self._get_pool_words(strategy.get('pool_2'), culture)
+                p1_words = self._get_pool_words(
+                    strategy.get('pool_1'), culture)
+                p2_words = self._get_pool_words(
+                    strategy.get('pool_2'), culture)
                 if p1_words and p2_words:
                     w1 = random.choice(p1_words)
                     w2 = random.choice(p2_words)
                     cw1 = self.engine._get_word_form(w1, skip_cache=True)
                     cw2 = self.engine._get_word_form(w2, skip_cache=True)
                     if self.engine.compounding_handler.enabled:
-                        final_w = self.engine.compounding_handler.construct_compound([cw1, cw2], self.engine)
+                        final_w = self.engine.compounding_handler.construct_compound(
+                            [cw1, cw2], self.engine)
                     else:
                         final_w = cw1 + cw2
                     return {'word': final_w, 'meaning': f"{w1} + {w2}"}
@@ -1330,8 +1414,10 @@ class GramatakiManager:
                     if p1_words and p2_words:
                         w1 = random.choice(p1_words)
                         w2 = random.choice(p2_words)
-                        cw1 = self.engine._get_word_form(w1, pos='VERB', skip_cache=True)
-                        cw2 = self.engine._get_word_form(w2, pos='NOUN', skip_cache=True)
+                        cw1 = self.engine._get_word_form(
+                            w1, pos='VERB', skip_cache=True)
+                        cw2 = self.engine._get_word_form(
+                            w2, pos='NOUN', skip_cache=True)
                         return {'word': cw1 + cw2, 'meaning': f"{w1} {w2}"}
             elif stype == 'abstract_derivation':
                 pool_key = strategy.get('pool', 'concept_noun')
@@ -1343,9 +1429,13 @@ class GramatakiManager:
                         der_rule = self.engine.affix_handler.get_derivation_rule(
                             "NOUN", "NOUN", strategy.get('derivation_type', 'abstract_noun'))
                         if der_rule:
-                            cw1 = self.engine.affix_handler.apply_affix(cw1, der_rule)
+                            cw1 = self.engine.affix_handler.apply_affix(
+                                cw1, der_rule)
                     return {'word': cw1, 'meaning': f"{w1} (Abstrato)"}
         rel_type = rule.get('type')
+        if rel_type == 'literal':
+            val = rule.get('value', '')
+            return {'word': val, 'meaning': rule.get('meaning', val)}
         if rel_type == 'relational':
             target = rule.get('target')
             connector = rule.get('connector', '')
@@ -1356,7 +1446,8 @@ class GramatakiManager:
                 connector = rule.get('connector_female')
             target_rule = culture.get('components_rules', {}).get(target)
             if target_rule:
-                target_res = self._generate_component(target, target_rule, culture, gender)
+                target_res = self._generate_component(
+                    target, target_rule, culture, gender)
                 if target_res and target_res.get('word'):
                     final_w = f"{connector} {target_res['word']}" if connector else target_res['word']
                     meaning_str = f"{connector} ({target_res['meaning']})" if connector else target_res['meaning']
@@ -1416,10 +1507,11 @@ class GramatakiManager:
         else:
             final_name = raw_name
         if filters.get('force_capitalization', True):
-            final_name = " ".join(part.capitalize() for part in final_name.split())
+            final_name = " ".join(part.capitalize()
+                                  for part in final_name.split())
         return final_name
 
-    def generate_names_from_concept(self, concept_phrase, count=8):
+    def generate_names_from_concept(self, concept_phrase, culture=None, count=8):
         stop_words = {
             'o', 'a', 'os', 'as', 'de', 'do', 'da', 'dos', 'das',
             'um', 'uma', 'uns', 'umas', 'em', 'no', 'na', 'nos', 'nas',
@@ -1427,6 +1519,63 @@ class GramatakiManager:
             'a', 'an', 'in', 'on', 'at', 'for', 'to', 'by', 'is', 'são',
             'é', 'ser', 'estar', 'se'
         }
+        results = []
+        seen = set()
+
+        if culture and 'dynamic_patterns' in culture:
+            for pat in culture['dynamic_patterns']:
+                match = re.match(pat.get('pattern', ''),
+                                 concept_phrase, re.IGNORECASE)
+                if match:
+                    groups = match.groups()
+                    fmt = pat.get('format', '')
+                    for attempt in range(count * 4):
+                        translated_groups = []
+                        all_comp_info = []
+                        for g in groups:
+                            g_words = re.split(r'[\s\-_]+', g.strip())
+                            g_kws = [re.sub(r'[^\w]', '', w) for w in g_words if w and re.sub(
+                                r'[^\w]', '', w).lower() not in stop_words]
+                            if not g_kws:
+                                g_kws = [g.strip()]
+                            rng = random.Random(
+                                int(hashlib.sha256(f"{g}_{attempt}".encode()).hexdigest(), 16))
+                            num_kw = rng.randint(
+                                1, min(3, len(g_kws))) if len(g_kws) > 0 else 0
+                            chosen_kw = rng.sample(g_kws, num_kw) if len(
+                                g_kws) >= num_kw else g_kws[:]
+                            parts = []
+                            for kw in chosen_kw:
+                                form = self.engine._get_word_form(
+                                    kw, skip_cache=True)
+                                if form:
+                                    parts.append(form)
+                                    all_comp_info.append(
+                                        {'keyword': kw, 'form': form})
+                            if self.engine.compounding_handler.enabled and len(parts) > 1:
+                                g_trans = self.engine.compounding_handler.construct_compound(
+                                    parts, self.engine)
+                            else:
+                                g_trans = "".join(parts)
+                            translated_groups.append(g_trans.capitalize())
+                        final_str = fmt.format(*translated_groups)
+                        if self.engine.sandhi_handler.enabled:
+                            final_str = self.engine.sandhi_handler.apply_sandhi(
+                                final_str)
+                        final_name = " ".join(p.capitalize()
+                                              for p in final_str.split())
+                        if final_name not in seen and len(final_name) > 1:
+                            results.append({
+                                'name': final_name,
+                                'etymology': pat.get('description', 'Padrão Dinâmico') + " (" + " + ".join(c['keyword'] for c in all_comp_info) + ")",
+                                'components': all_comp_info
+                            })
+                            seen.add(final_name)
+                        if len(results) >= count:
+                            break
+                    if results:
+                        return results
+
         words = re.split(r'[\s\-_]+', concept_phrase.lower().strip())
         keywords = [re.sub(r'[^\w]', '', w) for w in words
                     if w and re.sub(r'[^\w]', '', w) not in stop_words
@@ -1435,16 +1584,12 @@ class GramatakiManager:
             keywords = [re.sub(r'[^\w]', '', concept_phrase.lower().strip())]
         keywords = keywords[:4]
 
-        results = []
-        seen = set()
-
         for attempt in range(count * 4):
             rng = random.Random(int(hashlib.sha256(
                 f"{concept_phrase}_concept_{attempt}".encode()).hexdigest(), 16))
-
             num_kw = rng.randint(1, min(3, len(keywords)))
-            chosen_kw = rng.sample(keywords, num_kw) if len(keywords) >= num_kw else keywords[:]
-
+            chosen_kw = rng.sample(keywords, num_kw) if len(
+                keywords) >= num_kw else keywords[:]
             conlang_parts = []
             component_info = []
             for kw in chosen_kw:
@@ -1452,20 +1597,17 @@ class GramatakiManager:
                 if form:
                     conlang_parts.append(form)
                     component_info.append({'keyword': kw, 'form': form})
-
             if not conlang_parts:
                 continue
-
             if self.engine.compounding_handler.enabled and len(conlang_parts) > 1:
-                result_word = self.engine.compounding_handler.construct_compound(conlang_parts, self.engine)
+                result_word = self.engine.compounding_handler.construct_compound(
+                    conlang_parts, self.engine)
             else:
                 result_word = "".join(conlang_parts)
-
             if self.engine.sandhi_handler.enabled:
-                result_word = self.engine.sandhi_handler.apply_sandhi(result_word)
-
+                result_word = self.engine.sandhi_handler.apply_sandhi(
+                    result_word)
             result_word = result_word.capitalize()
-
             if result_word and result_word not in seen and len(result_word) >= 2:
                 results.append({
                     'name': result_word,
@@ -1473,10 +1615,8 @@ class GramatakiManager:
                     'components': component_info
                 })
                 seen.add(result_word)
-
             if len(results) >= count:
                 break
-
         return results
 
     def generate_basesuffixe_style_names(self, base_pool_key, suffix_pool_key, culture=None, count=12):
@@ -1512,7 +1652,8 @@ class GramatakiManager:
             suffix_raw = rng.choice(suffix_entries) if suffix_entries else ""
 
             if base_word:
-                conlang_base = self.engine._get_word_form(base_word, skip_cache=True)
+                conlang_base = self.engine._get_word_form(
+                    base_word, skip_cache=True)
             else:
                 conlang_base = ""
 
@@ -1521,7 +1662,8 @@ class GramatakiManager:
                 if len(suf_clean) <= 6 or suffix_raw.startswith('-'):
                     conlang_suffix = suf_clean
                 else:
-                    conlang_suffix = self.engine._get_word_form(suffix_raw, skip_cache=True)
+                    conlang_suffix = self.engine._get_word_form(
+                        suffix_raw, skip_cache=True)
             else:
                 conlang_suffix = ""
 
@@ -1531,7 +1673,8 @@ class GramatakiManager:
             parts = [p for p in [conlang_base, conlang_suffix] if p]
 
             if self.engine.compounding_handler.enabled and len(parts) > 1:
-                result = self.engine.compounding_handler.construct_compound(parts, self.engine)
+                result = self.engine.compounding_handler.construct_compound(
+                    parts, self.engine)
             else:
                 result = "".join(parts)
 
@@ -1584,7 +1727,8 @@ class GramatakiManager:
                 continue
 
             if self.engine.compounding_handler.enabled and len(conlang_parts) > 1:
-                result = self.engine.compounding_handler.construct_compound(conlang_parts, self.engine)
+                result = self.engine.compounding_handler.construct_compound(
+                    conlang_parts, self.engine)
             else:
                 result = "".join(conlang_parts)
 
@@ -1594,7 +1738,8 @@ class GramatakiManager:
             result = result.capitalize()
 
             if result and result not in seen and len(result) >= 3:
-                results.append({'name': result, 'etymology': ' + '.join(meanings)})
+                results.append(
+                    {'name': result, 'etymology': ' + '.join(meanings)})
                 seen.add(result)
 
         return results
@@ -1678,14 +1823,16 @@ class GramatakiManager:
             candidate = base
 
             if strategy == 'replace_final_vowel' and target_vowels:
-                stem = base.rstrip(''.join(ph.vowels or 'aeiou')) if base else base
+                stem = base.rstrip(
+                    ''.join(ph.vowels or 'aeiou')) if base else base
                 if not stem:
                     stem = base[:-1] if len(base) > 1 else base
                 candidate = stem + rng.choice(target_vowels)
 
             elif strategy == 'add_gender_suffix' and phonologically_valid:
                 suf = rng.choice(phonologically_valid)
-                stem = base.rstrip(''.join(ph.vowels or 'aeiou')) if base else base
+                stem = base.rstrip(
+                    ''.join(ph.vowels or 'aeiou')) if base else base
                 if not stem:
                     stem = base
                 candidate = stem + suf
@@ -1697,9 +1844,11 @@ class GramatakiManager:
                 candidate = stem + suf
 
             elif strategy == 'change_internal_vowel' and len(base) >= 3:
-                vowel_idxs = [i for i, c in enumerate(base) if c in (ph.vowels or 'aeiou')]
+                vowel_idxs = [i for i, c in enumerate(
+                    base) if c in (ph.vowels or 'aeiou')]
                 if vowel_idxs and target_vowels:
-                    idx = rng.choice(vowel_idxs[:-1] if len(vowel_idxs) > 1 else vowel_idxs)
+                    idx = rng.choice(
+                        vowel_idxs[:-1] if len(vowel_idxs) > 1 else vowel_idxs)
                     opts = [v for v in target_vowels if v != base[idx]]
                     if opts:
                         chars = list(base)
@@ -1708,12 +1857,14 @@ class GramatakiManager:
 
             elif strategy == 'replace_final_cluster' and len(base) >= 3:
                 stem = base[:-2] if len(base) > 2 else base[:-1]
-                suf = rng.choice(phonologically_valid) if phonologically_valid else rng.choice(target_vowels)
+                suf = rng.choice(phonologically_valid) if phonologically_valid else rng.choice(
+                    target_vowels)
                 candidate = stem + suf
 
             candidate = ph.apply_monophthongization(candidate)
             if candidate and not ph.is_valid_final(candidate[-1]):
-                valid_finals = [c for c in consonants_list if ph.is_valid_final(c)] + vowels_list
+                valid_finals = [
+                    c for c in consonants_list if ph.is_valid_final(c)] + vowels_list
                 if valid_finals:
                     candidate = candidate[:-1] + rng.choice(valid_finals)
 
@@ -1733,7 +1884,8 @@ class GramatakiManager:
         is_abstract = options.get('abstract', False)
         force_loan = options.get('force_loan', False)
         register = options.get('register', 'Neutro')
-        clean_meaning = "".join(c for c in meaning if c.isalnum() or c.isspace()).strip()
+        clean_meaning = "".join(
+            c for c in meaning if c.isalnum() or c.isspace()).strip()
         salt = options.get('salt', '')
         seed_str = f"{clean_meaning}_{self.engine.global_seed}_gramataki_{salt}"
         seed = int(hashlib.sha256(seed_str.encode()).hexdigest(), 16)
@@ -1753,28 +1905,37 @@ class GramatakiManager:
                 sub_word = self.engine._generate_word_from_seed(
                     kw, int(hashlib.sha256(f"{kw}_{seed}".encode()).hexdigest(), 16))
                 sub_words.append(sub_word)
-            generated_word = self.engine.compounding_handler.construct_compound(sub_words, self.engine)
+            generated_word = self.engine.compounding_handler.construct_compound(
+                sub_words, self.engine)
             if self.engine.sandhi_handler.enabled:
-                generated_word = self.engine.sandhi_handler.apply_sandhi(generated_word)
+                generated_word = self.engine.sandhi_handler.apply_sandhi(
+                    generated_word)
             gloss = f"Composto de: {', '.join(keywords)}"
         else:
             if self.engine.root_handler.enabled:
                 root = self.engine.root_handler.generate_root(clean_meaning)
-                pattern = self.engine.root_handler.get_binyan_by_meaning('basic')
-                generated_word = self.engine.root_handler.apply_pattern(root, pattern)
+                pattern = self.engine.root_handler.get_binyan_by_meaning(
+                    'basic')
+                generated_word = self.engine.root_handler.apply_pattern(
+                    root, pattern)
                 gloss = f"Raiz: {'-'.join(root)}"
             else:
-                generated_word = self.engine._generate_word_from_seed(clean_meaning, seed)
+                generated_word = self.engine._generate_word_from_seed(
+                    clean_meaning, seed)
                 gloss = "Geração fonotática simples"
         if is_abstract and self.engine.affix_handler.enabled:
-            rule = self.engine.affix_handler.get_derivation_rule("ADJ", "NOUN", "abstract_noun")
+            rule = self.engine.affix_handler.get_derivation_rule(
+                "ADJ", "NOUN", "abstract_noun")
             if not rule:
-                rule = self.engine.affix_handler.get_derivation_rule("VERB", "NOUN", "verbal_noun")
+                rule = self.engine.affix_handler.get_derivation_rule(
+                    "VERB", "NOUN", "verbal_noun")
             if rule:
-                generated_word = self.engine.affix_handler.apply_affix(generated_word, rule)
+                generated_word = self.engine.affix_handler.apply_affix(
+                    generated_word, rule)
                 gloss += " + Derivação Abstrata"
         if register != "Neutro":
-            generated_word = self.engine.phonology_handler.apply_rules(generated_word, register.lower())
+            generated_word = self.engine.phonology_handler.apply_rules(
+                generated_word, register.lower())
             gloss += f" ({register})"
         if self.engine.special_mechanics_handler.enabled:
             generated_word = self.engine.special_mechanics_handler.apply_mechanics(
@@ -1841,7 +2002,8 @@ class GramatakiManager:
                 raw = "".join(nativized_chars)
                 raw = ph.apply_monophthongization(raw)
                 if raw and not ph.is_valid_final(raw[-1]):
-                    valid_finals = [c for c in consonants_list if ph.is_valid_final(c)] + vowels_list
+                    valid_finals = [
+                        c for c in consonants_list if ph.is_valid_final(c)] + vowels_list
                     if valid_finals:
                         raw = raw[:-1] + rng.choice(valid_finals)
                 if raw:
@@ -1873,7 +2035,8 @@ class GramatakiManager:
         max_attempts = count * 10
         while len(results) < count and attempts < max_attempts:
             attempts += 1
-            seed_val = int(hashlib.sha256(f"{name}_deriv_{attempts}".encode()).hexdigest(), 16)
+            seed_val = int(hashlib.sha256(
+                f"{name}_deriv_{attempts}".encode()).hexdigest(), 16)
             rng = random.Random(seed_val)
             strategy = rng.choice(strategies)
             base = name.lower().strip()
@@ -1884,11 +2047,13 @@ class GramatakiManager:
                     candidate = stem + rng.choice(vowels_list)
             elif strategy == "change_suffix_consonant" and len(base) >= 2:
                 if consonants_list:
-                    valid = [c for c in consonants_list if ph.is_valid_final(c)]
+                    valid = [
+                        c for c in consonants_list if ph.is_valid_final(c)]
                     if valid:
                         candidate = base[:-1] + rng.choice(valid)
             elif strategy == "swap_internal_vowel" and len(base) >= 3:
-                vowel_idxs = [i for i, c in enumerate(base) if c in (ph.vowels or "aeiou")]
+                vowel_idxs = [i for i, c in enumerate(
+                    base) if c in (ph.vowels or "aeiou")]
                 if vowel_idxs and vowels_list and len(vowels_list) > 1:
                     idx = rng.choice(vowel_idxs)
                     current = base[idx]
@@ -1909,17 +2074,20 @@ class GramatakiManager:
                 if vowels_list:
                     candidate = stem + rng.choice(vowels_list)
                     if consonants_list and rng.random() < 0.4:
-                        valid = [c for c in consonants_list if ph.is_valid_final(c)]
+                        valid = [
+                            c for c in consonants_list if ph.is_valid_final(c)]
                         if valid:
                             candidate = candidate + rng.choice(valid)
             elif strategy == "swap_final_consonant" and len(base) >= 2:
                 if base[-1] in (ph.consonants or "") and consonants_list:
-                    valid = [c for c in consonants_list if ph.is_valid_final(c) and c != base[-1]]
+                    valid = [c for c in consonants_list if ph.is_valid_final(
+                        c) and c != base[-1]]
                     if valid:
                         candidate = base[:-1] + rng.choice(valid)
             elif strategy == "insert_medial_vowel" and len(base) >= 2 and vowels_list:
                 insert_pos = rng.randint(1, len(base) - 1)
-                candidate = base[:insert_pos] + rng.choice(vowels_list) + base[insert_pos:]
+                candidate = base[:insert_pos] + \
+                    rng.choice(vowels_list) + base[insert_pos:]
             elif strategy == "change_initial_cluster" and len(base) >= 2 and consonants_list:
                 if base[0] in (ph.consonants or ""):
                     options = [c for c in consonants_list if c != base[0]]
@@ -1930,13 +2098,15 @@ class GramatakiManager:
                     candidate = base + base[-1]
             candidate = ph.apply_monophthongization(candidate)
             if candidate and not ph.is_valid_final(candidate[-1]):
-                valid_finals = [c for c in consonants_list if ph.is_valid_final(c)] + vowels_list
+                valid_finals = [
+                    c for c in consonants_list if ph.is_valid_final(c)] + vowels_list
                 if valid_finals:
                     candidate = candidate[:-1] + rng.choice(valid_finals)
             if candidate:
                 candidate = candidate.capitalize()
                 if self.engine.sandhi_handler.enabled:
-                    candidate = self.engine.sandhi_handler.apply_sandhi(candidate)
+                    candidate = self.engine.sandhi_handler.apply_sandhi(
+                        candidate)
             if candidate and candidate not in seen and len(candidate) >= 2:
                 results.append(candidate)
                 seen.add(candidate)
@@ -1944,7 +2114,8 @@ class GramatakiManager:
 
     def generate_random_name(self):
         seed = random.randint(0, 9999999)
-        word = self.engine._generate_word_from_seed(f"rand_{seed}", seed, is_derived=False)
+        word = self.engine._generate_word_from_seed(
+            f"rand_{seed}", seed, is_derived=False)
         if word and self.engine.sandhi_handler.enabled:
             word = self.engine.sandhi_handler.apply_sandhi(word)
         return word.capitalize() if word else ""

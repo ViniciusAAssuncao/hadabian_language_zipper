@@ -1873,6 +1873,9 @@ class GramatakiManager:
                     return {'word': cw1, 'meaning': f"{w1} (Abstrato)"}
 
         rel_type = rule.get('type')
+        if rel_type == 'literal':
+            val = rule.get('value', '')
+            return {'word': val, 'meaning': rule.get('meaning', val)}
         if rel_type == 'relational':
             target = rule.get('target')
             connector = rule.get('connector', '')
@@ -1951,7 +1954,7 @@ class GramatakiManager:
                                   for part in final_name.split())
         return final_name
 
-    def generate_names_from_concept(self, concept_phrase, count=8):
+    def generate_names_from_concept(self, concept_phrase, culture=None, count=8):
         stop_words = {
             'o', 'a', 'os', 'as', 'de', 'do', 'da', 'dos', 'das',
             'um', 'uma', 'uns', 'umas', 'em', 'no', 'na', 'nos', 'nas',
@@ -1959,6 +1962,63 @@ class GramatakiManager:
             'a', 'an', 'in', 'on', 'at', 'for', 'to', 'by', 'is', 'são',
             'é', 'ser', 'estar', 'se'
         }
+        results = []
+        seen = set()
+
+        if culture and 'dynamic_patterns' in culture:
+            for pat in culture['dynamic_patterns']:
+                match = re.match(pat.get('pattern', ''),
+                                 concept_phrase, re.IGNORECASE)
+                if match:
+                    groups = match.groups()
+                    fmt = pat.get('format', '')
+                    for attempt in range(count * 4):
+                        translated_groups = []
+                        all_comp_info = []
+                        for g in groups:
+                            g_words = re.split(r'[\s\-_]+', g.strip())
+                            g_kws = [re.sub(r'[^\w]', '', w) for w in g_words if w and re.sub(
+                                r'[^\w]', '', w).lower() not in stop_words]
+                            if not g_kws:
+                                g_kws = [g.strip()]
+                            rng = random.Random(
+                                int(hashlib.sha256(f"{g}_{attempt}".encode()).hexdigest(), 16))
+                            num_kw = rng.randint(
+                                1, min(3, len(g_kws))) if len(g_kws) > 0 else 0
+                            chosen_kw = rng.sample(g_kws, num_kw) if len(
+                                g_kws) >= num_kw else g_kws[:]
+                            parts = []
+                            for kw in chosen_kw:
+                                form = self.engine._get_word_form(
+                                    kw, skip_cache=True)
+                                if form:
+                                    parts.append(form)
+                                    all_comp_info.append(
+                                        {'keyword': kw, 'form': form})
+                            if self.engine.compounding_handler.enabled and len(parts) > 1:
+                                g_trans = self.engine.compounding_handler.construct_compound(
+                                    parts, self.engine)
+                            else:
+                                g_trans = "".join(parts)
+                            translated_groups.append(g_trans.capitalize())
+                        final_str = fmt.format(*translated_groups)
+                        if self.engine.sandhi_handler.enabled:
+                            final_str = self.engine.sandhi_handler.apply_sandhi(
+                                final_str)
+                        final_name = " ".join(p.capitalize()
+                                              for p in final_str.split())
+                        if final_name not in seen and len(final_name) > 1:
+                            results.append({
+                                'name': final_name,
+                                'etymology': pat.get('description', 'Padrão Dinâmico') + " (" + " + ".join(c['keyword'] for c in all_comp_info) + ")",
+                                'components': all_comp_info
+                            })
+                            seen.add(final_name)
+                        if len(results) >= count:
+                            break
+                    if results:
+                        return results
+
         words = re.split(r'[\s\-_]+', concept_phrase.lower().strip())
         keywords = [re.sub(r'[^\w]', '', w) for w in words
                     if w and re.sub(r'[^\w]', '', w) not in stop_words
@@ -1966,9 +2026,6 @@ class GramatakiManager:
         if not keywords:
             keywords = [re.sub(r'[^\w]', '', concept_phrase.lower().strip())]
         keywords = keywords[:4]
-
-        results = []
-        seen = set()
 
         for attempt in range(count * 4):
             rng = random.Random(int(hashlib.sha256(

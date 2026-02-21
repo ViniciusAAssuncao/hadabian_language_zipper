@@ -5,4 +5,6 @@
 ./ConHab/__pycache__
 /syntax_cache
 .vscode
-__pycache__
+__pycache__/
+*.pyc
+*.pyo

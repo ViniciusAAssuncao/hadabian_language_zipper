@@ -80,6 +80,18 @@
                 "Feminino": "bint"
             },
             "target": "antitukirom"
+        },
+        "rand_concept_noun": {
+            "type": "pool_selection",
+            "pool": "concept_noun"
+        },
+        "rand_concept_divine": {
+            "type": "pool_selection",
+            "pool": "concept_divine"
+        },
+        "rand_concept_adjective": {
+            "type": "pool_selection",
+            "pool": "concept_adjective"
         }
     },
     "phonological_filters": {
