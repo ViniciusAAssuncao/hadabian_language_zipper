@@ -24,6 +24,15 @@ class GramatakiTab(ttk.Frame):
         self.main_container = ttk.Frame(self, padding=20)
         self.main_container.pack(fill=tk.BOTH, expand=True)
 
+        self.status_var = tk.StringVar()
+        self.status_label = ttk.Label(
+            self.main_container,
+            textvariable=self.status_var,
+            foreground=self.colors.get("accent", "#0078D7"),
+            font=("Segoe UI", 9, "italic")
+        )
+        self.status_label.pack(side=tk.BOTTOM, anchor="w", pady=(5, 0))
+
         self.notebook = ttk.Notebook(self.main_container)
         self.notebook.pack(fill=tk.BOTH, expand=True)
 
@@ -39,6 +48,10 @@ class GramatakiTab(ttk.Frame):
         self._build_generator_tab()
         self._build_nativizer_tab()
         self._build_editor_tab()
+
+    def show_status(self, message, duration=3000):
+        self.status_var.set(message)
+        self.after(duration, lambda: self.status_var.set(""))
 
     def _build_generator_tab(self):
         main_pane = ttk.PanedWindow(self.tab_generator, orient=tk.HORIZONTAL)
@@ -274,9 +287,12 @@ class GramatakiTab(ttk.Frame):
             if new_pool not in self.engine.gramataki_manager.unified_pools:
                 self.engine.gramataki_manager.unified_pools[new_pool] = []
                 self.engine.gramataki_manager.save_unified_pools()
-                self.update_ui_from_culture()
+                pools = list(
+                    self.engine.gramataki_manager.unified_pools.keys())
+                self.pool_cb['values'] = pools
                 self.pool_var.set(new_pool)
                 self.on_pool_select()
+                self.show_status(f"Pool '{new_pool}' criado.")
 
     def add_to_pool(self):
         if not self.engine:
@@ -313,7 +329,7 @@ class GramatakiTab(ttk.Frame):
         with open(file_path, 'w', encoding='utf-8') as f:
             json.dump(self.culture_data, f, indent=4, ensure_ascii=False)
         if not from_json_editor:
-            messagebox.showinfo("Sucesso", "Cultura salva com sucesso.")
+            self.show_status("Cultura salva com sucesso.")
 
     def save_json_file(self):
         try:
@@ -322,8 +338,7 @@ class GramatakiTab(ttk.Frame):
             self.culture_data = data
             self.save_culture_file(from_json_editor=True)
             self.update_ui_from_culture()
-            messagebox.showinfo(
-                "Sucesso", "JSON validado e sistema cultural atualizado.")
+            self.show_status("JSON validado e sistema cultural atualizado.")
         except Exception as e:
             messagebox.showerror("Erro", f"JSON Inválido:\n{str(e)}")
 
@@ -365,8 +380,8 @@ class GramatakiTab(ttk.Frame):
         name_type = self.name_type_var.get().strip()
         if name and name_type:
             self.engine.gramataki_manager.save_culture_name(name, name_type)
-            messagebox.showinfo(
-                "Sucesso", f"Nome '{name}' salvo no cachê como '{name_type}'.")
+            self.show_status(
+                f"Nome '{name}' salvo no cachê como '{name_type}'.")
 
     def nativize_name(self):
         if not self.engine:
