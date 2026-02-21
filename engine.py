@@ -2049,6 +2049,190 @@ class GramatakiManager:
         if self.engine.sandhi_handler.enabled:
             final_name = self.engine.sandhi_handler.apply_sandhi(final_name)
         return final_name
+    
+    def nativize_external_name_multiple(self, name, count=20):
+        if not name:
+            return []
+
+        ph = self.engine.phonology_handler
+        parts = name.strip().split()
+        results = []
+        seen = set()
+
+        base = self.nativize_external_name(name)
+        if base and base not in seen:
+            results.append(base)
+            seen.add(base)
+
+        vowels_list = list(ph.vowels) if ph.vowels else list("aeiou")
+        consonants_list = list(ph.consonants) if ph.consonants else []
+
+        attempts = 0
+        max_attempts = count * 8
+
+        while len(results) < count and attempts < max_attempts:
+            attempts += 1
+            seed_val = int(hashlib.sha256(
+                f"{name}_multi_{attempts}_{len(results)}".encode()
+            ).hexdigest(), 16)
+            rng = random.Random(seed_val)
+
+            deviation = 0.15 + (attempts / max_attempts) * 0.55
+
+            nativized_parts = []
+            for part in parts:
+                nativized_chars = []
+                for char in part.lower():
+                    char_norm = char
+                    is_vowel = char_norm in "aeiouyäëïöü"
+                    base_phoneme = ph.get_closest_phoneme(char_norm)
+                    if rng.random() < deviation:
+                        pool = vowels_list if is_vowel else consonants_list
+                        if pool:
+                            chosen = rng.choice(pool)
+                        else:
+                            chosen = base_phoneme
+                    else:
+                        chosen = base_phoneme
+                    nativized_chars.append(chosen)
+
+                raw = "".join(nativized_chars)
+                raw = ph.apply_monophthongization(raw)
+
+                if raw and not ph.is_valid_final(raw[-1]):
+                    valid_finals = [c for c in consonants_list if ph.is_valid_final(c)] + vowels_list
+                    if valid_finals:
+                        raw = raw[:-1] + rng.choice(valid_finals)
+
+                if raw:
+                    nativized_parts.append(raw.capitalize())
+
+            candidate = " ".join(nativized_parts)
+            if self.engine.sandhi_handler.enabled:
+                candidate = self.engine.sandhi_handler.apply_sandhi(candidate)
+
+            if candidate and candidate not in seen:
+                results.append(candidate)
+                seen.add(candidate)
+
+        return results
+
+    def generate_derived_forms(self, name, count=15):
+        if not name:
+            return []
+
+        ph = self.engine.phonology_handler
+        vowels_list = list(ph.vowels) if ph.vowels else list("aeiou")
+        consonants_list = list(ph.consonants) if ph.consonants else []
+
+        results = []
+        seen = set()
+        seen.add(name)
+
+        strategies = [
+            "change_suffix_vowel",
+            "change_suffix_consonant",
+            "swap_internal_vowel",
+            "add_vowel_suffix",
+            "add_consonant_suffix",
+            "truncate_and_extend",
+            "swap_final_consonant",
+            "insert_medial_vowel",
+            "change_initial_cluster",
+            "double_final_vowel",
+        ]
+
+        attempts = 0
+        max_attempts = count * 10
+
+        while len(results) < count and attempts < max_attempts:
+            attempts += 1
+            seed_val = int(hashlib.sha256(
+                f"{name}_deriv_{attempts}".encode()
+            ).hexdigest(), 16)
+            rng = random.Random(seed_val)
+
+            strategy = rng.choice(strategies)
+            base = name.lower().strip()
+            candidate = base
+
+            if strategy == "change_suffix_vowel" and len(base) >= 2:
+                stem = base[:-1]
+                if vowels_list:
+                    candidate = stem + rng.choice(vowels_list)
+
+            elif strategy == "change_suffix_consonant" and len(base) >= 2:
+                if consonants_list:
+                    valid = [c for c in consonants_list if ph.is_valid_final(c)]
+                    if valid:
+                        candidate = base[:-1] + rng.choice(valid)
+
+            elif strategy == "swap_internal_vowel" and len(base) >= 3:
+                vowel_idxs = [i for i, c in enumerate(base) if c in (ph.vowels or "aeiou")]
+                if vowel_idxs and vowels_list and len(vowels_list) > 1:
+                    idx = rng.choice(vowel_idxs)
+                    current = base[idx]
+                    options = [v for v in vowels_list if v != current]
+                    if options:
+                        chars = list(base)
+                        chars[idx] = rng.choice(options)
+                        candidate = "".join(chars)
+
+            elif strategy == "add_vowel_suffix" and vowels_list:
+                candidate = base + rng.choice(vowels_list)
+
+            elif strategy == "add_consonant_suffix" and consonants_list:
+                valid = [c for c in consonants_list if ph.is_valid_final(c)]
+                if valid and not (base and base[-1] in (ph.consonants or "")):
+                    candidate = base + rng.choice(valid)
+
+            elif strategy == "truncate_and_extend" and len(base) >= 3:
+                trunc_at = rng.randint(max(1, len(base) - 2), len(base) - 1)
+                stem = base[:trunc_at]
+                if vowels_list:
+                    candidate = stem + rng.choice(vowels_list)
+                    if consonants_list and rng.random() < 0.4:
+                        valid = [c for c in consonants_list if ph.is_valid_final(c)]
+                        if valid:
+                            candidate = candidate + rng.choice(valid)
+
+            elif strategy == "swap_final_consonant" and len(base) >= 2:
+                if base[-1] in (ph.consonants or "") and consonants_list:
+                    valid = [c for c in consonants_list if ph.is_valid_final(c) and c != base[-1]]
+                    if valid:
+                        candidate = base[:-1] + rng.choice(valid)
+
+            elif strategy == "insert_medial_vowel" and len(base) >= 2 and vowels_list:
+                insert_pos = rng.randint(1, len(base) - 1)
+                candidate = base[:insert_pos] + rng.choice(vowels_list) + base[insert_pos:]
+
+            elif strategy == "change_initial_cluster" and len(base) >= 2 and consonants_list:
+                if base[0] in (ph.consonants or ""):
+                    options = [c for c in consonants_list if c != base[0]]
+                    if options:
+                        candidate = rng.choice(options) + base[1:]
+
+            elif strategy == "double_final_vowel" and len(base) >= 1:
+                if base[-1] in (ph.vowels or "") and vowels_list:
+                    candidate = base + base[-1]
+
+            candidate = ph.apply_monophthongization(candidate)
+
+            if candidate and not ph.is_valid_final(candidate[-1]):
+                valid_finals = [c for c in consonants_list if ph.is_valid_final(c)] + vowels_list
+                if valid_finals:
+                    candidate = candidate[:-1] + rng.choice(valid_finals)
+
+            if candidate:
+                candidate = candidate.capitalize()
+                if self.engine.sandhi_handler.enabled:
+                    candidate = self.engine.sandhi_handler.apply_sandhi(candidate)
+
+            if candidate and candidate not in seen and len(candidate) >= 2:
+                results.append(candidate)
+                seen.add(candidate)
+
+        return results
 
     def generate_random_name(self) -> str:
         import random
