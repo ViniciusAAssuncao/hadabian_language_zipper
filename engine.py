@@ -1714,7 +1714,8 @@ class GramatakiManager:
 
         self.caches_dir = Path("./cultures/caches")
         self.caches_dir.mkdir(parents=True, exist_ok=True)
-        self.unified_pools_path = self.caches_dir / f"{self.profile_id}_pools_cache.json"
+        self.unified_pools_path = self.caches_dir / \
+            f"{self.profile_id}_pools_cache.json"
         self.culture_names_path = self.caches_dir / \
             f"{self.profile_id}_names.json"
         self.unified_pools = {}
@@ -1950,6 +1951,329 @@ class GramatakiManager:
                                   for part in final_name.split())
         return final_name
 
+    def generate_names_from_concept(self, concept_phrase, count=8):
+        stop_words = {
+            'o', 'a', 'os', 'as', 'de', 'do', 'da', 'dos', 'das',
+            'um', 'uma', 'uns', 'umas', 'em', 'no', 'na', 'nos', 'nas',
+            'por', 'para', 'com', 'que', 'e', 'ou', 'the', 'of', 'and',
+            'a', 'an', 'in', 'on', 'at', 'for', 'to', 'by', 'is', 'são',
+            'é', 'ser', 'estar', 'se'
+        }
+        words = re.split(r'[\s\-_]+', concept_phrase.lower().strip())
+        keywords = [re.sub(r'[^\w]', '', w) for w in words
+                    if w and re.sub(r'[^\w]', '', w) not in stop_words
+                    and len(re.sub(r'[^\w]', '', w)) > 1]
+        if not keywords:
+            keywords = [re.sub(r'[^\w]', '', concept_phrase.lower().strip())]
+        keywords = keywords[:4]
+
+        results = []
+        seen = set()
+
+        for attempt in range(count * 4):
+            rng = random.Random(int(hashlib.sha256(
+                f"{concept_phrase}_concept_{attempt}".encode()).hexdigest(), 16))
+
+            num_kw = rng.randint(1, min(3, len(keywords)))
+            chosen_kw = rng.sample(keywords, num_kw) if len(
+                keywords) >= num_kw else keywords[:]
+
+            conlang_parts = []
+            component_info = []
+            for kw in chosen_kw:
+                form = self.engine._get_word_form(kw, skip_cache=True)
+                if form:
+                    conlang_parts.append(form)
+                    component_info.append({'keyword': kw, 'form': form})
+
+            if not conlang_parts:
+                continue
+
+            if self.engine.compounding_handler.enabled and len(conlang_parts) > 1:
+                result_word = self.engine.compounding_handler.construct_compound(
+                    conlang_parts, self.engine)
+            else:
+                result_word = "".join(conlang_parts)
+
+            if self.engine.sandhi_handler.enabled:
+                result_word = self.engine.sandhi_handler.apply_sandhi(
+                    result_word)
+
+            result_word = result_word.capitalize()
+
+            if result_word and result_word not in seen and len(result_word) >= 2:
+                results.append({
+                    'name': result_word,
+                    'etymology': " + ".join(c['keyword'] for c in component_info),
+                    'components': component_info
+                })
+                seen.add(result_word)
+
+            if len(results) >= count:
+                break
+
+        return results
+
+    def generate_basesuffixe_style_names(self, base_pool_key, suffix_pool_key, culture=None, count=12):
+        base_words = []
+        suffix_entries = []
+        if culture:
+            base_words = self._get_pool_words(base_pool_key, culture)
+            cultural_suffixes = culture.get('cultural_suffixes', {})
+            if suffix_pool_key in cultural_suffixes:
+                suffix_entries = cultural_suffixes[suffix_pool_key]
+            else:
+                suffix_entries = self._get_pool_words(suffix_pool_key, culture)
+        if not base_words:
+            base_words = list(self.unified_pools.get(base_pool_key, []))
+        if not suffix_entries:
+            suffix_entries = list(self.unified_pools.get(suffix_pool_key, []))
+
+        if not base_words and not suffix_entries:
+            return []
+
+        results = []
+        seen = set()
+        ph = self.engine.phonology_handler
+        attempts = 0
+        max_attempts = count * 12
+
+        while len(results) < count and attempts < max_attempts:
+            attempts += 1
+            rng = random.Random(int(hashlib.sha256(
+                f"ashk_{base_pool_key}_{suffix_pool_key}_{attempts}".encode()).hexdigest(), 16))
+
+            base_word = rng.choice(base_words) if base_words else ""
+            suffix_raw = rng.choice(suffix_entries) if suffix_entries else ""
+
+            if base_word:
+                conlang_base = self.engine._get_word_form(
+                    base_word, skip_cache=True)
+            else:
+                conlang_base = ""
+
+            if suffix_raw:
+                suf_clean = suffix_raw.replace('-', '').strip()
+                if len(suf_clean) <= 6 or suffix_raw.startswith('-'):
+                    conlang_suffix = suf_clean
+                else:
+                    conlang_suffix = self.engine._get_word_form(
+                        suffix_raw, skip_cache=True)
+            else:
+                conlang_suffix = ""
+
+            if not conlang_base and not conlang_suffix:
+                continue
+
+            parts = [p for p in [conlang_base, conlang_suffix] if p]
+
+            if self.engine.compounding_handler.enabled and len(parts) > 1:
+                result = self.engine.compounding_handler.construct_compound(
+                    parts, self.engine)
+            else:
+                result = "".join(parts)
+
+            result = ph.apply_monophthongization(result)
+            if self.engine.sandhi_handler.enabled:
+                result = self.engine.sandhi_handler.apply_sandhi(result)
+            result = result.capitalize()
+
+            if result and result not in seen and len(result) >= 2:
+                results.append(result)
+                seen.add(result)
+
+        return results
+
+    def generate_word_blend_names(self, pool_keys, culture=None, count=12):
+        all_pool_words = []
+        for pk in pool_keys:
+            if culture:
+                words = self._get_pool_words(pk, culture)
+            else:
+                words = list(self.unified_pools.get(pk, []))
+            all_pool_words.extend([(w, pk) for w in words])
+
+        if not all_pool_words:
+            return []
+
+        results = []
+        seen = set()
+        ph = self.engine.phonology_handler
+        attempts = 0
+        max_attempts = count * 15
+
+        while len(results) < count and attempts < max_attempts:
+            attempts += 1
+            rng = random.Random(int(hashlib.sha256(
+                f"blend_{'_'.join(pool_keys)}_{attempts}".encode()).hexdigest(), 16))
+
+            num_parts = rng.randint(2, min(3, len(all_pool_words)))
+            chosen = rng.sample(all_pool_words, num_parts)
+
+            conlang_parts = []
+            meanings = []
+            for word, pool in chosen:
+                form = self.engine._get_word_form(word, skip_cache=True)
+                if form:
+                    conlang_parts.append(form)
+                    meanings.append(word)
+
+            if len(conlang_parts) < 1:
+                continue
+
+            if self.engine.compounding_handler.enabled and len(conlang_parts) > 1:
+                result = self.engine.compounding_handler.construct_compound(
+                    conlang_parts, self.engine)
+            else:
+                result = "".join(conlang_parts)
+
+            result = ph.apply_monophthongization(result)
+            if self.engine.sandhi_handler.enabled:
+                result = self.engine.sandhi_handler.apply_sandhi(result)
+            result = result.capitalize()
+
+            if result and result not in seen and len(result) >= 3:
+                results.append(
+                    {'name': result, 'etymology': ' + '.join(meanings)})
+                seen.add(result)
+
+        return results
+
+    def derive_gender_form(self, name, target_gender, culture=None):
+        results = []
+        seen = set()
+        seen.add(name)
+        ph = self.engine.phonology_handler
+        vowels_list = list(ph.vowels) if ph.vowels else list("aeiou")
+        consonants_list = list(ph.consonants) if ph.consonants else []
+
+        gender_rules = {}
+        if culture:
+            gender_rules = culture.get('gender_derivation', {})
+
+        if target_gender in gender_rules:
+            rule = gender_rules[target_gender]
+            affix = rule.get('affix', '')
+            position = rule.get('position', 'suffix')
+            strip_vowel = rule.get('strip_final_vowel', False)
+            base = name
+            if strip_vowel and base and base[-1].lower() in (ph.vowels or 'aeiou'):
+                base = base[:-1]
+            if position == 'suffix':
+                candidate = base + affix
+            elif position == 'prefix':
+                candidate = affix + base
+            else:
+                candidate = base + affix
+            candidate = ph.apply_monophthongization(candidate)
+            if self.engine.sandhi_handler.enabled:
+                candidate = self.engine.sandhi_handler.apply_sandhi(candidate)
+            candidate = candidate.capitalize()
+            if candidate and candidate not in seen:
+                results.append(candidate)
+                seen.add(candidate)
+
+        gender_vowel_pools = {
+            'Feminino': [v for v in vowels_list if v in 'aáéiíy'] or vowels_list[:max(1, len(vowels_list)//2)],
+            'Masculino': [v for v in vowels_list if v in 'ouóú'] or vowels_list[max(0, len(vowels_list)//2):],
+            'Neutro': vowels_list
+        }
+        target_vowels = gender_vowel_pools.get(target_gender, vowels_list)
+        if not target_vowels:
+            target_vowels = vowels_list
+
+        gender_suffix_pools = {
+            'Feminino': ['a', 'ia', 'ina', 'ina', 'elle', 'ette', 'issa'],
+            'Masculino': ['os', 'us', 'or', 'an', 'on', 'ar'],
+            'Neutro': ['e', 'en', 'im', 'um', 'al']
+        }
+        base_suffixes = gender_suffix_pools.get(target_gender, ['a'])
+
+        phonologically_valid = [s for s in base_suffixes
+                                if not s or ph.is_valid_final(s[-1])]
+        if not phonologically_valid:
+            phonologically_valid = base_suffixes
+
+        strategies = [
+            'replace_final_vowel',
+            'add_gender_suffix',
+            'replace_final_vowel',
+            'strip_and_add_suffix',
+            'change_internal_vowel',
+            'add_gender_suffix',
+            'strip_and_add_suffix',
+            'replace_final_cluster',
+        ]
+
+        attempts = 0
+        max_attempts = 60
+
+        while len(results) < 12 and attempts < max_attempts:
+            attempts += 1
+            rng = random.Random(int(hashlib.sha256(
+                f"{name}_gender_{target_gender}_{attempts}".encode()).hexdigest(), 16))
+
+            strategy = rng.choice(strategies)
+            base = name.lower().strip()
+            candidate = base
+
+            if strategy == 'replace_final_vowel' and target_vowels:
+                stem = base.rstrip(
+                    ''.join(ph.vowels or 'aeiou')) if base else base
+                if not stem:
+                    stem = base[:-1] if len(base) > 1 else base
+                candidate = stem + rng.choice(target_vowels)
+
+            elif strategy == 'add_gender_suffix' and phonologically_valid:
+                suf = rng.choice(phonologically_valid)
+                stem = base.rstrip(
+                    ''.join(ph.vowels or 'aeiou')) if base else base
+                if not stem:
+                    stem = base
+                candidate = stem + suf
+
+            elif strategy == 'strip_and_add_suffix' and len(base) >= 3 and phonologically_valid:
+                cut = rng.randint(max(1, len(base) - 2), len(base) - 1)
+                stem = base[:cut]
+                suf = rng.choice(phonologically_valid)
+                candidate = stem + suf
+
+            elif strategy == 'change_internal_vowel' and len(base) >= 3:
+                vowel_idxs = [i for i, c in enumerate(
+                    base) if c in (ph.vowels or 'aeiou')]
+                if vowel_idxs and target_vowels:
+                    idx = rng.choice(
+                        vowel_idxs[:-1] if len(vowel_idxs) > 1 else vowel_idxs)
+                    opts = [v for v in target_vowels if v != base[idx]]
+                    if opts:
+                        chars = list(base)
+                        chars[idx] = rng.choice(opts)
+                        candidate = "".join(chars)
+
+            elif strategy == 'replace_final_cluster' and len(base) >= 3:
+                stem = base[:-2] if len(base) > 2 else base[:-1]
+                suf = rng.choice(phonologically_valid) if phonologically_valid else rng.choice(
+                    target_vowels)
+                candidate = stem + suf
+
+            candidate = ph.apply_monophthongization(candidate)
+            if candidate and not ph.is_valid_final(candidate[-1]):
+                valid_finals = [
+                    c for c in consonants_list if ph.is_valid_final(c)] + vowels_list
+                if valid_finals:
+                    candidate = candidate[:-1] + rng.choice(valid_finals)
+
+            if self.engine.sandhi_handler.enabled:
+                candidate = self.engine.sandhi_handler.apply_sandhi(candidate)
+
+            candidate = candidate.capitalize() if candidate else ''
+
+            if candidate and candidate not in seen and len(candidate) >= 2:
+                results.append(candidate)
+                seen.add(candidate)
+
+        return results
+
     def generate_candidates(self, meaning: str, options: Dict) -> List[Dict]:
         candidates = []
         is_abstract = options.get('abstract', False)
@@ -2049,7 +2373,7 @@ class GramatakiManager:
         if self.engine.sandhi_handler.enabled:
             final_name = self.engine.sandhi_handler.apply_sandhi(final_name)
         return final_name
-    
+
     def nativize_external_name_multiple(self, name, count=20):
         if not name:
             return []
@@ -2100,7 +2424,8 @@ class GramatakiManager:
                 raw = ph.apply_monophthongization(raw)
 
                 if raw and not ph.is_valid_final(raw[-1]):
-                    valid_finals = [c for c in consonants_list if ph.is_valid_final(c)] + vowels_list
+                    valid_finals = [
+                        c for c in consonants_list if ph.is_valid_final(c)] + vowels_list
                     if valid_finals:
                         raw = raw[:-1] + rng.choice(valid_finals)
 
@@ -2163,12 +2488,14 @@ class GramatakiManager:
 
             elif strategy == "change_suffix_consonant" and len(base) >= 2:
                 if consonants_list:
-                    valid = [c for c in consonants_list if ph.is_valid_final(c)]
+                    valid = [
+                        c for c in consonants_list if ph.is_valid_final(c)]
                     if valid:
                         candidate = base[:-1] + rng.choice(valid)
 
             elif strategy == "swap_internal_vowel" and len(base) >= 3:
-                vowel_idxs = [i for i, c in enumerate(base) if c in (ph.vowels or "aeiou")]
+                vowel_idxs = [i for i, c in enumerate(
+                    base) if c in (ph.vowels or "aeiou")]
                 if vowel_idxs and vowels_list and len(vowels_list) > 1:
                     idx = rng.choice(vowel_idxs)
                     current = base[idx]
@@ -2192,19 +2519,22 @@ class GramatakiManager:
                 if vowels_list:
                     candidate = stem + rng.choice(vowels_list)
                     if consonants_list and rng.random() < 0.4:
-                        valid = [c for c in consonants_list if ph.is_valid_final(c)]
+                        valid = [
+                            c for c in consonants_list if ph.is_valid_final(c)]
                         if valid:
                             candidate = candidate + rng.choice(valid)
 
             elif strategy == "swap_final_consonant" and len(base) >= 2:
                 if base[-1] in (ph.consonants or "") and consonants_list:
-                    valid = [c for c in consonants_list if ph.is_valid_final(c) and c != base[-1]]
+                    valid = [c for c in consonants_list if ph.is_valid_final(
+                        c) and c != base[-1]]
                     if valid:
                         candidate = base[:-1] + rng.choice(valid)
 
             elif strategy == "insert_medial_vowel" and len(base) >= 2 and vowels_list:
                 insert_pos = rng.randint(1, len(base) - 1)
-                candidate = base[:insert_pos] + rng.choice(vowels_list) + base[insert_pos:]
+                candidate = base[:insert_pos] + \
+                    rng.choice(vowels_list) + base[insert_pos:]
 
             elif strategy == "change_initial_cluster" and len(base) >= 2 and consonants_list:
                 if base[0] in (ph.consonants or ""):
@@ -2219,14 +2549,16 @@ class GramatakiManager:
             candidate = ph.apply_monophthongization(candidate)
 
             if candidate and not ph.is_valid_final(candidate[-1]):
-                valid_finals = [c for c in consonants_list if ph.is_valid_final(c)] + vowels_list
+                valid_finals = [
+                    c for c in consonants_list if ph.is_valid_final(c)] + vowels_list
                 if valid_finals:
                     candidate = candidate[:-1] + rng.choice(valid_finals)
 
             if candidate:
                 candidate = candidate.capitalize()
                 if self.engine.sandhi_handler.enabled:
-                    candidate = self.engine.sandhi_handler.apply_sandhi(candidate)
+                    candidate = self.engine.sandhi_handler.apply_sandhi(
+                        candidate)
 
             if candidate and candidate not in seen and len(candidate) >= 2:
                 results.append(candidate)
