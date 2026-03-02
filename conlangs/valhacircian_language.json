@@ -1,0 +1,807 @@
+{
+    "id": "valhacircian_language",
+    "name": "Valhacírca",
+    "native_name": "Valhaseerk",
+    "family_node": "cauto",
+    "linguistic_family": "garmanic_trunk.json",
+    "shared_base_strength": 0.60,
+    "global_seed": 77492011,
+    "source_language_order": "SVO",
+    "word_order": "SVO",
+    "subordinate_word_order": "SOV",
+    "alignment": "nominative-accusative",
+    "agglutination_strength": 0.15,
+    "divergence_factor": 0.45,
+    "cultural_purism": 0.30,
+    "drop_articles": false,
+    "phonotactics": {
+        "active_style": "soft_cautic",
+        "inventory_styles": {
+            "soft_cautic": {
+                "consonants": "pbtdkgfvszhmnlrwj",
+                "vowels": "aeiou",
+                "notes": "Suavizado, sem fricativas guturais ou oclusivas aspiradas fortes."
+            }
+        },
+        "consonants": "pbtdkgfvszhmnlrwj",
+        "vowels": "aeiou",
+        "syllable_templates": [
+            "CVC",
+            "CV",
+            "CVVC",
+            "CCVC",
+            "CVCC",
+            "CCVVC",
+            "V",
+            "VC"
+        ],
+        "min_syllables": 1,
+        "max_syllables": 3,
+        "allowed_initial_clusters": {
+            "two_consonants": [
+                "bl",
+                "br",
+                "dr",
+                "fl",
+                "fr",
+                "gl",
+                "gr",
+                "kl",
+                "kr",
+                "pl",
+                "pr",
+                "sl",
+                "sm",
+                "sn",
+                "sp",
+                "st",
+                "sw",
+                "tr",
+                "tw",
+                "vl",
+                "vr"
+            ]
+        },
+        "forbidden_initial_clusters": [
+            "tl",
+            "dl",
+            "sr",
+            "zr",
+            "nm",
+            "sch",
+            "chr",
+            "x"
+        ],
+        "allowed_final_clusters": {
+            "two_consonants": [
+                "nd",
+                "nt",
+                "st",
+                "lk",
+                "lt",
+                "rt",
+                "rd",
+                "rm",
+                "rn",
+                "mp",
+                "nk",
+                "ng",
+                "ls",
+                "rs"
+            ]
+        },
+        "forbidden_final_consonants": [
+            "h",
+            "j",
+            "w",
+            "v",
+            "z"
+        ],
+        "diphthongs": [
+            "eej",
+            "aaj",
+            "ooj",
+            "uuj",
+            "oe",
+            "ie",
+            "ui",
+            "ou",
+            "au",
+            "ei",
+            "eu",
+            "aau"
+        ],
+        "sonority_hierarchy": {
+            "enabled": true,
+            "strict": true,
+            "scale": {
+                "p": 1,
+                "b": 1,
+                "t": 1,
+                "d": 1,
+                "k": 1,
+                "g": 1,
+                "f": 2,
+                "v": 2,
+                "s": 2,
+                "z": 2,
+                "h": 3,
+                "m": 4,
+                "n": 4,
+                "ng": 4,
+                "l": 5,
+                "r": 6,
+                "w": 7,
+                "j": 7,
+                "a": 8,
+                "e": 8,
+                "i": 8,
+                "o": 8,
+                "u": 8
+            },
+            "onset_rules": {
+                "min_distance": 2,
+                "allow_plateau": false,
+                "allow_reversal": false
+            },
+            "coda_rules": {
+                "min_distance": 0,
+                "allow_plateau": true,
+                "allow_reversal": true
+            }
+        },
+        "phonological_rules": [
+            {
+                "name": "final_devoicing_soft",
+                "input": "([bdvzg])$",
+                "output": "\\1_devoiced",
+                "resolution": {
+                    "b_devoiced": "p",
+                    "d_devoiced": "t",
+                    "v_devoiced": "f",
+                    "z_devoiced": "s",
+                    "g_devoiced": "k"
+                },
+                "context": "word_final",
+                "obligatory": true
+            },
+            {
+                "name": "vowel_doubling_open_syllable",
+                "input": "([aeou])([bdfgklmnprstvz])$",
+                "output": "\\1\\1\\2",
+                "context": "stressed_monosyllable",
+                "obligatory": false
+            }
+        ],
+        "sandhi": {
+            "enabled": true,
+            "cross_word_boundary": false,
+            "rules": [
+                {
+                    "pattern": "n\\s+b",
+                    "replacement": "m b"
+                },
+                {
+                    "pattern": "n\\s+p",
+                    "replacement": "m p"
+                }
+            ]
+        }
+    },
+    "root_generation": {
+        "strategy": "template_based_with_phonotactic_constraints",
+        "preferred_root_shapes": [
+            "CVC",
+            "CVVC",
+            "CCVC",
+            "CVCC"
+        ],
+        "preferred_initial_consonants": [
+            "b",
+            "d",
+            "f",
+            "g",
+            "h",
+            "k",
+            "l",
+            "m",
+            "n",
+            "p",
+            "r",
+            "s",
+            "t",
+            "v",
+            "w"
+        ],
+        "preferred_initial_clusters": [
+            "bl",
+            "br",
+            "dr",
+            "fl",
+            "fr",
+            "gl",
+            "gr",
+            "kl",
+            "kr",
+            "pl",
+            "pr",
+            "sl",
+            "sm",
+            "sn",
+            "sp",
+            "st",
+            "tr",
+            "vl",
+            "vr"
+        ],
+        "preferred_nuclei": [
+            "a",
+            "e",
+            "i",
+            "o",
+            "u",
+            "aa",
+            "ee",
+            "oo",
+            "uu",
+            "ie",
+            "oe",
+            "eej",
+            "ui",
+            "ou"
+        ],
+        "preferred_final_consonants": [
+            "k",
+            "l",
+            "m",
+            "n",
+            "p",
+            "r",
+            "s",
+            "t",
+            "ng"
+        ],
+        "preferred_final_clusters": [
+            "nd",
+            "nt",
+            "st",
+            "lk",
+            "lt",
+            "rt",
+            "rd",
+            "rm",
+            "rn",
+            "mp",
+            "nk"
+        ],
+        "avoid": {
+            "gutturals": [
+                "x",
+                "ch",
+                "sch",
+                "q"
+            ]
+        }
+    },
+    "morphological_derivation": {
+        "enabled": true,
+        "root_based": false,
+        "strategy": "affixation_and_compounding",
+        "max_depth": 3,
+        "source_suffixes": [
+            {
+                "suffix": "ção",
+                "replacement": "eeng",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 90,
+                "mode": "derive",
+                "derivation_type": "verbal_noun"
+            },
+            {
+                "suffix": "dade",
+                "replacement": "heejd",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 85,
+                "mode": "derive",
+                "derivation_type": "abstract_noun"
+            },
+            {
+                "suffix": "dor",
+                "replacement": "aar",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 85,
+                "mode": "derive",
+                "derivation_type": "agent"
+            },
+            {
+                "suffix": "mente",
+                "replacement": "leek",
+                "input_pos": "ADV",
+                "target_pos": "ADJ",
+                "priority": 90,
+                "mode": "derive",
+                "derivation_type": "adverbial"
+            },
+            {
+                "suffix": "vel",
+                "replacement": "baar",
+                "input_pos": "ADJ",
+                "target_pos": "ADJ",
+                "priority": 80,
+                "mode": "derive",
+                "derivation_type": "ability"
+            }
+        ]
+    },
+    "affix_system": {
+        "enabled": true,
+        "derivation_rules": [
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "agent",
+                "affix": "aar",
+                "position": "suffix",
+                "force": true
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "verbal_noun",
+                "affix": "eeng",
+                "position": "suffix",
+                "force": true
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "NOUN",
+                "type": "abstract_noun",
+                "affix": "heejd",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "type": "possessive",
+                "affix": "leek",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "ADJ",
+                "type": "ability",
+                "affix": "baar",
+                "position": "suffix"
+            }
+        ]
+    },
+    "compounding": {
+        "enabled": true,
+        "productivity": "very_high",
+        "max_components": 4,
+        "head_position": "final",
+        "linking_elements": {
+            "e": {
+                "after": [
+                    "n",
+                    "m",
+                    "l",
+                    "r"
+                ],
+                "examples": "pannekoek"
+            },
+            "s": {
+                "after": [
+                    "eeng",
+                    "heejd",
+                    "teejd"
+                ],
+                "examples": "staatsman"
+            },
+            "en": {
+                "after": [
+                    "e"
+                ],
+                "examples": "boeken"
+            }
+        }
+    },
+    "gender_system": {
+        "enabled": false,
+        "default": "common",
+        "genders": [
+            "common"
+        ],
+        "inference": [],
+        "markers": {}
+    },
+    "number_system": {
+        "enabled": true,
+        "numbers": [
+            "singular",
+            "plural"
+        ],
+        "default": "singular",
+        "markers": {
+            "singular": {
+                "marker": ""
+            },
+            "plural": {
+                "marker": "en",
+                "alternatives": [
+                    {
+                        "marker": "s",
+                        "conditions": [
+                            "ends_in_vowel",
+                            "foreign_origin"
+                        ],
+                        "frequency": 0.40
+                    }
+                ]
+            }
+        },
+        "umlaut_plurals": {
+            "enabled": false
+        }
+    },
+    "case_system": {
+        "enabled": false,
+        "cases": [
+            "nominative",
+            "accusative",
+            "dative",
+            "genitive"
+        ],
+        "markers": {
+            "nominative": "",
+            "accusative": "",
+            "dative": "",
+            "genitive": "s"
+        },
+        "preposition_handling": "coexist"
+    },
+    "determiner_system": {
+        "definite_article": {
+            "form": "dee",
+            "variants": [
+                "te"
+            ],
+            "procliticizes": false,
+            "declines": false
+        },
+        "indefinite_article": {
+            "form": "een",
+            "declines": false,
+            "no_plural": true
+        },
+        "demonstratives": {
+            "proximal": {
+                "sg": "deeze",
+                "pl": "deeze"
+            },
+            "distal": {
+                "sg": "daat",
+                "pl": "dee"
+            }
+        },
+        "possessives": {
+            "pronominal_suffixes": false,
+            "independent_forms": {
+                "1sg": "meejn",
+                "2sg": "jeej",
+                "3sg": "zeejn",
+                "1pl": "ons",
+                "2pl": "juul",
+                "3pl": "eun"
+            }
+        }
+    },
+    "pronominal_system": {
+        "independent_pronouns": {
+            "1sg": "iek",
+            "2sg": "jeej",
+            "3sg_m": "heej",
+            "3sg_f": "zeej",
+            "3sg_n": "et",
+            "1pl": "weej",
+            "2pl": "juul",
+            "3pl": "zeej"
+        },
+        "object_pronouns": {
+            "direct": {
+                "1sg": "meej",
+                "2sg": "jeej",
+                "3sg_m": "heem",
+                "3sg_f": "haar",
+                "3sg_n": "et",
+                "1pl": "ons",
+                "2pl": "juul",
+                "3pl": "eun"
+            },
+            "indirect": {
+                "1sg": "meej",
+                "2sg": "jeej",
+                "3sg_m": "heem",
+                "3sg_f": "haar",
+                "3sg_n": "et",
+                "1pl": "ons",
+                "2pl": "juul",
+                "3pl": "eun"
+            }
+        }
+    },
+    "tam_system": {
+        "enabled": true,
+        "person_marking": {
+            "enabled": false
+        },
+        "rules": [
+            {
+                "features": [
+                    "Tense=Pres",
+                    "Mood=Ind"
+                ],
+                "marker": "",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Past",
+                    "Mood=Ind"
+                ],
+                "marker": "te",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "VerbForm=Part",
+                    "Tense=Past"
+                ],
+                "prefix": "ge",
+                "suffix": "t",
+                "type": "circumfix"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "zaal",
+                "type": "particle_before"
+            },
+            {
+                "features": [
+                    "Mood=Imp"
+                ],
+                "marker": "",
+                "type": "bare_stem"
+            },
+            {
+                "features": [
+                    "Aspect=Perf"
+                ],
+                "marker": "heeb",
+                "type": "particle_before"
+            }
+        ],
+        "modal_verbs": {
+            "kan": "can/be_able",
+            "muut": "must/have_to",
+            "maag": "may/be_allowed",
+            "zaal": "shall/will",
+            "weel": "want_to"
+        }
+    },
+    "copula_system": {
+        "enabled": true,
+        "copulas": [
+            {
+                "type": "default",
+                "form": "eez",
+                "conjugates": false,
+                "conditions": [
+                    "Tense=Pres"
+                ]
+            },
+            {
+                "type": "past",
+                "form": "waas",
+                "conjugates": false,
+                "conditions": [
+                    "Tense=Past"
+                ]
+            },
+            {
+                "type": "infinitive",
+                "form": "zeejn",
+                "conjugates": false,
+                "conditions": [
+                    "VerbForm=Inf"
+                ]
+            }
+        ]
+    },
+    "v2_constraint": {
+        "enabled": true,
+        "main_clause": true,
+        "subordinate_clause": false,
+        "verb_position": 2
+    },
+    "verb_cluster": {
+        "enabled": true,
+        "position": "clause_final",
+        "order": "auxiliary_last",
+        "description": "Verbos no final em orações subordinadas"
+    },
+    "negation_system": {
+        "enabled": true,
+        "strategies": [
+            {
+                "type": "verbal_negation",
+                "marker": "neet",
+                "position": "postverbal_or_clause_final"
+            },
+            {
+                "type": "nominal_negation",
+                "marker": "geen",
+                "position": "before"
+            }
+        ]
+    },
+    "interrogative_system": {
+        "enabled": true,
+        "v2_inversion": true,
+        "wh_questions": {
+            "wh_fronting": true,
+            "pronouns": {
+                "who": "weej",
+                "what": "waat",
+                "where": "waar",
+                "when": "waan",
+                "why": "waarom",
+                "how": "hoe"
+            }
+        }
+    },
+    "adposition_system": {
+        "type": "prepositions",
+        "basic_prepositions": {
+            "de": "vaan",
+            "em": "een",
+            "para": "voor",
+            "por": "door",
+            "com": "meet",
+            "sem": "zonder",
+            "sobre": "op",
+            "até": "tot"
+        }
+    },
+    "degree_system": {
+        "enabled": true,
+        "comparative": {
+            "affix": "er",
+            "position": "suffix"
+        },
+        "superlative": {
+            "affix": "st",
+            "position": "suffix"
+        },
+        "diminutive": {
+            "affix": "je",
+            "position": "suffix"
+        }
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "fixed",
+        "position": "initial",
+        "graphic_accent": false
+    },
+    "lexical_confluence": {
+        "enabled": true,
+        "base_stability": 10,
+        "strata": [
+            {
+                "source_id": "midorian_language",
+                "weight": 60,
+                "mutation_intensity": 0.40
+            },
+            {
+                "source_id": "corimean_modern",
+                "weight": 30,
+                "mutation_intensity": 0.30
+            }
+        ]
+    },
+    "false_cognates": {
+        "enabled": true,
+        "natural_confusion_chance": 0.35,
+        "manual_pairs": {
+            "mar": "meer",
+            "lago": "zee",
+            "gato": "kaat"
+        }
+    },
+    "loanword_policy": {
+        "enabled": true,
+        "modes": {
+            "phonetic_adaptation": 0.70,
+            "calque": 0.30,
+            "semantic_extension": 0.0
+        }
+    },
+    "style": {
+        "capitalization": true,
+        "noun_capitalization": false,
+        "sentence_capitalization": true,
+        "sentence_terminators": [
+            ".",
+            "!",
+            "?"
+        ],
+        "secondary_terminators": [
+            ",",
+            ";",
+            ":"
+        ]
+    },
+    "vocabulary": {
+        "eu": "iek",
+        "tu": "jeej",
+        "ele": "heej",
+        "ela": "zeej",
+        "nós": "weej",
+        "vós": "juul",
+        "eles": "zeej",
+        "o": "dee",
+        "a": "dee",
+        "os": "dee",
+        "as": "dee",
+        "um": "een",
+        "uma": "een",
+        "fazer": "maak",
+        "ser": "zeejn",
+        "estar": "zeejn",
+        "ter": "heeb",
+        "ir": "gaan",
+        "vir": "koom",
+        "não": "neet",
+        "sim": "jaa",
+        "e": "aen",
+        "ou": "of",
+        "mas": "maar",
+        "porque": "waant",
+        "quando": "waan",
+        "água": "waater",
+        "fogo": "vuur",
+        "terra": "aard",
+        "ar": "luut",
+        "grande": "groot",
+        "pequeno": "kleen",
+        "bom": "goed",
+        "mau": "sleecht",
+        "hoje": "vaandaag",
+        "amanhã": "moorgen",
+        "ontem": "geester",
+        "casa": "huus",
+        "homem": "maan",
+        "mulher": "vrouw",
+        "criança": "keend",
+        "cidade": "staad",
+        "rei": "kooning"
+    },
+    "design_notes": {
+        "inspiration": "Aesthetic inspirada nos idiomas germânicos de terras baixas, focando no aspecto analítico. Muito mais suave sonoramente, sem fricativas intensas e sem declinações ou gêneros gramaticais rígidos.",
+        "character": "Suave, moderno, analítico, prático.",
+        "key_features": [
+            "Invariabilidade de conjugações verbais baseadas em pessoa.",
+            "Ausência total de gênero para substantivos (apenas o gênero comum com 'dee').",
+            "Ausência de casos gramaticais.",
+            "Ordem V2 relaxada em principal (SVO como padrão predominante) e SOV em subordinadas.",
+            "Prevalência de vogais longas representadas por letras duplas ou por dígrafos como 'eej'.",
+            "Alta inteligibilidade com Midoriano apenas na escrita devido a falsos cognatos e suavização fonética."
+        ]
+    }
+}

@@ -3,63 +3,164 @@
     "name": "Tekom-Krimlog",
     "native_name": "Tekom-Krimlog",
     "parent_id": "krimlog",
-    "description": "Padrão Administrativo e Científico do Krimlog. Variante de alto registro que utiliza o vocabulário base do Krimlog mas adota uma morfologia aglutinante sintética para precisão jurídica, científica e corporativa.",
+    "description": "Variante administrativa e científica ultra-sintética do Krimlog. Elimina artigos e preposições independentes utilizando um forte sistema de casos e morfologia aglutinante. Projetado para máxima densidade informacional, velocidade de digitação, e ausência de acentuação gráfica.",
     "global_seed": 17991799,
     "source_language_order": "SVO",
     "word_order": "SVO",
     "subordinate_word_order": "SOV",
     "alignment": "nominative-accusative",
-    "agglutination_strength": 0.65,
+    "agglutination_strength": 1.0,
     "divergence_factor": 0.0,
     "cultural_purism": 1.0,
+    "drop_articles": true,
+    "pro_drop": {
+        "enabled": true,
+        "conditions": [
+            "verb_agreement"
+        ]
+    },
     "lexical_confluence": {
         "enabled": true,
         "base_stability": 0,
-        "description": "100% do vocabulário derivado estritamente do Krimlog Padrão, sem empréstimos externos adicionais.",
+        "description": "100% do vocabulário derivado estritamente do Krimlog Padrão.",
         "strata": [
             {
                 "source_id": "krimlog",
                 "weight": 100,
-                "type": "inheritance",
-                "description": "Herança total do léxico Krimlog"
+                "type": "inheritance"
             }
         ]
     },
-    "abstract_concepts": {
+    "case_system": {
         "enabled": true,
-        "mappings": {
-            "do": "txo-",
-            "de": "txa-",
-            "da": "txa-",
-            "dos": "min-ha",
-            "das": "min-ha",
-            "o": "ha",
-            "a": "ha",
-            "os": "ha-txi",
-            "as": "ha-txi",
-            "e": "wa",
-            "às": "ha-en",
-            "à": "ha",
-            "em": "hī-en",
-            "que": "ana",
-            "aos": "tzi",
-            "nesta": "nedi",
-            "esta": "puii",
-            "este": "nedi",
-            "nesse": "puei"
+        "preposition_handling": "replace",
+        "marker_position": "suffix",
+        "markers": {
+            "nominative": {
+                "marker": "",
+                "type": "suffix"
+            },
+            "accusative": {
+                "marker": "t",
+                "type": "suffix"
+            },
+            "dative": {
+                "marker": "na",
+                "type": "suffix"
+            },
+            "genitive": {
+                "marker": "mim",
+                "type": "suffix"
+            },
+            "locative": {
+                "marker": "en",
+                "type": "suffix"
+            },
+            "ergative": {
+                "marker": "ka",
+                "type": "suffix"
+            }
         },
-        "definitions": {}
+        "preposition_case_mapping": {
+            "de": "genitive",
+            "do": "genitive",
+            "da": "genitive",
+            "em": "locative",
+            "no": "locative",
+            "na": "locative",
+            "a": "dative",
+            "ao": "dative",
+            "para": "dative",
+            "por": "instrumental"
+        }
+    },
+    "tam_system": {
+        "enabled": true,
+        "infer_imperative_from_context": true,
+        "rules": [
+            {
+                "features": [
+                    "Tense=Past"
+                ],
+                "marker": "pas",
+                "type": "prefix"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "va",
+                "type": "prefix"
+            },
+            {
+                "features": [
+                    "Aspect=Prog"
+                ],
+                "marker": "stan",
+                "type": "prefix"
+            },
+            {
+                "features": [
+                    "Aspect=Perf"
+                ],
+                "marker": "hav",
+                "type": "prefix"
+            }
+        ]
+    },
+    "negation_system": {
+        "enabled": true,
+        "strategies": [
+            {
+                "type": "standard_negation",
+                "marker": "non",
+                "suffix": "",
+                "description": "Negação prefixada diretamente ao núcleo."
+            }
+        ]
+    },
+    "compounding": {
+        "enabled": true,
+        "head_position": "final",
+        "linking_elements": {
+            "e": {
+                "after": [
+                    "b",
+                    "d",
+                    "f",
+                    "g",
+                    "k",
+                    "l",
+                    "m",
+                    "n",
+                    "p",
+                    "r",
+                    "s",
+                    "t",
+                    "v",
+                    "z"
+                ]
+            },
+            "-": {
+                "after": [
+                    "a",
+                    "e",
+                    "i",
+                    "o",
+                    "u"
+                ]
+            }
+        }
     },
     "phonotactics": {
         "active_style": "krimlog_standard",
         "inventory_styles": {
             "krimlog_standard": {
-                "description": "Inventário fonológico do Krimlog com vogais estendidas para nomes próprios",
                 "consonants": "bdfghklmnprstvz",
-                "vowels": "aeiouû"
+                "vowels": "aeiou"
             }
         },
-        "vowels": "aeiouû",
+        "vowels": "aeiou",
         "consonants": "bdfghklmnprstvz",
         "syllable_templates": [
             "CV",
@@ -69,256 +170,46 @@
         ],
         "min_syllables": 1,
         "max_syllables": 4,
-        "forbidden_initial_clusters": [
-            "bd",
-            "nm",
-            "lr",
-            "pb",
-            "kg",
-            "dt",
-            "fn",
-            "vl"
-        ],
-        "forbidden_final_consonants": [],
-        "max_consonant_cluster": 1,
-        "diphthongs": [
-            "ai",
-            "au",
-            "ei",
-            "ou",
-            "ui"
-        ],
         "epenthesis_vowel": "e",
-        "sonority_hierarchy": {
+        "sandhi": {
             "enabled": true,
-            "scale": {
-                "p": 1,
-                "b": 1,
-                "t": 1,
-                "d": 1,
-                "k": 1,
-                "g": 1,
-                "f": 2,
-                "v": 2,
-                "s": 2,
-                "z": 2,
-                "h": 2,
-                "m": 3,
-                "n": 3,
-                "l": 4,
-                "r": 5,
-                "a": 7,
-                "e": 7,
-                "i": 7,
-                "o": 7,
-                "u": 7,
-                "û": 7
-            },
-            "onset_rules": {
-                "min_distance": 2,
-                "allow_plateau": false,
-                "allow_reversal": false
-            },
-            "coda_rules": {
-                "min_distance": 0,
-                "allow_plateau": true,
-                "allow_reversal": true
-            }
-        },
-        "phonological_rules": [
-            {
-                "input": "VCV",
-                "output": "VCV",
-                "register": null,
-                "description": "Regra neutra padrão"
-            },
-            {
-                "input": "ʔ",
-                "output": "",
-                "register": null,
-                "description": "Eliminação de glotais"
-            },
-            {
-                "input": "ħ",
-                "output": "h",
-                "register": null,
-                "description": "Simplificação de faringais"
-            },
-            {
-                "input": "ʕ",
-                "output": "",
-                "register": null,
-                "description": "Eliminação de faringais"
-            },
-            {
-                "input": "q",
-                "output": "k",
-                "register": null,
-                "description": "Merge uvular-velar"
-            },
-            {
-                "input": "ṭ",
-                "output": "t",
-                "register": null,
-                "description": "Eliminação de enfáticas"
-            },
-            {
-                "input": "ṣ",
-                "output": "s",
-                "register": null,
-                "description": "Eliminação de enfáticas"
-            },
-            {
-                "input": "ḍ",
-                "output": "d",
-                "register": null,
-                "description": "Eliminação de enfáticas"
-            },
-            {
-                "input": "x",
-                "output": "h",
-                "register": null,
-                "description": "Simplificação velar fricativa"
-            },
-            {
-                "input": "ā",
-                "output": "a",
-                "register": null,
-                "description": "Eliminação de distinção de quantidade vocálica"
-            },
-            {
-                "input": "ī",
-                "output": "i",
-                "register": null,
-                "description": "Eliminação de distinção de quantidade vocálica"
-            },
-            {
-                "input": "ū",
-                "output": "u",
-                "register": null,
-                "description": "Eliminação de distinção de quantidade vocálica"
-            },
-            {
-                "input": "ē",
-                "output": "e",
-                "register": null,
-                "description": "Eliminação de distinção de quantidade vocálica"
-            },
-            {
-                "input": "ō",
-                "output": "o",
-                "register": null,
-                "description": "Eliminação de distinção de quantidade vocálica"
-            }
-        ]
+            "rules": [
+                {
+                    "pattern": "a-a",
+                    "replacement": "a",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "e-e",
+                    "replacement": "e",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "i-i",
+                    "replacement": "i",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "o-o",
+                    "replacement": "o",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "u-u",
+                    "replacement": "u",
+                    "ignore_case": true
+                }
+            ]
+        }
     },
-    "morphological_derivation": {
+    "stress_system": {
         "enabled": true,
-        "root_based": false,
-        "max_depth": 5,
-        "compounding": {
-            "enabled": true,
-            "connector": "-",
-            "head_position": "final",
-            "description": "Uso extensivo de palavras compostas para terminologia técnica (ex: 'dun-saiad' para 'fino véu' como membrana específica)."
-        }
-    },
-    "affix_system": {
-        "enabled": true,
-        "description": "Sistema onde partículas gramaticais isoladas do Krimlog tornam-se afixos obrigatórios no registro escrito.",
-        "derivation_rules": [
-            {
-                "from_pos": "NOUN",
-                "to_pos": "ADJ",
-                "type": "genitive_construct",
-                "affix": "-mim",
-                "position": "suffix",
-                "force": true,
-                "description": "Converte a partícula de posse 'mim' (de) em sufixo: 'niû-men-mim' (do coração)."
-            },
-            {
-                "from_pos": "VERB",
-                "to_pos": "VERB",
-                "type": "negation_block",
-                "affix": "non-",
-                "position": "prefix",
-                "force": true,
-                "description": "Negação padrão 'non' prefixada ao verbo."
-            },
-            {
-                "from_pos": "VERB",
-                "to_pos": "VERB",
-                "type": "future_block",
-                "affix": "va-",
-                "position": "prefix",
-                "force": true,
-                "description": "Partícula de futuro 'va' prefixada ao verbo."
-            },
-            {
-                "from_pos": "VERB",
-                "to_pos": "VERB",
-                "type": "past_block",
-                "affix": "pas-",
-                "position": "prefix",
-                "force": true,
-                "description": "Partícula de passado 'pas' prefixada ao verbo."
-            }
-        ]
-    },
-    "determiner_system": {
-        "definite_article": {
-            "form": "kisa-",
-            "procliticizes": true,
-            "description": "O artigo definido 'kisa' (o/a) torna-se um prefixo hifenizado obrigatório para substantivos definidos."
-        },
-        "indefinite_article": {
-            "form": "un",
-            "description": "Mantido como palavra separada para ênfase numérica, exceto em compostos técnicos."
-        }
-    },
-    "pronominal_system": {
-        "formal_pronouns": {
-            "enabled": true,
-            "description": "Derivação de pronomes honoríficos/formais usando o sufixo de grandeza '-om' (ex-aab).",
-            "mapping": {
-                "tu": "tu-om",
-                "vos": "vos-om",
-                "lu": "lu-om",
-                "anav": "anav-om"
-            }
-        }
-    },
-    "syntax_rules": {
-        "noun_phrase": {
-            "order": "Det-Adj-Noun",
-            "agglutination": true,
-            "description": "Artigos e adjetivos monossilábicos aglutinam-se ao substantivo principal."
-        },
-        "verb_phrase": {
-            "order": "Neg-Tam-Verb",
-            "agglutination": true,
-            "description": "O verbo atua como núcleo de um bloco que contém negação e tempo."
-        },
-        "sentence_structure": {
-            "connector_logic": "Conjunções compostas (ex: 'firitagru-anna') iniciam orações subordinadas de forma explícita."
-        }
+        "type": "fixed",
+        "position": "penultimate",
+        "graphic_accent": false
     },
     "writing_conventions": {
-        "hyphenation": "Obrigatória para conectar determinantes, partículas gramaticais e compostos nominais.",
-        "capitalization": "Apenas nomes próprios e início de sentença. Compostos mantêm caixa baixa após o hífen."
-    },
-    "design_principles": {
-        "principles": [
-            "Densidade Informacional - Expressar conceitos complexos em unidades lexicais únicas.",
-            "Desambiguação - Eliminar a flutuação de partículas soltas do Krimlog Padrão.",
-            "Padronização Corporativa - Criar termos fixos para departamentos e funções.",
-            "Herança Estrita - Não criar novas raízes, apenas novas montagens."
-        ],
-        "usage_context": [
-            "Artigos Científicos",
-            "Contratos Legais",
-            "Manuais Técnicos",
-            "Comunicação Corporativa Inter-regional"
-        ]
+        "hyphenation": "Usado apenas para quebrar ambiguidades vocálicas extremas; de resto, prefixação e sufixação direta para leitura paramétrica fluida.",
+        "capitalization": "Apenas primeira letra de sentenças e nomes próprios, visando formatação rápida em editores de texto."
     }
 }

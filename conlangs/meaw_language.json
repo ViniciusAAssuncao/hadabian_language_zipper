@@ -1,0 +1,859 @@
+{
+    "id": "meaw",
+    "name": "Meaw Language",
+    "description": "Uma conlang onde todas as palavras são variações de miados de gato. Proposta educacional e humorística para explorar o motor ConHab.",
+    "word_order": "SVO",
+    "subordinate_word_order": "SOV",
+    "source_language_order": "SVO",
+    "drop_articles": false,
+    "pro_drop": {
+        "enabled": true,
+        "conditions": [
+            "verb_agreement"
+        ]
+    },
+    "aesthetic_profile": {
+        "syllable_count_distribution": {
+            "1": 0.3,
+            "2": 0.5,
+            "3": 0.2
+        },
+        "cluster_density": 0.2,
+        "vowel_consonant_ratio": 0.5
+    },
+    "alignment": "nominative-accusative",
+    "global_seed": 768928557,
+    "phonotactics": {
+        "vowels": "aeiou",
+        "consonants": "mnywrptkh",
+        "active_style": "meow_style",
+        "inventory_styles": {
+            "meow_style": {
+                "consonants": "mnywrptkh",
+                "vowels": "aeiou"
+            }
+        },
+        "transition_matrix": {
+            "enabled": true,
+            "default_weight": 10,
+            "matrix": {
+                "m": {
+                    "i": 100,
+                    "a": 80,
+                    "u": 60,
+                    "e": 20,
+                    "o": 10
+                },
+                "n": {
+                    "y": 90,
+                    "a": 70,
+                    "i": 50,
+                    "u": 30
+                },
+                "y": {
+                    "a": 80,
+                    "u": 60,
+                    "i": 40
+                },
+                "w": {
+                    "a": 70,
+                    "i": 50,
+                    "u": 50
+                },
+                "r": {
+                    "a": 60,
+                    "u": 60,
+                    "i": 40,
+                    "o": 30
+                },
+                "p": {
+                    "u": 80,
+                    "r": 70,
+                    "a": 40
+                },
+                "t": {
+                    "a": 60,
+                    "u": 50,
+                    "i": 30
+                },
+                "k": {
+                    "a": 60,
+                    "i": 40,
+                    "u": 40
+                },
+                "h": {
+                    "a": 50,
+                    "i": 30,
+                    "u": 30
+                }
+            }
+        },
+        "syllable_templates": [
+            "CV",
+            "CVC",
+            "V",
+            "VC"
+        ],
+        "min_syllables": 1,
+        "max_syllables": 3,
+        "max_consonant_cluster": 1,
+        "max_vowel_cluster": 1,
+        "forbidden_initial_clusters": [],
+        "forbidden_final_consonants": [],
+        "epenthesis_vowel": "i",
+        "diphthongs": [
+            "ai",
+            "au",
+            "ia",
+            "iu",
+            "ei",
+            "oi"
+        ],
+        "sonority_hierarchy": {
+            "enabled": false
+        }
+    },
+    "consonant_mutation": {
+        "enabled": true,
+        "rules": [
+            {
+                "name": "Lenition",
+                "description": "Suaviza consoantes após o marcador de tópico 'nya' ou determinantes",
+                "triggers": {
+                    "words": [
+                        "nya"
+                    ],
+                    "pos": [
+                        "DET"
+                    ]
+                },
+                "mutations": {
+                    "p": "w",
+                    "t": "y",
+                    "k": "h"
+                }
+            }
+        ]
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "fixed",
+        "position": "initial",
+        "graphic_accent": true,
+        "accent_map": {
+            "a": "á",
+            "e": "é",
+            "i": "í",
+            "o": "ó",
+            "u": "ú"
+        }
+    },
+    "semantic_fields": {
+        "enabled": true,
+        "auto_detect": true,
+        "use_nltk": true,
+        "threshold": 0.3,
+        "manual_groups": {
+            "gato": "felino",
+            "rato": "presa",
+            "leite": "comida",
+            "sofá": "móvel",
+            "caixa": "esconderijo"
+        }
+    },
+    "polysemy_rules": {
+        "enabled": true,
+        "merges": {
+            "miau": "som",
+            "ronron": "som"
+        },
+        "splits": {
+            "banco": [
+                {
+                    "target_suffix": "_inst",
+                    "rules": {
+                        "feats": [
+                            "Num"
+                        ],
+                        "deprel": [
+                            "nmod"
+                        ]
+                    }
+                },
+                {
+                    "target_suffix": "_assento",
+                    "rules": {
+                        "feats": [],
+                        "deprel": [
+                            "obl"
+                        ]
+                    }
+                }
+            ]
+        }
+    },
+    "false_cognates": {
+        "enabled": true,
+        "natural_confusion_chance": 0.2,
+        "manual_pairs": {
+            "nyan": "miau",
+            "purr": "ronron"
+        }
+    },
+    "vowel_harmony": {
+        "enabled": true,
+        "groups": {
+            "front": "ei",
+            "back": "aou"
+        },
+        "rules": [
+            {
+                "input": "a",
+                "map": {
+                    "front": "e",
+                    "back": "a"
+                }
+            },
+            {
+                "input": "o",
+                "map": {
+                    "front": "e",
+                    "back": "o"
+                }
+            }
+        ]
+    },
+    "case_system": {
+        "enabled": true,
+        "preposition_handling": "replace",
+        "markers": {
+            "nominative": {
+                "marker": "nya",
+                "type": "suffix"
+            },
+            "accusative": {
+                "marker": "mi",
+                "type": "suffix"
+            },
+            "dative": {
+                "marker": "ni",
+                "type": "suffix"
+            },
+            "genitive": {
+                "marker": "no",
+                "type": "suffix"
+            },
+            "locative": {
+                "marker": "na",
+                "type": "suffix"
+            }
+        },
+        "marker_position": "suffix"
+    },
+    "tam_system": {
+        "enabled": true,
+        "infer_imperative_from_context": true,
+        "rules": [
+            {
+                "features": [
+                    "VerbForm=Inf"
+                ],
+                "marker": "ru",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "VerbForm=Ger"
+                ],
+                "marker": "an",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Past"
+                ],
+                "marker": "ta",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "tu",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Imp"
+                ],
+                "marker": "nya",
+                "type": "particle_before"
+            },
+            {
+                "features": [
+                    "Mood=Cnd"
+                ],
+                "marker": "ra",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Sub"
+                ],
+                "marker": "ke",
+                "type": "particle_before"
+            }
+        ]
+    },
+    "agreement_rules": {
+        "gender_agreement": true,
+        "number_agreement": true
+    },
+    "gender_system": {
+        "enabled": true,
+        "default": "neutro",
+        "inference": [
+            {
+                "suffix": "a",
+                "gender": "feminino"
+            },
+            {
+                "suffix": "i",
+                "gender": "feminino"
+            },
+            {
+                "suffix": "o",
+                "gender": "masculino"
+            },
+            {
+                "suffix": "u",
+                "gender": "masculino"
+            }
+        ],
+        "markers": {
+            "masculino": {
+                "targets": [
+                    "ADJ",
+                    "DET",
+                    "VERB"
+                ],
+                "marker": "nya",
+                "position": "suffix"
+            },
+            "feminino": {
+                "targets": [
+                    "ADJ",
+                    "DET",
+                    "VERB"
+                ],
+                "marker": "nyi",
+                "position": "suffix"
+            },
+            "neutro": {
+                "targets": [
+                    "ADJ",
+                    "DET",
+                    "VERB"
+                ],
+                "marker": "nyu",
+                "position": "suffix"
+            }
+        }
+    },
+    "topicalization": {
+        "enabled": true,
+        "position": "initial",
+        "topic_marker": "nya",
+        "reintroduce_articles": true
+    },
+    "focus_structure": {
+        "enabled": true,
+        "object_focus_marker": "mi",
+        "verb_focus_marker": "ma",
+        "suppress_case": true
+    },
+    "functional_particles": {
+        "muito": {
+            "noun_position": "post_nominal",
+            "adj_position": "pre_nominal",
+            "verb_position": "post_verbal"
+        }
+    },
+    "degree_system": {
+        "enabled": true,
+        "source_rules": [
+            {
+                "type": "diminutive",
+                "suffix": "inho",
+                "replacement": "o"
+            },
+            {
+                "type": "diminutive",
+                "suffix": "inha",
+                "replacement": "a"
+            },
+            {
+                "type": "augmentative",
+                "suffix": "ão",
+                "replacement": "o"
+            },
+            {
+                "type": "augmentative",
+                "suffix": "ona",
+                "replacement": "a"
+            },
+            {
+                "type": "superlative",
+                "suffix": "íssimo",
+                "replacement": "o"
+            },
+            {
+                "type": "superlative",
+                "suffix": "íssima",
+                "replacement": "a"
+            }
+        ],
+        "rules": {
+            "diminutive": {
+                "affix": "ita",
+                "position": "suffix"
+            },
+            "augmentative": {
+                "affix": "ota",
+                "position": "suffix"
+            },
+            "superlative": {
+                "affix": "isa",
+                "position": "suffix"
+            }
+        }
+    },
+    "morphological_derivation": {
+        "enabled": true,
+        "max_depth": 3,
+        "exceptions": [
+            "amor",
+            "dor",
+            "sol"
+        ]
+    },
+    "affix_system": {
+        "enabled": true,
+        "source_suffixes": [
+            {
+                "input_pos": "ADJ",
+                "suffix": "ático",
+                "replacement": "a",
+                "target_pos": "NOUN",
+                "priority": 0
+            },
+            {
+                "input_pos": "ADJ",
+                "suffix": "ico",
+                "replacement": "o",
+                "target_pos": "NOUN",
+                "priority": 0
+            },
+            {
+                "input_pos": "NOUN",
+                "suffix": "dor",
+                "replacement": "r",
+                "target_pos": "VERB",
+                "priority": 0
+            },
+            {
+                "input_pos": "NOUN",
+                "suffix": "ção",
+                "replacement": "r",
+                "target_pos": "VERB",
+                "priority": 0
+            },
+            {
+                "input_pos": "ADV",
+                "suffix": "mente",
+                "replacement": "x",
+                "target_pos": "ADJ",
+                "priority": 1
+            },
+            {
+                "input_pos": "ADJ",
+                "suffix": "izado",
+                "replacement": "",
+                "target_pos": "NOUN",
+                "priority": 0
+            },
+            {
+                "input_pos": "VERB",
+                "suffix": "ante",
+                "replacement": "",
+                "target_pos": "NOUN",
+                "priority": 0
+            },
+            {
+                "input_pos": "NOUN",
+                "suffix": "al",
+                "replacement": "e",
+                "target_pos": "ADJ",
+                "priority": 0
+            },
+            {
+                "input_pos": "NOUN",
+                "suffix": "o",
+                "replacement": "",
+                "target_pos": "VERB",
+                "min_word_length": 5,
+                "priority": 0
+            }
+        ],
+        "derivation_rules": [
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "affix": "nya",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "agent",
+                "affix": "tu",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "ADV",
+                "affix": "li",
+                "position": "suffix"
+            }
+        ]
+    },
+    "reduplication": {
+        "enabled": true,
+        "epenthesis_vowel": "i",
+        "rules": [
+            {
+                "features": [
+                    "Number=Plur"
+                ],
+                "pos": [
+                    "NOUN"
+                ],
+                "method": "first_syllable",
+                "separator": ""
+            },
+            {
+                "features": [
+                    "Aspect=Hab"
+                ],
+                "pos": [
+                    "VERB"
+                ],
+                "method": "whole_word",
+                "separator": "-"
+            },
+            {
+                "features": [
+                    "Focus=Yes"
+                ],
+                "method": "first_syllable",
+                "separator": ""
+            }
+        ]
+    },
+    "numeric_handling": {
+        "ignore_digits": true
+    },
+    "style": {
+        "capitalization": true,
+        "punctuation_map": {
+            ".": ".",
+            "!": "!",
+            "?": "?",
+            ",": ",",
+            ";": ";",
+            ":": ":"
+        },
+        "sentence_terminators": [
+            ".",
+            "!",
+            "?"
+        ],
+        "secondary_terminators": [
+            ":",
+            ";"
+        ]
+    },
+    "negation_system": {
+        "enabled": true,
+        "strategies": [
+            {
+                "type": "verbal_negation",
+                "marker": "mr",
+                "suffix": ""
+            },
+            {
+                "type": "nominal_negation",
+                "marker": "mr",
+                "suffix": ""
+            }
+        ]
+    },
+    "interrogative_system": {
+        "enabled": true,
+        "question_particles": [
+            {
+                "type": "yes_no",
+                "particle": "nya"
+            },
+            {
+                "type": "yes_no_alternative",
+                "particle": "nyan"
+            }
+        ],
+        "detection_rules": {
+            "wh_words": [
+                "quem",
+                "o que",
+                "qual",
+                "quando",
+                "onde",
+                "por que",
+                "como"
+            ],
+            "alternative_indicators": [
+                "ou"
+            ]
+        }
+    },
+    "copula_system": {
+        "enabled": true,
+        "copulas": [
+            {
+                "type": "present_default",
+                "conditions": [
+                    "Tense=Pres"
+                ],
+                "form": "meow"
+            },
+            {
+                "type": "past_default",
+                "conditions": [
+                    "Tense=Past"
+                ],
+                "form": "miau"
+            },
+            {
+                "type": "future_default",
+                "conditions": [
+                    "Tense=Fut"
+                ],
+                "form": "purr"
+            }
+        ]
+    },
+    "compounding": {
+        "enabled": true,
+        "head_position": "final",
+        "linking_elements": {
+            "n": {
+                "after": [
+                    "a",
+                    "i",
+                    "u"
+                ]
+            },
+            "y": {
+                "after": [
+                    "o",
+                    "e"
+                ]
+            }
+        }
+    },
+    "pronominal_system": {
+        "independent_pronouns": {
+            "1sg": "mi",
+            "2sg": "ni",
+            "3sg_m": "nya",
+            "3sg_f": "nyi",
+            "1pl": "mu",
+            "2pl": "nu",
+            "3pl": "nyu"
+        },
+        "object_pronouns": {
+            "direct": {
+                "1sg": "mi",
+                "2sg": "ni",
+                "3sg_m": "nya",
+                "3sg_f": "nyi",
+                "1pl": "mu",
+                "2pl": "nu",
+                "3pl": "nyu"
+            },
+            "indirect": {
+                "1sg": "mi",
+                "2sg": "ni",
+                "3sg_m": "nya",
+                "3sg_f": "nyi",
+                "1pl": "mu",
+                "2pl": "nu",
+                "3pl": "nyu"
+            }
+        },
+        "clitic_ordering": {
+            "enabled": true,
+            "order": [
+                "verb",
+                "obj_direct",
+                "obj_indirect"
+            ],
+            "encliticizes": true,
+            "procliticizes": false
+        }
+    },
+    "determiner_system": {
+        "definite_article": {
+            "form": "nya",
+            "variants": [],
+            "sun_letter_assimilation": false
+        },
+        "demonstratives": {
+            "proximal": {
+                "sg_m": "nyan",
+                "sg_f": "nyan",
+                "pl": "nyan"
+            },
+            "distal": {
+                "sg_m": "nya",
+                "sg_f": "nya",
+                "pl": "nya"
+            },
+            "source_mappings": {
+                "proximal": [
+                    "este",
+                    "esta",
+                    "isto"
+                ],
+                "distal": [
+                    "aquele",
+                    "aquela",
+                    "aquilo"
+                ]
+            }
+        },
+        "possessives": {
+            "pronominal_suffixes": true,
+            "suffixes": {
+                "1sg": "mi",
+                "2sg": "ni",
+                "3sg_m": "nya",
+                "3sg_f": "nyi",
+                "1pl": "mu",
+                "2pl": "nu",
+                "3pl": "nyu"
+            },
+            "possessive_lemmas": {
+                "meu": "1",
+                "minha": "1",
+                "teu": "2",
+                "tua": "2",
+                "seu": "3",
+                "sua": "3",
+                "nosso": "1",
+                "nossa": "1",
+                "vosso": "2",
+                "vossa": "2",
+                "seus": "3",
+                "suas": "3"
+            }
+        }
+    },
+    "number_system": {
+        "numbers": [
+            "singular",
+            "plural"
+        ],
+        "broken_plurals": {
+            "enabled": true,
+            "patterns": [
+                {
+                    "singular_pattern": "CVC",
+                    "plural_pattern": "CVCCV"
+                }
+            ]
+        },
+        "dual_markers": {
+            "enabled": true,
+            "nominative": "nyan",
+            "accusative": "nyan"
+        }
+    },
+    "adposition_system": {
+        "basic_prepositions": {
+            "de": "no",
+            "em": "na",
+            "para": "ni",
+            "com": "mu"
+        },
+        "inflected_prepositions": {
+            "enabled": true,
+            "forms": {
+                "no": {
+                    "1sg": "nomi",
+                    "2sg": "noni",
+                    "3sg_m": "nonya"
+                }
+            }
+        }
+    },
+    "special_mechanics": {
+        "enabled": true,
+        "suffix_replacement": {
+            "type": "suffix_replacement",
+            "percentage": 20,
+            "suffixes": [
+                "nyan",
+                "purr"
+            ]
+        }
+    },
+    "allomorphy": {
+        "enabled": false,
+        "rules": []
+    },
+    "loanword_policy": {
+        "enabled": true,
+        "modes": {
+            "phonetic_adaptation": 0.8,
+            "calque": 0.15,
+            "semantic_extension": 0.05
+        },
+        "calque_connector": "-"
+    },
+    "lexical_confluence": {
+        "enabled": false,
+        "base_stability": 100,
+        "strata": []
+    },
+    "root_system": {
+        "enabled": false,
+        "binyanim": []
+    },
+    "pharyngealization": {
+        "enabled": false
+    },
+    "construct_state": {
+        "enabled": false
+    },
+    "sandhi": {
+        "enabled": false,
+        "rules": []
+    },
+    "sun_letter_assimilation": false,
+    "broken_plurals": {
+        "enabled": false
+    },
+    "dual": {
+        "enabled": false
+    }
+}

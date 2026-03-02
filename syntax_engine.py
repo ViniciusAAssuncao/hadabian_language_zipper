@@ -333,7 +333,8 @@ class WordOrderMapper:
                     self.agreement_rules.get('gender_agreement', False)
                 if not has_agreement:
                     return False
-            head_idx = func['dependencies'][0] if func['dependencies'] else -1
+            head_idx = func['dependencies'][0] if func.get(
+                'dependencies') else -1
             if head_idx != -1:
                 head_func = next(
                     (f for f in functions if f['original_index'] == head_idx), None)
@@ -352,7 +353,8 @@ class WordOrderMapper:
 
                 if match_pos and match_deprel:
                     if func['pos'] == 'DET' and self.topicalization_config.get('reintroduce_articles', False):
-                        head_idx = func.get('dependencies', [-1])[0]
+                        head_idx = func['dependencies'][0] if func.get(
+                            'dependencies') else -1
                         if head_idx != -1:
                             for f in functions:
                                 if f['index'] == head_idx:
@@ -371,7 +373,8 @@ class WordOrderMapper:
             return False
 
         if self.topicalization_config.get('reintroduce_articles', False):
-            head_idx = func.get('dependencies', [-1])[0]
+            head_idx = func['dependencies'][0] if func.get(
+                'dependencies') else -1
             if head_idx != -1:
                 for f in functions:
                     if f['index'] == head_idx:
@@ -447,7 +450,8 @@ class WordOrderMapper:
             if chunk_built:
                 chunks.append(chunk_built)
                 continue
-            head_idx = func['dependencies'][0] if func['dependencies'] else -1
+            head_idx = func['dependencies'][0] if func.get(
+                'dependencies') else -1
             if head_idx > i and head_idx < len(functions):
                 head_pos = functions[head_idx]['pos']
                 head_func = functions[head_idx]['function']
@@ -630,7 +634,7 @@ class WordOrderMapper:
             token_data = next(
                 (f for f in functions if f['index'] == word_real_idx), None)
 
-            if token_data and token_data['dependencies']:
+            if token_data and token_data.get('dependencies'):
                 head_ptr = token_data['dependencies'][0]
                 if head_ptr != -1 and head_ptr not in chunk_indices:
                     chunk_head_index = idx_in_chunk
@@ -820,7 +824,8 @@ class SyntaxEngine:
             lemma = f['lemma'].lower()
             word = f['word'].lower()
             if word in det_forms or lemma in det_forms:
-                head_idx = f['dependencies'][0] if f['dependencies'] else -1
+                head_idx = f['dependencies'][0] if f.get(
+                    'dependencies') else -1
                 if head_idx != -1 and head_idx < len(functions):
                     head = next(
                         (h for h in functions if h['index'] == head_idx), None)
@@ -834,7 +839,8 @@ class SyntaxEngine:
                         else:
                             f['feats'] = 'PronType=Art|Definite=Def'
             if lemma in particles:
-                head_idx = f['dependencies'][0] if f['dependencies'] else -1
+                head_idx = f['dependencies'][0] if f.get(
+                    'dependencies') else -1
                 if head_idx != -1 and head_idx < len(functions):
                     head = next(
                         (h for h in functions if h['index'] == head_idx), None)
@@ -869,17 +875,18 @@ class SyntaxEngine:
             if not word:
                 continue
             if skip_next_space:
-                last_token = final_tokens.pop()
-                if word in punct_suffix:
-                    final_tokens.append(last_token)
-                    final_tokens[-1] = final_tokens[-1] + word
-                    skip_next_space = False
-                else:
-                    final_tokens.append(last_token + word)
-                    skip_next_space = False
-                    if word.endswith('-'):
-                        skip_next_space = True
-                    continue
+                if final_tokens:
+                    last_token = final_tokens.pop()
+                    if word in punct_suffix:
+                        final_tokens.append(last_token)
+                        final_tokens[-1] = final_tokens[-1] + word
+                        skip_next_space = False
+                    else:
+                        final_tokens.append(last_token + word)
+                        skip_next_space = False
+                        if word.endswith('-'):
+                            skip_next_space = True
+                        continue
             if not final_tokens:
                 final_tokens.append(word)
             else:
