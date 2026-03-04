@@ -565,7 +565,7 @@
         "base_stability": 25,
         "strata": [
             {
-                "source_id": "cauterian",
+                "source_id": "cauterian_language",
                 "weight": 50,
                 "mutation_intensity": 0.1
             },

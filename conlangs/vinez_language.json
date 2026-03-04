@@ -1,0 +1,1135 @@
+{
+    "id": "vinezian",
+    "name": "Vinêz",
+    "native_name": "Ìl-Vìniż",
+    "description": "Língua levínica fortemente influenciada pelo Pavísiano e Midoriano, resultando em uma mistura única de gramática semítica com vocabulário europeu.",
+    "family_node": "western-levinic",
+    "linguistic_family": "ordo_enkian_family.json",
+    "shared_base_strength": 0.35,
+    "global_seed": 20260304,
+    "source_language_order": "SVO",
+    "word_order": "VSO",
+    "subordinate_word_order": "SVO",
+    "alignment": "nominative-accusative",
+    "agglutination_strength": 0.45,
+    "divergence_factor": 0.25,
+    "cultural_purism": 0.15,
+    "drop_articles": false,
+    "pro_drop": {
+        "enabled": true,
+        "conditions": [
+            "verb_agreement"
+        ]
+    },
+    "lexical_confluence": {
+        "enabled": true,
+        "base_stability": 0,
+        "strata": [
+            {
+                "source_id": "pavisian_language",
+                "weight": 60,
+                "type": "superstratum",
+                "mutation_intensity": 0.15
+            },
+            {
+                "source_id": "mabadi_language",
+                "weight": 30,
+                "type": "inheritance",
+                "mutation_intensity": 0.05
+            },
+            {
+                "source_id": "midorian_language",
+                "weight": 10,
+                "type": "adstratum",
+                "mutation_intensity": 0.25
+            }
+        ]
+    },
+    "aesthetic_profile": {
+        "syllable_count_distribution": {
+            "1": 0.10,
+            "2": 0.45,
+            "3": 0.35,
+            "4": 0.10
+        },
+        "cluster_density": 0.35,
+        "vowel_consonant_ratio": 0.60
+    },
+    "phonotactics": {
+        "active_style": "standard",
+        "inventory_styles": {
+            "standard": {
+                "consonants": "bcdfghjklmnpqrstvwxzżċġgħħ",
+                "vowels": "aeiouieaw"
+            }
+        },
+        "vowels": "aeiou",
+        "consonants": "bcdfghjklmnpqrstvwxzżċġgħħ",
+        "syllable_templates": [
+            "CV",
+            "CVC",
+            "CCVC",
+            "CVCC",
+            "V",
+            "VC"
+        ],
+        "min_syllables": 1,
+        "max_syllables": 4,
+        "forbidden_initial_clusters": [
+            "nm",
+            "lr",
+            "pb",
+            "kg",
+            "dt"
+        ],
+        "forbidden_final_consonants": [
+            "h"
+        ],
+        "max_consonant_cluster": 2,
+        "diphthongs": [
+            "ie",
+            "aw",
+            "aj",
+            "ej",
+            "ow"
+        ],
+        "epenthesis_vowel": "i",
+        "sandhi": {
+            "enabled": true,
+            "rules": [
+                {
+                    "pattern": "([aeiou])\\s+([aeiou])",
+                    "replacement": "\\1'\\2",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "il\\s+([tdrsznlċżċ])",
+                    "replacement": "i\\1 \\1",
+                    "ignore_case": true
+                }
+            ]
+        },
+        "phonological_rules": [
+            {
+                "input": "għV",
+                "output": "V:",
+                "register": "standard"
+            },
+            {
+                "input": "Vgħ$",
+                "output": "V:ħ$",
+                "register": "standard"
+            },
+            {
+                "input": "tj",
+                "output": "ċ",
+                "register": "standard"
+            },
+            {
+                "input": "dj",
+                "output": "ġ",
+                "register": "standard"
+            }
+        ]
+    },
+    "allomorphy": {
+        "enabled": true,
+        "rules": [
+            {
+                "target_word": "il",
+                "environment": "before_vowel",
+                "replacement": "l-"
+            },
+            {
+                "target_word": "ta",
+                "environment": "before_vowel",
+                "replacement": "t'"
+            },
+            {
+                "target_word": "ma",
+                "environment": "before_vowel",
+                "replacement": "m'"
+            }
+        ]
+    },
+    "root_system": {
+        "enabled": true,
+        "type": "triconsonantal",
+        "patterns": [
+            "CaCaC",
+            "CiCieC",
+            "CuCaC",
+            "CaCCaC",
+            "CieCieC",
+            "maCCaC",
+            "miCCieC"
+        ],
+        "binyanim": [
+            {
+                "name": "qal",
+                "form": "I",
+                "pattern": "CaCaC",
+                "meaning": "basic_active"
+            },
+            {
+                "name": "nifal",
+                "form": "II",
+                "pattern": "inCaCaC",
+                "meaning": "passive_reflexive"
+            },
+            {
+                "name": "piel",
+                "form": "III",
+                "pattern": "CaCCeC",
+                "meaning": "intensive"
+            },
+            {
+                "name": "hitpael",
+                "form": "VII",
+                "pattern": "itCaCCaC",
+                "meaning": "reflexive_intensive"
+            }
+        ]
+    },
+    "morphological_derivation": {
+        "enabled": true,
+        "root_based": true,
+        "max_depth": 3,
+        "exceptions": [
+            "il",
+            "u",
+            "li",
+            "minn",
+            "fi",
+            "bi",
+            "ma'"
+        ],
+        "nominal_patterns": [
+            {
+                "pattern": "maCCaC",
+                "type": "place_instrument"
+            },
+            {
+                "pattern": "CieCiC",
+                "type": "active_participle"
+            },
+            {
+                "pattern": "maCCuC",
+                "type": "passive_participle"
+            }
+        ],
+        "source_suffixes": [
+            {
+                "suffix": "ção",
+                "replacement": "zzjoni",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "mode": "adapt",
+                "priority": 100
+            },
+            {
+                "suffix": "são",
+                "replacement": "zzjoni",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "mode": "adapt",
+                "priority": 95
+            },
+            {
+                "suffix": "dade",
+                "replacement": "tà",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "mode": "adapt",
+                "priority": 90
+            },
+            {
+                "suffix": "ismo",
+                "replacement": "iżmu",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "mode": "adapt",
+                "priority": 85
+            },
+            {
+                "suffix": "ista",
+                "replacement": "ista",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "mode": "adapt",
+                "priority": 80
+            },
+            {
+                "suffix": "mente",
+                "replacement": "ment",
+                "input_pos": "ADV",
+                "target_pos": "ADV",
+                "mode": "adapt",
+                "priority": 75
+            },
+            {
+                "suffix": "oso",
+                "replacement": "uż",
+                "input_pos": "ADJ",
+                "target_pos": "ADJ",
+                "mode": "adapt",
+                "priority": 70
+            },
+            {
+                "suffix": "osa",
+                "replacement": "uża",
+                "input_pos": "ADJ",
+                "target_pos": "ADJ",
+                "mode": "adapt",
+                "priority": 65
+            },
+            {
+                "suffix": "al",
+                "replacement": "ali",
+                "input_pos": "ADJ",
+                "target_pos": "ADJ",
+                "mode": "adapt",
+                "priority": 60
+            },
+            {
+                "suffix": "ar",
+                "replacement": "a",
+                "input_pos": "VERB",
+                "target_pos": "VERB",
+                "mode": "adapt",
+                "priority": 50
+            },
+            {
+                "suffix": "er",
+                "replacement": "i",
+                "input_pos": "VERB",
+                "target_pos": "VERB",
+                "mode": "adapt",
+                "priority": 50
+            },
+            {
+                "suffix": "ir",
+                "replacement": "i",
+                "input_pos": "VERB",
+                "target_pos": "VERB",
+                "mode": "adapt",
+                "priority": 50
+            }
+        ]
+    },
+    "affix_system": {
+        "enabled": true,
+        "derivation_rules": [
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "verbal_noun",
+                "affix": "ien",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "type": "relational",
+                "affix": "i",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "ADJ",
+                "type": "possibility",
+                "affix": "abbli",
+                "position": "suffix"
+            }
+        ]
+    },
+    "gender_system": {
+        "enabled": true,
+        "genders": [
+            "masculine",
+            "feminine"
+        ],
+        "default": "masculine",
+        "inference": [
+            {
+                "suffix": "a",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "tà",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "zzjoni",
+                "gender": "feminine"
+            }
+        ],
+        "markers": {
+            "feminine": {
+                "marker": "a",
+                "position": "suffix",
+                "targets": [
+                    "ADJ",
+                    "VERB"
+                ]
+            },
+            "masculine": {
+                "marker": "",
+                "position": "suffix",
+                "targets": [
+                    "ADJ",
+                    "VERB"
+                ]
+            }
+        }
+    },
+    "number_system": {
+        "numbers": [
+            "singular",
+            "plural",
+            "dual"
+        ],
+        "default": "singular",
+        "markers": {
+            "plural": {
+                "marker": "i",
+                "alternatives": [
+                    "iet",
+                    "ijiet",
+                    "in"
+                ]
+            },
+            "singular": {
+                "marker": ""
+            }
+        },
+        "dual_markers": {
+            "nominative": "ejn",
+            "accusative": "ejn",
+            "genitive": "ejn"
+        },
+        "broken_plurals": {
+            "enabled": true,
+            "patterns": [
+                {
+                    "singular_pattern": "CieCiC",
+                    "plural_pattern": "CwaCaC"
+                },
+                {
+                    "singular_pattern": "CaCaC",
+                    "plural_pattern": "CqieCaC"
+                },
+                {
+                    "singular_pattern": "maCCaC",
+                    "plural_pattern": "maCaCiC"
+                }
+            ]
+        }
+    },
+    "case_system": {
+        "enabled": true,
+        "cases": [
+            "nominative",
+            "accusative",
+            "dative",
+            "genitive",
+            "locative"
+        ],
+        "marker_position": "prefix",
+        "preposition_handling": "coexist",
+        "markers": {
+            "nominative": {
+                "marker": "",
+                "type": "suffix",
+                "conditions": []
+            },
+            "accusative": {
+                "marker": "lil ",
+                "type": "particle_before",
+                "conditions": [
+                    "definite",
+                    "animate"
+                ]
+            },
+            "dative": {
+                "marker": "lil ",
+                "type": "particle_before",
+                "conditions": []
+            },
+            "genitive": {
+                "marker": "ta' ",
+                "type": "particle_before",
+                "conditions": []
+            },
+            "locative": {
+                "marker": "fi ",
+                "type": "particle_before",
+                "conditions": []
+            }
+        },
+        "construct_state": {
+            "enabled": true,
+            "suppress_article_on_head": true,
+            "trigger_dependencies": [
+                "nmod",
+                "nmod:poss"
+            ],
+            "phonological_changes": [
+                {
+                    "pattern": "a$",
+                    "replacement": "at",
+                    "condition": "feminine"
+                }
+            ]
+        }
+    },
+    "determiner_system": {
+        "definite_article": {
+            "form": "il",
+            "variants": [
+                "l"
+            ],
+            "procliticizes": true,
+            "sun_letter_assimilation": true,
+            "sun_letters": [
+                "t",
+                "d",
+                "r",
+                "z",
+                "s",
+                "n",
+                "l",
+                "ċ",
+                "ż"
+            ]
+        },
+        "demonstratives": {
+            "gender_inheritance_heuristic": true,
+            "proximal": {
+                "sg_m": "dan",
+                "sg_f": "din",
+                "pl": "dawn"
+            },
+            "distal": {
+                "sg_m": "dak",
+                "sg_f": "dik",
+                "pl": "dawk"
+            },
+            "source_mappings": {
+                "proximal": [
+                    "este",
+                    "esta",
+                    "isto",
+                    "esse",
+                    "essa",
+                    "isso",
+                    "estes",
+                    "estas",
+                    "esses",
+                    "essas"
+                ],
+                "distal": [
+                    "aquele",
+                    "aquela",
+                    "aquilo",
+                    "aqueles",
+                    "aquelas"
+                ]
+            }
+        },
+        "possessives": {
+            "pronominal_suffixes": true,
+            "suppress_article": true,
+            "suffixes": {
+                "1sg": "i",
+                "2sg_m": "ek",
+                "2sg_f": "ki",
+                "3sg_m": "u",
+                "3sg_f": "ha",
+                "1pl": "na",
+                "2pl": "kom",
+                "3pl": "hom"
+            },
+            "possessive_lemmas": {
+                "meu": "1",
+                "minha": "1",
+                "teu": "2",
+                "tua": "2",
+                "seu": "3",
+                "sua": "3",
+                "nosso": "1",
+                "nossa": "1",
+                "vosso": "2",
+                "vossa": "2"
+            }
+        }
+    },
+    "pronominal_system": {
+        "independent_pronouns": {
+            "1sg": "jien",
+            "2sg_m": "int",
+            "2sg_f": "inti",
+            "3sg_m": "huwa",
+            "3sg_f": "hija",
+            "1pl": "aħna",
+            "2pl": "intom",
+            "3pl": "huma"
+        },
+        "object_pronouns": {
+            "direct": {
+                "1sg": "ni",
+                "2sg_m": "k",
+                "2sg_f": "ki",
+                "3sg_m": "h",
+                "3sg_f": "ha",
+                "1pl": "na",
+                "2pl": "kom",
+                "3pl": "hom"
+            },
+            "indirect": {
+                "1sg": "li",
+                "2sg_m": "lek",
+                "2sg_f": "lki",
+                "3sg_m": "lu",
+                "3sg_f": "lha",
+                "1pl": "lna",
+                "2pl": "lkom",
+                "3pl": "lhom"
+            }
+        },
+        "clitic_ordering": {
+            "enabled": true,
+            "order": [
+                "neg",
+                "verb",
+                "obj_indirect",
+                "obj_direct"
+            ],
+            "encliticizes": true
+        }
+    },
+    "adposition_system": {
+        "inflected_prepositions": {
+            "enabled": true,
+            "forms": {
+                "fi": {
+                    "1sg": "fija",
+                    "2sg_m": "fik",
+                    "2sg_f": "fiki",
+                    "3sg_m": "fih",
+                    "3sg_f": "fiha",
+                    "1pl": "fina",
+                    "2pl": "fikom",
+                    "3pl": "fihom"
+                },
+                "bi": {
+                    "1sg": "bija",
+                    "2sg_m": "bik",
+                    "2sg_f": "biki",
+                    "3sg_m": "bih",
+                    "3sg_f": "biha",
+                    "1pl": "bina",
+                    "2pl": "bikom",
+                    "3pl": "bihom"
+                },
+                "ma'": {
+                    "1sg": "miegħi",
+                    "2sg_m": "miegħek",
+                    "2sg_f": "miegħki",
+                    "3sg_m": "miegħu",
+                    "3sg_f": "magħha",
+                    "1pl": "magħna",
+                    "2pl": "magħkom",
+                    "3pl": "magħhom"
+                },
+                "minn": {
+                    "1sg": "minni",
+                    "2sg_m": "minnek",
+                    "2sg_f": "minnki",
+                    "3sg_m": "minnu",
+                    "3sg_f": "minnha",
+                    "1pl": "minna",
+                    "2pl": "minkom",
+                    "3pl": "minnhom"
+                },
+                "ta'": {
+                    "1sg": "tiegħi",
+                    "2sg_m": "tiegħek",
+                    "2sg_f": "tiegħki",
+                    "3sg_m": "tiegħu",
+                    "3sg_f": "tagħha",
+                    "1pl": "tagħna",
+                    "2pl": "tagħkom",
+                    "3pl": "tagħhom"
+                },
+                "ma": {
+                    "1sg": "ma'ija",
+                    "2sg_m": "ma'ik",
+                    "2sg_f": "ma'iki",
+                    "3sg_m": "ma'ih",
+                    "3sg_f": "ma'iha",
+                    "1pl": "ma'ina",
+                    "2pl": "ma'ikom",
+                    "3pl": "ma'ihom"
+                }
+            }
+        },
+        "basic_prepositions": {
+            "de": "ta'",
+            "em": "fi",
+            "por": "għal",
+            "com": "ma'",
+            "para": "għal",
+            "a": "lil",
+            "sem": "mingħajr"
+        }
+    },
+    "tam_system": {
+        "enabled": true,
+        "infer_imperative_from_context": true,
+        "person_marking": {
+            "enabled": true,
+            "prefixes": {
+                "1sg": "n",
+                "2sg_m": "t",
+                "2sg_f": "t",
+                "3sg_m": "j",
+                "3sg_f": "t",
+                "1pl": "n",
+                "2pl": "t",
+                "3pl": "j"
+            },
+            "suffixes": {
+                "1sg": "",
+                "2sg_m": "",
+                "2sg_f": "i",
+                "3sg_m": "",
+                "3sg_f": "",
+                "1pl": "u",
+                "2pl": "u",
+                "3pl": "u"
+            }
+        },
+        "rules": [
+            {
+                "features": [
+                    "Tense=Pres",
+                    "Aspect=Imp"
+                ],
+                "marker": "",
+                "type": "prefix"
+            },
+            {
+                "features": [
+                    "Tense=Past",
+                    "Aspect=Perf"
+                ],
+                "marker": "",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "se ",
+                "type": "particle_before"
+            },
+            {
+                "features": [
+                    "Aspect=Prog"
+                ],
+                "marker": "qed ",
+                "type": "particle_before"
+            },
+            {
+                "features": [
+                    "Mood=Cnd"
+                ],
+                "marker": "kieku ",
+                "type": "particle_before"
+            },
+            {
+                "features": [
+                    "VerbForm=Part",
+                    "Tense=Past"
+                ],
+                "marker": "ma",
+                "type": "prefix"
+            },
+            {
+                "features": [
+                    "VerbForm=Inf"
+                ],
+                "marker": "a",
+                "type": "suffix"
+            }
+        ]
+    },
+    "copula_system": {
+        "enabled": true,
+        "copulas": [
+            {
+                "type": "present_default",
+                "form": "zero",
+                "conjugates": false,
+                "conditions": [
+                    "Tense=Pres",
+                    "SubjectType=Noun"
+                ]
+            },
+            {
+                "type": "present_pronominal",
+                "form": "pronominal",
+                "conjugates": true,
+                "conditions": [
+                    "Tense=Pres",
+                    "SubjectType=Pronoun"
+                ]
+            },
+            {
+                "type": "past",
+                "form": "kien",
+                "conjugates": true,
+                "conditions": [
+                    "Tense=Past"
+                ]
+            },
+            {
+                "type": "future",
+                "form": "ikun",
+                "conjugates": true,
+                "conditions": [
+                    "Tense=Fut"
+                ]
+            }
+        ]
+    },
+    "negation_system": {
+        "enabled": true,
+        "strategies": [
+            {
+                "type": "verbal_negation",
+                "marker": "ma ",
+                "suffix": "x"
+            },
+            {
+                "type": "nominal_negation",
+                "marker": "mhux ",
+                "suffix": ""
+            },
+            {
+                "type": "emphatic_negation",
+                "marker": "qatt ",
+                "suffix": ""
+            },
+            {
+                "type": "existential_negation",
+                "marker": "m'hemmx ",
+                "suffix": ""
+            }
+        ]
+    },
+    "interrogative_system": {
+        "enabled": true,
+        "question_particles": [
+            {
+                "type": "yes_no",
+                "particle": "jaqaw",
+                "position": "initial",
+                "optional": true
+            }
+        ],
+        "detection_rules": {
+            "wh_words": [
+                "min",
+                "x'inhu",
+                "meta",
+                "fejn",
+                "kif",
+                "għaliex",
+                "kemm",
+                "liema"
+            ],
+            "alternative_indicators": [
+                "jew"
+            ]
+        },
+        "particle_metadata": {
+            "pos": "PART",
+            "function": "INT",
+            "deprel": "discourse"
+        }
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "weight",
+        "position": "penultimate",
+        "graphic_accent": true,
+        "accent_map": {
+            "a": "à",
+            "e": "è",
+            "i": "ì",
+            "o": "ò",
+            "u": "ù"
+        }
+    },
+    "vowel_harmony": {
+        "enabled": false
+    },
+    "consonant_mutation": {
+        "enabled": true,
+        "rules": [
+            {
+                "triggers": {
+                    "words": [
+                        "il",
+                        "l"
+                    ],
+                    "pos": [
+                        "DET"
+                    ],
+                    "ending_chars": [
+                        "l"
+                    ]
+                },
+                "mutations": {
+                    "t": "t",
+                    "d": "d",
+                    "r": "r",
+                    "z": "z",
+                    "s": "s",
+                    "n": "n",
+                    "l": "l",
+                    "ċ": "ċ",
+                    "ż": "ż"
+                }
+            }
+        ]
+    },
+    "pharyngealization": {
+        "enabled": true,
+        "triggers": [
+            "ħ",
+            "għ"
+        ],
+        "affected_vowels": [
+            "a",
+            "e",
+            "i",
+            "o",
+            "u"
+        ],
+        "lowering_effect": true
+    },
+    "reduplication": {
+        "enabled": false
+    },
+    "topicalization": {
+        "enabled": true,
+        "topic_marker": "",
+        "position": "initial",
+        "reintroduce_articles": true
+    },
+    "focus_structure": {
+        "enabled": false
+    },
+    "agreement_rules": {
+        "gender_agreement": true,
+        "number_agreement": true,
+        "person_agreement": true,
+        "adjunct_position": "after_core"
+    },
+    "degree_system": {
+        "enabled": true,
+        "rules": {
+            "diminutive": {
+                "affix": "ett",
+                "position": "suffix"
+            },
+            "augmentative": {
+                "affix": "un",
+                "position": "suffix"
+            },
+            "superlative": {
+                "affix": "l-iktar ",
+                "position": "prefix"
+            }
+        },
+        "source_rules": [
+            {
+                "suffix": "inho",
+                "replacement": "",
+                "type": "diminutive"
+            },
+            {
+                "suffix": "ão",
+                "replacement": "",
+                "type": "augmentative"
+            },
+            {
+                "suffix": "íssimo",
+                "replacement": "",
+                "type": "superlative"
+            }
+        ]
+    },
+    "semantic_fields": {
+        "enabled": true,
+        "use_nltk": false,
+        "animate_domains": [
+            "kinship",
+            "religion",
+            "occupation",
+            "fauna"
+        ],
+        "manual_groups": {
+            "deus": "religion",
+            "igreja": "religion",
+            "rei": "occupation",
+            "arte": "high_culture",
+            "poesia": "high_culture",
+            "estrela": "celestial"
+        }
+    },
+    "polysemy_rules": {
+        "enabled": true,
+        "merges": {
+            "canção": "poesia",
+            "entender": "saber",
+            "compreender": "saber"
+        }
+    },
+    "false_cognates": {
+        "enabled": true,
+        "manual_pairs": {
+            "atualmente": "verament",
+            "pretender": "taparsi",
+            "livraria": "bibljoteka"
+        },
+        "natural_confusion_chance": 0.05
+    },
+    "loanword_policy": {
+        "enabled": true,
+        "modes": {
+            "phonetic_adaptation": 0.75,
+            "calque": 0.20,
+            "semantic_extension": 0.05
+        },
+        "calque_connector": " "
+    },
+    "abstract_concepts": {
+        "enabled": true,
+        "mappings": {
+            "de": "ta'",
+            "do": "tal",
+            "da": "tal",
+            "dos": "tal",
+            "das": "tal",
+            "o": "il",
+            "a": "il",
+            "os": "il",
+            "as": "il",
+            "e": "u",
+            "que": "li",
+            "em": "fi",
+            "ser": "ikun",
+            "fazer": "jagħmel",
+            "mas": "iżda",
+            "ou": "jew",
+            "porque": "għax",
+            "quando": "meta",
+            "se": "jekk"
+        },
+        "definitions": {}
+    },
+    "lexical_registers": {
+        "enabled": true,
+        "registers": [
+            {
+                "name": "formal",
+                "chance": 0.30,
+                "mutation_factor": 0.5,
+                "description": "Registro formal com maior influência pavísiana."
+            },
+            {
+                "name": "colloquial",
+                "chance": 0.55,
+                "mutation_factor": 1.2,
+                "description": "Registro coloquial cotidiano, mais próximo da raiz mabádi."
+            },
+            {
+                "name": "poetic",
+                "chance": 0.15,
+                "mutation_factor": 0.8,
+                "description": "Registro literário com elisões líricas e arcaísmos."
+            }
+        ]
+    },
+    "functional_particles": {
+        "muito": {
+            "adj_word": "ħafna",
+            "adj_position": "post_nominal",
+            "noun_word": "ħafna",
+            "noun_position": "post_nominal",
+            "verb_word": "ħafna",
+            "verb_position": "post_verbal"
+        },
+        "pouco": {
+            "adj_word": "ftit",
+            "adj_position": "post_nominal",
+            "noun_word": "ftit",
+            "noun_position": "pre_nominal"
+        },
+        "mais": {
+            "adj_word": "iżjed",
+            "adj_position": "pre_nominal",
+            "noun_word": "iktar",
+            "noun_position": "pre_nominal"
+        },
+        "menos": {
+            "adj_word": "inqas",
+            "adj_position": "pre_nominal",
+            "noun_word": "inqas",
+            "noun_position": "pre_nominal"
+        },
+        "bem": {
+            "verb_word": "tajjeb",
+            "verb_position": "post_verbal"
+        },
+        "mal": {
+            "verb_word": "ħażin",
+            "verb_position": "post_verbal"
+        },
+        "já": {
+            "verb_word": "diġà",
+            "verb_position": "pre_verbal"
+        },
+        "ainda": {
+            "verb_word": "għad",
+            "verb_position": "pre_verbal"
+        }
+    },
+    "numeric_handling": {
+        "ignore_digits": true
+    },
+    "style": {
+        "capitalization": true,
+        "punctuation_map": {
+            ",": ",",
+            ".": ".",
+            "!": "!",
+            "?": "?",
+            ":": ":",
+            ";": ";"
+        },
+        "sentence_terminators": [
+            ".",
+            "!",
+            "?"
+        ],
+        "secondary_terminators": [
+            ":",
+            ";"
+        ]
+    }
+}

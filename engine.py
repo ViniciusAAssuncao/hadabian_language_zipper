@@ -815,14 +815,26 @@ class RootSystemHandler:
         lemma_lower = lemma.lower()
         if lemma_lower in self.root_registry:
             return list(self.root_registry[lemma_lower].replace("-", ""))
+        
         rng = random.Random(self.seed + sum(ord(c) for c in lemma_lower))
+        
+        phonotactics = self.profile.get('phonotactics', {})
+        
+        allowed_initial = phonotactics.get('allowed_initial_clusters', [])
+        if not allowed_initial:
+            allowed_initial = list(self.consonants)
+            
+        forbidden_finals = set(phonotactics.get('forbidden_final_consonants', []))
+        allowed_final = [c for c in self.consonants if c not in forbidden_finals]
+        if not allowed_final:
+            allowed_final = list(self.consonants)
 
         pref_initial = self.profile.get('root_generation', {}).get(
-            'preferred_initial_clusters', ['str', 'st', 'br'])
+            'preferred_initial_clusters', allowed_initial)
         pref_final = self.profile.get('root_generation', {}).get(
-            'preferred_final_clusters', ['cht', 'ft', 'nd'])
+            'preferred_final_clusters', allowed_final)
         pref_vowels = self.profile.get('root_generation', {}).get(
-            'preferred_nuclei', ['a', 'o', 'u'])
+            'preferred_nuclei', list(self.phonology_handler.vowels))
 
         c1 = rng.choice(pref_initial)
         v = rng.choice(pref_vowels)

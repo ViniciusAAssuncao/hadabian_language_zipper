@@ -1,0 +1,996 @@
+{
+    "id": "manfue",
+    "name": "Manfuë (A Língua dos Homens)",
+    "description": "Língua franca de prestígio de Ërda. Uma fusão majestosa inspirada no Quenya, Finlandês e Nórdico Antigo. Possui um sistema de casos altamente complexo, é plural, dual, pouco aglutinante e extremamente lógica. Marcada pelo uso de tremas (umlaut), acentos e mutações consonantais profundas.",
+    "word_order": "SVO",
+    "subordinate_word_order": "SVO",
+    "source_language_order": "SVO",
+    "drop_articles": false,
+    "pro_drop": {
+        "enabled": true,
+        "conditions": [
+            "verb_agreement"
+        ]
+    },
+    "aesthetic_profile": {
+        "syllable_count_distribution": {
+            "1": 0.15,
+            "2": 0.45,
+            "3": 0.30,
+            "4": 0.10
+        },
+        "cluster_density": 0.4,
+        "vowel_consonant_ratio": 0.5
+    },
+    "alignment": "nominative-accusative",
+    "global_seed": 18934,
+    "phonotactics": {
+        "vowels": "aeiouäëïöüáéíóúâêîôû",
+        "consonants": "bcdfghjklmnpqrstvwxz",
+        "active_style": "manfue_classical",
+        "inventory_styles": {
+            "manfue_classical": {
+                "consonants": "ptkmnlsrvhfdgbq",
+                "vowels": "aeiouäëïöü"
+            }
+        },
+        "transition_matrix": {
+            "enabled": true,
+            "default_weight": 10,
+            "matrix": {
+                "q": {
+                    "u": 100,
+                    "v": 20
+                },
+                "k": {
+                    "a": 50,
+                    "e": 20,
+                    "i": 20,
+                    "u": 10
+                },
+                "l": {
+                    "l": 40,
+                    "a": 30,
+                    "e": 30
+                },
+                "s": {
+                    "s": 50,
+                    "t": 40,
+                    "v": 10
+                },
+                "n": {
+                    "d": 40,
+                    "t": 40,
+                    "n": 20
+                },
+                "m": {
+                    "b": 50,
+                    "p": 50
+                }
+            }
+        },
+        "syllable_templates": [
+            "CV",
+            "CVC",
+            "V",
+            "VC",
+            "CCV",
+            "CVCC"
+        ],
+        "min_syllables": 1,
+        "max_syllables": 4,
+        "max_consonant_cluster": 2,
+        "max_vowel_cluster": 2,
+        "forbidden_initial_clusters": [
+            "nt",
+            "nd",
+            "mb",
+            "mp",
+            "ss",
+            "ll",
+            "rr",
+            "ng",
+            "ld",
+            "rt"
+        ],
+        "forbidden_final_consonants": [
+            "b",
+            "c",
+            "d",
+            "f",
+            "g",
+            "h",
+            "j",
+            "p",
+            "q",
+            "v",
+            "w",
+            "x",
+            "z"
+        ],
+        "epenthesis_vowel": "ë",
+        "diphthongs": [
+            "ai",
+            "ei",
+            "oi",
+            "ui",
+            "au",
+            "eu",
+            "iu",
+            "ou",
+            "ie",
+            "uë",
+            "öa",
+            "eä",
+            "iä"
+        ],
+        "sonority_hierarchy": {
+            "enabled": true,
+            "scale": {
+                "p": 1,
+                "t": 1,
+                "k": 1,
+                "b": 2,
+                "d": 2,
+                "g": 2,
+                "f": 3,
+                "v": 3,
+                "s": 3,
+                "z": 3,
+                "h": 3,
+                "m": 4,
+                "n": 4,
+                "l": 5,
+                "r": 5
+            },
+            "onset_rules": {
+                "min_distance": 2,
+                "allow_plateau": false,
+                "allow_reversal": false
+            },
+            "coda_rules": {
+                "min_distance": 0,
+                "allow_plateau": true,
+                "allow_reversal": true
+            }
+        }
+    },
+    "consonant_mutation": {
+        "enabled": true,
+        "rules": [
+            {
+                "name": "Lenição Intervocálica",
+                "description": "Suaviza oclusivas surdas entre vogais (frequentemente após artigos ou preposições terminadas em vogal).",
+                "triggers": {
+                    "words": [
+                        "väl",
+                        "vïs",
+                        "andú"
+                    ],
+                    "pos": [
+                        "DET",
+                        "ADP"
+                    ]
+                },
+                "mutations": {
+                    "p": "v",
+                    "t": "d",
+                    "c": "g",
+                    "k": "g",
+                    "m": "v"
+                }
+            },
+            {
+                "name": "Nasalização",
+                "description": "Nasaliza oclusivas após palavras terminadas em 'n' ou 'm'.",
+                "triggers": {
+                    "ending_chars": [
+                        "n",
+                        "m"
+                    ]
+                },
+                "mutations": {
+                    "p": "m",
+                    "b": "m",
+                    "t": "n",
+                    "d": "n",
+                    "k": "ng",
+                    "g": "ng"
+                }
+            }
+        ]
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "weight",
+        "position": "penultimate",
+        "graphic_accent": true,
+        "accent_map": {
+            "a": "á",
+            "e": "é",
+            "i": "í",
+            "o": "ó",
+            "u": "ú",
+            "ä": "ä",
+            "ë": "ë",
+            "ï": "ï",
+            "ö": "ö",
+            "ü": "ü"
+        }
+    },
+    "vowel_harmony": {
+        "enabled": true,
+        "groups": {
+            "front": "äëïöü",
+            "back": "aou"
+        },
+        "rules": [
+            {
+                "input": "a",
+                "map": {
+                    "front": "ä",
+                    "back": "a"
+                }
+            },
+            {
+                "input": "o",
+                "map": {
+                    "front": "ö",
+                    "back": "o"
+                }
+            },
+            {
+                "input": "u",
+                "map": {
+                    "front": "ü",
+                    "back": "u"
+                }
+            }
+        ]
+    },
+    "case_system": {
+        "enabled": true,
+        "preposition_handling": "coexist",
+        "markers": {
+            "nominative": {
+                "marker": "",
+                "type": "suffix"
+            },
+            "accusative": {
+                "marker": "n",
+                "type": "suffix"
+            },
+            "genitive": {
+                "marker": "s",
+                "type": "suffix"
+            },
+            "dative": {
+                "marker": "r",
+                "type": "suffix"
+            },
+            "locative": {
+                "marker": "ssë",
+                "type": "suffix"
+            },
+            "ablative": {
+                "marker": "llo",
+                "type": "suffix"
+            },
+            "allative": {
+                "marker": "nna",
+                "type": "suffix"
+            },
+            "instrumental": {
+                "marker": "nen",
+                "type": "suffix"
+            }
+        },
+        "marker_position": "suffix"
+    },
+    "tam_system": {
+        "enabled": true,
+        "infer_imperative_from_context": true,
+        "person_marking": {
+            "enabled": true,
+            "prefixes": {},
+            "suffixes": {
+                "1sg": "n",
+                "2sg": "t",
+                "3sg": "ss",
+                "1pl": "m",
+                "2pl": "st",
+                "3pl": "nt",
+                "1du": "stë",
+                "2du": "ttë",
+                "3du": "të"
+            }
+        },
+        "rules": [
+            {
+                "features": [
+                    "VerbForm=Inf"
+                ],
+                "marker": "ië",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "VerbForm=Ger"
+                ],
+                "marker": "la",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "VerbForm=Part",
+                    "Tense=Past"
+                ],
+                "marker": "na",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Past"
+                ],
+                "marker": "në",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "uva",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Imp"
+                ],
+                "marker": "ya",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Imp"
+                ],
+                "marker": "ca",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Cnd"
+                ],
+                "marker": "ta",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Sub"
+                ],
+                "marker": "nai",
+                "type": "particle_before"
+            }
+        ]
+    },
+    "number_system": {
+        "numbers": [
+            "singular",
+            "plural",
+            "dual"
+        ],
+        "markers": {
+            "plural": {
+                "marker": "i",
+                "alternatives": [
+                    "r",
+                    "s"
+                ]
+            }
+        },
+        "dual_markers": {
+            "nominative": "t",
+            "accusative": "t",
+            "genitive": "to"
+        },
+        "broken_plurals": {
+            "enabled": true,
+            "patterns": []
+        }
+    },
+    "gender_system": {
+        "enabled": true,
+        "default": "neutro",
+        "inference": [
+            {
+                "suffix": "a",
+                "gender": "feminino"
+            },
+            {
+                "suffix": "ë",
+                "gender": "feminino"
+            },
+            {
+                "suffix": "o",
+                "gender": "masculino"
+            },
+            {
+                "suffix": "u",
+                "gender": "masculino"
+            },
+            {
+                "suffix": "i",
+                "gender": "neutro"
+            }
+        ],
+        "markers": {
+            "masculino": {
+                "targets": [
+                    "ADJ"
+                ],
+                "marker": "o",
+                "position": "suffix"
+            },
+            "feminino": {
+                "targets": [
+                    "ADJ"
+                ],
+                "marker": "a",
+                "position": "suffix"
+            },
+            "neutro": {
+                "targets": [
+                    "ADJ"
+                ],
+                "marker": "ë",
+                "position": "suffix"
+            }
+        }
+    },
+    "determiner_system": {
+        "definite_article": {
+            "form": "väl",
+            "variants": [
+                "vïs"
+            ],
+            "sun_letter_assimilation": false
+        },
+        "demonstratives": {
+            "proximal": {
+                "sg_m": "sin",
+                "sg_f": "sina",
+                "pl": "sini"
+            },
+            "distal": {
+                "sg_m": "tan",
+                "sg_f": "tana",
+                "pl": "tani"
+            }
+        },
+        "possessives": {
+            "pronominal_suffixes": true,
+            "suffixes": {
+                "1sg": "nya",
+                "2sg": "lya",
+                "3sg": "rya",
+                "1pl": "lmë",
+                "2pl": "ldë",
+                "3pl": "ntë"
+            },
+            "independent_forms": {
+                "1sg_m": "hïl",
+                "1sg_f": "hildi",
+                "1pl_m": "hïlmë",
+                "1pl_f": "hildimë",
+                "2sg_m": "tïl",
+                "2sg_f": "tildi"
+            },
+            "possessive_lemmas": {
+                "meu": "1sg",
+                "minha": "1sg",
+                "meus": "1sg",
+                "minhas": "1sg",
+                "teu": "2sg",
+                "tua": "2sg",
+                "teus": "2sg",
+                "tuas": "2sg",
+                "seu": "3sg",
+                "sua": "3sg",
+                "seus": "3sg",
+                "suas": "3sg",
+                "nosso": "1pl",
+                "nossa": "1pl",
+                "nossos": "1pl",
+                "nossas": "1pl"
+            }
+        }
+    },
+    "pronominal_system": {
+        "independent_pronouns": {
+            "1sg": "är",
+            "2sg": "tís",
+            "3sg": "er",
+            "1pl": "nïs",
+            "2pl": "tïst",
+            "3pl": "tïe"
+        },
+        "object_pronouns": {
+            "direct": {
+                "1sg": "n",
+                "2sg": "t",
+                "3sg": "s",
+                "1pl": "m",
+                "2pl": "st",
+                "3pl": "nt"
+            }
+        },
+        "clitic_ordering": {
+            "enabled": true,
+            "order": [
+                "verb",
+                "obj_direct",
+                "obj_indirect"
+            ],
+            "encliticizes": true,
+            "procliticizes": false
+        }
+    },
+    "compounding": {
+        "enabled": true,
+        "head_position": "final",
+        "linking_elements": {
+            "s": {
+                "after": [
+                    "a",
+                    "e",
+                    "i",
+                    "o",
+                    "u",
+                    "ä",
+                    "ë",
+                    "ï",
+                    "ö",
+                    "ü"
+                ],
+                "words": [
+                    "ërda",
+                    "mördo",
+                    "rûna"
+                ]
+            },
+            "n": {
+                "after": [
+                    "r",
+                    "l"
+                ]
+            }
+        }
+    },
+    "semantic_fields": {
+        "enabled": true,
+        "auto_detect": false,
+        "use_nltk": false,
+        "manual_groups": {
+            "rio": "água",
+            "chuva": "água",
+            "mar": "água",
+            "fogo": "calor",
+            "sol": "luz",
+            "estrela": "luz"
+        }
+    },
+    "polysemy_rules": {
+        "enabled": true,
+        "merges": {
+            "oceano": "mar",
+            "escuridão": "sombra",
+            "monarca": "rei",
+            "comandante": "líder"
+        },
+        "splits": {}
+    },
+    "false_cognates": {
+        "enabled": false
+    },
+    "topicalization": {
+        "enabled": true,
+        "position": "initial",
+        "topic_marker": "nä",
+        "reintroduce_articles": false
+    },
+    "focus_structure": {
+        "enabled": true,
+        "object_focus_marker": "të",
+        "verb_focus_marker": "së",
+        "suppress_case": false
+    },
+    "functional_particles": {
+        "muito": {
+            "noun_position": "post_nominal",
+            "adj_position": "pre_nominal",
+            "verb_position": "post_verbal"
+        },
+        "sempre": {
+            "verb_position": "pre_verbal"
+        },
+        "ainda": {
+            "verb_position": "pre_verbal"
+        }
+    },
+    "degree_system": {
+        "enabled": true,
+        "source_rules": [
+            {
+                "type": "diminutive",
+                "suffix": "zinho",
+                "replacement": ""
+            },
+            {
+                "type": "diminutive",
+                "suffix": "zinha",
+                "replacement": ""
+            },
+            {
+                "type": "augmentative",
+                "suffix": "ão",
+                "replacement": "o"
+            },
+            {
+                "type": "superlative",
+                "suffix": "íssimo",
+                "replacement": "o"
+            }
+        ],
+        "rules": {
+            "diminutive": {
+                "affix": "incë",
+                "position": "suffix"
+            },
+            "augmentative": {
+                "affix": "tag",
+                "position": "prefix"
+            },
+            "superlative": {
+                "affix": "lótë",
+                "position": "suffix"
+            }
+        }
+    },
+    "morphological_derivation": {
+        "enabled": true,
+        "max_depth": 3,
+        "exceptions": []
+    },
+    "affix_system": {
+        "enabled": true,
+        "source_suffixes": [
+            {
+                "input_pos": "ADJ",
+                "suffix": "mente",
+                "replacement": "",
+                "target_pos": "ADV",
+                "priority": 1
+            },
+            {
+                "input_pos": "VERB",
+                "suffix": "dor",
+                "replacement": "r",
+                "target_pos": "NOUN",
+                "priority": 0
+            },
+            {
+                "input_pos": "VERB",
+                "suffix": "ção",
+                "replacement": "r",
+                "target_pos": "NOUN",
+                "priority": 0
+            }
+        ],
+        "derivation_rules": [
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "affix": "vë",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "agent",
+                "affix": "rë",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "ADV",
+                "affix": "vëa",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "action",
+                "affix": "ië",
+                "position": "suffix"
+            }
+        ]
+    },
+    "reduplication": {
+        "enabled": true,
+        "epenthesis_vowel": "ë",
+        "rules": [
+            {
+                "features": [
+                    "Aspect=Iter"
+                ],
+                "pos": [
+                    "VERB"
+                ],
+                "method": "first_syllable",
+                "separator": "-"
+            },
+            {
+                "features": [
+                    "Degree=Abs"
+                ],
+                "pos": [
+                    "ADJ"
+                ],
+                "method": "whole_word",
+                "separator": "-"
+            }
+        ]
+    },
+    "numeric_handling": {
+        "ignore_digits": true
+    },
+    "style": {
+        "capitalization": true,
+        "punctuation_map": {
+            ".": ".",
+            "!": "!",
+            "?": "?",
+            ",": ",",
+            ";": ";",
+            ":": ":"
+        },
+        "sentence_terminators": [
+            ".",
+            "!",
+            "?"
+        ],
+        "secondary_terminators": [
+            ":",
+            ";"
+        ]
+    },
+    "vocabulary": {
+        "terra": "ërda",
+        "sacro": "äiri",
+        "império": "anlûngä",
+        "homem": "mie",
+        "homens": "mie",
+        "olá": "hië",
+        "luz": "aurä",
+        "sonho": "drömar",
+        "como": "már",
+        "ir": "túra",
+        "vai": "túra",
+        "bem": "ällë",
+        "tudo": "ëssa",
+        "saudações": "alvasï",
+        "onde": "tír",
+        "estar": "ea",
+        "está": "eassë",
+        "aí": "tís",
+        "perdão": "varssë",
+        "desculpe": "varssë",
+        "eu": "är",
+        "você": "tís",
+        "ele": "er",
+        "eles": "tïe",
+        "nós": "nïs",
+        "boa": "älvá",
+        "bom": "älvá",
+        "noite": "nûlë",
+        "dia": "tûlë",
+        "tarde": "intässië",
+        "tempestuoso": "vúna",
+        "caótico": "vúna",
+        "terras": "ërdas",
+        "conhecimento": "lïssë",
+        "mar": "airïs",
+        "polo": "tärma",
+        "central": "endïa",
+        "universo": "ocién",
+        "fábrica": "tíndin",
+        "máquina": "cölürë",
+        "mecanizado": "cölürë",
+        "industrial": "tínglaat",
+        "indústria": "ísënlaat",
+        "manufatura": "tïndölë",
+        "produção em massa": "mïnlögë",
+        "palácio": "paradis",
+        "os": "vïs",
+        "as": "vïs",
+        "o": "väl",
+        "a": "väl",
+        "inferno": "hëllmirassë",
+        "esfera": "tûl",
+        "iluminada": "tûl",
+        "sol": "tûl",
+        "sul": "hyssä",
+        "neblina": "alüsse",
+        "voo": "äurê",
+        "inverno": "frösta",
+        "verão": "hélrûn",
+        "outono": "aquavín",
+        "primavera": "circaflora",
+        "amor": "már",
+        "amo": "már",
+        "rei": "cúr",
+        "reis": "cúrinasta",
+        "reino": "cúrinasta",
+        "orar": "árca",
+        "ore": "árca",
+        "por": "lúë",
+        "sabedoria": "änná",
+        "pois": "ïnnár",
+        "de": "andú",
+        "tolos": "ëné",
+        "já": "vïs",
+        "bastam": "kúr",
+        "guerra": "rûnás",
+        "governo": "anlurtúnë",
+        "arbítrio": "vadismál",
+        "ganso": "alcarno",
+        "pato": "anquá",
+        "excelente": "ëlîr",
+        "música": "tínndëlëa",
+        "oriente": "hëlssë",
+        "fazer": "vënie",
+        "ocidente": "callivë",
+        "fortaleza": "töl",
+        "infinito": "anár",
+        "rio": "vía",
+        "curso": "vía",
+        "clã": "via",
+        "dinastia": "via",
+        "espada": "alalünga",
+        "lâmina": "alalünga",
+        "popular": "lïendínas",
+        "eterno": "västo",
+        "cidade": "minas",
+        "parlamento": "vínta",
+        "líder": "hérin",
+        "casa": "bâr",
+        "ilha": "sëa",
+        "feito": "lünga",
+        "construído": "lünga",
+        "que": "töt",
+        "esteja": "nëssa",
+        "com": "allë",
+        "sem": "ärssë",
+        "e": "ár",
+        "ainda": "voro",
+        "tão": "lënquë",
+        "selvagem": "rúnd",
+        "olhe": "wíntë",
+        "cima": "scöntë",
+        "armadura": "lúngcrönië",
+        "deus": "äuris",
+        "abençoe": "allë",
+        "cidade grande": "tônd",
+        "força": "cröniûst",
+        "forças": "cröni",
+        "me": "mís",
+        "dê": "sïr",
+        "sangue": "blút",
+        "puro": "blastrü",
+        "grão-rei": "ëisencúnd",
+        "vitória": "sít",
+        "porto": "quëndi",
+        "sino": "vala",
+        "santo": "sílna",
+        "divino": "sílna",
+        "morte": "mördo",
+        "viver": "ês",
+        "é": "cönd",
+        "lucro": "cambie",
+        "pardal": "ändulót",
+        "lâmpada": "tämparínä",
+        "barco": "lót",
+        "voar": "víng",
+        "pássaro": "angot",
+        "vermelho": "rót",
+        "escarlate": "sångeröt",
+        "púrpura": "rosserót",
+        "rosa": "rosse",
+        "fantasma": "gast",
+        "evento": "gäist",
+        "sobrenatural": "gäist",
+        "grande": "tag",
+        "lobo": "rûng",
+        "lobisomem": "mierûng",
+        "homem-lobo": "mierûng",
+        "cavalo": "trairö",
+        "maça": "marin",
+        "portão": "fendë",
+        "trancado": "rág",
+        "coroa": "ríanta",
+        "meu": "hïl",
+        "minha": "hildi",
+        "orbe": "anlûngmarin",
+        "domínio": "anlûngmarin",
+        "nascimento": "renúst",
+        "esperança": "vaniquendë",
+        "boi": "änga",
+        "touro": "änga",
+        "corrente": "ässén",
+        "ouro": "curdo",
+        "dourado": "curdo",
+        "príncipe": "vardo",
+        "prata": "sílma",
+        "rouxinol": "novalníma",
+        "ciclo": "samngírn",
+        "casta": "vórna",
+        "sacerdote": "äurisíri",
+        "campeonato": "mármëontar",
+        "unido": "anä",
+        "unidos": "anär",
+        "ferro": "sinda",
+        "trabalhador": "varmo",
+        "jogo": "lúmëa",
+        "esporte": "lúmëa",
+        "castelo": "orko",
+        "espectro": "carnistir",
+        "sombrio": "carnistir",
+        "elfo": "quénir",
+        "sapo": "gróa",
+        "joia": "hëlmírin",
+        "esmeralda": "hëlmírin",
+        "esmeraldas": "hëlmírin",
+        "cinco": "lípën",
+        "escura": "morëquantï",
+        "escuras": "morëquantï",
+        "escondem": "hílna",
+        "segredo": "lótïn",
+        "cruel": "alistima",
+        "espíritos": "gast",
+        "livres": "cinút",
+        "atados": "costenlë",
+        "em": "ïn",
+        "destino": "tiëring",
+        "ira": "wíra",
+        "incendeia": "inqavíka",
+        "mente": "híga",
+        "avareza": "agílma",
+        "corrompe": "celethíma",
+        "coração": "válna",
+        "inveja": "tíríssë",
+        "sussurra": "ìvislä",
+        "ouvido": "taniquelassë",
+        "ganância": "ahílmár",
+        "destrói": "dangír",
+        "alma": "äurie",
+        "luxúria": "losta",
+        "seduz": "vörï",
+        "forjados": "macil",
+        "mãos": "dì",
+        "servir": "tíllïa",
+        "desejos": "vanimalda",
+        "perpetuar": "viomaldä",
+        "poder": "änlang",
+        "mas": "quót",
+        "cuidado": "dangïsc",
+        "preço": "tëlma",
+        "alto": "örin",
+        "aqueles": "sai",
+        "possuem": "harÿa",
+        "estarão": "núnvëma",
+        "influência": "tölge",
+        "maligna": "ampano",
+        "da": "tát",
+        "do": "andú",
+        "um": "an"
+    }
+}

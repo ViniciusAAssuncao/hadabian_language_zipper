@@ -1,0 +1,1345 @@
+{
+    "id": "old_tossirian",
+    "name": "Tossíriano Antigo",
+    "description": "Língua ancestral da civilização pavísiana, precursora do Pavísiano Clássico e veículo das grandes obras dos poetas Harthamel e Dandalião. O Tossíriano Antigo distingue-se por quatro gêneros gramaticais — masculino, feminino, animado I (para almas, divindades e entidades elevadas) e animado II (para forças naturais, animais e fenômenos) — e pelo arcaico grupo consonantal 'ww', preservado em vocábulos como 'liwwim' (alma), 'cordìwwim' (coração) e 'paràwwim' (palavra), que na transição para o Pavísiano Clássico se simplificou em 'iv': 'ww belignia' tornou-se 'iv belignia', e 'çavatriy' evoluiu para 'cavatrii'. O artigo do animado I 'eliy' tem essa mesma origem arcaica. Outros traços marcantes: lenição consonantal inicial após determinantes (herança catalã), geminação líquida e nasal após o artigo animado I, ordem SVO na oração principal e SOV na subordinada, sistema TAM com passado em '-aw' (arcaico '-aww'), subjuntivo em '-iy', infinitivo em '-vir' e futuro pelo partículo 'çal'. A ortografia emprega os grafemas especiais Ç, J, K, W, X e Y, conferindo à língua sua estética distintiva entre musicalidade toscana e aspereza catalã.",
+    "word_order": "SVO",
+    "subordinate_word_order": "SOV",
+    "source_language_order": "SVO",
+    "drop_articles": false,
+    "pro_drop": {
+        "enabled": true,
+        "conditions": [
+            "verb_agreement"
+        ]
+    },
+    "lexical_confluence": {
+        "enabled": true,
+        "base_stability": 0,
+        "strata": [
+            {
+                "source_id": "pavisian_language",
+                "weight": 80,
+                "type": "inheritance",
+                "description": "Herança Neoraabiana fundamental"
+            },
+            {
+                "source_id": "western_neoraabic",
+                "weight": 20,
+                "type": "inheritance",
+                "description": "Influência e substrato da alta poesia Tossíriana"
+            }
+        ]
+    },
+    "aesthetic_profile": {
+        "syllable_count_distribution": {
+            "1": 0.05,
+            "2": 0.45,
+            "3": 0.35,
+            "4": 0.12,
+            "5": 0.03
+        },
+        "cluster_density": 0.15,
+        "vowel_consonant_ratio": 1.3
+    },
+    "alignment": "nominative-accusative",
+    "global_seed": 73921,
+    "phonotactics": {
+        "vowels": "aeiouy",
+        "consonants": "bcçdfghjklmnprstvwxz",
+        "active_style": "tossirian_classic",
+        "inventory_styles": {
+            "tossirian_classic": {
+                "consonants": "bcçdfghjklmnprstvwxz",
+                "vowels": "aeiou"
+            },
+            "tossirian_archaic": {
+                "consonants": "bcçdfghjklmnprstvwwxyz",
+                "vowels": "aeiouàèìòù"
+            }
+        },
+        "syllable_templates": [
+            "CV",
+            "CV",
+            "CVV",
+            "V",
+            "CVC",
+            "CCV"
+        ],
+        "min_syllables": 1,
+        "max_syllables": 4,
+        "max_consonant_cluster": 2,
+        "max_vowel_cluster": 2,
+        "forbidden_initial_clusters": [
+            "wl",
+            "wn",
+            "wm",
+            "çç",
+            "nm",
+            "ml",
+            "nr",
+            "xw",
+            "kç",
+            "çk",
+            "yw",
+            "yx",
+            "tl",
+            "dl",
+            "sr",
+            "sl",
+            "mr",
+            "nl",
+            "lr",
+            "rl",
+            "kg",
+            "gk",
+            "cj",
+            "jc",
+            "cx",
+            "xc",
+            "gx",
+            "xg",
+            "sx",
+            "xs",
+            "çc",
+            "cç",
+            "ww",
+            "wr",
+            "yy",
+            "jy",
+            "jw",
+            "çw",
+            "çy",
+            "nw",
+            "mw",
+            "rw",
+            "lw"
+        ],
+        "forbidden_final_consonants": [
+            "b",
+            "c",
+            "ç",
+            "d",
+            "f",
+            "g",
+            "h",
+            "j",
+            "k",
+            "p",
+            "t",
+            "v",
+            "x",
+            "z"
+        ],
+        "epenthesis_vowel": "e",
+        "diphthongs": [
+            "ai",
+            "ei",
+            "oi",
+            "au",
+            "eu",
+            "ia",
+            "ie",
+            "io",
+            "iu",
+            "ua",
+            "ue",
+            "uo",
+            "ui",
+            "ya",
+            "ye",
+            "yo"
+        ],
+        "transition_matrix": {
+            "enabled": true,
+            "default_weight": 5,
+            "matrix": {
+                "p": {
+                    "a": 100,
+                    "e": 100,
+                    "i": 100,
+                    "o": 100,
+                    "u": 100,
+                    "r": 30,
+                    "l": 20
+                },
+                "t": {
+                    "a": 100,
+                    "e": 100,
+                    "i": 100,
+                    "o": 100,
+                    "u": 100,
+                    "r": 30
+                },
+                "k": {
+                    "a": 100,
+                    "e": 100,
+                    "i": 100,
+                    "o": 100,
+                    "u": 100,
+                    "w": 30
+                },
+                "c": {
+                    "a": 100,
+                    "e": 100,
+                    "i": 100,
+                    "o": 100,
+                    "u": 100,
+                    "r": 20,
+                    "l": 20
+                },
+                "b": {
+                    "a": 100,
+                    "e": 100,
+                    "i": 100,
+                    "o": 100,
+                    "u": 100,
+                    "r": 30,
+                    "l": 20
+                },
+                "d": {
+                    "a": 100,
+                    "e": 100,
+                    "i": 100,
+                    "o": 100,
+                    "u": 100,
+                    "r": 30
+                },
+                "g": {
+                    "a": 100,
+                    "e": 100,
+                    "i": 100,
+                    "o": 100,
+                    "u": 100,
+                    "r": 20,
+                    "l": 20,
+                    "w": 15
+                },
+                "f": {
+                    "a": 100,
+                    "e": 100,
+                    "i": 100,
+                    "o": 100,
+                    "u": 100,
+                    "r": 20,
+                    "l": 20
+                },
+                "v": {
+                    "a": 100,
+                    "e": 100,
+                    "i": 100,
+                    "o": 100,
+                    "u": 100,
+                    "r": 15
+                },
+                "s": {
+                    "a": 100,
+                    "e": 100,
+                    "i": 100,
+                    "o": 100,
+                    "u": 100,
+                    "t": 15,
+                    "p": 15,
+                    "c": 15,
+                    "k": 10
+                },
+                "z": {
+                    "a": 100,
+                    "e": 100,
+                    "i": 100,
+                    "o": 100,
+                    "u": 100
+                },
+                "x": {
+                    "a": 100,
+                    "e": 100,
+                    "i": 100,
+                    "o": 100,
+                    "u": 100
+                },
+                "ç": {
+                    "a": 100,
+                    "e": 100,
+                    "i": 100,
+                    "o": 100,
+                    "u": 100
+                },
+                "j": {
+                    "a": 100,
+                    "e": 100,
+                    "i": 100,
+                    "o": 100,
+                    "u": 100
+                },
+                "m": {
+                    "a": 100,
+                    "e": 100,
+                    "i": 100,
+                    "o": 100,
+                    "u": 100
+                },
+                "n": {
+                    "a": 100,
+                    "e": 100,
+                    "i": 100,
+                    "o": 100,
+                    "u": 100
+                },
+                "l": {
+                    "a": 100,
+                    "e": 100,
+                    "i": 100,
+                    "o": 100,
+                    "u": 100
+                },
+                "r": {
+                    "a": 100,
+                    "e": 100,
+                    "i": 100,
+                    "o": 100,
+                    "u": 100
+                },
+                "w": {
+                    "a": 100,
+                    "e": 100,
+                    "i": 100,
+                    "o": 100,
+                    "u": 100,
+                    "w": 40
+                },
+                "y": {
+                    "a": 100,
+                    "e": 100,
+                    "i": 100,
+                    "o": 100,
+                    "u": 100
+                }
+            }
+        },
+        "sonority_hierarchy": {
+            "enabled": true,
+            "scale": {
+                "p": 1,
+                "t": 1,
+                "k": 1,
+                "c": 1,
+                "b": 2,
+                "d": 2,
+                "g": 2,
+                "f": 3,
+                "v": 3,
+                "s": 3,
+                "z": 3,
+                "x": 3,
+                "ç": 3,
+                "j": 3,
+                "h": 3,
+                "m": 4,
+                "n": 4,
+                "l": 5,
+                "r": 5,
+                "w": 6,
+                "y": 6
+            },
+            "onset_rules": {
+                "min_distance": 2,
+                "allow_plateau": false,
+                "allow_reversal": false
+            },
+            "coda_rules": {
+                "min_distance": 0,
+                "allow_plateau": false,
+                "allow_reversal": false
+            },
+            "contact_rules": {
+                "min_distance": 0,
+                "allow_plateau": true,
+                "allow_reversal": false
+            }
+        }
+    },
+    "consonant_mutation": {
+        "enabled": true,
+        "rules": [
+            {
+                "name": "Lenição Pós-Determinante",
+                "description": "Lenição da consoante inicial após artigos e determinantes, traço herdado do substrato catalão do Tossíriano Antigo.",
+                "triggers": {
+                    "pos": [
+                        "DET"
+                    ]
+                },
+                "mutations": {
+                    "p": "b",
+                    "t": "d",
+                    "k": "g",
+                    "f": "v",
+                    "s": "z",
+                    "ç": "j"
+                }
+            },
+            {
+                "name": "Assimilação Nasal",
+                "description": "Assimilação nasal da consoante inicial após palavras terminadas em nasal, característica da fonologia clássica tossíriana.",
+                "triggers": {
+                    "ending_chars": [
+                        "n",
+                        "m"
+                    ]
+                },
+                "mutations": {
+                    "b": "m",
+                    "d": "n",
+                    "g": "n"
+                }
+            },
+            {
+                "name": "Geminação do Animado I",
+                "description": "Geminação das líquidas e nasais iniciais após o artigo animado I 'eliy', marca poética celebrada por Harthamel.",
+                "triggers": {
+                    "words": [
+                        "eliy",
+                        "ww"
+                    ]
+                },
+                "mutations": {
+                    "l": "ll",
+                    "r": "rr",
+                    "n": "nn",
+                    "s": "ss"
+                }
+            }
+        ]
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "fixed",
+        "position": "penultimate",
+        "graphic_accent": true,
+        "accent_map": {
+            "a": "à",
+            "e": "è",
+            "i": "ì",
+            "o": "ò",
+            "u": "ù"
+        }
+    },
+    "vowel_harmony": {
+        "enabled": true,
+        "groups": {
+            "front": "ei",
+            "back": "aou"
+        },
+        "rules": [
+            {
+                "input": "a",
+                "map": {
+                    "front": "e",
+                    "back": "a"
+                }
+            },
+            {
+                "input": "e",
+                "map": {
+                    "front": "e",
+                    "back": "o"
+                }
+            }
+        ]
+    },
+    "number_system": {
+        "numbers": [
+            "singular",
+            "plural"
+        ],
+        "markers": {
+            "plural": {
+                "marker": "i",
+                "type": "suffix",
+                "alternatives": [
+                    "e",
+                    "ari"
+                ]
+            }
+        },
+        "broken_plurals": {
+            "enabled": true,
+            "patterns": [
+                {
+                    "singular_pattern": "CaCo",
+                    "plural_pattern": "CaCi"
+                },
+                {
+                    "singular_pattern": "CaCa",
+                    "plural_pattern": "CaCe"
+                },
+                {
+                    "singular_pattern": "CiCo",
+                    "plural_pattern": "CiCi"
+                }
+            ]
+        }
+    },
+    "gender_system": {
+        "enabled": true,
+        "default": "masculino",
+        "genders": [
+            "masculino",
+            "feminino",
+            "animado_i",
+            "animado_ii"
+        ],
+        "inference": [
+            {
+                "suffix": "ença",
+                "gender": "feminino"
+            },
+            {
+                "suffix": "issa",
+                "gender": "feminino"
+            },
+            {
+                "suffix": "ura",
+                "gender": "feminino"
+            },
+            {
+                "suffix": "iel",
+                "gender": "animado_i"
+            },
+            {
+                "suffix": "na",
+                "gender": "feminino"
+            },
+            {
+                "suffix": "ia",
+                "gender": "feminino"
+            },
+            {
+                "suffix": "iy",
+                "gender": "animado_i"
+            },
+            {
+                "suffix": "yn",
+                "gender": "animado_i"
+            },
+            {
+                "suffix": "im",
+                "gender": "animado_i"
+            },
+            {
+                "suffix": "ol",
+                "gender": "masculino"
+            },
+            {
+                "suffix": "el",
+                "gender": "masculino"
+            },
+            {
+                "suffix": "or",
+                "gender": "masculino"
+            },
+            {
+                "suffix": "al",
+                "gender": "masculino"
+            },
+            {
+                "suffix": "yr",
+                "gender": "animado_ii"
+            },
+            {
+                "suffix": "ax",
+                "gender": "animado_ii"
+            },
+            {
+                "suffix": "ar",
+                "gender": "animado_ii"
+            },
+            {
+                "suffix": "a",
+                "gender": "feminino"
+            },
+            {
+                "suffix": "o",
+                "gender": "masculino"
+            }
+        ],
+        "markers": {
+            "masculino": {
+                "targets": [
+                    "ADJ",
+                    "DET",
+                    "VERB"
+                ],
+                "marker": "",
+                "position": "suffix"
+            },
+            "feminino": {
+                "targets": [
+                    "ADJ",
+                    "DET",
+                    "VERB"
+                ],
+                "marker": "a",
+                "position": "suffix"
+            },
+            "animado_i": {
+                "targets": [
+                    "ADJ",
+                    "DET",
+                    "VERB"
+                ],
+                "marker": "iy",
+                "position": "suffix"
+            },
+            "animado_ii": {
+                "targets": [
+                    "ADJ",
+                    "DET",
+                    "VERB"
+                ],
+                "marker": "ar",
+                "position": "suffix"
+            }
+        }
+    },
+    "agreement_rules": {
+        "gender_agreement": true,
+        "number_agreement": true,
+        "adjunct_position": "after_core"
+    },
+    "case_system": {
+        "enabled": true,
+        "preposition_handling": "coexist",
+        "markers": {
+            "nominative": {
+                "marker": "",
+                "type": "suffix"
+            },
+            "accusative": {
+                "marker": "im",
+                "type": "suffix",
+                "conditions": [
+                    "animate"
+                ]
+            },
+            "genitive": {
+                "marker": "di",
+                "type": "particle_before"
+            },
+            "dative": {
+                "marker": "a",
+                "type": "particle_before"
+            },
+            "locative": {
+                "marker": "en",
+                "type": "particle_before"
+            }
+        },
+        "marker_position": "suffix"
+    },
+    "tam_system": {
+        "enabled": true,
+        "infer_imperative_from_context": true,
+        "rules": [
+            {
+                "features": [
+                    "VerbForm=Inf"
+                ],
+                "marker": "vire",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "VerbForm=Ger"
+                ],
+                "marker": "endo",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "VerbForm=Part"
+                ],
+                "marker": "àt",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Past"
+                ],
+                "marker": "aw",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Imp"
+                ],
+                "marker": "ova",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "çal",
+                "type": "particle_before"
+            },
+            {
+                "features": [
+                    "Mood=Cnd"
+                ],
+                "marker": "oria",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Sub"
+                ],
+                "marker": "iy",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Imp"
+                ],
+                "marker": "e",
+                "type": "suffix"
+            }
+        ]
+    },
+    "negation_system": {
+        "enabled": true,
+        "strategies": [
+            {
+                "type": "verbal_negation",
+                "marker": "noç",
+                "suffix": ""
+            },
+            {
+                "type": "nominal_negation",
+                "marker": "çen",
+                "suffix": ""
+            },
+            {
+                "type": "emphatic_negation",
+                "marker": "jamàs",
+                "suffix": ""
+            }
+        ]
+    },
+    "copula_system": {
+        "enabled": true,
+        "copulas": [
+            {
+                "type": "present_default",
+                "form": "ès",
+                "conditions": [],
+                "conjugates": false
+            },
+            {
+                "type": "past_default",
+                "form": "fow",
+                "conditions": [
+                    "Tense=Past"
+                ],
+                "conjugates": false
+            }
+        ]
+    },
+    "interrogative_system": {
+        "enabled": true,
+        "question_particles": [
+            {
+                "type": "yes_no",
+                "particle": "kà"
+            },
+            {
+                "type": "yes_no_alternative",
+                "particle": "kà"
+            }
+        ],
+        "detection_rules": {
+            "wh_words": [
+                "que",
+                "quem",
+                "onde",
+                "quando",
+                "como",
+                "por que",
+                "qual",
+                "quanto",
+                "quanto"
+            ],
+            "alternative_indicators": [
+                "ou"
+            ]
+        },
+        "particle_metadata": {
+            "pos": "PART",
+            "function": "INT",
+            "deprel": "discourse"
+        }
+    },
+    "determiner_system": {
+        "definite_article": {
+            "form": "el",
+            "procliticizes": false,
+            "sun_letter_assimilation": false,
+            "sun_letters": []
+        },
+        "demonstratives": {
+            "proximal": {
+                "sg_m": "çest",
+                "sg_f": "çesta",
+                "pl": "çesti"
+            },
+            "distal": {
+                "sg_m": "quell",
+                "sg_f": "quella",
+                "pl": "quelli"
+            },
+            "source_mappings": {
+                "proximal": [
+                    "este",
+                    "esta",
+                    "isto",
+                    "esse",
+                    "essa",
+                    "isso",
+                    "estes",
+                    "estas",
+                    "esses",
+                    "essas"
+                ],
+                "distal": [
+                    "aquele",
+                    "aquela",
+                    "aquilo",
+                    "aqueles",
+                    "aquelas"
+                ]
+            },
+            "gender_inheritance_heuristic": true
+        },
+        "possessives": {
+            "pronominal_suffixes": false,
+            "possessive_lemmas": {
+                "meu": "1",
+                "minha": "1",
+                "meus": "1",
+                "minhas": "1",
+                "teu": "2",
+                "tua": "2",
+                "teus": "2",
+                "tuas": "2",
+                "seu": "3",
+                "sua": "3",
+                "seus": "3",
+                "suas": "3",
+                "nosso": "1",
+                "nossa": "1",
+                "nossos": "1",
+                "nossas": "1",
+                "vosso": "2",
+                "vossa": "2",
+                "vossos": "2",
+                "vossas": "2"
+            }
+        }
+    },
+    "adposition_system": {
+        "basic_prepositions": {
+            "de": "di",
+            "do": "del",
+            "da": "dela",
+            "dos": "deli",
+            "das": "delas",
+            "em": "en",
+            "no": "nel",
+            "na": "nela",
+            "nos": "neli",
+            "nas": "nelas",
+            "para": "pra",
+            "por": "per",
+            "com": "con",
+            "sobre": "sòvr",
+            "até": "ata",
+            "desde": "des",
+            "entre": "intr",
+            "sem": "sen",
+            "sob": "sot",
+            "após": "post",
+            "ante": "ant",
+            "contra": "kontr",
+            "através": "travers",
+            "durante": "dur",
+            "segundo": "segon",
+            "perante": "prant",
+            "acerca": "açèrk"
+        }
+    },
+    "topicalization": {
+        "enabled": true,
+        "position": "initial",
+        "topic_marker": "çi",
+        "reintroduce_articles": false
+    },
+    "focus_structure": {
+        "enabled": true,
+        "object_focus_marker": "kel",
+        "verb_focus_marker": "wid",
+        "suppress_case": true
+    },
+    "functional_particles": {
+        "muito": {
+            "noun_position": "post_nominal",
+            "adj_position": "pre_nominal",
+            "verb_position": "post_verbal"
+        },
+        "sempre": {
+            "verb_position": "pre_verbal"
+        },
+        "já": {
+            "verb_position": "pre_verbal"
+        },
+        "nunca": {
+            "verb_position": "pre_verbal"
+        },
+        "ainda": {
+            "verb_position": "pre_verbal"
+        },
+        "apenas": {
+            "verb_position": "pre_verbal"
+        }
+    },
+    "degree_system": {
+        "enabled": true,
+        "source_rules": [
+            {
+                "type": "diminutive",
+                "suffix": "zinho",
+                "replacement": ""
+            },
+            {
+                "type": "diminutive",
+                "suffix": "zinha",
+                "replacement": ""
+            },
+            {
+                "type": "diminutive",
+                "suffix": "inho",
+                "replacement": "o"
+            },
+            {
+                "type": "diminutive",
+                "suffix": "inha",
+                "replacement": "a"
+            },
+            {
+                "type": "augmentative",
+                "suffix": "zão",
+                "replacement": ""
+            },
+            {
+                "type": "augmentative",
+                "suffix": "zona",
+                "replacement": ""
+            },
+            {
+                "type": "augmentative",
+                "suffix": "ão",
+                "replacement": "o"
+            },
+            {
+                "type": "augmentative",
+                "suffix": "ona",
+                "replacement": ""
+            },
+            {
+                "type": "superlative",
+                "suffix": "íssimo",
+                "replacement": "o"
+            },
+            {
+                "type": "superlative",
+                "suffix": "íssima",
+                "replacement": "a"
+            }
+        ],
+        "rules": {
+            "diminutive": {
+                "affix": "in",
+                "position": "suffix"
+            },
+            "augmentative": {
+                "affix": "on",
+                "position": "suffix"
+            },
+            "superlative": {
+                "affix": "ívol",
+                "position": "suffix"
+            }
+        }
+    },
+    "morphological_derivation": {
+        "enabled": true,
+        "max_depth": 3,
+        "exceptions": [
+            "amor",
+            "dor",
+            "sol",
+            "mar",
+            "paz",
+            "luz",
+            "belo",
+            "grande"
+        ]
+    },
+    "affix_system": {
+        "enabled": true,
+        "source_suffixes": [
+            {
+                "input_pos": "ADJ",
+                "suffix": "ático",
+                "replacement": "a",
+                "target_pos": "NOUN",
+                "priority": 1
+            },
+            {
+                "input_pos": "ADJ",
+                "suffix": "ico",
+                "replacement": "o",
+                "target_pos": "NOUN",
+                "priority": 1
+            },
+            {
+                "input_pos": "NOUN",
+                "suffix": "dor",
+                "replacement": "re",
+                "target_pos": "VERB",
+                "priority": 0
+            },
+            {
+                "input_pos": "NOUN",
+                "suffix": "ção",
+                "replacement": "re",
+                "target_pos": "VERB",
+                "priority": 0
+            },
+            {
+                "input_pos": "ADV",
+                "suffix": "mente",
+                "replacement": "e",
+                "target_pos": "ADJ",
+                "priority": 1
+            },
+            {
+                "input_pos": "ADJ",
+                "suffix": "oso",
+                "replacement": "o",
+                "target_pos": "NOUN",
+                "priority": 0
+            },
+            {
+                "input_pos": "ADJ",
+                "suffix": "osa",
+                "replacement": "a",
+                "target_pos": "NOUN",
+                "priority": 0
+            },
+            {
+                "input_pos": "VERB",
+                "suffix": "ante",
+                "replacement": "",
+                "target_pos": "NOUN",
+                "priority": 0
+            },
+            {
+                "input_pos": "NOUN",
+                "suffix": "al",
+                "replacement": "e",
+                "target_pos": "ADJ",
+                "priority": 0
+            },
+            {
+                "input_pos": "NOUN",
+                "suffix": "izar",
+                "replacement": "ar",
+                "target_pos": "VERB",
+                "priority": 0
+            },
+            {
+                "input_pos": "VERB",
+                "suffix": "ção",
+                "replacement": "re",
+                "target_pos": "NOUN",
+                "priority": 0
+            }
+        ],
+        "derivation_rules": [
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "affix": "ivol",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "agent",
+                "affix": "tore",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "verbal_noun",
+                "affix": "ment",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "ADV",
+                "affix": "ment",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "VERB",
+                "affix": "yar",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "NOUN",
+                "type": "abstract_noun",
+                "affix": "ença",
+                "position": "suffix"
+            }
+        ]
+    },
+    "reduplication": {
+        "enabled": true,
+        "epenthesis_vowel": "e",
+        "rules": [
+            {
+                "features": [
+                    "Number=Plur"
+                ],
+                "pos": [
+                    "NOUN"
+                ],
+                "method": "first_syllable",
+                "separator": ""
+            },
+            {
+                "features": [
+                    "Aspect=Hab"
+                ],
+                "pos": [
+                    "VERB"
+                ],
+                "method": "whole_word",
+                "separator": "-"
+            },
+            {
+                "features": [
+                    "Aspect=Iter"
+                ],
+                "pos": [
+                    "VERB"
+                ],
+                "method": "first_syllable",
+                "separator": "-"
+            },
+            {
+                "features": [
+                    "Degree=Abs"
+                ],
+                "method": "whole_word",
+                "separator": "-"
+            }
+        ]
+    },
+    "semantic_fields": {
+        "enabled": true,
+        "auto_detect": true,
+        "use_nltk": true,
+        "threshold": 0.3,
+        "manual_groups": {
+            "rio": "água",
+            "chuva": "água",
+            "lago": "água",
+            "mar": "água",
+            "oceano": "água",
+            "neve": "água",
+            "fogo": "calor",
+            "sol": "calor",
+            "chama": "calor",
+            "brasa": "calor",
+            "amor": "sentimento",
+            "ódio": "sentimento",
+            "dor": "sentimento",
+            "alegria": "sentimento",
+            "tristeza": "sentimento",
+            "saudade": "sentimento",
+            "pedra": "terra",
+            "areia": "terra",
+            "rocha": "terra",
+            "montanha": "terra",
+            "floresta": "natureza",
+            "árvore": "natureza",
+            "flor": "natureza",
+            "erva": "natureza",
+            "poesia": "arte",
+            "música": "arte",
+            "canto": "arte",
+            "pintura": "arte"
+        }
+    },
+    "polysemy_rules": {
+        "enabled": true,
+        "merges": {
+            "azul": "céu",
+            "oceano": "mar",
+            "chama": "fogo",
+            "penas": "dor",
+            "pena": "dor",
+            "saudade": "dor",
+            "anseio": "amor"
+        },
+        "splits": {
+            "ser": [
+                {
+                    "target_suffix": "_perm",
+                    "rules": {
+                        "feats": [
+                            "Mood=Ind",
+                            "Tense=Pres"
+                        ]
+                    }
+                },
+                {
+                    "target_suffix": "_trans",
+                    "rules": {
+                        "feats": [
+                            "Mood=Sub"
+                        ]
+                    }
+                }
+            ],
+            "banco": [
+                {
+                    "target_suffix": "_inst",
+                    "rules": {
+                        "deprel": [
+                            "nmod",
+                            "obj"
+                        ]
+                    }
+                },
+                {
+                    "target_suffix": "_assento",
+                    "rules": {
+                        "deprel": [
+                            "obl"
+                        ]
+                    }
+                }
+            ]
+        }
+    },
+    "false_cognates": {
+        "enabled": true,
+        "natural_confusion_chance": 0.12,
+        "manual_pairs": {
+            "noite": "dia",
+            "fresco": "quente",
+            "alto": "profundo",
+            "claro": "escuro",
+            "bravo": "manso"
+        }
+    },
+    "compounding": {
+        "enabled": true,
+        "head_position": "final",
+        "linking_elements": {
+            "o": {
+                "after": [
+                    "o",
+                    "or",
+                    "ol",
+                    "el",
+                    "al",
+                    "r",
+                    "l",
+                    "n"
+                ]
+            },
+            "i": {
+                "after": [
+                    "a",
+                    "ia",
+                    "na",
+                    "ura",
+                    "ença"
+                ]
+            }
+        }
+    },
+    "loanword_policy": {
+        "enabled": true,
+        "modes": {
+            "phonetic_adaptation": 0.65,
+            "calque": 0.25,
+            "semantic_extension": 0.10
+        },
+        "calque_connector": ""
+    },
+    "abstract_concepts": {
+        "enabled": true,
+        "mappings": {
+            "eternidade": "çalvorniy",
+            "infinito": "infìm",
+            "melancolia": "malenkonìy",
+            "sublime": "sublimìyn",
+            "épico": "epikàr",
+            "saudade": "liwwàriy",
+            "nostalgia": "liwwàriy",
+            "destino": "destìvol",
+            "fortuna": "fortùna",
+            "virtude": "virtìvol",
+            "sabedoria": "savençiy",
+            "coragem": "kortìyn",
+            "honra": "onrìvol",
+            "glória": "glorìyn",
+            "triunfo": "triomfàr"
+        },
+        "local_overrides": {},
+        "definitions": {}
+    },
+    "style": {
+        "capitalization": true,
+        "punctuation_map": {
+            ".": ".",
+            "!": "!",
+            "?": "?",
+            ",": ",",
+            ";": ";",
+            ":": ":"
+        },
+        "sentence_terminators": [
+            ".",
+            "!",
+            "?"
+        ],
+        "secondary_terminators": [
+            ":",
+            ";"
+        ]
+    },
+    "numeric_handling": {
+        "ignore_digits": true
+    },
+    "agglutination_strength": 0.85,
+    "divergence_factor": 0.05,
+    "cultural_purism": 0.30
+}

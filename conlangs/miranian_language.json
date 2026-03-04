@@ -29,7 +29,7 @@
                 "type": "substrate"
             },
             {
-                "source_id": "cauterian",
+                "source_id": "cauterian_language",
                 "weight": 30,
                 "mutation_intensity": 0.5,
                 "type": "adstrate"
