@@ -10,6 +10,7 @@ from ui.profile import ProfileTab
 from ui.gramataki import GramatakiTab
 from ui.idioms import IdiomTab
 from ui.spinner import LoadingOverlay
+from ui.intelligibility_tab import IntelligibilityTab
 
 
 class ProfileSelectorDialog(tk.Toplevel):
@@ -330,6 +331,10 @@ class ConHabApp:
         self.profile_widget = ProfileTab(self.notebook, self.colors)
         self.notebook.add(self.profile_widget, text="Editor JSON")
 
+        self.intelligibility_widget = IntelligibilityTab(
+            self.notebook, self.colors, self.engine)
+        self.notebook.add(self.intelligibility_widget, text="Lebe-Naiul")
+
     def setup_translation_tab(self):
         content_pane = ttk.PanedWindow(
             self.tab_translation, orient=tk.VERTICAL)
@@ -434,6 +439,8 @@ class ConHabApp:
         self.tab_idioms.engine = self.engine
         self.tab_idioms.manager = self.engine.idiom_manager
         self.tab_idioms.refresh_list()
+
+        self.intelligibility_widget.update_engine(self.engine)
 
         self.loading_overlay.hide()
 
