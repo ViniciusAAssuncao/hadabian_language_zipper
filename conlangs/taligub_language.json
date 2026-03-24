@@ -1,0 +1,591 @@
+{
+    "id": "taligub",
+    "name": "Taligub",
+    "description": "Língua com estética malaia, mas com gênero gramatical, sistema de casos ergativo-absolutivo, TAM complexo e afixação produtiva. Ordem SVO na principal, SOV na subordinada, com possibilidade de topicalização e foco.",
+    "word_order": "SVO",
+    "subordinate_word_order": "SOV",
+    "source_language_order": "SVO",
+    "drop_articles": true,
+    "pro_drop": {
+        "enabled": true,
+        "conditions": [
+            "verb_agreement"
+        ]
+    },
+    "aesthetic_profile": {
+        "syllable_count_distribution": {
+            "1": 0.2,
+            "2": 0.5,
+            "3": 0.2,
+            "4": 0.1
+        },
+        "cluster_density": 0.3,
+        "vowel_consonant_ratio": 0.5
+    },
+    "alignment": "ergative-absolutive",
+    "global_seed": 260027472,
+    "phonotactics": {
+        "vowels": "aeiou",
+        "consonants": "ptkbdgmnNsfhlrwj",
+        "active_style": "malay_style",
+        "inventory_styles": {
+            "malay_style": {
+                "consonants": "ptkbdgmnNsfhlrwj",
+                "vowels": "aeiou"
+            }
+        },
+        "transition_matrix": {
+            "enabled": true,
+            "default_weight": 5,
+            "matrix": {
+                "m": {
+                    "p": 80,
+                    "b": 60,
+                    "t": 10
+                },
+                "n": {
+                    "t": 80,
+                    "d": 60,
+                    "s": 30
+                },
+                "N": {
+                    "k": 80,
+                    "g": 60,
+                    "h": 20
+                },
+                "p": {
+                    "t": 10,
+                    "k": 5
+                },
+                "t": {
+                    "s": 40,
+                    "r": 20
+                },
+                "k": {
+                    "s": 20,
+                    "h": 30
+                },
+                "r": {
+                    "a": 60,
+                    "i": 40
+                },
+                "l": {
+                    "a": 50,
+                    "u": 30
+                }
+            }
+        },
+        "syllable_templates": [
+            "CV",
+            "CVC",
+            "V",
+            "VC"
+        ],
+        "min_syllables": 1,
+        "max_syllables": 3,
+        "max_consonant_cluster": 1,
+        "max_vowel_cluster": 1,
+        "forbidden_initial_clusters": [
+            "pt",
+            "kt",
+            "bd",
+            "gb",
+            "mn",
+            "nm",
+            "rl"
+        ],
+        "forbidden_final_consonants": [
+            "h",
+            "j",
+            "w"
+        ],
+        "epenthesis_vowel": "e",
+        "diphthongs": [
+            "ai",
+            "au",
+            "oi",
+            "ei"
+        ],
+        "sonority_hierarchy": {
+            "enabled": true,
+            "scale": {
+                "p": 0,
+                "t": 0,
+                "k": 0,
+                "b": 1,
+                "d": 1,
+                "g": 1,
+                "s": 2,
+                "f": 2,
+                "h": 2,
+                "m": 3,
+                "n": 3,
+                "N": 3,
+                "l": 4,
+                "r": 4,
+                "w": 5,
+                "j": 5
+            },
+            "onset_rules": {
+                "min_distance": 1,
+                "allow_plateau": false,
+                "allow_reversal": false
+            },
+            "coda_rules": {
+                "min_distance": 0,
+                "allow_plateau": true,
+                "allow_reversal": true
+            }
+        }
+    },
+    "consonant_mutation": {
+        "enabled": true,
+        "rules": [
+            {
+                "name": "Nasal assimilation (meN- prefix)",
+                "description": "O prefixo meN- nasaliza a oclusiva inicial do verbo",
+                "triggers": {
+                    "words": [
+                        "meN-"
+                    ],
+                    "pos": [
+                        "VERB"
+                    ]
+                },
+                "mutations": {
+                    "p": "m",
+                    "t": "n",
+                    "k": "N",
+                    "b": "m",
+                    "d": "n",
+                    "g": "N",
+                    "s": "ny",
+                    "c": "ny"
+                }
+            },
+            {
+                "name": "Post-nasal voicing",
+                "description": "Após nasal, oclusivas surdas tornam-se sonoras",
+                "triggers": {
+                    "ending_chars": [
+                        "m",
+                        "n",
+                        "N"
+                    ]
+                },
+                "mutations": {
+                    "p": "b",
+                    "t": "d",
+                    "k": "g"
+                }
+            }
+        ]
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "fixed",
+        "position": "penultimate",
+        "graphic_accent": false,
+        "accent_map": {}
+    },
+    "semantic_fields": {
+        "enabled": true,
+        "auto_detect": true,
+        "use_nltk": true,
+        "threshold": 0.3,
+        "manual_groups": {
+            "air": "water",
+            "hujan": "water",
+            "sungai": "water",
+            "laut": "water",
+            "api": "fire",
+            "panas": "heat",
+            "matahari": "heat"
+        }
+    },
+    "polysemy_rules": {
+        "enabled": true,
+        "merges": {
+            "langit": "sky",
+            "bumi": "earth",
+            "cahaya": "light"
+        },
+        "splits": {
+            "jalan": [
+                {
+                    "target_suffix": "_fisik",
+                    "rules": {
+                        "feats": [
+                            "Case=Loc"
+                        ]
+                    }
+                },
+                {
+                    "target_suffix": "_abstrak",
+                    "rules": {
+                        "feats": [
+                            "Case=Abs"
+                        ]
+                    }
+                }
+            ]
+        }
+    },
+    "false_cognates": {
+        "enabled": true,
+        "natural_confusion_chance": 0.1,
+        "manual_pairs": {
+            "kiri": "kanan",
+            "siang": "malam",
+            "besar": "kecil"
+        }
+    },
+    "vowel_harmony": {
+        "enabled": false,
+        "groups": {},
+        "rules": []
+    },
+    "case_system": {
+        "enabled": true,
+        "preposition_handling": "coexist",
+        "marker_position": "suffix",
+        "markers": {
+            "ergative": {
+                "marker": "-n",
+                "type": "suffix"
+            },
+            "absolutive": {
+                "marker": "",
+                "type": "suffix"
+            },
+            "dative": {
+                "marker": "-kan",
+                "type": "suffix",
+                "conditions": [
+                    "animate"
+                ]
+            },
+            "genitive": {
+                "marker": "-pun",
+                "type": "suffix"
+            },
+            "locative": {
+                "marker": "-tem",
+                "type": "suffix"
+            },
+            "instrumental": {
+                "marker": "-dengan",
+                "type": "particle_before"
+            }
+        }
+    },
+    "tam_system": {
+        "enabled": true,
+        "infer_imperative_from_context": true,
+        "rules": [
+            {
+                "features": [
+                    "Tense=Past"
+                ],
+                "marker": "telah",
+                "type": "particle_before"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "akan",
+                "type": "particle_before"
+            },
+            {
+                "features": [
+                    "Aspect=Prog"
+                ],
+                "marker": "sedang",
+                "type": "particle_before"
+            },
+            {
+                "features": [
+                    "Aspect=Perf"
+                ],
+                "marker": "sudah",
+                "type": "particle_before"
+            },
+            {
+                "features": [
+                    "Mood=Imp"
+                ],
+                "marker": "-lah",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Sub"
+                ],
+                "marker": "hendak",
+                "type": "particle_before"
+            },
+            {
+                "features": [
+                    "VerbForm=Inf"
+                ],
+                "marker": "meN-",
+                "type": "prefix"
+            },
+            {
+                "features": [
+                    "Voice=Pass"
+                ],
+                "marker": "di-",
+                "type": "prefix"
+            }
+        ]
+    },
+    "agreement_rules": {
+        "gender_agreement": true,
+        "number_agreement": true
+    },
+    "gender_system": {
+        "enabled": true,
+        "default": "neutro",
+        "inference": [
+            {
+                "suffix": "a",
+                "gender": "feminino"
+            },
+            {
+                "suffix": "i",
+                "gender": "feminino"
+            },
+            {
+                "suffix": "o",
+                "gender": "masculino"
+            },
+            {
+                "suffix": "u",
+                "gender": "masculino"
+            }
+        ],
+        "markers": {
+            "masculino": {
+                "targets": [
+                    "ADJ",
+                    "DET",
+                    "VERB"
+                ],
+                "marker": "-an",
+                "position": "suffix"
+            },
+            "feminino": {
+                "targets": [
+                    "ADJ",
+                    "DET",
+                    "VERB"
+                ],
+                "marker": "-in",
+                "position": "suffix"
+            },
+            "neutro": {
+                "targets": [
+                    "ADJ",
+                    "DET",
+                    "VERB"
+                ],
+                "marker": "-um",
+                "position": "suffix"
+            }
+        }
+    },
+    "topicalization": {
+        "enabled": true,
+        "position": "initial",
+        "topic_marker": "pun",
+        "reintroduce_articles": false
+    },
+    "focus_structure": {
+        "enabled": true,
+        "object_focus_marker": "lah",
+        "verb_focus_marker": "kah",
+        "suppress_case": true
+    },
+    "functional_particles": {
+        "sangat": {
+            "noun_position": "post_nominal",
+            "adj_position": "pre_nominal",
+            "verb_position": "post_verbal"
+        },
+        "selalu": {
+            "verb_position": "pre_verbal"
+        },
+        "juga": {
+            "verb_position": "post_verbal"
+        }
+    },
+    "degree_system": {
+        "enabled": true,
+        "source_rules": [
+            {
+                "type": "diminutive",
+                "suffix": "cik",
+                "replacement": ""
+            },
+            {
+                "type": "diminutive",
+                "suffix": "cil",
+                "replacement": ""
+            },
+            {
+                "type": "augmentative",
+                "suffix": "gaz",
+                "replacement": ""
+            },
+            {
+                "type": "augmentative",
+                "suffix": "bes",
+                "replacement": ""
+            },
+            {
+                "type": "superlative",
+                "suffix": "pisan",
+                "replacement": ""
+            }
+        ],
+        "rules": {
+            "diminutive": {
+                "affix": "-cik",
+                "position": "suffix"
+            },
+            "augmentative": {
+                "affix": "-gaz",
+                "position": "suffix"
+            },
+            "superlative": {
+                "affix": "-pisan",
+                "position": "suffix"
+            }
+        }
+    },
+    "morphological_derivation": {
+        "enabled": true,
+        "max_depth": 3,
+        "exceptions": [
+            "nama",
+            "hati",
+            "orang"
+        ]
+    },
+    "affix_system": {
+        "enabled": true,
+        "source_suffixes": [
+            {
+                "input_pos": "VERB",
+                "suffix": "kan",
+                "replacement": "",
+                "target_pos": "NOUN",
+                "priority": 1
+            },
+            {
+                "input_pos": "NOUN",
+                "suffix": "an",
+                "replacement": "",
+                "target_pos": "ADJ",
+                "priority": 0
+            },
+            {
+                "input_pos": "ADJ",
+                "suffix": "i",
+                "replacement": "",
+                "target_pos": "VERB",
+                "priority": 0
+            }
+        ],
+        "derivation_rules": [
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "agent",
+                "affix": "peN-",
+                "position": "prefix"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "result",
+                "affix": "-an",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "type": "relational",
+                "affix": "-i",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "ADV",
+                "affix": "dengan",
+                "position": "particle_before"
+            }
+        ]
+    },
+    "reduplication": {
+        "enabled": true,
+        "epenthesis_vowel": "e",
+        "rules": [
+            {
+                "features": [
+                    "Number=Plur"
+                ],
+                "pos": [
+                    "NOUN"
+                ],
+                "method": "whole_word",
+                "separator": "-"
+            },
+            {
+                "features": [
+                    "Aspect=Hab"
+                ],
+                "pos": [
+                    "VERB"
+                ],
+                "method": "whole_word",
+                "separator": "-"
+            },
+            {
+                "features": [
+                    "Degree=Int"
+                ],
+                "pos": [
+                    "ADJ"
+                ],
+                "method": "first_syllable",
+                "separator": ""
+            }
+        ]
+    },
+    "numeric_handling": {
+        "ignore_digits": true
+    },
+    "style": {
+        "capitalization": true,
+        "punctuation_map": {
+            ".": ".",
+            "!": "!",
+            "?": "?",
+            ",": ",",
+            ";": ";",
+            ":": ":"
+        },
+        "sentence_terminators": [
+            ".",
+            "!",
+            "?"
+        ],
+        "secondary_terminators": [
+            ":",
+            ";"
+        ]
+    }
+}

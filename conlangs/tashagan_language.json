@@ -1,0 +1,467 @@
+{
+    "id": "tashagan",
+    "name": "Língua Tashagan",
+    "description": "Língua aglutinante inspirada na estética e textura do Georgiano e do Armênio, parte do ramo Sul do tronco Catalivético. Possui alinhamento ergativo-absolutivo, polipessoalismo verbal (prefixos de objeto e sufixos de sujeito) e aglomerações consonantais ricas, porém suavizadas. Ausência total de gênero gramatical.",
+    "word_order": "SOV",
+    "subordinate_word_order": "SOV",
+    "source_language_order": "SVO",
+    "alignment": "ergative-absolutive",
+    "drop_articles": true,
+    "global_seed": 429629377,
+    "linguistic_family": "catalian_languages_trunk.json",
+    "family_node": "south_branch",
+    "shared_base_strength": 0.85,
+    "divergence_factor": 0.15,
+    "pro_drop": {
+        "enabled": true,
+        "conditions": [
+            "verb_agreement"
+        ]
+    },
+    "aesthetic_profile": {
+        "syllable_count_distribution": {
+            "1": 0.05,
+            "2": 0.40,
+            "3": 0.40,
+            "4": 0.15
+        },
+        "cluster_density": 0.65,
+        "vowel_consonant_ratio": 0.35
+    },
+    "phonotactics": {
+        "vowels": "aeiou",
+        "consonants": "pbtdkgqcvszxmnlrhyjwčšž",
+        "syllable_templates": [
+            "CVC",
+            "CV",
+            "CCV",
+            "V",
+            "VC",
+            "CCVC",
+            "CVCC"
+        ],
+        "min_syllables": 1,
+        "max_syllables": 5,
+        "max_consonant_cluster": 3,
+        "max_vowel_cluster": 1,
+        "forbidden_initial_clusters": [
+            "tp",
+            "kd",
+            "pb",
+            "bp",
+            "kg",
+            "gk",
+            "td",
+            "dt",
+            "sz",
+            "zs"
+        ],
+        "forbidden_final_consonants": [
+            "h",
+            "w",
+            "j"
+        ],
+        "epenthesis_vowel": "i",
+        "sonority_hierarchy": {
+            "enabled": true,
+            "scale": {
+                "p": 1,
+                "t": 1,
+                "k": 1,
+                "q": 1,
+                "c": 1,
+                "č": 1,
+                "b": 2,
+                "d": 2,
+                "g": 2,
+                "j": 2,
+                "f": 3,
+                "s": 3,
+                "š": 3,
+                "x": 3,
+                "h": 3,
+                "v": 4,
+                "z": 4,
+                "ž": 4,
+                "m": 5,
+                "n": 5,
+                "l": 6,
+                "r": 6,
+                "w": 7,
+                "y": 7
+            },
+            "onset_rules": {
+                "min_distance": 1,
+                "allow_plateau": false,
+                "allow_reversal": false
+            },
+            "coda_rules": {
+                "min_distance": 0,
+                "allow_plateau": true,
+                "allow_reversal": true
+            }
+        }
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "fixed",
+        "position": "penultimate",
+        "graphic_accent": false
+    },
+    "case_system": {
+        "enabled": true,
+        "preposition_handling": "replace",
+        "marker_position": "suffix",
+        "markers": {
+            "absolutive": {
+                "marker": "i",
+                "type": "suffix"
+            },
+            "ergative": {
+                "marker": "ma",
+                "type": "suffix"
+            },
+            "dative": {
+                "marker": "es",
+                "type": "suffix"
+            },
+            "genitive": {
+                "marker": "is",
+                "type": "suffix"
+            },
+            "locative": {
+                "marker": "shi",
+                "type": "suffix"
+            },
+            "instrumental": {
+                "marker": "it",
+                "type": "suffix"
+            }
+        }
+    },
+    "number_system": {
+        "numbers": [
+            "singular",
+            "plural"
+        ],
+        "markers": {
+            "plural": {
+                "marker": "eb",
+                "alternatives": [
+                    "eb"
+                ]
+            }
+        },
+        "broken_plurals": {
+            "enabled": false
+        }
+    },
+    "gender_system": {
+        "enabled": false
+    },
+    "tam_system": {
+        "enabled": true,
+        "infer_imperative_from_context": true,
+        "rules": [
+            {
+                "features": [
+                    "VerbForm=Inf"
+                ],
+                "marker": "la",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Past"
+                ],
+                "marker": "di",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "eb",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Aspect=Prog"
+                ],
+                "marker": "am",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Cnd"
+                ],
+                "marker": "da",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Imp"
+                ],
+                "marker": "e",
+                "type": "suffix"
+            }
+        ],
+        "person_marking": {
+            "enabled": true,
+            "suffixes": {
+                "1sg": "v",
+                "2sg": "s",
+                "3sg": "a",
+                "1pl": "vt",
+                "2pl": "st",
+                "3pl": "an"
+            }
+        }
+    },
+    "pronominal_system": {
+        "independent_pronouns": {
+            "1sg": "me",
+            "2sg": "shen",
+            "3sg": "is",
+            "1pl": "chven",
+            "2pl": "tkven",
+            "3pl": "isini"
+        },
+        "clitic_ordering": {
+            "enabled": true,
+            "order": [
+                "obj_indirect",
+                "obj_direct",
+                "verb"
+            ],
+            "encliticizes": false,
+            "procliticizes": true
+        },
+        "object_pronouns": {
+            "direct": {
+                "1sg": "m",
+                "2sg": "g",
+                "3sg": "h",
+                "1pl": "gv",
+                "2pl": "gt",
+                "3pl": "h"
+            },
+            "indirect": {
+                "1sg": "m",
+                "2sg": "g",
+                "3sg": "s",
+                "1pl": "gv",
+                "2pl": "gt",
+                "3pl": "s"
+            }
+        }
+    },
+    "negation_system": {
+        "enabled": true,
+        "strategies": [
+            {
+                "type": "verbal_negation",
+                "marker": "ar ",
+                "suffix": ""
+            },
+            {
+                "type": "emphatic_negation",
+                "marker": "ver ",
+                "suffix": ""
+            }
+        ]
+    },
+    "interrogative_system": {
+        "enabled": true,
+        "question_particles": [
+            {
+                "type": "yes_no",
+                "particle": "tu"
+            }
+        ],
+        "detection_rules": {
+            "wh_words": [
+                "quem",
+                "qual",
+                "onde",
+                "quando",
+                "como",
+                "por que",
+                "que",
+                "qual"
+            ],
+            "alternative_indicators": [
+                "ou"
+            ]
+        }
+    },
+    "copula_system": {
+        "enabled": true,
+        "copulas": [
+            {
+                "type": "present_default",
+                "form": "aris",
+                "conjugates": false,
+                "conditions": [
+                    "Tense=Pres"
+                ]
+            },
+            {
+                "type": "past_default",
+                "form": "iqo",
+                "conjugates": false,
+                "conditions": [
+                    "Tense=Past"
+                ]
+            },
+            {
+                "type": "future_default",
+                "form": "ikneba",
+                "conjugates": false,
+                "conditions": [
+                    "Tense=Fut"
+                ]
+            }
+        ]
+    },
+    "affix_system": {
+        "enabled": true,
+        "derivation_rules": [
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "affix": "uri",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "NOUN",
+                "type": "abstract_noun",
+                "affix": "oba",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "agent",
+                "affix": "m",
+                "position": "prefix"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "ADV",
+                "affix": "ad",
+                "position": "suffix"
+            }
+        ]
+    },
+    "degree_system": {
+        "enabled": true,
+        "rules": {
+            "diminutive": {
+                "affix": "kuna",
+                "position": "suffix"
+            },
+            "augmentative": {
+                "affix": "zara",
+                "position": "suffix"
+            },
+            "superlative": {
+                "affix": "u",
+                "position": "prefix"
+            }
+        }
+    },
+    "compounding": {
+        "enabled": true,
+        "head_position": "final",
+        "linking_elements": {
+            "a": {
+                "after": [
+                    "b",
+                    "d",
+                    "g",
+                    "p",
+                    "t",
+                    "k",
+                    "v",
+                    "z",
+                    "š",
+                    "ž",
+                    "x",
+                    "m",
+                    "n",
+                    "l",
+                    "r",
+                    "c",
+                    "č",
+                    "q",
+                    "j"
+                ]
+            }
+        }
+    },
+    "sandhi": {
+        "enabled": true,
+        "rules": [
+            {
+                "pattern": "a\\sa",
+                "replacement": "a",
+                "ignore_case": true
+            },
+            {
+                "pattern": "i\\si",
+                "replacement": "i",
+                "ignore_case": true
+            },
+            {
+                "pattern": "e\\se",
+                "replacement": "e",
+                "ignore_case": true
+            }
+        ]
+    },
+    "style": {
+        "capitalization": true,
+        "punctuation_map": {
+            ".": ".",
+            "!": "!",
+            "?": "?",
+            ",": ",",
+            ";": ";",
+            ":": ":"
+        },
+        "sentence_terminators": [
+            ".",
+            "!",
+            "?"
+        ],
+        "secondary_terminators": [
+            ":",
+            ";"
+        ]
+    },
+    "vocabulary": {
+        "sim": "ho",
+        "não": "ara",
+        "olá": "gamarjoba",
+        "obrigado": "madloba",
+        "por favor": "getaqva",
+        "água": "tsqali",
+        "fogo": "tsetskhli",
+        "terra": "mits'a",
+        "ar": "haeri",
+        "eu": "me",
+        "tu": "shen",
+        "você": "shen",
+        "ele": "is",
+        "ela": "is",
+        "nós": "chven",
+        "vós": "tkven",
+        "eles": "isini",
+        "elas": "isini",
+        "um": "erti",
+        "dois": "ori",
+        "três": "sami"
+    }
+}

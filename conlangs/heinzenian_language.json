@@ -1,0 +1,336 @@
+{
+    "id": "heinzenian_language",
+    "name": "Heinzeniano",
+    "native_name": "Henshinkai",
+    "description": "Língua isolada do arquipélago de Komishima. Altamente aglutinante, com ordem SOV estrita. Caracteriza-se pela ausência de artigos, invariabilidade de número nos substantivos, e um sistema complexo de partículas e honoríficos. Foneticamente inspirada na fluidez asiática (sílabas CV, CVn), mas distingue-se por possuir um sistema de tonicidade marcado e vocabulário inteiramente original.",
+    "word_order": "SOV",
+    "subordinate_word_order": "SOV",
+    "source_language_order": "SVO",
+    "drop_articles": true,
+    "pro_drop": {
+        "enabled": true,
+        "conditions": [
+            "context_inferred"
+        ]
+    },
+    "alignment": "nominative-accusative",
+    "agglutination_strength": 1.0,
+    "global_seed": 847291,
+    "aesthetic_profile": {
+        "syllable_count_distribution": {
+            "1": 0.05,
+            "2": 0.45,
+            "3": 0.35,
+            "4": 0.15
+        },
+        "cluster_density": 0.0,
+        "vowel_consonant_ratio": 0.6
+    },
+    "phonotactics": {
+        "vowels": "aeiou",
+        "consonants": "kgtdsznhbpmyrw",
+        "syllable_templates": [
+            "CV",
+            "V",
+            "CVC"
+        ],
+        "min_syllables": 1,
+        "max_syllables": 4,
+        "max_consonant_cluster": 1,
+        "max_vowel_cluster": 2,
+        "forbidden_initial_clusters": [
+            "nm",
+            "mr",
+            "nl",
+            "tl",
+            "st",
+            "sp",
+            "sk",
+            "tr",
+            "pr",
+            "kr",
+            "fl",
+            "fr"
+        ],
+        "forbidden_final_consonants": [
+            "k",
+            "g",
+            "t",
+            "d",
+            "s",
+            "z",
+            "h",
+            "p",
+            "b",
+            "m",
+            "y",
+            "r",
+            "w"
+        ],
+        "epenthesis_vowel": "u",
+        "diphthongs": [
+            "ai",
+            "ei",
+            "ou",
+            "au",
+            "oi"
+        ],
+        "sonority_hierarchy": {
+            "enabled": false
+        }
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "fixed",
+        "position": "penultimate",
+        "graphic_accent": true,
+        "accent_map": {
+            "a": "á",
+            "e": "é",
+            "i": "í",
+            "o": "ó",
+            "u": "ú"
+        }
+    },
+    "case_system": {
+        "enabled": true,
+        "preposition_handling": "replace",
+        "marker_position": "suffix",
+        "markers": {
+            "nominative": {
+                "marker": "ko",
+                "type": "particle_after"
+            },
+            "accusative": {
+                "marker": "to",
+                "type": "particle_after"
+            },
+            "dative": {
+                "marker": "re",
+                "type": "particle_after"
+            },
+            "genitive": {
+                "marker": "ma",
+                "type": "particle_after"
+            },
+            "locative": {
+                "marker": "ze",
+                "type": "particle_after"
+            },
+            "instrumental": {
+                "marker": "ban",
+                "type": "particle_after"
+            },
+            "comitative": {
+                "marker": "sho",
+                "type": "particle_after"
+            }
+        }
+    },
+    "topicalization": {
+        "enabled": true,
+        "position": "initial",
+        "topic_marker": "ya"
+    },
+    "focus_structure": {
+        "enabled": true,
+        "object_focus_marker": "zo",
+        "verb_focus_marker": "do",
+        "suppress_case": true
+    },
+    "number_system": {
+        "enabled": false
+    },
+    "gender_system": {
+        "enabled": false
+    },
+    "tam_system": {
+        "enabled": true,
+        "infer_imperative_from_context": true,
+        "person_marking": {
+            "enabled": false
+        },
+        "rules": [
+            {
+                "features": [
+                    "Tense=Pres"
+                ],
+                "marker": "mu",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Past"
+                ],
+                "marker": "ki",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "rai",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Aspect=Prog"
+                ],
+                "marker": "nami",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Imp"
+                ],
+                "marker": "te",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Cnd"
+                ],
+                "marker": "ba",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Polite=Form"
+                ],
+                "marker": "sen",
+                "type": "suffix"
+            }
+        ]
+    },
+    "negation_system": {
+        "enabled": true,
+        "strategies": [
+            {
+                "type": "verbal_negation",
+                "marker": "ren",
+                "position": "suffix"
+            },
+            {
+                "type": "nominal_negation",
+                "marker": "zari",
+                "position": "suffix"
+            }
+        ]
+    },
+    "interrogative_system": {
+        "enabled": true,
+        "question_particles": [
+            {
+                "type": "yes_no",
+                "particle": "sa",
+                "position": "final"
+            }
+        ],
+        "detection_rules": {
+            "wh_words": [
+                "quem",
+                "o que",
+                "onde",
+                "quando",
+                "como",
+                "por que"
+            ]
+        }
+    },
+    "copula_system": {
+        "enabled": true,
+        "copulas": [
+            {
+                "type": "present_default",
+                "form": "daru",
+                "conjugates": false
+            },
+            {
+                "type": "past",
+                "form": "daki",
+                "conjugates": false
+            },
+            {
+                "type": "formal",
+                "form": "gozamu",
+                "conjugates": false
+            }
+        ]
+    },
+    "affix_system": {
+        "enabled": true,
+        "derivation_rules": [
+            {
+                "from_pos": "NOUN",
+                "to_pos": "NOUN",
+                "type": "honorific_high",
+                "affix": "tora",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "NOUN",
+                "type": "honorific_standard",
+                "affix": "han",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "agent",
+                "affix": "te",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "ADV",
+                "type": "manner",
+                "affix": "ku",
+                "position": "suffix"
+            }
+        ]
+    },
+    "compounding": {
+        "enabled": true,
+        "head_position": "final",
+        "linking_elements": {
+            "no": {
+                "words": []
+            }
+        }
+    },
+    "lexical_registers": {
+        "enabled": true,
+        "registers": [
+            {
+                "name": "keigo_formal",
+                "chance": 0.3,
+                "mutation_factor": 0.0,
+                "description": "Linguagem altamente formal usando a cópula 'gozamu' e sufixo verbal '-sen'."
+            },
+            {
+                "name": "colloquial",
+                "chance": 0.5,
+                "mutation_factor": 1.0,
+                "description": "Linguagem casual com fortes reduções de partículas."
+            }
+        ]
+    },
+    "style": {
+        "capitalization": true,
+        "punctuation_map": {
+            ".": "。",
+            ",": "،",
+            "!": "！",
+            "?": "？"
+        },
+        "sentence_terminators": [
+            "。",
+            "！",
+            "？"
+        ],
+        "secondary_terminators": [
+            "،"
+        ]
+    }
+}

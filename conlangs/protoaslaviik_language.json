@@ -1,0 +1,293 @@
+{
+    "id": "protoaslaviik_language",
+    "name": "Proto-Aslávika",
+    "description": "Língua proto com sistema de casos, acento inicial, SOV, aglutinante. Possui 4 casos (nominativo, acusativo, dativo, genitivo), 2 números (singular e plural), e apenas um gênero (masculino). Forte tendência aglutinante, com sufixos de caso e número. O acento tônico recai sempre na primeira sílaba, conferindo um som pesado, mas sem sons guturais. Exemplos de terminações comuns: -ásdy (nom.sg), -ahat (acc.sg), -ovaakhí (dat.sg), -iivík (gen.sg). O plural é marcado pelo sufixo -ir antes do caso.",
+    "word_order": "SOV",
+    "subordinate_word_order": "SOV",
+    "source_language_order": "SVO",
+    "drop_articles": true,
+    "pro_drop": {
+        "enabled": false
+    },
+    "aesthetic_profile": {
+        "syllable_count_distribution": {
+            "1": 0.1,
+            "2": 0.5,
+            "3": 0.3,
+            "4": 0.1
+        },
+        "cluster_density": 0.6,
+        "vowel_consonant_ratio": 0.5
+    },
+    "alignment": "nominative-accusative",
+    "global_seed": 42857,
+    "phonotactics": {
+        "vowels": "aeiou",
+        "consonants": "ptkbdgfvszmnlrjh",
+        "syllable_templates": [
+            "CV",
+            "CVC",
+            "CCV",
+            "CCVC",
+            "V",
+            "VC"
+        ],
+        "min_syllables": 1,
+        "max_syllables": 4,
+        "max_consonant_cluster": 2,
+        "max_vowel_cluster": 2,
+        "forbidden_initial_clusters": [
+            "nm",
+            "mr",
+            "nl",
+            "tl"
+        ],
+        "forbidden_final_consonants": [
+            "h",
+            "j"
+        ],
+        "epenthesis_vowel": "i",
+        "diphthongs": [
+            "ai",
+            "ei",
+            "ou",
+            "au"
+        ],
+        "sonority_hierarchy": {
+            "enabled": false
+        }
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "fixed",
+        "position": "initial",
+        "graphic_accent": false,
+        "accent_map": {
+            "a": "á",
+            "e": "é",
+            "i": "í",
+            "o": "ó",
+            "u": "ú"
+        }
+    },
+    "case_system": {
+        "enabled": true,
+        "preposition_handling": "replace",
+        "markers": {
+            "nominative": {
+                "marker": "ásdy",
+                "type": "suffix"
+            },
+            "accusative": {
+                "marker": "ahat",
+                "type": "suffix"
+            },
+            "dative": {
+                "marker": "ovaakhí",
+                "type": "suffix"
+            },
+            "genitive": {
+                "marker": "iivík",
+                "type": "suffix"
+            },
+            "locative": {
+                "marker": "ovák",
+                "type": "suffix"
+            },
+            "instrumental": {
+                "marker": "urák",
+                "type": "suffix"
+            },
+            "ablative": {
+                "marker": "udás",
+                "type": "suffix"
+            },
+            "vocative": {
+                "marker": "e",
+                "type": "suffix"
+            },
+            "comitative": {
+                "marker": "takha",
+                "type": "suffix"
+            }
+        },
+        "marker_position": "suffix"
+    },
+    "number_system": {
+        "markers": {
+            "plural": {
+                "marker": "ir"
+            }
+        }
+    },
+    "broken_plurals": {
+        "enabled": true,
+        "patterns": []
+    },
+    "tam_system": {
+        "enabled": true,
+        "infer_imperative_from_context": true,
+        "rules": [
+            {
+                "features": [
+                    "Tense=Past"
+                ],
+                "marker": "dag",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "kuh",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Imp"
+                ],
+                "marker": "va",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Aspect=Prog"
+                ],
+                "marker": "sá",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Aspect=Perf"
+                ],
+                "marker": "tá",
+                "type": "suffix"
+            }
+        ]
+    },
+    "gender_system": {
+        "enabled": false
+    },
+    "agreement_rules": {
+        "gender_agreement": false,
+        "number_agreement": true
+    },
+    "semantic_fields": {
+        "enabled": false
+    },
+    "polysemy_rules": {
+        "enabled": false
+    },
+    "false_cognates": {
+        "enabled": false
+    },
+    "vowel_harmony": {
+        "enabled": false
+    },
+    "consonant_mutation": {
+        "enabled": false
+    },
+    "topicalization": {
+        "enabled": false
+    },
+    "focus_structure": {
+        "enabled": false
+    },
+    "functional_particles": {},
+    "degree_system": {
+        "enabled": true,
+        "rules": {
+            "diminutive": {
+                "affix": "ina",
+                "position": "suffix"
+            },
+            "augmentative": {
+                "affix": "ona",
+                "position": "suffix"
+            },
+            "comparative": {
+                "affix": "eg",
+                "position": "suffix"
+            },
+            "superlative": {
+                "affix": "ovin",
+                "position": "suffix"
+            }
+        }
+    },
+    "reduplication": {
+        "enabled": false
+    },
+    "morphological_derivation": {
+        "enabled": false
+    },
+    "affix_system": {
+        "enabled": false
+    },
+    "compounding": {
+        "enabled": true,
+        "head_position": "final",
+        "linking_elements": {}
+    },
+    "interrogative_system": {
+        "enabled": true,
+        "question_particles": [
+            {
+                "type": "yes_no",
+                "particle": "qa"
+            }
+        ],
+        "detection_rules": {
+            "wh_words": [
+                "quem",
+                "o que",
+                "onde",
+                "quando",
+                "como",
+                "por que"
+            ],
+            "alternative_indicators": [
+                "ou"
+            ]
+        }
+    },
+    "negation_system": {
+        "enabled": true,
+        "strategies": [
+            {
+                "type": "verbal_negation",
+                "marker": "ne",
+                "suffix": ""
+            }
+        ]
+    },
+    "copula_system": {
+        "enabled": true,
+        "copulas": [
+            {
+                "type": "present_default",
+                "form": "es"
+            }
+        ]
+    },
+    "style": {
+        "capitalization": true,
+        "punctuation_map": {
+            ".": ".",
+            "!": "!",
+            "?": "?",
+            ",": ",",
+            ";": ";",
+            ":": ":"
+        },
+        "sentence_terminators": [
+            ".",
+            "!",
+            "?"
+        ],
+        "secondary_terminators": [
+            ":",
+            ";"
+        ]
+    }
+}
