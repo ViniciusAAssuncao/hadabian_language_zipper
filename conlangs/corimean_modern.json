@@ -974,7 +974,7 @@
                 "nom_m": "er",
                 "acc_m": "en",
                 "gen_m": "en",
-                "dat_m": "em",
+                "dat_m": "am",
                 "nom_f": "e",
                 "acc_f": "e",
                 "gen_f": "er",
@@ -982,7 +982,7 @@
                 "nom_n": "es",
                 "acc_n": "es",
                 "gen_n": "en",
-                "dat_n": "em"
+                "dat_n": "am"
             },
             "weak": {
                 "when": "after_definite_article",

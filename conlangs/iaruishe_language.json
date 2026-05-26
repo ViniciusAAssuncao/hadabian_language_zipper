@@ -1,0 +1,825 @@
+{
+    "id": "iaruishe",
+    "name": "Iaruíche",
+    "native_name": "Yarūsche",
+    "description": "O Iaruíche (Yarūsche) é uma língua do ramo high-corimean-north originada em Aendur entre os yarudes-aendurianos orientais. Historicamente a língua cotidiana enquanto o Lishanaam era litúrgico, o Iaruíche é um 'elo perdido' ou 'máquina do tempo' para o Corimês Medieval. Hoje, está extinta como primeira língua, possuindo cerca de 350 mil falantes de L2 restritos a comunidades yarudes ultraortodoxas fora de Glipard. A língua combina uma base lexical e estrutural corimesa (35-40%) com forte influxo morfológico e vocabular do Yarude Lishanaam (30%) e do Tsevério (30%), resultando em uma fonologia peculiar que mescla clusters germânicos com fricativas eslavas e algumas guturais semíticas fossilizadas.",
+    "family_node": "high-corimean-north",
+    "linguistic_family": "garmanic_trunk.json",
+    "global_seed": 1827459102,
+    "shared_base_strength": 0.40,
+    "source_language_order": "SVO",
+    "word_order": "SVO",
+    "subordinate_word_order": "SOV",
+    "alignment": "nominative-accusative",
+    "agglutination_strength": 0.85,
+    "divergence_factor": 0.45,
+    "cultural_purism": 0.85,
+    "drop_articles": false,
+    "aesthetic_profile": {
+        "syllable_count_distribution": {
+            "1": 0.15,
+            "2": 0.50,
+            "3": 0.25,
+            "4": 0.10
+        },
+        "cluster_density": 0.6,
+        "preferred_roots": []
+    },
+    "lexical_confluence": {
+        "enabled": true,
+        "base_stability": 0,
+        "strata": [
+            {
+                "type": "corimean_base",
+                "source_id": "corimean_modern",
+                "weight": 40,
+                "mutation_intensity": 0.3
+            },
+            {
+                "type": "lishanaam_adstrate",
+                "source_id": "yarude_lishanaam",
+                "weight": 30,
+                "mutation_intensity": 0.2
+            },
+            {
+                "type": "tseverian_adstrate",
+                "source_id": "tseverian_language",
+                "weight": 30,
+                "mutation_intensity": 0.4
+            }
+        ]
+    },
+    "phonotactics": {
+        "active_style": "orthodox_standard",
+        "inventory_styles": {
+            "orthodox_standard": {
+                "description": "Inventário padrão ortodoxo, preserva sibilantes eslavas e uvulares semíticas em empréstimos.",
+                "consonants": "pbtdkgfvszšžxħhmnlrwjqʕ",
+                "vowels": "aeiouäöüāīū"
+            }
+        },
+        "consonants": "pbtdkgfvszšžxħhmnlrwjqʕ",
+        "vowels": "aeiouäöüāīū",
+        "syllable_templates": [
+            "CVC",
+            "CV",
+            "CVCC",
+            "CCVC",
+            "CCV"
+        ],
+        "min_syllables": 1,
+        "max_syllables": 4,
+        "forbidden_initial_clusters": [
+            "bd",
+            "tṭ",
+            "nm",
+            "lr",
+            "qg",
+            "ħʕ"
+        ],
+        "allowed_initial_clusters": {
+            "two_consonants": [
+                "bl",
+                "br",
+                "dr",
+                "fl",
+                "fr",
+                "gl",
+                "gr",
+                "kl",
+                "kr",
+                "pl",
+                "pr",
+                "tr",
+                "šv",
+                "šr",
+                "šl",
+                "šm",
+                "šn",
+                "sp",
+                "st",
+                "sv",
+                "kv",
+                "zv"
+            ]
+        },
+        "forbidden_final_consonants": [
+            "h",
+            "j",
+            "w"
+        ],
+        "max_consonant_cluster": 3,
+        "diphthongs": [
+            "ai",
+            "au",
+            "ei",
+            "eu",
+            "oi"
+        ],
+        "epenthesis_vowel": "e",
+        "phonological_rules": [
+            {
+                "name": "auslautverhaertung",
+                "input": "([bdgžz])$",
+                "output": "\\1_devoiced",
+                "resolution": {
+                    "b_devoiced": "p",
+                    "d_devoiced": "t",
+                    "g_devoiced": "k",
+                    "ž_devoiced": "š",
+                    "z_devoiced": "s"
+                },
+                "context": "word_final",
+                "obligatory": true,
+                "description": "Desvozeamento final herdado do Corimês"
+            },
+            {
+                "name": "pharyngeal_softening",
+                "input": "ʕ",
+                "output": "ʔ",
+                "register": "colloquial",
+                "description": "Perda da faringal sonora fora de contextos de recitação"
+            }
+        ],
+        "sandhi": {
+            "enabled": true,
+            "rules": [
+                {
+                    "pattern": "n\\s+([pb])",
+                    "replacement": "m \\1",
+                    "description": "Assimilação nasal labial"
+                }
+            ]
+        }
+    },
+    "compounding": {
+        "enabled": true,
+        "head_position": "final",
+        "productivity": "high",
+        "linking_elements": {
+            "s": {
+                "after": [
+                    "ung",
+                    "heit",
+                    "ost",
+                    "nik"
+                ],
+                "examples": "Bildung-s-bukh"
+            },
+            "en": {
+                "after": [
+                    "e",
+                    "a"
+                ],
+                "examples": "Zemlya-n-mašt"
+            }
+        }
+    },
+    "affix_system": {
+        "enabled": true,
+        "derivation_rules": [
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "agent_masculine",
+                "affix": "er",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "agent_slavic",
+                "affix": "nik",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "NOUN",
+                "type": "abstract",
+                "affix": "ost",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "verbal_noun",
+                "affix": "ung",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "ADV",
+                "type": "adverbial",
+                "affix": "lix",
+                "position": "suffix"
+            }
+        ],
+        "source_suffixes": [
+            {
+                "suffix": "ção",
+                "replacement": "ung",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN"
+            },
+            {
+                "suffix": "dade",
+                "replacement": "ost",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN"
+            },
+            {
+                "suffix": "dor",
+                "replacement": "nik",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN"
+            }
+        ]
+    },
+    "gender_system": {
+        "enabled": true,
+        "genders": [
+            "masculine",
+            "feminine",
+            "neuter"
+        ],
+        "default": "masculine",
+        "inference": [
+            {
+                "suffix": "er",
+                "gender": "masculine"
+            },
+            {
+                "suffix": "nik",
+                "gender": "masculine"
+            },
+            {
+                "suffix": "a",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "ung",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "ost",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "chen",
+                "gender": "neuter"
+            },
+            {
+                "suffix": "o",
+                "gender": "neuter"
+            }
+        ],
+        "markers": {
+            "masculine": {
+                "marker": "",
+                "position": "suffix",
+                "targets": [
+                    "ADJ",
+                    "DET"
+                ]
+            },
+            "feminine": {
+                "marker": "e",
+                "position": "suffix",
+                "targets": [
+                    "ADJ",
+                    "DET"
+                ]
+            },
+            "neuter": {
+                "marker": "es",
+                "position": "suffix",
+                "targets": [
+                    "ADJ",
+                    "DET"
+                ]
+            }
+        }
+    },
+    "number_system": {
+        "numbers": [
+            "singular",
+            "plural"
+        ],
+        "default": "singular",
+        "markers": {
+            "singular": {
+                "marker": ""
+            },
+            "plural": {
+                "marker": "en",
+                "alternatives": [
+                    {
+                        "marker": "i",
+                        "conditions": [
+                            "ends_in_slavic_consonant"
+                        ]
+                    },
+                    {
+                        "marker": "im",
+                        "conditions": [
+                            "religious_term",
+                            "animate"
+                        ]
+                    }
+                ]
+            }
+        },
+        "broken_plurals": {
+            "enabled": true,
+            "description": "O Iaruíche preserva a metafonia germânica (Umlaut) do Corimês como plural quebrado interno.",
+            "patterns": [
+                {
+                    "singular_pattern": "a",
+                    "plural_pattern": "ä"
+                },
+                {
+                    "singular_pattern": "o",
+                    "plural_pattern": "ö"
+                },
+                {
+                    "singular_pattern": "u",
+                    "plural_pattern": "ü"
+                },
+                {
+                    "singular_pattern": "au",
+                    "plural_pattern": "äu"
+                }
+            ]
+        }
+    },
+    "case_system": {
+        "enabled": true,
+        "cases": [
+            "nominative",
+            "accusative",
+            "genitive",
+            "dative"
+        ],
+        "marker_position": "suffix",
+        "preposition_handling": "coexist",
+        "description": "Sistema de 4 casos fundindo declinação corimesa e tsevéria.",
+        "markers": {
+            "nominative": {
+                "marker": "",
+                "type": "suffix"
+            },
+            "accusative": {
+                "marker": "u",
+                "type": "suffix",
+                "conditions": [
+                    "animate"
+                ],
+                "shift_to_determiner": true
+            },
+            "genitive": {
+                "marker": "es",
+                "alternatives": [
+                    "a"
+                ],
+                "type": "suffix"
+            },
+            "dative": {
+                "marker": "em",
+                "alternatives": [
+                    "u"
+                ],
+                "type": "suffix"
+            }
+        },
+        "construct_state": {
+            "enabled": true,
+            "description": "Herança do Lishanaam. O primeiro substantivo perde artigo se modificado por genitivo sem preposição.",
+            "trigger_dependencies": [
+                "nmod",
+                "nmod:poss"
+            ],
+            "suppress_article_on_head": true
+        }
+    },
+    "determiner_system": {
+        "definite_article": {
+            "form": "der",
+            "variants": [
+                "di",
+                "dat"
+            ],
+            "declines": true,
+            "description": "Artigos definidos baseados no Corimês Medieval."
+        },
+        "indefinite_article": {
+            "form": "en",
+            "variants": [
+                "ene"
+            ],
+            "declines": true
+        },
+        "demonstratives": {
+            "gender_inheritance_heuristic": true,
+            "proximal": {
+                "sg_m": "diz",
+                "sg_f": "dize",
+                "sg_n": "dizes",
+                "pl": "dizi"
+            },
+            "distal": {
+                "sg_m": "jen",
+                "sg_f": "jene",
+                "sg_n": "jenes",
+                "pl": "jeni"
+            }
+        },
+        "possessives": {
+            "pronominal_suffixes": true,
+            "suppress_article": true,
+            "description": "Possessivos podem ser sufixados no estilo Lishanaam para família/religião, ou independentes (Corimês) para objetos.",
+            "independent_forms": {
+                "1sg": "min",
+                "2sg": "din",
+                "3sg_m": "zin",
+                "1pl": "unzer"
+            },
+            "suffixes": {
+                "1sg": "-i",
+                "2sg_m": "-ak",
+                "2sg_f": "-ik",
+                "3sg_m": "-o",
+                "3sg_f": "-ah",
+                "1pl": "-nu",
+                "2pl": "-kum",
+                "3pl": "-hum"
+            }
+        }
+    },
+    "pronominal_system": {
+        "independent_pronouns": {
+            "1sg": "ix",
+            "2sg": "du",
+            "3sg_m": "on",
+            "3sg_f": "zi",
+            "3sg_n": "es",
+            "1pl": "vir",
+            "2pl": "ir",
+            "3pl": "oni"
+        },
+        "object_pronouns": {
+            "accusative": {
+                "1sg": "mix",
+                "2sg": "dix",
+                "3sg_m": "in",
+                "3sg_f": "zi",
+                "1pl": "uns",
+                "2pl": "eux",
+                "3pl": "zi"
+            },
+            "dative": {
+                "1sg": "mir",
+                "2sg": "dir",
+                "3sg_m": "im",
+                "3sg_f": "ir",
+                "1pl": "uns",
+                "2pl": "eux",
+                "3pl": "im"
+            }
+        }
+    },
+    "adposition_system": {
+        "type": "prepositions",
+        "case_government": {
+            "enabled": true,
+            "strict": true,
+            "dative_only": [
+                "mit",
+                "nax",
+                "fon",
+                "zu",
+                "s"
+            ],
+            "accusative_only": [
+                "durx",
+                "fur",
+                "gegen",
+                "v"
+            ],
+            "genitive": [
+                "bez",
+                "vegen"
+            ]
+        },
+        "inflected_prepositions": {
+            "enabled": true,
+            "description": "Preposições fundidas com pronomes do Lishanaam.",
+            "forms": {
+                "mit": {
+                    "1sg": "miti",
+                    "2sg_m": "mitak",
+                    "3sg_m": "mito",
+                    "1pl": "mitnu",
+                    "3pl": "mithum"
+                },
+                "fur": {
+                    "1sg": "furi",
+                    "2sg_m": "furak",
+                    "3sg_m": "furo",
+                    "1pl": "furnu",
+                    "3pl": "furhum"
+                }
+            }
+        }
+    },
+    "tam_system": {
+        "enabled": true,
+        "person_marking": {
+            "enabled": true,
+            "position": "suffix",
+            "suffixes": {
+                "1sg": "e",
+                "2sg": "st",
+                "3sg": "t",
+                "1pl": "em",
+                "2pl": "et",
+                "3pl": "en"
+            }
+        },
+        "rules": [
+            {
+                "features": [
+                    "Tense=Past",
+                    "VerbClass=Weak"
+                ],
+                "marker": "te",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Past",
+                    "VerbClass=SlavicBase"
+                ],
+                "marker": "l",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Past",
+                    "VerbClass=Strong"
+                ],
+                "marker": "ablaut",
+                "type": "stem_change"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "budu ",
+                "type": "particle_before",
+                "description": "Futuro analítico tsevério."
+            },
+            {
+                "features": [
+                    "VerbForm=Part",
+                    "Tense=Past"
+                ],
+                "prefix": "ge",
+                "suffix": "t",
+                "type": "circumfix"
+            }
+        ]
+    },
+    "copula_system": {
+        "enabled": true,
+        "obligatory": true,
+        "copulas": [
+            {
+                "type": "default",
+                "form": "zin",
+                "conjugates": true,
+                "conditions": [],
+                "description": "Ser/Estar (fusão de sein corimês e byt tsevério)"
+            },
+            {
+                "type": "past",
+                "form": "var",
+                "conjugates": true,
+                "conditions": [
+                    "Tense=Past"
+                ]
+            }
+        ]
+    },
+    "negation_system": {
+        "enabled": true,
+        "strategies": [
+            {
+                "type": "verbal_negation",
+                "marker": "ni ",
+                "position": "particle_before",
+                "description": "Negação verbal pré-posta (Tsevério)"
+            },
+            {
+                "type": "nominal_negation",
+                "marker": "kein",
+                "position": "replaces_indefinite_article",
+                "declines": true,
+                "description": "Negação nominal germânica"
+            }
+        ]
+    },
+    "interrogative_system": {
+        "enabled": true,
+        "v2_inversion": true,
+        "wh_questions": {
+            "wh_fronting": true,
+            "verb_position": 2,
+            "pronouns": {
+                "who": "ver",
+                "what": "vas",
+                "where": "gde",
+                "when": "kogda",
+                "why": "varum",
+                "how": "kif"
+            }
+        },
+        "question_particles": [
+            {
+                "type": "yes_no",
+                "particle": "li",
+                "position": "particle_after_verb"
+            }
+        ]
+    },
+    "special_mechanics": {
+        "enabled": true,
+        "laxarahiim_degraded": {
+            "type": "suffix_replacement",
+            "percentage": 3,
+            "target_domains": [
+                "religion",
+                "law",
+                "abstract"
+            ],
+            "suffixes": [
+                "-iim",
+                "-ot",
+                "-yia"
+            ],
+            "description": "A sagrada regra do Laxarahiim sobreviveu no Iaruíche apenas como marcador fossilizado para termos altamente formais ou religiosos, fechando essas palavras à flexão secular."
+        }
+    },
+    "semantic_fields": {
+        "enabled": true,
+        "animate_domains": [
+            "kinship",
+            "occupation",
+            "religion",
+            "divine"
+        ],
+        "manual_groups": {
+            "yumnawe": "divine",
+            "kāhin": "religion",
+            "nabī": "religion",
+            "czar": "occupation",
+            "melek": "occupation"
+        }
+    },
+    "loanword_policy": {
+        "enabled": true,
+        "modes": {
+            "phonetic_adaptation": 0.5,
+            "calque": 0.5,
+            "semantic_extension": 0.0
+        },
+        "calque_connector": "",
+        "adaptation_rules": [
+            {
+                "source_phoneme": "w",
+                "target_phoneme": "v",
+                "environment": "all"
+            },
+            {
+                "source_phoneme": "θ",
+                "target_phoneme": "t",
+                "environment": "all"
+            }
+        ]
+    },
+    "abstract_concepts": {
+        "enabled": true,
+        "mappings": {
+            "deus": "Yumnawe",
+            "planeta": "Zemlya",
+            "mundo": "ʕalam",
+            "paz": "šalām",
+            "terra": "arxt"
+        }
+    },
+    "lexical_registers": {
+        "enabled": true,
+        "registers": [
+            {
+                "name": "orthodox_high",
+                "chance": 0.3,
+                "mutation_factor": 0.2,
+                "description": "Registro alto usado em debates rabínicos e textos antigos. Preserva ʕ e q."
+            },
+            {
+                "name": "secular_low",
+                "chance": 0.7,
+                "mutation_factor": 1.5,
+                "description": "Registro coloquial. Guturais caem, prevalece o vocabulário corimês-tsevério."
+            }
+        ]
+    },
+    "functional_particles": {
+        "muito": {
+            "adj_word": "saggi",
+            "noun_word": "saggi",
+            "verb_word": "saggi"
+        },
+        "pouco": {
+            "adj_word": "malo",
+            "noun_word": "malo",
+            "verb_word": "malo"
+        },
+        "já": {
+            "verb_word": "už",
+            "verb_position": "pre_verbal"
+        }
+    },
+    "degree_system": {
+        "enabled": true,
+        "comparative": {
+            "affix": "er",
+            "position": "suffix",
+            "triggers_umlaut": true
+        },
+        "superlative": {
+            "affix": "st",
+            "position": "suffix",
+            "triggers_umlaut": true
+        },
+        "diminutive": {
+            "affix": "ka",
+            "position": "suffix",
+            "gender": "feminine"
+        },
+        "source_rules": [
+            {
+                "suffix": "inho",
+                "replacement": "ka",
+                "type": "diminutive"
+            },
+            {
+                "suffix": "ão",
+                "replacement": "išče",
+                "type": "augmentative"
+            }
+        ]
+    },
+    "style": {
+        "capitalization": true,
+        "noun_capitalization": true,
+        "sentence_terminators": [
+            ".",
+            "!",
+            "?"
+        ],
+        "secondary_terminators": [
+            ":",
+            ";"
+        ],
+        "punctuation_map": {
+            ",": ",",
+            ".": ".",
+            "!": "!",
+            "?": "?",
+            ":": ":",
+            ";": ";"
+        }
+    },
+    "vocabulary": {
+        "eu": "ix",
+        "tu": "du",
+        "ele": "on",
+        "ela": "zi",
+        "nós": "vir",
+        "vós": "ir",
+        "eles": "oni",
+        "pai": "ab",
+        "mãe": "im",
+        "filho": "bar",
+        "água": "voda",
+        "fogo": "iš",
+        "terra": "arxt",
+        "casa": "hauz",
+        "livro": "kniga",
+        "rei": "melek",
+        "bom": "gut",
+        "mau": "rax",
+        "grande": "groš",
+        "pequeno": "maloi"
+    }
+}

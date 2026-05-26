@@ -13,7 +13,7 @@
                 "source_id": "corimean_modern",
                 "weight": 100,
                 "type": "inheritance",
-                "mutation_intensity": 0.15,
+                "mutation_intensity": 0.05,
                 "description": "Base lexical herdada do Alto Corimês"
             }
         ]
@@ -24,7 +24,7 @@
     "word_order": "SVO",
     "subordinate_word_order": "SVO",
     "alignment": "nominative-accusative",
-    "agglutination_strength": 0.0,
+    "agglutination_strength": 0.3,
     "divergence_factor": 0.20,
     "cultural_purism": 0.48,
     "phonotactics": {
@@ -32,22 +32,22 @@
         "inventory_styles": {
             "standard_aidanese": {
                 "description": "Inventário padrão do Aidanês - mais suave e fino que Corimês",
-                "consonants": "pbtdkgfvszšhmnlrwj",
+                "consonants": "pbtdkgfvszchmnlrwj",
                 "vowels": "aiueoäöüaa"
             },
             "formal_imperial": {
                 "description": "Registro formal imperial com mais distinções",
-                "consonants": "pbtdkgfvszšžhmnlrwj",
+                "consonants": "pbtdkgfvszcžhmnlrwj",
                 "vowels": "aiueoäöü"
             },
             "colloquial_simplified": {
                 "description": "Coloquial com máxima simplificação",
-                "consonants": "pbtdkgfvszšhmnlrw",
+                "consonants": "pbtdkgfvszchmnlrw",
                 "vowels": "aiueo"
             }
         },
         "vowels": "aiueoäöüaa",
-        "consonants": "pbtdkgfvszšhmnlrwj",
+        "consonants": "pbtdkgfvszchmnlrwj",
         "syllable_templates": [
             "CV",
             "CVC",
@@ -691,6 +691,7 @@
             "da": "äm",
             "de": "äm",
             "dos": "ämb",
+            "das": "ämb",
             "deus": "Äuris"
         },
         "definitions": {

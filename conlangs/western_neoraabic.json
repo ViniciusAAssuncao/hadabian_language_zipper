@@ -1,0 +1,634 @@
+{
+    "id": "western_neoraabic",
+    "name": "Western Neoraabic",
+    "description": "Uma língua clássica de alto prestígio. Fonologia suave, fluida, livre de sons guturais, projetada para alta literatura e poesia. O sistema flexional é regular e se funde harmoniosamente através de regras de sandhi.",
+    "word_order": "SVO",
+    "subordinate_word_order": "SOV",
+    "source_language_order": "SVO",
+    "drop_articles": true,
+    "lexical_confluence": {
+        "enabled": true,
+        "base_stability": 75,
+        "strata": [
+            {
+                "source_id": "rmp",
+                "weight": 25,
+                "type": "inheritance",
+                "mutation_intensity": 0.8,
+                "description": "Base lexical do Raabiano, fortemente nurgatizada (suavizada)"
+            }
+        ]
+    },
+    "pro_drop": {
+        "enabled": true,
+        "conditions": [
+            "verb_agreement"
+        ]
+    },
+    "aesthetic_profile": {
+        "syllable_count_distribution": {
+            "1": 0.05,
+            "2": 0.45,
+            "3": 0.40,
+            "4": 0.10
+        },
+        "cluster_density": 0.12,
+        "vowel_consonant_ratio": 0.55
+    },
+    "alignment": "nominative-accusative",
+    "global_seed": 983457129,
+    "phonotactics": {
+        "vowels": "aeiou",
+        "consonants": "pbtdcgfvsmnlr",
+        "syllable_templates": [
+            "CV",
+            "CVC",
+            "VC",
+            "V"
+        ],
+        "min_syllables": 2,
+        "max_syllables": 4,
+        "max_consonant_cluster": 2,
+        "max_vowel_cluster": 2,
+        "forbidden_initial_clusters": [
+            "rt",
+            "lt",
+            "nt",
+            "mt",
+            "nd",
+            "mb",
+            "ng",
+            "rs",
+            "ls",
+            "sr",
+            "sl",
+            "mn",
+            "nm"
+        ],
+        "forbidden_final_consonants": [
+            "b",
+            "d",
+            "g",
+            "v",
+            "p",
+            "f",
+            "c"
+        ],
+        "epenthesis_vowel": "e",
+        "diphthongs": [
+            "ae",
+            "au",
+            "oe"
+        ],
+        "sandhi": {
+            "enabled": true,
+            "rules": [
+                {
+                    "pattern": "a\\s*a\\b",
+                    "replacement": "a",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "e\\s*e\\b",
+                    "replacement": "e",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "i\\s*i\\b",
+                    "replacement": "i",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "o\\s*o\\b",
+                    "replacement": "o",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "u\\s*u\\b",
+                    "replacement": "u",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "a\\s*o\\b",
+                    "replacement": "o",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "a\\s*i\\b",
+                    "replacement": "ae",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "a\\s*e\\b",
+                    "replacement": "ae",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "e\\s*i\\b",
+                    "replacement": "ei",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "u\\s*i\\b",
+                    "replacement": "ui",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "us\\s*i\\b",
+                    "replacement": "i",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "um\\s*i\\b",
+                    "replacement": "i",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "a\\s*ae\\b",
+                    "replacement": "ae",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "um\\s*a\\b",
+                    "replacement": "a",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "us\\s*m\\b",
+                    "replacement": "um",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "a\\s*m\\b",
+                    "replacement": "am",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "um\\s*m\\b",
+                    "replacement": "um",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "e\\s*m\\b",
+                    "replacement": "em",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "i\\s*m\\b",
+                    "replacement": "im",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "u\\s*m\\b",
+                    "replacement": "um",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "s\\s*s\\b",
+                    "replacement": "ss",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "t\\s*t\\b",
+                    "replacement": "tt",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "c\\s*c\\b",
+                    "replacement": "cc",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "r\\s*r\\b",
+                    "replacement": "rr",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "l\\s*l\\b",
+                    "replacement": "ll",
+                    "ignore_case": true
+                }
+            ]
+        },
+        "phonological_rules": [
+            {
+                "input": "VsV",
+                "output": "VrV"
+            },
+            {
+                "input": "VtV",
+                "output": "VdV"
+            },
+            {
+                "input": "np",
+                "output": "mp"
+            },
+            {
+                "input": "nb",
+                "output": "mb"
+            }
+        ],
+        "sonority_hierarchy": {
+            "enabled": true,
+            "scale": {
+                "p": 1,
+                "t": 1,
+                "c": 1,
+                "b": 2,
+                "d": 2,
+                "g": 2,
+                "f": 3,
+                "v": 3,
+                "s": 3,
+                "m": 4,
+                "n": 4,
+                "l": 5,
+                "r": 6
+            },
+            "onset_rules": {
+                "min_distance": 2,
+                "allow_plateau": false,
+                "allow_reversal": false
+            },
+            "coda_rules": {
+                "min_distance": 1,
+                "allow_plateau": true,
+                "allow_reversal": true
+            }
+        }
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "weight",
+        "position": "penultimate",
+        "graphic_accent": false
+    },
+    "case_system": {
+        "enabled": true,
+        "preposition_handling": "coexist",
+        "marker_position": "suffix",
+        "markers": {
+            "nominative": {
+                "marker": "",
+                "type": "suffix"
+            },
+            "genitive": {
+                "marker": "is",
+                "type": "suffix"
+            },
+            "dative": {
+                "marker": "i",
+                "type": "suffix"
+            },
+            "accusative": {
+                "marker": "m",
+                "type": "suffix"
+            },
+            "vocative": {
+                "marker": "e",
+                "type": "suffix"
+            },
+            "ablative": {
+                "marker": "e",
+                "type": "suffix"
+            },
+            "locative": {
+                "marker": "e",
+                "type": "suffix"
+            }
+        },
+        "preposition_case_mapping": {
+            "de": "ablative",
+            "para": "dative",
+            "com": "ablative",
+            "por": "accusative",
+            "em": "ablative",
+            "a": "accusative"
+        }
+    },
+    "gender_system": {
+        "enabled": true,
+        "default": "masculino",
+        "inference": [
+            {
+                "suffix": "a",
+                "gender": "feminino"
+            },
+            {
+                "suffix": "io",
+                "gender": "feminino"
+            },
+            {
+                "suffix": "us",
+                "gender": "masculino"
+            },
+            {
+                "suffix": "or",
+                "gender": "masculino"
+            },
+            {
+                "suffix": "um",
+                "gender": "neutro"
+            },
+            {
+                "suffix": "en",
+                "gender": "neutro"
+            }
+        ],
+        "markers": {
+            "masculino": {
+                "targets": [
+                    "ADJ",
+                    "VERB",
+                    "DET"
+                ],
+                "marker": "us",
+                "position": "suffix"
+            },
+            "feminino": {
+                "targets": [
+                    "ADJ",
+                    "VERB",
+                    "DET"
+                ],
+                "marker": "a",
+                "position": "suffix"
+            },
+            "neutro": {
+                "targets": [
+                    "ADJ",
+                    "VERB",
+                    "DET"
+                ],
+                "marker": "um",
+                "position": "suffix"
+            }
+        }
+    },
+    "agreement_rules": {
+        "gender_agreement": true,
+        "number_agreement": true,
+        "person_agreement": true,
+        "adjunct_position": "after_core"
+    },
+    "number_system": {
+        "numbers": [
+            "singular",
+            "plural"
+        ],
+        "markers": {
+            "plural": {
+                "marker": "i",
+                "alternatives": [
+                    "es"
+                ]
+            }
+        }
+    },
+    "tam_system": {
+        "enabled": true,
+        "infer_imperative_from_context": true,
+        "person_marking": {
+            "enabled": true,
+            "suffixes": {
+                "1sg": "o",
+                "2sg": "s",
+                "3sg": "t",
+                "1pl": "mus",
+                "2pl": "tis",
+                "3pl": "nt"
+            }
+        },
+        "rules": [
+            {
+                "features": [
+                    "VerbForm=Inf"
+                ],
+                "marker": "re",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Past"
+                ],
+                "marker": "v",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "b",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Sub"
+                ],
+                "marker": "m",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "VerbForm=Part",
+                    "Tense=Pres"
+                ],
+                "marker": "ns",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "VerbForm=Part",
+                    "Tense=Past"
+                ],
+                "marker": "tus",
+                "type": "suffix"
+            }
+        ]
+    },
+    "vowel_harmony": {
+        "enabled": false
+    },
+    "affix_system": {
+        "enabled": true,
+        "derivation_rules": [
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "affix": "alis",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "affix": "icus",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "affix": "osus",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "ADV",
+                "affix": "iter",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "agent",
+                "affix": "tor",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "action",
+                "affix": "tio",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "NOUN",
+                "type": "abstract",
+                "affix": "itas",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "result",
+                "affix": "mentum",
+                "position": "suffix"
+            }
+        ],
+        "source_suffixes": [
+            {
+                "suffix": "mente",
+                "replacement": "iter",
+                "input_pos": "ADV",
+                "target_pos": "ADV",
+                "priority": 10
+            },
+            {
+                "suffix": "ção",
+                "replacement": "tio",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 9
+            },
+            {
+                "suffix": "dor",
+                "replacement": "tor",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 9
+            },
+            {
+                "suffix": "dade",
+                "replacement": "itas",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 8
+            },
+            {
+                "suffix": "ismo",
+                "replacement": "ismus",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 8
+            },
+            {
+                "suffix": "al",
+                "replacement": "alis",
+                "input_pos": "ADJ",
+                "target_pos": "ADJ",
+                "priority": 7
+            },
+            {
+                "suffix": "oso",
+                "replacement": "osus",
+                "input_pos": "ADJ",
+                "target_pos": "ADJ",
+                "priority": 7
+            }
+        ]
+    },
+    "lexical_registers": {
+        "enabled": true,
+        "registers": [
+            {
+                "name": "Poetico",
+                "chance": 0.15,
+                "mutation_factor": 1,
+                "description": "Utiliza formas alongadas e vocabulário arcaizante estrito."
+            },
+            {
+                "name": "Vulgar",
+                "chance": 0.05,
+                "mutation_factor": 2,
+                "description": "Simula síncope, lenição excessiva e queda de consoantes finais."
+            }
+        ]
+    },
+    "style": {
+        "capitalization": true,
+        "punctuation_map": {
+            ".": ".",
+            ",": ",",
+            ";": ";",
+            ":": ":",
+            "!": "!",
+            "?": "?"
+        }
+    },
+    "semantic_fields": {
+        "enabled": true,
+        "manual_groups": {
+            "sol": "celestial",
+            "lua": "celestial",
+            "estrela": "celestial",
+            "rei": "nobreza",
+            "rainha": "nobreza",
+            "deus": "divindade",
+            "sagrado": "divindade"
+        }
+    },
+    "polysemy_rules": {
+        "enabled": true,
+        "merges": {
+            "canção": "carmen",
+            "espada": "gladius",
+            "guerra": "bellum",
+            "paz": "pax",
+            "luz": "lux",
+            "sombra": "umbra"
+        }
+    },
+    "compounding": {
+        "enabled": true,
+        "head_position": "initial",
+        "linking_elements": {
+            "i": {
+                "after": [
+                    "b",
+                    "c",
+                    "d",
+                    "f",
+                    "g",
+                    "l",
+                    "m",
+                    "n",
+                    "p",
+                    "r",
+                    "s",
+                    "t",
+                    "v"
+                ]
+            }
+        }
+    }
+}

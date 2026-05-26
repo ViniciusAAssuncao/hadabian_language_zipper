@@ -1,0 +1,1082 @@
+{
+    "id": "longrian",
+    "name": "Longriês",
+    "native_name": "Lóng-Rī Kǔ",
+    "family_node": "longrian_isolate",
+    "linguistic_family": "longrian_trunk.json",
+    "description": "Língua tonal, monossilábica e isolante oriunda de Longria. Caracterizada pela ausência de flexões nominais e verbais, com estrutura sintática rígida e extenso uso de classificadores numéricos. Apresenta seis tons fonêmicos estruturais.",
+    "shared_base_strength": 0.0,
+    "global_seed": 8888888,
+    "source_language_order": "SVO",
+    "word_order": "SVO",
+    "subordinate_word_order": "SVO",
+    "alignment": "nominative-accusative",
+    "agglutination_strength": 0.05,
+    "divergence_factor": 0.1,
+    "cultural_purism": 0.95,
+    "drop_articles": true,
+    "pro_drop": {
+        "enabled": true,
+        "conditions": [
+            "context_clear",
+            "topic_prominent"
+        ]
+    },
+    "aesthetic_profile": {
+        "syllable_count_distribution": {
+            "1": 0.85,
+            "2": 0.12,
+            "3": 0.03
+        },
+        "cluster_density": 0.0,
+        "vowel_consonant_ratio": 1.5
+    },
+    "phonotactics": {
+        "active_style": "standard_longrian",
+        "inventory_styles": {
+            "standard_longrian": {
+                "description": "Inventário padrão do Longriês focado em monossílabos limpos",
+                "consonants": "pbtdkgfsxhcmnlwrq",
+                "vowels": "aeiouwyāáǎàâēéěèêīíǐìîōóǒòôūúǔùû"
+            }
+        },
+        "vowels": "aeiouwyāáǎàâēéěèêīíǐìîōóǒòôūúǔùû",
+        "consonants": "pbtdkgfsxhcmnlwrq",
+        "syllable_templates": [
+            "CV",
+            "CVC",
+            "V",
+            "VC"
+        ],
+        "min_syllables": 1,
+        "max_syllables": 2,
+        "forbidden_initial_clusters": [
+            "pt",
+            "pk",
+            "bd",
+            "bg",
+            "ts",
+            "st",
+            "sp",
+            "sk",
+            "mn",
+            "nm",
+            "lr",
+            "rl",
+            "nw",
+            "mw",
+            "fw"
+        ],
+        "forbidden_final_consonants": [
+            "p",
+            "b",
+            "t",
+            "d",
+            "k",
+            "f",
+            "s",
+            "x",
+            "h",
+            "c",
+            "l",
+            "r",
+            "w",
+            "q"
+        ],
+        "max_consonant_cluster": 0,
+        "diphthongs": [
+            "ai",
+            "ei",
+            "ao",
+            "ou",
+            "ia",
+            "ie",
+            "io",
+            "iu",
+            "ua",
+            "uo",
+            "ui",
+            "üe"
+        ],
+        "epenthesis_vowel": "i",
+        "sonority_hierarchy": {
+            "enabled": false
+        },
+        "phonological_rules": [
+            {
+                "input": "n$",
+                "output": "n",
+                "register": null
+            },
+            {
+                "input": "g$",
+                "output": "ng",
+                "register": null
+            },
+            {
+                "input": "m$",
+                "output": "m",
+                "register": "formal"
+            }
+        ]
+    },
+    "tonal_system": {
+        "enabled": true,
+        "description": "Sistema de 6 tons fonêmicos que determinam o significado lexical",
+        "tones": {
+            "1": {
+                "name": "Alto Plano",
+                "diacritic": "ā",
+                "pitch": "55"
+            },
+            "2": {
+                "name": "Ascendente",
+                "diacritic": "á",
+                "pitch": "35"
+            },
+            "3": {
+                "name": "Baixo Friccionado",
+                "diacritic": "ǎ",
+                "pitch": "214"
+            },
+            "4": {
+                "name": "Descendente Curto",
+                "diacritic": "à",
+                "pitch": "51"
+            },
+            "5": {
+                "name": "Alto Descendente",
+                "diacritic": "â",
+                "pitch": "53"
+            },
+            "6": {
+                "name": "Médio Plano",
+                "diacritic": "a",
+                "pitch": "33"
+            }
+        },
+        "tone_sandhi": {
+            "enabled": true,
+            "rules": [
+                {
+                    "sequence": [
+                        "3",
+                        "3"
+                    ],
+                    "result": [
+                        "2",
+                        "3"
+                    ]
+                },
+                {
+                    "sequence": [
+                        "4",
+                        "4"
+                    ],
+                    "result": [
+                        "5",
+                        "4"
+                    ]
+                },
+                {
+                    "sequence": [
+                        "pù",
+                        "4"
+                    ],
+                    "result": [
+                        "pú",
+                        "4"
+                    ]
+                },
+                {
+                    "sequence": [
+                        "yí",
+                        "4"
+                    ],
+                    "result": [
+                        "yí",
+                        "4"
+                    ]
+                }
+            ]
+        }
+    },
+    "compounding": {
+        "enabled": true,
+        "head_position": "final",
+        "linking_elements": {
+            "": {
+                "after": [
+                    "a",
+                    "e",
+                    "i",
+                    "o",
+                    "u",
+                    "n",
+                    "g",
+                    "m",
+                    "ā",
+                    "á",
+                    "ǎ",
+                    "à",
+                    "â"
+                ]
+            }
+        }
+    },
+    "root_system": {
+        "enabled": false
+    },
+    "morphological_derivation": {
+        "enabled": true,
+        "root_based": false,
+        "max_depth": 1,
+        "exceptions": [
+            "mí",
+            "nó",
+            "tā",
+            "xì",
+            "pù"
+        ],
+        "source_suffixes": [
+            {
+                "suffix": "mente",
+                "replacement": "tì",
+                "input_pos": "ADV",
+                "target_pos": "ADJ",
+                "mode": "derive",
+                "priority": 10
+            },
+            {
+                "suffix": "ção",
+                "replacement": "xù",
+                "input_pos": "NOUN",
+                "target_pos": "VERB",
+                "mode": "derive",
+                "priority": 9
+            },
+            {
+                "suffix": "dor",
+                "replacement": "jě",
+                "input_pos": "NOUN",
+                "target_pos": "VERB",
+                "mode": "derive",
+                "priority": 9
+            }
+        ]
+    },
+    "affix_system": {
+        "enabled": true,
+        "derivation_rules": [
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "agent_doer",
+                "affix": "jě",
+                "position": "suffix",
+                "force": true
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "ADV",
+                "type": "adverbial",
+                "affix": "tì",
+                "position": "suffix",
+                "force": true
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "type": "relational",
+                "affix": "tē",
+                "position": "suffix",
+                "force": true
+            }
+        ],
+        "source_suffixes": []
+    },
+    "classifiers_system": {
+        "enabled": true,
+        "mandatory_with_numbers": true,
+        "mandatory_with_demonstratives": true,
+        "default_classifier": "kò",
+        "structure": "NUMBER + CLASSIFIER + NOUN",
+        "categories": {
+            "kò": [
+                "pessoas",
+                "conceitos gerais",
+                "objetos indefinidos"
+            ],
+            "tāo": [
+                "objetos longos",
+                "rios",
+                "estradas",
+                "animais alongados",
+                "linhas"
+            ],
+            "pān": [
+                "livros",
+                "cadernos",
+                "documentos encadernados",
+                "revistas"
+            ],
+            "tsī": [
+                "animais pequenos",
+                "pássaros",
+                "insetos",
+                "braços",
+                "pernas"
+            ],
+            "cāng": [
+                "objetos planos",
+                "papel",
+                "mesas",
+                "camas",
+                "fotos"
+            ],
+            "kū": [
+                "árvores",
+                "plantas",
+                "flores enraizadas"
+            ],
+            "tǒu": [
+                "animais grandes",
+                "gado",
+                "porcos",
+                "elefantes"
+            ],
+            "jià": [
+                "máquinas",
+                "aviões",
+                "veículos grandes"
+            ],
+            "bā": [
+                "objetos com cabo",
+                "facas",
+                "cadeiras",
+                "guarda-chuvas"
+            ],
+            "jiàn": [
+                "roupas",
+                "assuntos",
+                "eventos",
+                "presentes"
+            ]
+        }
+    },
+    "gender_system": {
+        "enabled": false,
+        "genders": [],
+        "default": "neutro",
+        "inference": [],
+        "markers": {}
+    },
+    "number_system": {
+        "numbers": [
+            "singular",
+            "plural"
+        ],
+        "default": "singular",
+        "markers": {
+            "plural": {
+                "marker": "mīn",
+                "conditions": [
+                    "animate",
+                    "pronoun"
+                ]
+            },
+            "singular": {
+                "marker": ""
+            }
+        },
+        "broken_plurals": {
+            "enabled": false
+        }
+    },
+    "case_system": {
+        "enabled": false,
+        "cases": [],
+        "marker_position": "suffix",
+        "preposition_handling": "coexist",
+        "markers": {},
+        "construct_state": {
+            "enabled": false
+        }
+    },
+    "determiner_system": {
+        "definite_article": {
+            "form": "",
+            "variants": [],
+            "procliticizes": false,
+            "sun_letter_assimilation": false
+        },
+        "demonstratives": {
+            "gender_inheritance_heuristic": false,
+            "proximal": {
+                "sg_m": "cè",
+                "sg_f": "cè",
+                "sg_n": "cè",
+                "pl": "cè"
+            },
+            "distal": {
+                "sg_m": "nà",
+                "sg_f": "nà",
+                "sg_n": "nà",
+                "pl": "nà"
+            },
+            "source_mappings": {
+                "proximal": [
+                    "este",
+                    "esta",
+                    "isto",
+                    "esse",
+                    "essa",
+                    "isso",
+                    "estes",
+                    "estas",
+                    "esses",
+                    "essas"
+                ],
+                "distal": [
+                    "aquele",
+                    "aquela",
+                    "aquilo",
+                    "aqueles",
+                    "aquelas"
+                ]
+            }
+        },
+        "possessives": {
+            "pronominal_suffixes": false,
+            "suppress_article": true,
+            "suffixes": {},
+            "possessive_lemmas": {
+                "meu": "1",
+                "minha": "1",
+                "teu": "2",
+                "tua": "2",
+                "seu": "3",
+                "sua": "3",
+                "nosso": "1",
+                "nossa": "1",
+                "vosso": "2",
+                "vossa": "2"
+            }
+        }
+    },
+    "pronominal_system": {
+        "independent_pronouns": {
+            "1sg": "mí",
+            "2sg_m": "nó",
+            "2sg_f": "nó",
+            "3sg_m": "tā",
+            "3sg_f": "tā",
+            "3sg_n": "tā",
+            "1pl": "mímīn",
+            "2pl": "nómīn",
+            "3pl": "tāmīn"
+        },
+        "object_pronouns": {
+            "direct": {},
+            "indirect": {}
+        },
+        "clitic_ordering": {
+            "enabled": false
+        }
+    },
+    "adposition_system": {
+        "inflected_prepositions": {
+            "enabled": false
+        },
+        "basic_prepositions": {
+            "em": "sāi",
+            "de": "cóng",
+            "para": "wèi",
+            "com": "tóng",
+            "por": "yǒu",
+            "sobre": "xàng",
+            "sob": "xià",
+            "antes": "qián",
+            "depois": "hòu"
+        }
+    },
+    "tam_system": {
+        "enabled": true,
+        "infer_imperative_from_context": true,
+        "person_marking": {
+            "enabled": false
+        },
+        "rules": [
+            {
+                "features": [
+                    "Tense=Past"
+                ],
+                "marker": "lā",
+                "type": "particle_after"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "jī",
+                "type": "particle_before"
+            },
+            {
+                "features": [
+                    "Aspect=Prog"
+                ],
+                "marker": "sāi",
+                "type": "particle_before"
+            },
+            {
+                "features": [
+                    "Aspect=Perf"
+                ],
+                "marker": "kū",
+                "type": "particle_after"
+            },
+            {
+                "features": [
+                    "Aspect=Exp"
+                ],
+                "marker": "kuò",
+                "type": "particle_after"
+            },
+            {
+                "features": [
+                    "Mood=Imp"
+                ],
+                "marker": "pā",
+                "type": "particle_after"
+            },
+            {
+                "features": [
+                    "Mood=Cnd"
+                ],
+                "marker": "yào",
+                "type": "particle_before"
+            }
+        ]
+    },
+    "copula_system": {
+        "enabled": true,
+        "copulas": [
+            {
+                "type": "present_default",
+                "form": "xì",
+                "conjugates": false,
+                "conditions": []
+            },
+            {
+                "type": "locative",
+                "form": "sāi",
+                "conjugates": false,
+                "conditions": [
+                    "SubjectType=Noun"
+                ]
+            }
+        ]
+    },
+    "negation_system": {
+        "enabled": true,
+        "strategies": [
+            {
+                "type": "verbal_negation",
+                "marker": "pù",
+                "suffix": ""
+            },
+            {
+                "type": "nominal_negation",
+                "marker": "fēi",
+                "suffix": ""
+            },
+            {
+                "type": "past_negation",
+                "marker": "mēi",
+                "suffix": ""
+            },
+            {
+                "type": "emphatic_negation",
+                "marker": "jué pù",
+                "suffix": ""
+            },
+            {
+                "type": "prohibitive",
+                "marker": "pié",
+                "suffix": ""
+            }
+        ]
+    },
+    "interrogative_system": {
+        "enabled": true,
+        "question_particles": [
+            {
+                "type": "yes_no",
+                "particle": "mā",
+                "position": "final",
+                "optional": false
+            },
+            {
+                "type": "yes_no_alternative",
+                "particle": "hái xì",
+                "position": "medial",
+                "optional": false
+            }
+        ],
+        "detection_rules": {
+            "wh_words": [
+                "shéi",
+                "shén",
+                "nǎ",
+                "zěn",
+                "duō"
+            ],
+            "alternative_indicators": [
+                "hái",
+                "huò"
+            ]
+        },
+        "particle_metadata": {
+            "pos": "PART",
+            "function": "INT",
+            "deprel": "discourse"
+        }
+    },
+    "vowel_harmony": {
+        "enabled": false
+    },
+    "consonant_mutation": {
+        "enabled": false
+    },
+    "pharyngealization": {
+        "enabled": false
+    },
+    "stress_system": {
+        "enabled": false
+    },
+    "reduplication": {
+        "enabled": true,
+        "epenthesis_vowel": "",
+        "rules": [
+            {
+                "features": [
+                    "Degree=Abs"
+                ],
+                "method": "whole_word",
+                "separator": "",
+                "pos": [
+                    "ADJ"
+                ]
+            },
+            {
+                "features": [
+                    "Aspect=Iter"
+                ],
+                "method": "whole_word",
+                "separator": "yí",
+                "pos": [
+                    "VERB"
+                ]
+            },
+            {
+                "features": [
+                    "Number=Plur",
+                    "Animacy=Anim"
+                ],
+                "method": "whole_word",
+                "separator": "",
+                "pos": [
+                    "NOUN"
+                ]
+            }
+        ]
+    },
+    "topicalization": {
+        "enabled": true,
+        "topic_marker": "yā",
+        "position": "initial",
+        "reintroduce_articles": false
+    },
+    "focus_structure": {
+        "enabled": true,
+        "object_focus_marker": "pǎ",
+        "verb_focus_marker": "xì",
+        "suppress_case": false
+    },
+    "agreement_rules": {
+        "gender_agreement": false,
+        "number_agreement": false,
+        "person_agreement": false,
+        "adjunct_position": "before_verb"
+    },
+    "degree_system": {
+        "enabled": true,
+        "rules": {
+            "diminutive": {
+                "affix": "zǐ",
+                "position": "suffix"
+            },
+            "augmentative": {
+                "affix": "dà ",
+                "position": "prefix"
+            },
+            "superlative": {
+                "affix": "zuì ",
+                "position": "prefix"
+            },
+            "comparative": {
+                "affix": "gèng ",
+                "position": "prefix"
+            }
+        },
+        "source_rules": [
+            {
+                "suffix": "inho",
+                "replacement": "",
+                "type": "diminutive"
+            },
+            {
+                "suffix": "ão",
+                "replacement": "",
+                "type": "augmentative"
+            },
+            {
+                "suffix": "íssimo",
+                "replacement": "",
+                "type": "superlative"
+            }
+        ]
+    },
+    "semantic_fields": {
+        "enabled": true,
+        "use_nltk": false,
+        "animate_domains": [
+            "kinship",
+            "occupation",
+            "fauna"
+        ],
+        "manual_groups": {
+            "pai": "kinship",
+            "mãe": "kinship",
+            "filho": "kinship",
+            "médico": "occupation",
+            "professor": "occupation",
+            "gato": "fauna",
+            "cão": "fauna",
+            "dragão": "fauna"
+        }
+    },
+    "polysemy_rules": {
+        "enabled": true,
+        "merges": {
+            "rio": "shǔi",
+            "lago": "shǔi",
+            "oceano": "hǎi"
+        },
+        "splits": {
+            "comprar": [
+                {
+                    "target_suffix": "mǎi",
+                    "rules": {
+                        "deprel": [
+                            "root",
+                            "conj"
+                        ]
+                    }
+                }
+            ],
+            "vender": [
+                {
+                    "target_suffix": "mài",
+                    "rules": {
+                        "deprel": [
+                            "root",
+                            "conj"
+                        ]
+                    }
+                }
+            ]
+        }
+    },
+    "false_cognates": {
+        "enabled": true,
+        "manual_pairs": {
+            "chá": "cá",
+            "mãe": "mā",
+            "cavalo": "mǎ",
+            "cânhamo": "má",
+            "xingar": "mà"
+        },
+        "natural_confusion_chance": 0.08
+    },
+    "loanword_policy": {
+        "enabled": true,
+        "modes": {
+            "phonetic_adaptation": 0.65,
+            "calque": 0.35,
+            "semantic_extension": 0.0
+        },
+        "calque_connector": ""
+    },
+    "abstract_concepts": {
+        "enabled": true,
+        "mappings": {
+            "eu": "mí",
+            "me": "mí",
+            "mim": "mí",
+            "meu": "mí tē",
+            "minha": "mí tē",
+            "tu": "nó",
+            "te": "nó",
+            "ti": "nó",
+            "teu": "nó tē",
+            "tua": "nó tē",
+            "você": "nó",
+            "ele": "tā",
+            "ela": "tā",
+            "o": "tā",
+            "a": "tā",
+            "seu": "tā tē",
+            "sua": "tā tē",
+            "nós": "mímīn",
+            "nosso": "mímīn tē",
+            "nossa": "mímīn tē",
+            "vós": "nómīn",
+            "vocês": "nómīn",
+            "vosso": "nómīn tē",
+            "vossa": "nómīn tē",
+            "eles": "tāmīn",
+            "elas": "tāmīn",
+            "seus": "tāmīn tē",
+            "suas": "tāmīn tē",
+            "um": "yí",
+            "uma": "yí",
+            "dois": "wà",
+            "duas": "wà",
+            "três": "sān",
+            "quatro": "sì",
+            "cinco": "wǔ",
+            "seis": "liù",
+            "sete": "qī",
+            "oito": "bā",
+            "nove": "jiǔ",
+            "dez": "shí",
+            "cem": "bǎi",
+            "mil": "qiān",
+            "e": "xē",
+            "ou": "huò",
+            "mas": "tàn",
+            "porque": "yīn",
+            "se": "rú",
+            "que": "kū",
+            "quando": "shí",
+            "onde": "nǎ",
+            "como": "zěn",
+            "quem": "shéi",
+            "qual": "nǎ",
+            "ser": "xì",
+            "estar": "sāi",
+            "ter": "yǒu",
+            "fazer": "sù",
+            "ir": "qù",
+            "vir": "lái",
+            "poder": "néng",
+            "querer": "yào",
+            "saber": "zhī",
+            "ver": "kàn",
+            "dar": "gěi",
+            "falar": "shuō",
+            "comer": "chī",
+            "beber": "hē",
+            "dormir": "shuì",
+            "viver": "huó",
+            "morrer": "sǐ",
+            "bom": "hǎo",
+            "mau": "huài",
+            "grande": "dà",
+            "pequeno": "xiǎo",
+            "alto": "gāo",
+            "baixo": "dī",
+            "longo": "cháng",
+            "curto": "duǎn",
+            "novo": "xīn",
+            "velho": "lǎo",
+            "quente": "rè",
+            "frio": "lěng",
+            "feliz": "kuài",
+            "triste": "bēi",
+            "dia": "rù",
+            "noite": "yè",
+            "sol": "xīng",
+            "lua": "yuè",
+            "fogo": "fâ",
+            "água": "xó",
+            "terra": "tǔ",
+            "céu": "tiān",
+            "vento": "fēng",
+            "montanha": "xān",
+            "rio": "chuān",
+            "mar": "hǎi",
+            "pessoa": "jén",
+            "homem": "nán",
+            "mulher": "nǚ",
+            "criança": "hái",
+            "pai": "fù",
+            "mãe": "mǔ",
+            "rei": "wáng",
+            "casa": "jiā",
+            "cidade": "chéng",
+            "país": "guó",
+            "longria": "lóng-rī",
+            "caminho": "dào",
+            "livro": "shū",
+            "palavra": "zì",
+            "nome": "míng",
+            "mente": "xīn",
+            "corpo": "tǐ",
+            "mão": "shǒu",
+            "olho": "mù",
+            "boca": "kǒu",
+            "sim": "xì",
+            "não": "pù",
+            "muito": "hén",
+            "pouco": "shǎo",
+            "mais": "gèng",
+            "já": "yǐ",
+            "ainda": "hái",
+            "bem": "hǎo",
+            "aqui": "zhè",
+            "ali": "nà"
+        },
+        "definitions": {}
+    },
+    "lexical_registers": {
+        "enabled": true,
+        "registers": [
+            {
+                "name": "formal",
+                "chance": 0.2,
+                "mutation_factor": 0.0,
+                "description": "Registro formal padrão, usa vocabulário mais literário."
+            },
+            {
+                "name": "colloquial",
+                "chance": 0.4,
+                "mutation_factor": 1.0,
+                "description": "Registro coloquial, uso intensivo de partículas finais e simplificação tonal."
+            },
+            {
+                "name": "court",
+                "chance": 0.05,
+                "mutation_factor": 0.0,
+                "description": "Registro da corte Longriana, vocabulário exclusivo e polidez máxima."
+            }
+        ]
+    },
+    "functional_particles": {
+        "muito": {
+            "adj_word": "hén",
+            "adj_position": "pre_nominal",
+            "noun_word": "hén",
+            "noun_position": "pre_nominal",
+            "verb_word": "hén",
+            "verb_position": "pre_verbal"
+        },
+        "pouco": {
+            "adj_word": "shǎo",
+            "adj_position": "pre_nominal",
+            "noun_word": "shǎo",
+            "noun_position": "pre_nominal"
+        },
+        "mais": {
+            "adj_word": "gèng",
+            "adj_position": "pre_nominal",
+            "noun_word": "gèng",
+            "noun_position": "pre_nominal"
+        },
+        "já": {
+            "verb_word": "yǐ",
+            "verb_position": "pre_verbal"
+        },
+        "ainda": {
+            "verb_word": "hái",
+            "verb_position": "pre_verbal"
+        },
+        "apenas": {
+            "verb_word": "zhǐ",
+            "verb_position": "pre_verbal"
+        },
+        "também": {
+            "verb_word": "yě",
+            "verb_position": "pre_verbal"
+        }
+    },
+    "numeric_handling": {
+        "ignore_digits": true
+    },
+    "style": {
+        "capitalization": true,
+        "sentence_terminators": [
+            ".",
+            "!",
+            "?"
+        ],
+        "secondary_terminators": [
+            ":",
+            ";"
+        ],
+        "punctuation_map": {
+            ",": "，",
+            ".": "。",
+            "!": "！",
+            "?": "？",
+            ":": "：",
+            ";": "；",
+            "...": "……",
+            "(": "（",
+            ")": "）",
+            "[": "【",
+            "]": "】",
+            "\"": "”",
+            "'": "’"
+        }
+    },
+    "mappings": {
+        "de": "tē",
+        "do": "tē",
+        "da": "tē",
+        "dos": "tē",
+        "das": "tē",
+        "e": "xē",
+        "em": "sāi",
+        "no": "sāi",
+        "na": "sāi",
+        "nos": "sāi",
+        "nas": "sāi",
+        "que": "kū",
+        "ser": "xì",
+        "fazer": "sù",
+        "um": "yí",
+        "uma": "yí",
+        "longria": "lóng-rī"
+    },
+    "phonological_processes": {
+        "assimilation": {
+            "nasal_place": false,
+            "sun_letter": false,
+            "voice": false
+        },
+        "deletion": {
+            "short_vowel_syncope": false,
+            "glottal_elision": false,
+            "final_consonant_drop": false
+        },
+        "insertion": {
+            "epenthetic_vowel": "",
+            "glide_insertion": false
+        },
+        "metathesis": {
+            "enabled": false
+        }
+    }
+}

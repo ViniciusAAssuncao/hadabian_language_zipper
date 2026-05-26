@@ -1,0 +1,526 @@
+{
+    "id": "svaldian_language",
+    "name": "Sváldio",
+    "description": "Língua mais divergente do tronco garmânico, isolada por milênios nas tundras e florestas orientais do norte. Desenvolveu uma estética única que mistura um ritmo de entonação inicial forte com uma profunda morfologia aglutinante. Possui apenas dois gêneros (comum e neutro) e um sistema rigoroso de harmonia vocálica. Mantém a base SVO germânica, mas substituiu a maioria das preposições por um denso sistema de casos espaciais e relacionais.",
+    "family_id": "garmanic_trunk",
+    "linguistic_family": "garmanic_trunk.json",
+    "family_node": "svaldian_branch",
+    "word_order": "SVO",
+    "subordinate_word_order": "SOV",
+    "source_language_order": "SVO",
+    "alignment": "nominative-accusative",
+    "global_seed": 73821,
+    "phonotactics": {
+        "vowels": "aeiouyäö",
+        "consonants": "ptkdgsfvhlrmnj",
+        "syllable_templates": [
+            "CV",
+            "CVC",
+            "V",
+            "VC",
+            "CCV",
+            "CVCC",
+            "CVCV"
+        ],
+        "min_syllables": 2,
+        "max_syllables": 5,
+        "max_consonant_cluster": 2,
+        "forbidden_initial_clusters": [
+            "tl",
+            "dl",
+            "sr",
+            "zr",
+            "nm",
+            "lr",
+            "nt",
+            "nd"
+        ],
+        "forbidden_final_consonants": [
+            "h",
+            "j",
+            "v",
+            "d",
+            "g"
+        ],
+        "epenthesis_vowel": "e",
+        "diphthongs": [
+            "ai",
+            "ei",
+            "öi",
+            "äi",
+            "uo",
+            "yö",
+            "ie"
+        ],
+        "sonority_hierarchy": {
+            "enabled": true,
+            "scale": {
+                "p": 1,
+                "t": 1,
+                "k": 1,
+                "d": 2,
+                "g": 2,
+                "f": 3,
+                "s": 3,
+                "h": 3,
+                "v": 3,
+                "m": 4,
+                "n": 4,
+                "l": 5,
+                "r": 5,
+                "j": 6
+            },
+            "onset_rules": {
+                "min_distance": 1,
+                "allow_plateau": false,
+                "allow_reversal": false
+            },
+            "coda_rules": {
+                "min_distance": 0,
+                "allow_plateau": true,
+                "allow_reversal": true
+            }
+        },
+        "phonological_rules": [
+            {
+                "input": "k$",
+                "output": "kk",
+                "register": "formal"
+            }
+        ]
+    },
+    "vowel_harmony": {
+        "enabled": true,
+        "groups": {
+            "front": "ä ö y e i",
+            "back": "a o u"
+        },
+        "rules": [
+            {
+                "input": "a",
+                "map": {
+                    "front": "ä",
+                    "back": "a"
+                }
+            },
+            {
+                "input": "o",
+                "map": {
+                    "front": "ö",
+                    "back": "o"
+                }
+            },
+            {
+                "input": "u",
+                "map": {
+                    "front": "y",
+                    "back": "u"
+                }
+            }
+        ]
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "fixed",
+        "position": "initial",
+        "graphic_accent": false
+    },
+    "case_system": {
+        "enabled": true,
+        "preposition_handling": "coexist",
+        "marker_position": "suffix",
+        "markers": {
+            "nominative": {
+                "marker": "",
+                "type": "suffix"
+            },
+            "accusative": {
+                "marker": "-m",
+                "type": "suffix"
+            },
+            "genitive": {
+                "marker": "-nna",
+                "type": "suffix"
+            },
+            "dative": {
+                "marker": "-lle",
+                "type": "suffix"
+            },
+            "locative": {
+                "marker": "-sso",
+                "type": "suffix"
+            }
+        },
+        "preposition_case_mapping": {
+            "pä": "locative",
+            "ylä": "genitive",
+            "il": "accusative"
+        }
+    },
+    "gender_system": {
+        "enabled": true,
+        "genders": [
+            "comum",
+            "neutro"
+        ],
+        "default": "comum",
+        "inference": [
+            {
+                "suffix": "t",
+                "gender": "neutro"
+            },
+            {
+                "suffix": "k",
+                "gender": "neutro"
+            },
+            {
+                "suffix": "a",
+                "gender": "comum"
+            },
+            {
+                "suffix": "ä",
+                "gender": "comum"
+            },
+            {
+                "suffix": "i",
+                "gender": "comum"
+            }
+        ],
+        "markers": {
+            "comum": {
+                "targets": [
+                    "ADJ",
+                    "DET",
+                    "PRON"
+                ],
+                "marker": "-in",
+                "position": "suffix"
+            },
+            "neutro": {
+                "targets": [
+                    "ADJ",
+                    "DET",
+                    "PRON"
+                ],
+                "marker": "-et",
+                "position": "suffix"
+            }
+        }
+    },
+    "number_system": {
+        "numbers": [
+            "singular",
+            "plural"
+        ],
+        "markers": {
+            "plural": {
+                "marker": "-tö",
+                "alternatives": [
+                    "-kö"
+                ]
+            }
+        },
+        "broken_plurals": {
+            "enabled": false
+        }
+    },
+    "tam_system": {
+        "enabled": true,
+        "infer_imperative_from_context": true,
+        "person_marking": {
+            "enabled": true,
+            "suffixes": {
+                "1sg": "-k",
+                "2sg": "-l",
+                "3sg": "-pi",
+                "1pl": "-mme",
+                "2pl": "-tte",
+                "3pl": "-vat"
+            },
+            "prefixes": {}
+        },
+        "rules": [
+            {
+                "features": [
+                    "Tense=Past"
+                ],
+                "marker": "-vi",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "-kso",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Cnd"
+                ],
+                "marker": "-isi",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Aspect=Perf"
+                ],
+                "marker": "här",
+                "type": "particle_before"
+            }
+        ]
+    },
+    "agreement_rules": {
+        "gender_agreement": true,
+        "number_agreement": true
+    },
+    "consonant_mutation": {
+        "enabled": true,
+        "rules": [
+            {
+                "name": "Consonant Gradation (Lenition)",
+                "triggers": {
+                    "ending_chars": [
+                        "a",
+                        "e",
+                        "i",
+                        "o",
+                        "u",
+                        "y",
+                        "ä",
+                        "ö"
+                    ]
+                },
+                "mutations": {
+                    "p": "v",
+                    "t": "d",
+                    "k": "j"
+                }
+            }
+        ]
+    },
+    "compounding": {
+        "enabled": true,
+        "productivity": "very_high",
+        "head_position": "final",
+        "linking_elements": {
+            "s": {
+                "after": [
+                    "-n",
+                    "-t",
+                    "-k"
+                ]
+            },
+            "e": {
+                "after": [
+                    "-r",
+                    "-l"
+                ]
+            }
+        }
+    },
+    "morphological_derivation": {
+        "enabled": true,
+        "max_depth": 3,
+        "exceptions": []
+    },
+    "affix_system": {
+        "enabled": true,
+        "derivation_rules": [
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "type": "relational",
+                "affix": "-lli",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "NOUN",
+                "type": "abstract",
+                "affix": "-us",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "agent",
+                "affix": "-jä",
+                "position": "suffix"
+            }
+        ]
+    },
+    "determiner_system": {
+        "definite_article": {
+            "form": "en",
+            "variants": [
+                "in",
+                "et"
+            ],
+            "procliticizes": false,
+            "sun_letter_assimilation": false
+        },
+        "demonstratives": {
+            "proximal": {
+                "sg_m": "tämä",
+                "sg_f": "tämä",
+                "sg_n": "täät",
+                "pl": "nämä"
+            },
+            "distal": {
+                "sg_m": "tuo",
+                "sg_f": "tuo",
+                "sg_n": "tuot",
+                "pl": "nuo"
+            }
+        },
+        "possessives": {
+            "pronominal_suffixes": true,
+            "suffixes": {
+                "1sg": "-ni",
+                "2sg": "-si",
+                "3sg": "-nsa",
+                "1pl": "-mme",
+                "2pl": "-nne",
+                "3pl": "-nsa"
+            },
+            "independent_forms": {
+                "1sg": "minu",
+                "2sg": "sinu",
+                "3sg": "häne",
+                "1pl": "mei",
+                "2pl": "tei",
+                "3pl": "hei"
+            }
+        }
+    },
+    "adposition_system": {
+        "basic_prepositions": {
+            "em": "sissä",
+            "de": "alta",
+            "para": "kohti",
+            "com": "kansa",
+            "sem": "ilma",
+            "sobre": "ylä"
+        }
+    },
+    "negation_system": {
+        "enabled": true,
+        "strategies": [
+            {
+                "type": "verbal_negation",
+                "marker": "ei",
+                "suffix": ""
+            }
+        ]
+    },
+    "interrogative_system": {
+        "enabled": true,
+        "question_particles": [
+            {
+                "type": "yes_no",
+                "particle": "kö"
+            }
+        ],
+        "detection_rules": {
+            "wh_words": [
+                "mika",
+                "kuka",
+                "missä",
+                "millo",
+                "miksi"
+            ]
+        }
+    },
+    "copula_system": {
+        "enabled": true,
+        "copulas": [
+            {
+                "type": "present_default",
+                "form": "ol",
+                "conjugates": true
+            }
+        ]
+    },
+    "degree_system": {
+        "enabled": true,
+        "rules": {
+            "comparative": {
+                "affix": "-mpi",
+                "position": "suffix"
+            },
+            "superlative": {
+                "affix": "-sti",
+                "position": "suffix"
+            }
+        }
+    },
+    "lexical_registers_defaults": {
+        "enabled": true,
+        "registers": [
+            {
+                "name": "formal",
+                "chance": 0.20,
+                "mutation_factor": 0.5,
+                "description": "Registro formal e arcaico poético"
+            },
+            {
+                "name": "colloquial",
+                "chance": 0.50,
+                "mutation_factor": 1.2,
+                "description": "Coloquial com forte síncope de vogais curtas"
+            }
+        ]
+    },
+    "style": {
+        "capitalization": true,
+        "punctuation_map": {
+            ".": ".",
+            "!": "!",
+            "?": "?",
+            ",": ",",
+            ";": ";",
+            ":": ":"
+        },
+        "sentence_terminators": [
+            ".",
+            "!",
+            "?"
+        ],
+        "secondary_terminators": [
+            ":",
+            ";"
+        ]
+    },
+    "vocabulary": {
+        "floresta": "sköögi",
+        "fogo": "eltti",
+        "água": "vaasi",
+        "gelo": "jässä",
+        "neve": "lyymi",
+        "urso": "börkö",
+        "lobo": "varkka",
+        "árvore": "trööp",
+        "sol": "sööliki",
+        "lua": "maana",
+        "estrela": "stärnä",
+        "homem": "kaväri",
+        "mulher": "kvinno",
+        "criança": "bääri",
+        "casa": "höösi",
+        "dia": "pägar",
+        "noite": "nöti",
+        "espada": "svärtti",
+        "escudo": "skilti",
+        "rei": "kunin",
+        "frio": "kälti",
+        "bom": "hyvä",
+        "mau": "paha",
+        "grande": "suuri",
+        "pequeno": "liite",
+        "ir": "männä",
+        "vir": "tulla",
+        "comer": "syöti",
+        "beber": "jövvi"
+    }
+}

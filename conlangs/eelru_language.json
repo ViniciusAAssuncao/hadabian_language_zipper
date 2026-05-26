@@ -1,0 +1,459 @@
+{
+    "id": "eelru_language",
+    "name": "Ëelru",
+    "description": "Língua das Ilhas Londóricas (West Londoric Illiac). Caracteriza-se pela ordem VSO, mutações consonantais iniciais, harmonia vocálica com umlauts e um sistema de casos extenso que substitui completamente as preposições.",
+    "word_order": "VSO",
+    "subordinate_word_order": "VSO",
+    "source_language_order": "SVO",
+    "drop_articles": false,
+    "family_node": "west_londoric_illiac",
+    "pro_drop": {
+        "enabled": true,
+        "conditions": [
+            "verb_agreement"
+        ]
+    },
+    "aesthetic_profile": {
+        "syllable_count_distribution": {
+            "1": 0.15,
+            "2": 0.45,
+            "3": 0.30,
+            "4": 0.10
+        },
+        "cluster_density": 0.3,
+        "vowel_consonant_ratio": 0.55
+    },
+    "alignment": "nominative-accusative",
+    "global_seed": 88219,
+    "phonotactics": {
+        "vowels": "aeiouyäëïöü",
+        "consonants": "bdfghjklmnprstvwz",
+        "active_style": "londoric_style",
+        "inventory_styles": {
+            "londoric_style": {
+                "consonants": "bdfghjklmnprstvwz",
+                "vowels": "aeiouyäëïöü"
+            }
+        },
+        "transition_matrix": {
+            "enabled": true,
+            "default_weight": 5,
+            "matrix": {
+                "l": {
+                    "l": 40,
+                    "a": 20,
+                    "ä": 20
+                },
+                "d": {
+                    "d": 30,
+                    "r": 10
+                },
+                "r": {
+                    "h": 50
+                },
+                "c": {
+                    "h": 80
+                }
+            }
+        },
+        "syllable_templates": [
+            "CV",
+            "CVC",
+            "VC",
+            "V"
+        ],
+        "min_syllables": 1,
+        "max_syllables": 4,
+        "max_consonant_cluster": 2,
+        "max_vowel_cluster": 1,
+        "forbidden_initial_clusters": [
+            "nt",
+            "nd",
+            "rt",
+            "lt"
+        ],
+        "forbidden_final_consonants": [
+            "h",
+            "b",
+            "d",
+            "g"
+        ],
+        "epenthesis_vowel": "y",
+        "phonological_rules": [
+            {
+                "input": "ll",
+                "output": "ł",
+                "register": "phonetic"
+            },
+            {
+                "input": "dd",
+                "output": "ð",
+                "register": "phonetic"
+            },
+            {
+                "input": "rh",
+                "output": "r̥",
+                "register": "phonetic"
+            }
+        ],
+        "sandhi": {
+            "enabled": true,
+            "rules": [
+                {
+                    "pattern": "n\\s+([bp])",
+                    "replacement": "m \\1",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "([aeiouyäëïöü])\\s+([aeiouyäëïöü])",
+                    "replacement": "\\1'\\2",
+                    "ignore_case": true
+                }
+            ]
+        }
+    },
+    "lexical_confluence": {
+        "enabled": true,
+        "base_stability": 60,
+        "strata": [
+            {
+                "source_id": "general_language",
+                "weight": 30,
+                "mutation_intensity": 0.2
+            },
+            {
+                "source_id": "midorian_language",
+                "weight": 10,
+                "mutation_intensity": 0.5
+            }
+        ]
+    },
+    "consonant_mutation": {
+        "enabled": true,
+        "rules": [
+            {
+                "name": "Soft Mutation (Lenition)",
+                "description": "Ocorre após determinantes, vocativos e na posição de objeto direto.",
+                "triggers": {
+                    "pos": [
+                        "DET",
+                        "PART"
+                    ],
+                    "words": [
+                        "ä",
+                        "o",
+                        "ni"
+                    ]
+                },
+                "mutations": {
+                    "p": "b",
+                    "t": "d",
+                    "k": "g",
+                    "b": "f",
+                    "d": "dd",
+                    "g": "",
+                    "m": "f",
+                    "ll": "l",
+                    "rh": "r"
+                }
+            },
+            {
+                "name": "Nasal Mutation",
+                "description": "Ocorre após possessivos de primeira pessoa ou nasais.",
+                "triggers": {
+                    "words": [
+                        "fy",
+                        "yn"
+                    ]
+                },
+                "mutations": {
+                    "p": "mh",
+                    "t": "nh",
+                    "k": "ngh",
+                    "b": "m",
+                    "d": "n",
+                    "g": "ng"
+                }
+            }
+        ]
+    },
+    "vowel_harmony": {
+        "enabled": true,
+        "groups": {
+            "front": "eiäëïöü",
+            "back": "aouy"
+        },
+        "rules": [
+            {
+                "input": "a",
+                "map": {
+                    "front": "ä",
+                    "back": "a"
+                }
+            },
+            {
+                "input": "o",
+                "map": {
+                    "front": "ö",
+                    "back": "o"
+                }
+            },
+            {
+                "input": "u",
+                "map": {
+                    "front": "ü",
+                    "back": "u"
+                }
+            }
+        ]
+    },
+    "case_system": {
+        "enabled": true,
+        "preposition_handling": "replace",
+        "marker_position": "suffix",
+        "preposition_case_mapping": {
+            "de": "genitive",
+            "do": "genitive",
+            "da": "genitive",
+            "para": "dative",
+            "a": "dative",
+            "em": "locative",
+            "no": "locative",
+            "na": "locative",
+            "por": "instrumental",
+            "com": "comitative",
+            "sem": "abessive",
+            "desde": "ablative"
+        },
+        "markers": {
+            "nominative": {
+                "marker": "",
+                "type": "suffix"
+            },
+            "accusative": {
+                "marker": "-n",
+                "type": "suffix"
+            },
+            "genitive": {
+                "marker": "-or",
+                "type": "suffix"
+            },
+            "dative": {
+                "marker": "-i",
+                "type": "suffix"
+            },
+            "locative": {
+                "marker": "-yn",
+                "type": "suffix"
+            },
+            "ablative": {
+                "marker": "-oth",
+                "type": "suffix"
+            },
+            "instrumental": {
+                "marker": "-gan",
+                "type": "suffix"
+            },
+            "comitative": {
+                "marker": "-gyd",
+                "type": "suffix"
+            },
+            "abessive": {
+                "marker": "-heb",
+                "type": "suffix"
+            }
+        }
+    },
+    "gender_system": {
+        "enabled": true,
+        "default": "masculino",
+        "inference": [
+            {
+                "suffix": "en",
+                "gender": "feminino"
+            },
+            {
+                "suffix": "es",
+                "gender": "feminino"
+            },
+            {
+                "suffix": "a",
+                "gender": "feminino"
+            },
+            {
+                "suffix": "yn",
+                "gender": "masculino"
+            },
+            {
+                "suffix": "wr",
+                "gender": "masculino"
+            }
+        ],
+        "markers": {
+            "feminino": {
+                "targets": [
+                    "ADJ"
+                ],
+                "marker": "es",
+                "position": "suffix"
+            },
+            "masculino": {
+                "targets": [
+                    "ADJ"
+                ],
+                "marker": "wr",
+                "position": "suffix"
+            }
+        }
+    },
+    "number_system": {
+        "markers": {
+            "plural": {
+                "marker": "-au",
+                "alternatives": [
+                    "-ion",
+                    "-i"
+                ]
+            }
+        }
+    },
+    "tam_system": {
+        "enabled": true,
+        "rules": [
+            {
+                "features": [
+                    "Tense=Past"
+                ],
+                "marker": "odd",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "ydd",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Pres"
+                ],
+                "marker": "ith",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "VerbForm=Inf"
+                ],
+                "marker": "u",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Cnd"
+                ],
+                "marker": "ai",
+                "type": "suffix"
+            }
+        ],
+        "person_marking": {
+            "enabled": true,
+            "suffixes": {
+                "1sg": "-af",
+                "2sg": "-i",
+                "3sg_m": "-ef",
+                "3sg_f": "-hi",
+                "1pl": "-wn",
+                "2pl": "-wch",
+                "3pl": "-on"
+            }
+        }
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "fixed",
+        "position": "penultimate",
+        "graphic_accent": true,
+        "accent_map": {
+            "a": "â",
+            "e": "ê",
+            "i": "î",
+            "o": "ô",
+            "u": "û",
+            "y": "ŷ",
+            "w": "ŵ"
+        }
+    },
+    "affix_system": {
+        "enabled": true,
+        "agglutination_strength": 0.8,
+        "source_suffixes": [
+            {
+                "input_pos": "NOUN",
+                "suffix": "ness",
+                "replacement": "deb",
+                "target_pos": "NOUN"
+            },
+            {
+                "input_pos": "ADJ",
+                "suffix": "ly",
+                "replacement": "yn",
+                "target_pos": "ADV",
+                "mode": "prefix"
+            }
+        ],
+        "derivation_rules": [
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "agent",
+                "affix": "wr",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "NOUN",
+                "type": "abstract",
+                "affix": "deb",
+                "position": "suffix"
+            }
+        ]
+    },
+    "special_mechanics": {
+        "enabled": true,
+        "suffix_replacement": {
+            "percentage": 15,
+            "suffixes": [
+                "ll",
+                "dd",
+                "ch",
+                "ff",
+                "ph",
+                "th"
+            ]
+        }
+    },
+    "style": {
+        "capitalization": true,
+        "punctuation_map": {
+            ".": ".",
+            ",": ",",
+            "?": "?",
+            "!": "!"
+        },
+        "sentence_terminators": [
+            ".",
+            "!",
+            "?"
+        ]
+    },
+    "false_cognates": {
+        "enabled": true,
+        "manual_pairs": {
+            "bara": "pão",
+            "glin": "joelho",
+            "llan": "igreja",
+            "avon": "rio"
+        }
+    }
+}

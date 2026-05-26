@@ -1,0 +1,752 @@
+{
+    "id": "pavisian",
+    "name": "Pavísiano",
+    "native_name": "Pavís",
+    "description": "Língua literária e poética derivada do Neoraabiano ocidental, enraizada no dialeto tossíniano do século 17. Caracteriza-se por seu ritmo 'cantado', predominância vocálica (quase todas as palavras terminam em vogal), consoantes duplas enfáticas e um sistema analítico e fusional. Preserva três gêneros gramaticais estruturais (masculino, feminino e neutro) advindos do Animado I e Animado II do Tossíriano arcaico. É o idioma erudito das célebres obras poéticas de Harthamel e Dandalião.",
+    "family_node": "western_neoraabic",
+    "linguistic_family": "raabic_trunk.json",
+    "shared_base_strength": 0.85,
+    "global_seed": 8472910,
+    "source_language_order": "SVO",
+    "word_order": "SVO",
+    "subordinate_word_order": "SVO",
+    "alignment": "nominative-accusative",
+    "agglutination_strength": 0.12,
+    "divergence_factor": 0.35,
+    "cultural_purism": 0.95,
+    "drop_articles": false,
+    "pro_drop": {
+        "enabled": true,
+        "conditions": [
+            "verb_agreement"
+        ]
+    },
+    "lexical_confluence": {
+        "enabled": true,
+        "base_stability": 0,
+        "strata": [
+            {
+                "source_id": "western_neoraabic",
+                "weight": 85,
+                "type": "literary_confluence",
+                "description": "Confluência literária dos versos de Dandalião"
+            },
+            {
+                "source_id": "cauterian_language",
+                "weight": 15,
+                "type": "inheritance",
+                "description": "Influência e substrato da alta poesia Tossíriana"
+            }
+        ]
+    },
+    "aesthetic_profile": {
+        "syllable_count_distribution": {
+            "1": 0.05,
+            "2": 0.35,
+            "3": 0.40,
+            "4": 0.15,
+            "5": 0.05
+        },
+        "cluster_density": 0.18,
+        "vowel_consonant_ratio": 0.70
+    },
+    "phonotactics": {
+        "vowels": "aeiouáéíóúâêîôû",
+        "consonants": "bcdfghlmnpqrstvz",
+        "syllable_templates": [
+            "CV",
+            "CV",
+            "CVV",
+            "CVC",
+            "V"
+        ],
+        "min_syllables": 1,
+        "max_syllables": 5,
+        "allowed_initial_clusters": [
+            "pl",
+            "pr",
+            "bl",
+            "br",
+            "tr",
+            "dr",
+            "cl",
+            "cr",
+            "gl",
+            "gr",
+            "fl",
+            "fr",
+            "sp",
+            "st",
+            "sc",
+            "sm",
+            "sn",
+            "sf",
+            "sv"
+        ],
+        "forbidden_final_consonants": [
+            "b",
+            "c",
+            "d",
+            "f",
+            "g",
+            "h",
+            "m",
+            "p",
+            "q",
+            "t",
+            "v",
+            "z"
+        ],
+        "max_consonant_cluster": 2,
+        "diphthongs": [
+            "ia",
+            "io",
+            "ie",
+            "iu",
+            "ua",
+            "uo",
+            "ue",
+            "ui",
+            "ai",
+            "ei",
+            "oi",
+            "au",
+            "eu"
+        ],
+        "epenthesis_vowel": "e",
+        "transition_matrix": {
+            "enabled": true,
+            "default_weight": 10,
+            "matrix": {
+                "t": {
+                    "t": 60,
+                    "r": 30
+                },
+                "l": {
+                    "l": 60
+                },
+                "s": {
+                    "s": 60,
+                    "p": 20,
+                    "t": 20,
+                    "c": 20
+                },
+                "r": {
+                    "r": 60
+                },
+                "m": {
+                    "m": 60
+                },
+                "n": {
+                    "n": 60
+                },
+                "p": {
+                    "p": 60,
+                    "r": 20,
+                    "l": 20
+                },
+                "c": {
+                    "c": 60,
+                    "r": 20,
+                    "l": 20
+                }
+            }
+        },
+        "phonological_rules": [
+            {
+                "input": "ww",
+                "output": "iv",
+                "description": "Evolução do Tossíriano arcaico ww para iv"
+            },
+            {
+                "input": "ç",
+                "output": "c",
+                "description": "Perda do fonema e letra Ç"
+            },
+            {
+                "input": "k",
+                "output": "c",
+                "description": "Perda do fonema e letra K"
+            },
+            {
+                "input": "y",
+                "output": "i",
+                "description": "Perda do fonema e letra Y"
+            },
+            {
+                "input": "w",
+                "output": "v",
+                "description": "Perda do fonema e letra W"
+            },
+            {
+                "input": "x",
+                "output": "ss",
+                "description": "Perda do fonema e letra X"
+            },
+            {
+                "input": "j",
+                "output": "gi",
+                "description": "Perda do fonema e letra J"
+            },
+            {
+                "input": "troi$",
+                "output": "trii",
+                "description": "Alteração vocálica para plural masculino complexo (ex: cavatro -> cavatrii)"
+            },
+            {
+                "input": "gnoi$",
+                "output": "gnia",
+                "description": "Alteração vocálica irregular poética (ex: beligno -> belignia)"
+            },
+            {
+                "input": "oi$",
+                "output": "i",
+                "description": "Alteração vocálica regular de plural masculino"
+            },
+            {
+                "input": "ai$",
+                "output": "e",
+                "description": "Alteração vocálica regular de plural feminino"
+            },
+            {
+                "input": "ei$",
+                "output": "i",
+                "description": "Alteração vocálica regular de plural neutro/comum"
+            },
+            {
+                "input": "ui$",
+                "output": "ui",
+                "description": "Preservação de hiatos em plurais"
+            }
+        ],
+        "sandhi": {
+            "enabled": true,
+            "rules": [
+                {
+                    "pattern": "([aeiouáéíóú])\\s+([aeiouáéíóú])",
+                    "replacement": "\\1'\\2",
+                    "description": "Elisão poética e fluida intervocálica"
+                }
+            ]
+        }
+    },
+    "morphological_derivation": {
+        "enabled": true,
+        "root_based": false,
+        "max_depth": 2,
+        "exceptions": [
+            "el",
+            "la",
+            "ve",
+            "na",
+            "di",
+            "per",
+            "con",
+            "e",
+            "o",
+            "ma"
+        ],
+        "nominal_patterns": [
+            {
+                "pattern": "-tiu",
+                "type": "abstract_noun"
+            },
+            {
+                "pattern": "-men",
+                "type": "result_noun"
+            },
+            {
+                "pattern": "-essa",
+                "type": "quality_noun"
+            },
+            {
+                "pattern": "-or",
+                "type": "agent_masc"
+            },
+            {
+                "pattern": "-tria",
+                "type": "agent_fem"
+            }
+        ],
+        "source_suffixes": [
+            {
+                "suffix": "ção",
+                "replacement": "tiu",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 100,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "dade",
+                "replacement": "ta",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 90,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "mento",
+                "replacement": "men",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 80,
+                "mode": "adapt"
+            },
+            {
+                "suffix": "eiro",
+                "replacement": "ero",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "priority": 75,
+                "mode": "adapt"
+            }
+        ]
+    },
+    "affix_system": {
+        "enabled": true,
+        "derivation_rules": [
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "action",
+                "affix": "tiu",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "ADJ",
+                "type": "possibility",
+                "affix": "bile",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "ADV",
+                "type": "manner",
+                "affix": "men",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "type": "relation",
+                "affix": "ico",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "VERB",
+                "type": "causative",
+                "affix": "isare",
+                "position": "suffix"
+            }
+        ]
+    },
+    "gender_system": {
+        "enabled": true,
+        "genders": [
+            "masculine",
+            "feminine",
+            "neuter"
+        ],
+        "default": "masculine",
+        "inference": [
+            {
+                "suffix": "a",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "o",
+                "gender": "masculine"
+            },
+            {
+                "suffix": "e",
+                "gender": "neuter"
+            },
+            {
+                "suffix": "tiu",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "ta",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "or",
+                "gender": "masculine"
+            },
+            {
+                "suffix": "men",
+                "gender": "neuter"
+            }
+        ],
+        "markers": {
+            "feminine": {
+                "marker": "",
+                "position": "suffix",
+                "targets": [
+                    "ADJ",
+                    "DET"
+                ]
+            },
+            "masculine": {
+                "marker": "",
+                "position": "suffix",
+                "targets": [
+                    "ADJ",
+                    "DET"
+                ]
+            },
+            "neuter": {
+                "marker": "",
+                "position": "suffix",
+                "targets": [
+                    "ADJ",
+                    "DET"
+                ]
+            }
+        }
+    },
+    "number_system": {
+        "numbers": [
+            "singular",
+            "plural"
+        ],
+        "default": "singular",
+        "markers": {
+            "plural": {
+                "marker": "i"
+            },
+            "singular": {
+                "marker": ""
+            }
+        },
+        "broken_plurals": {
+            "enabled": false
+        }
+    },
+    "determiner_system": {
+        "definite_article": {
+            "form": "el",
+            "variants": [
+                "la",
+                "li",
+                "le",
+                "lo"
+            ],
+            "procliticizes": false
+        },
+        "demonstratives": {
+            "proximal": {
+                "sg_m": "ces",
+                "sg_f": "ca",
+                "pl": "ci"
+            },
+            "distal": {
+                "sg_m": "ves",
+                "sg_f": "va",
+                "pl": "vi"
+            }
+        },
+        "possessives": {
+            "pronominal_suffixes": false,
+            "independent_forms": {
+                "1sg_m": "mio",
+                "1sg_f": "mia",
+                "1pl": "nos",
+                "2sg_m": "tuo",
+                "2sg_f": "tua",
+                "2pl": "vos",
+                "3sg_m": "suo",
+                "3sg_f": "sua",
+                "3pl": "lor"
+            }
+        }
+    },
+    "pronominal_system": {
+        "independent_pronouns": {
+            "1sg": "io",
+            "2sg": "tu",
+            "3sg_m": "lu",
+            "3sg_f": "lei",
+            "1pl": "noi",
+            "2pl": "voi",
+            "3pl": "lor"
+        },
+        "object_pronouns": {
+            "direct": {
+                "1sg": "mi",
+                "2sg": "ti",
+                "3sg_m": "lo",
+                "3sg_f": "la",
+                "1pl": "ci",
+                "2pl": "vi",
+                "3pl": "li"
+            },
+            "indirect": {
+                "1sg": "me",
+                "2sg": "te",
+                "3sg_m": "le",
+                "3sg_f": "le",
+                "1pl": "ce",
+                "2pl": "ve",
+                "3pl": "lor"
+            }
+        },
+        "clitic_ordering": {
+            "enabled": true,
+            "order": [
+                "neg",
+                "obj_indirect",
+                "obj_direct",
+                "verb"
+            ],
+            "procliticizes": true
+        }
+    },
+    "tam_system": {
+        "enabled": true,
+        "description": "Sistema verbal altamente fusional que carrega a musicalidade poética Pavísiana.",
+        "person_marking": {
+            "enabled": true,
+            "suffixes": {
+                "1sg": "o",
+                "2sg": "is",
+                "3sg": "e",
+                "1pl": "mo",
+                "2pl": "te",
+                "3pl": "no"
+            }
+        },
+        "rules": [
+            {
+                "features": [
+                    "Tense=Past",
+                    "Aspect=Perf"
+                ],
+                "marker": "vi",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Past",
+                    "Aspect=Imp"
+                ],
+                "marker": "va",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "ro",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Cnd"
+                ],
+                "marker": "ria",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Sub"
+                ],
+                "marker": "ne ",
+                "type": "particle_before"
+            },
+            {
+                "features": [
+                    "VerbForm=Part",
+                    "Tense=Past"
+                ],
+                "marker": "to",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "VerbForm=Inf"
+                ],
+                "marker": "re",
+                "type": "suffix"
+            }
+        ]
+    },
+    "copula_system": {
+        "enabled": true,
+        "copulas": [
+            {
+                "type": "default",
+                "form": "sen",
+                "conjugates": true,
+                "irregular": true,
+                "paradigm": {
+                    "1sg": "so",
+                    "2sg": "sei",
+                    "3sg": "se",
+                    "1pl": "siam",
+                    "2pl": "siet",
+                    "3pl": "son"
+                }
+            },
+            {
+                "type": "temporary",
+                "form": "star",
+                "conjugates": true,
+                "irregular": true,
+                "paradigm": {
+                    "1sg": "sto",
+                    "2sg": "stai",
+                    "3sg": "sta",
+                    "1pl": "stiam",
+                    "2pl": "stiet",
+                    "3pl": "stan"
+                }
+            }
+        ]
+    },
+    "negation_system": {
+        "enabled": true,
+        "strategies": [
+            {
+                "type": "verbal_negation",
+                "marker": "no ",
+                "suffix": "",
+                "description": "Negação verbal fluida"
+            },
+            {
+                "type": "emphatic_negation",
+                "marker": "mai ",
+                "suffix": "",
+                "description": "Negação poética e literária"
+            }
+        ]
+    },
+    "interrogative_system": {
+        "enabled": true,
+        "question_particles": [
+            {
+                "type": "yes_no",
+                "particle": "se",
+                "position": "initial"
+            }
+        ],
+        "detection_rules": {
+            "wh_words": [
+                "chi",
+                "ce",
+                "ove",
+                "can",
+                "com",
+                "perce"
+            ]
+        }
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "fixed",
+        "position": "penultimate",
+        "graphic_accent": true,
+        "accent_map": {
+            "a": "á",
+            "e": "é",
+            "i": "í",
+            "o": "ó",
+            "u": "ú"
+        }
+    },
+    "semantic_fields": {
+        "enabled": true,
+        "manual_groups": {
+            "arte": "high_culture",
+            "poesia": "high_culture",
+            "música": "high_culture",
+            "canto": "high_culture",
+            "luz": "divine",
+            "verdade": "divine",
+            "estrela": "celestial"
+        }
+    },
+    "polysemy_rules": {
+        "enabled": true,
+        "description": "Fusões poéticas características da literatura Dandaliana e Harthameliana.",
+        "merges": {
+            "canção": "poesia",
+            "brilho": "verdade",
+            "sombra": "mentira",
+            "sangue": "vida"
+        }
+    },
+    "lexical_registers": {
+        "enabled": true,
+        "registers": [
+            {
+                "name": "Poético",
+                "chance": 0.35,
+                "mutation_factor": 1.2,
+                "description": "Linguagem elevada dos versos Harthamelianos; favorece ditongos longos e elisões líricas."
+            },
+            {
+                "name": "Comum",
+                "chance": 0.65,
+                "mutation_factor": 0.5,
+                "description": "Fala cotidiana de Pavís."
+            }
+        ]
+    },
+    "loanword_policy": {
+        "enabled": true,
+        "modes": {
+            "phonetic_adaptation": 0.95,
+            "calque": 0.04,
+            "semantic_extension": 0.01
+        }
+    },
+    "functional_particles": {
+        "muito": {
+            "adj_word": "mol",
+            "noun_word": "tan",
+            "verb_word": "tan"
+        },
+        "pouco": {
+            "adj_word": "poc",
+            "noun_word": "poc",
+            "verb_word": "poc"
+        },
+        "mais": {
+            "adj_word": "piu"
+        },
+        "menos": {
+            "adj_word": "men"
+        },
+        "bem": {
+            "verb_word": "ben"
+        },
+        "mal": {
+            "verb_word": "mal"
+        },
+        "já": {
+            "verb_word": "gia"
+        },
+        "ainda": {
+            "verb_word": "ancor"
+        }
+    },
+    "style": {
+        "capitalization": true,
+        "punctuation_map": {
+            ",": ",",
+            ".": ".",
+            "!": "!",
+            "?": "?",
+            ";": ";"
+        },
+        "sentence_terminators": [
+            ".",
+            "!",
+            "?"
+        ]
+    }
+}

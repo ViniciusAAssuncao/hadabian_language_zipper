@@ -539,6 +539,65 @@
                 "pronunciation_softer_than_corimean",
                 "mutual_evolution_with_aidanese"
             ]
+        },
+        {
+            "id": "low-garmanic",
+            "parent_id": "middle-garmanic",
+            "description": "Ramo Baixo Garmânico, derivado do Garmânico Médio. Caracteriza-se por inovações fonológicas e morfológicas que o distinguem do ramo que deu origem ao Corimês. É a base para as línguas garmânicas ocidentais, incluindo o Cauto.",
+            "shared_lexicon_strength": 0.72,
+            "agglutination_strength": 0.70,
+            "distinctive_features": [
+                "lenição de consoantes oclusivas em posição intervocálica",
+                "desenvolvimento de vogais nasais",
+                "simplificação do sistema de casos",
+                "tendência a ordem SVO em orações principais",
+                "surgimento de artigos definidos mais cedo que no ramo alto"
+            ]
+        },
+        {
+            "id": "western-garmanic",
+            "parent_id": "low-garmanic",
+            "description": "Ramo Garmânico Ocidental, continuação do Baixo Garmânico com inovações próprias. Apresenta forte desenvolvimento de sons guturais, influência de substratos não‑garmânicos e características que o distanciam ainda mais do Corimês.",
+            "shared_lexicon_strength": 0.68,
+            "agglutination_strength": 0.62,
+            "distinctive_features": [
+                "sistema consonantal com fricativas uvulares /χ/ e faringais /ħ/",
+                "perda de distinção de gênero neutro em muitos contextos",
+                "vogais posteriores arredondadas e guturais",
+                "desenvolvimento de consoantes aspiradas em posição inicial",
+                "redução do sistema de casos a dois ou três"
+            ]
+        },
+        {
+            "id": "cauto",
+            "parent_id": "western-garmanic",
+            "description": "Língua Cauta, pertencente ao ramo ocidental do Baixo Garmânico. É marcada por sons guturais proeminentes (fricativas uvulares e faringais) e guarda poucas semelhanças com o Corimês. Inspirada no Franco (Frankish) e nas línguas germânicas ocidentais históricas, apresenta um sistema consonantal rico e uma fonotática que favorece encontros consonantais guturais.",
+            "shared_lexicon_strength": 0.85,
+            "agglutination_strength": 0.55,
+            "distinctive_features": [
+                "fricativas guturais: /χ/, /ɣ/, /ħ/, /ʕ/ (dependendo do dialeto)",
+                "preservação de oclusivas aspiradas em posição inicial de palavra",
+                "desenvolvimento de vogais guturais (e.g., /ɑ/, /ɒ/) sob influência de consoantes faringais",
+                "ordem básica SVO com vestígios de SOV em subordinadas",
+                "sistema de casos reduzido (nominativo, acusativo, genitivo/dativo)",
+                "pouca influência do sistema de classes verbais fortes do proto‑germânico",
+                "vocabulário com substrato de línguas pré‑garmânicas da região ocidental"
+            ]
+        },
+        {
+            "id": "noric",
+            "parent_id": "high-corimean-north",
+            "description": "Ramo Nórico, falado nas regiões montanhosas do norte. Caracteriza-se por uma fonologia mais conservadora, mantendo muitos dos sons do proto‑garmânico e apresentando menos inovações que os outros ramos.",
+            "shared_lexicon_strength": 0.90,
+            "agglutination_strength": 0.85,
+            "distinctive_features": [
+                "preservação de consoantes oclusivas aspiradas em posição inicial",
+                "vogais longas preservadas sem redução",
+                "sistema de casos completo com pouca sincretização",
+                "ordem SOV mais rígida mesmo em subordinadas",
+                "umlaut altamente produtivo e presente em muitos paradigmas",
+                "vocabulário com muitos arcaísmos e poucos empréstimos"
+            ]
         }
     ],
     "intelligibility": {
@@ -560,7 +619,16 @@
         "carminean:transitional-stüberian": 0.92,
         "low-corimean-north:carminean": 0.87,
         "southern-corimean:aidanese": 0.68,
-        "southern-corimean:carminean": 0.72
+        "southern-corimean:carminean": 0.72,
+        "cauto:high-corimean-north": 0.20,
+        "cauto:low-corimean-north": 0.25,
+        "cauto:aidanese": 0.15,
+        "cauto:carminean": 0.18,
+        "noric:high-corimean-north": 0.92,
+        "noric:low-corimean-north": 0.88,
+        "noric:aidanese": 0.85,
+        "noric:carminean": 0.90,
+        "noric:southern-corimean": 0.80
     },
     "intelligibility_factors": {
         "description": "Fatores que afetam a inteligibilidade mútua no continuum garmânico",

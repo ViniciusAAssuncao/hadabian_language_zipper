@@ -1,0 +1,406 @@
+{
+    "id": "general_language",
+    "name": "Língua Geral (Molol Sinfi)",
+    "description": "Língua auxiliar histórica das Ilhas Londórias (514-1110 AH). Caracterizada por fonotática simples, mutações consonantais e uso de preposições conjugadas. Evoluiu como um pidgin estabilizado de dialetos locais (Midoriano Antigo, Canlório, etc.).",
+    "word_order": "SVO",
+    "subordinate_word_order": "SVO",
+    "source_language_order": "SVO",
+    "drop_articles": false,
+    "agglutination_strength": 0.1,
+    "pro_drop": {
+        "enabled": true,
+        "conditions": [
+            "verb_agreement"
+        ]
+    },
+    "aesthetic_profile": {
+        "syllable_count_distribution": {
+            "1": 0.1,
+            "2": 0.6,
+            "3": 0.25,
+            "4": 0.05
+        },
+        "cluster_density": 0.1,
+        "vowel_consonant_ratio": 0.55
+    },
+    "alignment": "nominative-accusative",
+    "global_seed": 8841,
+    "phonotactics": {
+        "vowels": "aeiou",
+        "consonants": "ptkbdgfshmnlrwy",
+        "active_style": "soft_island",
+        "inventory_styles": {
+            "soft_island": {
+                "consonants": "ptkbdgfshmnlrwy",
+                "vowels": "aeiou"
+            }
+        },
+        "syllable_templates": [
+            "CV",
+            "CVC",
+            "V",
+            "VC"
+        ],
+        "min_syllables": 1,
+        "max_syllables": 4,
+        "max_consonant_cluster": 1,
+        "max_vowel_cluster": 1,
+        "forbidden_initial_clusters": [
+            "nt",
+            "mp",
+            "nk",
+            "rt",
+            "lt"
+        ],
+        "forbidden_final_consonants": [
+            "p",
+            "t",
+            "k",
+            "b",
+            "d",
+            "g",
+            "h",
+            "w",
+            "y"
+        ],
+        "epenthesis_vowel": "a",
+        "sonority_hierarchy": {
+            "enabled": true,
+            "scale": {
+                "b": 1,
+                "d": 1,
+                "g": 1,
+                "p": 0,
+                "t": 0,
+                "k": 0,
+                "f": 2,
+                "s": 2,
+                "h": 2,
+                "m": 3,
+                "n": 3,
+                "l": 4,
+                "r": 4,
+                "w": 4,
+                "y": 4
+            },
+            "onset_rules": {
+                "min_distance": 2,
+                "allow_plateau": false
+            }
+        }
+    },
+    "consonant_mutation": {
+        "enabled": true,
+        "rules": [
+            {
+                "name": "Lenição Suave",
+                "description": "Ocorre após artigos definidos e partículas vocálicas. Transforma oclusivas surdas em sonoras e fricativas em aproximantes.",
+                "triggers": {
+                    "words": [
+                        "a",
+                        "o",
+                        "wa",
+                        "ni"
+                    ],
+                    "pos": [
+                        "DET",
+                        "PART"
+                    ]
+                },
+                "mutations": {
+                    "p": "b",
+                    "t": "d",
+                    "k": "g",
+                    "f": "w",
+                    "s": "h",
+                    "m": "w"
+                }
+            },
+            {
+                "name": "Nasalização",
+                "description": "Ocorre quando a palavra anterior termina em 'n' ou 'm'.",
+                "triggers": {
+                    "ending_chars": [
+                        "n",
+                        "m"
+                    ]
+                },
+                "mutations": {
+                    "b": "m",
+                    "d": "n",
+                    "g": "ng",
+                    "p": "m",
+                    "t": "n",
+                    "k": "ng"
+                }
+            }
+        ]
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "fixed",
+        "position": "penultimate",
+        "graphic_accent": false
+    },
+    "adposition_system": {
+        "inflected_prepositions": {
+            "enabled": true,
+            "forms": {
+                "na": {
+                    "1sg": "nami",
+                    "2sg": "nayu",
+                    "3sg": "nata",
+                    "1pl": "nanu",
+                    "2pl": "navu",
+                    "3pl": "nali"
+                },
+                "po": {
+                    "1sg": "pomi",
+                    "2sg": "poyu",
+                    "3sg": "pota",
+                    "1pl": "ponu",
+                    "2pl": "povu",
+                    "3pl": "poli"
+                },
+                "ka": {
+                    "1sg": "kami",
+                    "2sg": "kayu",
+                    "3sg": "kata",
+                    "1pl": "kanu",
+                    "2pl": "kavu",
+                    "3pl": "kali"
+                },
+                "te": {
+                    "1sg": "temi",
+                    "2sg": "teyu",
+                    "3sg": "teta",
+                    "1pl": "tenu",
+                    "2pl": "tevu",
+                    "3pl": "teli"
+                }
+            }
+        },
+        "basic_prepositions": {
+            "em": "na",
+            "de": "ka",
+            "para": "po",
+            "com": "te",
+            "por": "po"
+        }
+    },
+    "pronominal_system": {
+        "independent_pronouns": {
+            "1sg": "mi",
+            "2sg": "yu",
+            "3sg_m": "ta",
+            "3sg_f": "ta",
+            "3sg": "ta",
+            "1pl": "nu",
+            "2pl": "vu",
+            "3pl": "li"
+        }
+    },
+    "tam_system": {
+        "enabled": true,
+        "infer_imperative_from_context": true,
+        "rules": [
+            {
+                "features": [
+                    "VerbForm=Inf"
+                ],
+                "marker": "on",
+                "type": "suffix",
+                "description": "Substantivo Verbal (Forma Nominal) usado no lugar do infinitivo"
+            },
+            {
+                "features": [
+                    "VerbForm=Vnoun"
+                ],
+                "marker": "on",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Past"
+                ],
+                "marker": "pa",
+                "type": "particle_before"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "go",
+                "type": "particle_before"
+            },
+            {
+                "features": [
+                    "Mood=Imp"
+                ],
+                "marker": "le",
+                "type": "particle_before"
+            },
+            {
+                "features": [
+                    "Aspect=Prog"
+                ],
+                "marker": "si",
+                "type": "particle_before"
+            }
+        ]
+    },
+    "gender_system": {
+        "enabled": true,
+        "default": "neutro",
+        "inference": [],
+        "markers": {
+            "neutro": {
+                "targets": [],
+                "marker": "",
+                "position": "suffix"
+            }
+        }
+    },
+    "number_system": {
+        "markers": {
+            "plural": {
+                "marker": "i",
+                "type": "suffix",
+                "pos": [
+                    "NOUN"
+                ]
+            }
+        }
+    },
+    "case_system": {
+        "enabled": false,
+        "preposition_handling": "coexist"
+    },
+    "determiner_system": {
+        "definite_article": {
+            "form": "a",
+            "variants": [],
+            "procliticizes": false
+        },
+        "demonstratives": {
+            "proximal": {
+                "sg_m": "ki",
+                "pl": "kini"
+            },
+            "distal": {
+                "sg_m": "la",
+                "pl": "lani"
+            },
+            "source_mappings": {
+                "proximal": [
+                    "este",
+                    "esta",
+                    "isto",
+                    "esse",
+                    "essa",
+                    "isso"
+                ],
+                "distal": [
+                    "aquele",
+                    "aquela",
+                    "aquilo"
+                ]
+            }
+        }
+    },
+    "functional_particles": {
+        "muito": {
+            "noun_word": "mota",
+            "verb_word": "mota",
+            "adj_word": "mota",
+            "noun_position": "pre_nominal"
+        },
+        "sempre": {
+            "verb_word": "semp",
+            "verb_position": "pre_verbal"
+        },
+        "nunca": {
+            "verb_word": "non",
+            "verb_position": "pre_verbal"
+        },
+        "e": {
+            "noun_word": "ye"
+        },
+        "mas": {
+            "noun_word": "ba"
+        },
+        "ou": {
+            "noun_word": "o"
+        }
+    },
+    "negation_system": {
+        "enabled": true,
+        "strategies": [
+            {
+                "type": "verbal_negation",
+                "marker": "ne",
+                "suffix": ""
+            },
+            {
+                "type": "nominal_negation",
+                "marker": "ne",
+                "suffix": ""
+            }
+        ]
+    },
+    "interrogative_system": {
+        "enabled": true,
+        "question_particles": [
+            {
+                "type": "yes_no",
+                "particle": "ke"
+            }
+        ]
+    },
+    "vocabulary": {
+        "água": "wila",
+        "fogo": "fay",
+        "ar": "hawa",
+        "homem": "man",
+        "mulher": "fana",
+        "criança": "pikin",
+        "casa": "kas",
+        "sol": "sola",
+        "lua": "avun",
+        "comer": "namon",
+        "beber": "bilon",
+        "dormir": "slifon",
+        "falar": "tokon",
+        "ver": "siyon",
+        "saber": "savon",
+        "ser": "bi",
+        "estar": "tad"
+    },
+    "polysemy_rules": {
+        "enabled": true,
+        "merges": {
+            "céu": "alto",
+            "mar": "wila",
+            "lago": "wila",
+            "rio": "wila"
+        }
+    },
+    "false_cognates": {
+        "enabled": true,
+        "natural_confusion_chance": 0.1
+    },
+    "style": {
+        "capitalization": true,
+        "punctuation_map": {
+            ".": ".",
+            ",": ",",
+            "?": "?",
+            "!": "!"
+        },
+        "sentence_terminators": [
+            ".",
+            "!",
+            "?"
+        ]
+    }
+}

@@ -1,0 +1,541 @@
+{
+    "id": "eresseo",
+    "name": "Eresseo Moderno",
+    "native_name": "Hēréssos",
+    "description": "Língua de prestígio do Reino de Eressa, considerada a quinta língua de Hadab. Caracteriza-se por estética 'Erênica', rica composição lexical para fins científicos, declinação fusional complexa e purismo linguístico.",
+    "global_seed": 918273645,
+    "word_order": "SVO",
+    "subordinate_word_order": "SOV",
+    "source_language_order": "SVO",
+    "alignment": "nominative-accusative",
+    "agglutination_strength": 0.15,
+    "cultural_purism": 0.95,
+    "drop_articles": false,
+    "pro_drop": {
+        "enabled": true,
+        "conditions": [
+            "verb_agreement",
+            "emphatic_subject_absent"
+        ]
+    },
+    "aesthetic_profile": {
+        "syllable_count_distribution": {
+            "1": 0.05,
+            "2": 0.35,
+            "3": 0.40,
+            "4": 0.15,
+            "5": 0.05
+        },
+        "cluster_density": 0.6,
+        "vowel_consonant_ratio": 0.55
+    },
+    "phonotactics": {
+        "active_style": "erenic_prestige",
+        "inventory_styles": {
+            "erenic_prestige": {
+                "consonants": "ptkbdgmnlrszθφχψξh",
+                "vowels": "aeiouāēīōūy"
+            }
+        },
+        "vowels": "aeiouāēīōūy",
+        "consonants": "ptkbdgmnlrszθφχψξh",
+        "syllable_templates": [
+            "CV",
+            "CVC",
+            "CCV",
+            "CCVC",
+            "CVCC",
+            "V",
+            "VC"
+        ],
+        "min_syllables": 2,
+        "max_syllables": 5,
+        "forbidden_initial_clusters": [
+            "nm",
+            "mr",
+            "nl",
+            "tl",
+            "dl",
+            "bm"
+        ],
+        "forbidden_final_consonants": [
+            "p",
+            "t",
+            "k",
+            "b",
+            "d",
+            "g",
+            "m",
+            "h",
+            "θ",
+            "φ",
+            "χ"
+        ],
+        "max_consonant_cluster": 3,
+        "epenthesis_vowel": "e",
+        "diphthongs": [
+            "ai",
+            "ei",
+            "oi",
+            "au",
+            "eu",
+            "ou"
+        ],
+        "sonority_hierarchy": {
+            "enabled": true,
+            "scale": {
+                "p": 1,
+                "t": 1,
+                "k": 1,
+                "b": 1,
+                "d": 1,
+                "g": 1,
+                "φ": 2,
+                "θ": 2,
+                "χ": 2,
+                "s": 3,
+                "z": 3,
+                "h": 3,
+                "ψ": 3,
+                "ξ": 3,
+                "m": 4,
+                "n": 4,
+                "l": 5,
+                "r": 5
+            }
+        }
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "weight",
+        "position": "antepenultimate",
+        "graphic_accent": true,
+        "accent_map": {
+            "a": "á",
+            "e": "é",
+            "i": "í",
+            "o": "ó",
+            "u": "ú",
+            "ā": "â",
+            "ē": "ê",
+            "ī": "î",
+            "ō": "ô",
+            "ū": "û"
+        }
+    },
+    "case_system": {
+        "enabled": true,
+        "marker_position": "suffix",
+        "preposition_handling": "coexist",
+        "markers": {
+            "nominative": {
+                "marker": "-os",
+                "type": "suffix",
+                "conditions": [
+                    "masculine",
+                    "singular"
+                ]
+            },
+            "nominative_fem": {
+                "marker": "-a",
+                "type": "suffix",
+                "conditions": [
+                    "feminine",
+                    "singular"
+                ]
+            },
+            "nominative_neut": {
+                "marker": "-on",
+                "type": "suffix",
+                "conditions": [
+                    "neuter",
+                    "singular"
+                ]
+            },
+            "vocative": {
+                "marker": "-e",
+                "type": "suffix",
+                "conditions": [
+                    "masculine",
+                    "singular"
+                ]
+            },
+            "accusative": {
+                "marker": "-on",
+                "type": "suffix",
+                "conditions": [
+                    "masculine",
+                    "singular"
+                ]
+            },
+            "accusative_fem": {
+                "marker": "-an",
+                "type": "suffix",
+                "conditions": [
+                    "feminine",
+                    "singular"
+                ]
+            },
+            "genitive": {
+                "marker": "-io",
+                "type": "suffix"
+            },
+            "dative": {
+                "marker": "-ei",
+                "type": "suffix"
+            }
+        }
+    },
+    "gender_system": {
+        "enabled": true,
+        "genders": [
+            "masculine",
+            "feminine",
+            "neuter"
+        ],
+        "default": "neuter",
+        "inference": [
+            {
+                "suffix": "os",
+                "gender": "masculine"
+            },
+            {
+                "suffix": "as",
+                "gender": "masculine"
+            },
+            {
+                "suffix": "es",
+                "gender": "masculine"
+            },
+            {
+                "suffix": "a",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "ē",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "is",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "on",
+                "gender": "neuter"
+            },
+            {
+                "suffix": "ma",
+                "gender": "neuter"
+            }
+        ],
+        "markers": {
+            "masculine": {
+                "marker": "o",
+                "position": "suffix",
+                "targets": [
+                    "DET",
+                    "ADJ"
+                ]
+            },
+            "feminine": {
+                "marker": "a",
+                "position": "suffix",
+                "targets": [
+                    "DET",
+                    "ADJ"
+                ]
+            },
+            "neuter": {
+                "marker": "on",
+                "position": "suffix",
+                "targets": [
+                    "DET",
+                    "ADJ"
+                ]
+            }
+        }
+    },
+    "tam_system": {
+        "enabled": true,
+        "description": "Sistema complexo com aumento temporal e reduplicação perfeita",
+        "rules": [
+            {
+                "features": [
+                    "Tense=Past"
+                ],
+                "marker": "e-",
+                "type": "prefix",
+                "description": "Aumento silábico para tempos passados"
+            },
+            {
+                "features": [
+                    "Aspect=Perf"
+                ],
+                "marker": "ke-",
+                "type": "prefix",
+                "description": "Reduplicação padrão para perfeito (simplificada)"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "-sō",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Sub"
+                ],
+                "marker": "-ōi",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Opt"
+                ],
+                "marker": "-oim",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Pres",
+                    "Number=Sing",
+                    "Person=1"
+                ],
+                "marker": "-ō",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Pres",
+                    "Number=Sing",
+                    "Person=2"
+                ],
+                "marker": "-eis",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Pres",
+                    "Number=Sing",
+                    "Person=3"
+                ],
+                "marker": "-ei",
+                "type": "suffix"
+            }
+        ]
+    },
+    "compounding": {
+        "enabled": true,
+        "head_position": "final",
+        "linking_elements": {
+            "o": {
+                "after": [
+                    "b",
+                    "d",
+                    "g",
+                    "p",
+                    "t",
+                    "k",
+                    "m",
+                    "n",
+                    "l",
+                    "r",
+                    "s",
+                    "z",
+                    "x"
+                ],
+                "words": []
+            }
+        },
+        "vocabulary": {
+            "biologia": "bioslogos",
+            "astronomia": "astronnomos",
+            "filosofia": "filosofia",
+            "geologia": "kthonlogos",
+            "tecnologia": "tekhnelogos"
+        }
+    },
+    "reduplication": {
+        "enabled": true,
+        "epenthesis_vowel": "e",
+        "rules": [
+            {
+                "features": [
+                    "Aspect=Perf"
+                ],
+                "pos": [
+                    "VERB"
+                ],
+                "method": "first_syllable",
+                "separator": ""
+            }
+        ]
+    },
+    "affix_system": {
+        "enabled": true,
+        "source_suffixes": [
+            {
+                "suffix": "logia",
+                "replacement": "logos",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "mode": "adapt",
+                "priority": 100
+            },
+            {
+                "suffix": "grafia",
+                "replacement": "graphos",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "mode": "adapt",
+                "priority": 100
+            },
+            {
+                "suffix": "ismo",
+                "replacement": "ismos",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "mode": "adapt",
+                "priority": 90
+            },
+            {
+                "suffix": "ista",
+                "replacement": "istēs",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "mode": "adapt",
+                "priority": 90
+            },
+            {
+                "suffix": "iano",
+                "replacement": "eias",
+                "input_pos": "NOUN",
+                "target_pos": "NOUN",
+                "mode": "adapt",
+                "priority": 90
+            }
+        ],
+        "derivation_rules": [
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "agent_doer",
+                "affix": "-tēr",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "verbal_noun",
+                "affix": "-sis",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "NOUN",
+                "type": "abstract_noun",
+                "affix": "-ia",
+                "position": "suffix"
+            }
+        ]
+    },
+    "morphological_derivation": {
+        "enabled": true,
+        "max_depth": 1,
+        "exceptions": [
+            "maçã",
+            "macieira",
+            "sol",
+            "luz"
+        ]
+    },
+    "semantic_fields": {
+        "enabled": true,
+        "manual_groups": {
+            "maçã": "fruta",
+            "macieira": "árvore",
+            "sol": "celeste",
+            "fogo": "elemento",
+            "água": "elemento",
+            "terra": "elemento",
+            "ar": "elemento"
+        }
+    },
+    "polysemy_rules": {
+        "enabled": true,
+        "splits": {
+            "maçã": [
+                {
+                    "target_suffix": "",
+                    "rules": {
+                        "feats": []
+                    }
+                }
+            ],
+            "macieira": [
+                {
+                    "target_suffix": "",
+                    "rules": {
+                        "feats": []
+                    }
+                }
+            ]
+        }
+    },
+    "abstract_concepts": {
+        "enabled": true,
+        "mappings": {
+            "ou": "ihlē",
+            "sou": "ihlē"
+        },
+        "local_overrides": {
+            "maçã": "mēlon",
+            "macieira": "dendron-mēlon"
+        }
+    },
+    "functional_particles": {
+        "muito": {
+            "adj_word": "polys",
+            "adj_position": "pre_nominal"
+        },
+        "não": {
+            "verb_word": "ou",
+            "verb_position": "pre_verbal"
+        },
+        "e": {
+            "noun_word": "kai",
+            "noun_position": "pre_nominal"
+        },
+        "mas": {
+            "noun_word": "alla",
+            "noun_position": "pre_nominal"
+        }
+    },
+    "lexical_registers": {
+        "enabled": true,
+        "registers": [
+            {
+                "name": "acadêmico",
+                "chance": 0.4,
+                "mutation_factor": 0.2,
+                "description": "Uso formal científico, preferência por compostos clássicos"
+            },
+            {
+                "name": "poético",
+                "chance": 0.2,
+                "mutation_factor": 0.5,
+                "description": "Uso arcaico com referências à mitologia de Eressa"
+            }
+        ]
+    },
+    "loanword_policy": {
+        "enabled": true,
+        "modes": {
+            "phonetic_adaptation": 0.2,
+            "calque": 0.7,
+            "semantic_extension": 0.1
+        },
+        "calque_connector": "o"
+    }
+}

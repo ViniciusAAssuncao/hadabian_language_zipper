@@ -1,0 +1,102 @@
+{
+    "culture_id": "rmp_culture",
+    "linked_profile": "rmp",
+    "description": "Sistema onomástico tricameral Hadabiano, focado no coletivo sobre o individual (Angarikiirom, Antitukirom e Domom-min). O sistema é data-driven e suporta configurações agnósticas de gênero.",
+    "formulas": {
+        "cotidiano": [
+            "angarikiirom",
+            "domom_min"
+        ],
+        "formal": [
+            "angarikiirom",
+            "antitukirom",
+            "domom_min"
+        ],
+        "formal_krimlog": [
+            "angarikiirom",
+            "krimlog_connector",
+            "domom_min"
+        ],
+        "completo_krimlog": [
+            "angarikiirom",
+            "hetu_min_connector",
+            "antitukirom",
+            "domom_min"
+        ],
+        "terrestre_tradicional": [
+            "angarikiirom",
+            "patronimico_terrestre"
+        ]
+    },
+    "components_rules": {
+        "angarikiirom": {
+            "generation_strategies": [
+                {
+                    "type": "compound",
+                    "weight": 0.5,
+                    "pool_1": "concept_adjective",
+                    "pool_2": "concept_noun"
+                },
+                {
+                    "type": "verbal_sentence",
+                    "weight": 0.3,
+                    "pattern": [
+                        "concept_verb",
+                        "concept_divine"
+                    ]
+                },
+                {
+                    "type": "abstract_derivation",
+                    "weight": 0.2,
+                    "pool": "concept_noun",
+                    "derivation_type": "abstract_noun"
+                }
+            ],
+            "gender_inflection": false
+        },
+        "antitukirom": {
+            "type": "pool_selection",
+            "pool": "ancestor_names"
+        },
+        "domom_min": {
+            "type": "pool_selection",
+            "pool": "house_names"
+        },
+        "krimlog_connector": {
+            "type": "relational",
+            "connector": "ned",
+            "target": "domom_min"
+        },
+        "hetu_min_connector": {
+            "type": "relational",
+            "connector": "hetu-min",
+            "target": "antitukirom"
+        },
+        "patronimico_terrestre": {
+            "type": "relational",
+            "connector": "bin",
+            "gender_connectors": {
+                "Masculino": "bin",
+                "Feminino": "bint"
+            },
+            "target": "antitukirom"
+        },
+        "rand_concept_noun": {
+            "type": "pool_selection",
+            "pool": "concept_noun"
+        },
+        "rand_concept_divine": {
+            "type": "pool_selection",
+            "pool": "concept_divine"
+        },
+        "rand_concept_adjective": {
+            "type": "pool_selection",
+            "pool": "concept_adjective"
+        }
+    },
+    "phonological_filters": {
+        "force_capitalization": true,
+        "apply_sandhi_between_components": true,
+        "max_length_per_name": 40
+    }
+}

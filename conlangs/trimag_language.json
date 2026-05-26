@@ -1,0 +1,453 @@
+{
+    "id": "trimago",
+    "name": "Trimano",
+    "description": "Língua neoraabica oriental de beleza ímpar, desenvolvida em relativo isolamento nas fronteiras do leste de Aendur. Mantém profunda herança lexical do oeste, mas inovou radicalmente em sua morfologia, adotando o artigo definido enclítico, três gêneros gramaticais e um intrincado sistema de declinações fundido à definitude. O sujeito é frequentemente elíptico, confiando na rica conjugação verbal.",
+    "word_order": "SOV",
+    "subordinate_word_order": "SOV",
+    "source_language_order": "SVO",
+    "drop_articles": true,
+    "alignment": "nominative-accusative",
+    "global_seed": 77491203,
+    "lexical_confluence": {
+        "enabled": true,
+        "base_stability": 24,
+        "strata": [
+            {
+                "source_id": "western_neoraabic",
+                "weight": 76,
+                "type": "inheritance",
+                "mutation_intensity": 0.18,
+                "description": "Substrato massivo do oeste, adaptado à fonologia oriental"
+            }
+        ]
+    },
+    "pro_drop": {
+        "enabled": true,
+        "conditions": [
+            "verb_agreement"
+        ]
+    },
+    "aesthetic_profile": {
+        "syllable_count_distribution": {
+            "1": 0.10,
+            "2": 0.40,
+            "3": 0.35,
+            "4": 0.15
+        },
+        "cluster_density": 0.25,
+        "vowel_consonant_ratio": 0.55
+    },
+    "phonotactics": {
+        "vowels": "aeiouăâî",
+        "consonants": "bcdfghjklmnprsștțvz",
+        "syllable_templates": [
+            "CV",
+            "CVC",
+            "CCV",
+            "V",
+            "VC",
+            "CVCC"
+        ],
+        "min_syllables": 2,
+        "max_syllables": 5,
+        "max_consonant_cluster": 2,
+        "max_vowel_cluster": 2,
+        "forbidden_initial_clusters": [
+            "ștț",
+            "țs",
+            "nț",
+            "rș"
+        ],
+        "forbidden_final_consonants": [
+            "h",
+            "v",
+            "j",
+            "g"
+        ],
+        "epenthesis_vowel": "ă",
+        "diphthongs": [
+            "ea",
+            "oa",
+            "ia",
+            "ie",
+            "ua",
+            "uă"
+        ],
+        "phonological_rules": [
+            {
+                "input": "ti",
+                "output": "ți",
+                "description": "Palatalização de t antes de i"
+            },
+            {
+                "input": "si",
+                "output": "și",
+                "description": "Palatalização de s antes de i"
+            },
+            {
+                "input": "aâ",
+                "output": "â",
+                "description": "Contração vocálica"
+            }
+        ],
+        "sonority_hierarchy": {
+            "enabled": true,
+            "scale": {
+                "p": 1,
+                "t": 1,
+                "k": 1,
+                "ț": 1,
+                "c": 1,
+                "b": 2,
+                "d": 2,
+                "g": 2,
+                "f": 3,
+                "s": 3,
+                "ș": 3,
+                "h": 3,
+                "v": 4,
+                "z": 4,
+                "j": 4,
+                "m": 5,
+                "n": 5,
+                "l": 6,
+                "r": 7
+            },
+            "onset_rules": {
+                "min_distance": 2,
+                "allow_plateau": false,
+                "allow_reversal": false
+            },
+            "coda_rules": {
+                "min_distance": 1,
+                "allow_plateau": false,
+                "allow_reversal": true
+            }
+        }
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "fixed",
+        "position": "penultimate",
+        "graphic_accent": false
+    },
+    "gender_system": {
+        "enabled": true,
+        "default": "masculino",
+        "inference": [
+            {
+                "suffix": "ă",
+                "gender": "feminino"
+            },
+            {
+                "suffix": "a",
+                "gender": "feminino"
+            },
+            {
+                "suffix": "e",
+                "gender": "neutro"
+            },
+            {
+                "suffix": "u",
+                "gender": "masculino"
+            }
+        ],
+        "markers": {
+            "masculino": {
+                "targets": [
+                    "ADJ"
+                ],
+                "marker": "u",
+                "position": "suffix"
+            },
+            "feminino": {
+                "targets": [
+                    "ADJ"
+                ],
+                "marker": "ă",
+                "position": "suffix"
+            },
+            "neutro": {
+                "targets": [
+                    "ADJ"
+                ],
+                "marker": "e",
+                "position": "suffix"
+            }
+        }
+    },
+    "number_system": {
+        "numbers": [
+            "singular",
+            "plural"
+        ],
+        "markers": {
+            "plural": {
+                "marker": "i",
+                "alternatives": [
+                    "e",
+                    "uri"
+                ]
+            }
+        }
+    },
+    "case_system": {
+        "enabled": true,
+        "preposition_handling": "coexist",
+        "marker_position": "suffix",
+        "markers": {
+            "nominative": {
+                "marker": "ul",
+                "type": "suffix",
+                "conditions": [
+                    "definite"
+                ]
+            },
+            "accusative": {
+                "marker": "ul",
+                "type": "suffix",
+                "conditions": [
+                    "definite"
+                ]
+            },
+            "genitive": {
+                "marker": "lui",
+                "type": "suffix",
+                "conditions": [
+                    "definite"
+                ]
+            },
+            "dative": {
+                "marker": "lui",
+                "type": "suffix",
+                "conditions": [
+                    "definite"
+                ]
+            },
+            "vocative": {
+                "marker": "le",
+                "type": "suffix"
+            }
+        },
+        "preposition_case_mapping": {
+            "de": "genitive",
+            "a": "dative",
+            "para": "accusative",
+            "em": "accusative",
+            "com": "accusative"
+        }
+    },
+    "tam_system": {
+        "enabled": true,
+        "infer_imperative_from_context": true,
+        "person_marking": {
+            "enabled": true,
+            "suffixes": {
+                "1sg": "sc",
+                "2sg": "ști",
+                "3sg": "ște",
+                "1pl": "m",
+                "2pl": "ți",
+                "3pl": "sc"
+            }
+        },
+        "rules": [
+            {
+                "features": [
+                    "VerbForm=Inf"
+                ],
+                "marker": "re",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Past"
+                ],
+                "marker": "t",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "vo ",
+                "type": "prefix"
+            },
+            {
+                "features": [
+                    "Mood=Sub"
+                ],
+                "marker": "să ",
+                "type": "particle_before"
+            }
+        ]
+    },
+    "allomorphy": {
+        "enabled": true,
+        "rules": [
+            {
+                "target_word": "ul",
+                "environment": "before_feature",
+                "feature": "feminine_start",
+                "replacement": "a"
+            },
+            {
+                "target_word": "lui",
+                "environment": "before_feature",
+                "feature": "feminine_start",
+                "replacement": "ei"
+            }
+        ],
+        "feature_definitions": {
+            "feminine_start": [
+                "ă",
+                "a"
+            ]
+        }
+    },
+    "determiner_system": {
+        "possessives": {
+            "pronominal_suffixes": false,
+            "independent_forms": {
+                "1sg_m": "meu",
+                "1sg_f": "mea",
+                "2sg_m": "tău",
+                "2sg_f": "ta",
+                "3sg_m": "său",
+                "3sg_f": "sa",
+                "1pl_m": "nostru",
+                "1pl_f": "noastră",
+                "2pl_m": "vostru",
+                "2pl_f": "voastră"
+            }
+        }
+    },
+    "demonstratives": {
+        "enabled": true,
+        "proximal": {
+            "sg_m": "acest",
+            "sg_f": "această",
+            "pl": "acești"
+        },
+        "distal": {
+            "sg_m": "acel",
+            "sg_f": "acea",
+            "pl": "acei"
+        }
+    },
+    "affix_system": {
+        "enabled": true,
+        "derivation_rules": [
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "affix": "esc",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "ADV",
+                "affix": "ește",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "agent",
+                "affix": "tor",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "NOUN",
+                "type": "abstract",
+                "affix": "itate",
+                "position": "suffix"
+            }
+        ]
+    },
+    "degree_system": {
+        "enabled": true,
+        "source_rules": [
+            {
+                "type": "diminutive",
+                "suffix": "zinho",
+                "replacement": ""
+            },
+            {
+                "type": "diminutive",
+                "suffix": "zinha",
+                "replacement": ""
+            },
+            {
+                "type": "augmentative",
+                "suffix": "zão",
+                "replacement": ""
+            },
+            {
+                "type": "superlative",
+                "suffix": "íssimo",
+                "replacement": ""
+            }
+        ],
+        "rules": {
+            "diminutive": {
+                "affix": "uț",
+                "position": "suffix"
+            },
+            "augmentative": {
+                "affix": "oi",
+                "position": "suffix"
+            },
+            "superlative": {
+                "affix": "prea ",
+                "position": "prefix"
+            }
+        }
+    },
+    "lexical_registers": {
+        "enabled": true,
+        "registers": [
+            {
+                "name": "Eclesiástico",
+                "chance": 0.15,
+                "mutation_factor": 1,
+                "description": "Uso de consoantes oclusivas mais duras e vocabulário arcano."
+            },
+            {
+                "name": "Coloquial",
+                "chance": 0.35,
+                "mutation_factor": 2,
+                "description": "Síncope de vogais átonas e fusão de preposições."
+            }
+        ]
+    },
+    "semantic_fields": {
+        "enabled": true,
+        "manual_groups": {
+            "sangue": "vitalidade",
+            "floresta": "mistério",
+            "lobo": "protetor",
+            "noite": "oculto"
+        }
+    },
+    "polysemy_rules": {
+        "enabled": true,
+        "merges": {
+            "alma": "sangue",
+            "sombra": "noite",
+            "estrangeiro": "inimigo"
+        }
+    },
+    "style": {
+        "capitalization": true,
+        "punctuation_map": {
+            ".": ".",
+            ",": ",",
+            ";": ";",
+            ":": ":",
+            "!": "!",
+            "?": "?"
+        }
+    }
+}

@@ -1,0 +1,492 @@
+{
+    "id": "esperantido_conhab",
+    "name": "Esperantido (Réplica Estrutural do Esperanto)",
+    "description": "Uma conlang aglutinante e extremamente regular, baseada na gramática do Esperanto. Utiliza o motor de Sandhi e TAM do ConHab para forçar as terminações de classes gramaticais (-o, -a, -e, -i) e aplica as marcações corretas de plural (-j) e acusativo (-n).",
+    "word_order": "SVO",
+    "subordinate_word_order": "SVO",
+    "source_language_order": "SVO",
+    "drop_articles": false,
+    "pro_drop": {
+        "enabled": false
+    },
+    "alignment": "nominative-accusative",
+    "global_seed": 1887,
+    "aesthetic_profile": {
+        "syllable_count_distribution": {
+            "1": 0.1,
+            "2": 0.5,
+            "3": 0.3,
+            "4": 0.1
+        },
+        "cluster_density": 0.3,
+        "vowel_consonant_ratio": 0.5
+    },
+    "phonotactics": {
+        "vowels": "aeiou",
+        "consonants": "bcĉdfgĝhĥjĵklmnprsŝtvz",
+        "syllable_templates": [
+            "CV",
+            "CVC",
+            "V",
+            "VC",
+            "CCV",
+            "CVCC"
+        ],
+        "min_syllables": 1,
+        "max_syllables": 4,
+        "forbidden_final_consonants": [
+            "b",
+            "c",
+            "ĉ",
+            "d",
+            "f",
+            "g",
+            "ĝ",
+            "h",
+            "ĥ",
+            "ĵ",
+            "k",
+            "l",
+            "m",
+            "p",
+            "r",
+            "ŝ",
+            "t",
+            "v",
+            "z"
+        ],
+        "diphthongs": [
+            "aŭ",
+            "eŭ",
+            "aj",
+            "ej",
+            "oj",
+            "uj"
+        ],
+        "sandhi": {
+            "enabled": true,
+            "rules": [
+                {
+                    "pattern": "([aeiou])as\\b",
+                    "replacement": "as",
+                    "description": "Evita acúmulo de vogais no presente"
+                },
+                {
+                    "pattern": "([aeiou])is\\b",
+                    "replacement": "is",
+                    "description": "Evita acúmulo de vogais no passado"
+                },
+                {
+                    "pattern": "([aeiou])os\\b",
+                    "replacement": "os",
+                    "description": "Evita acúmulo de vogais no futuro"
+                },
+                {
+                    "pattern": "([aeiou])us\\b",
+                    "replacement": "us",
+                    "description": "Evita acúmulo de vogais no condicional"
+                },
+                {
+                    "pattern": "([aeiou])u\\b",
+                    "replacement": "u",
+                    "description": "Evita acúmulo de vogais no imperativo"
+                },
+                {
+                    "pattern": "([aeiou])i\\b",
+                    "replacement": "i",
+                    "description": "Evita acúmulo de vogais no infinitivo"
+                },
+                {
+                    "pattern": "([bcĉdfgĝhĥjĵklmnprsŝtvz])j\\b",
+                    "replacement": "\\1oj",
+                    "description": "Força a desinência nominal -o antes do plural se a raiz terminar em consoante"
+                },
+                {
+                    "pattern": "([bcĉdfgĝhĥjĵklmnprsŝtvz])n\\b",
+                    "replacement": "\\1on",
+                    "description": "Força a desinência nominal -o antes do acusativo se a raiz terminar em consoante"
+                },
+                {
+                    "pattern": "([bcĉdfgĝhĥjĵklmnprsŝtvz])jn\\b",
+                    "replacement": "\\1ojn",
+                    "description": "Força a desinência nominal -o antes do plural acusativo"
+                }
+            ]
+        }
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "fixed",
+        "position": "penultimate",
+        "graphic_accent": false
+    },
+    "case_system": {
+        "enabled": true,
+        "preposition_handling": "coexist",
+        "markers": {
+            "nominative": {
+                "marker": "",
+                "type": "suffix"
+            },
+            "accusative": {
+                "marker": "n",
+                "type": "suffix"
+            }
+        },
+        "marker_position": "suffix"
+    },
+    "number_system": {
+        "numbers": [
+            "singular",
+            "plural"
+        ],
+        "markers": {
+            "plural": {
+                "marker": "j",
+                "position": "suffix"
+            }
+        }
+    },
+    "tam_system": {
+        "enabled": true,
+        "infer_imperative_from_context": true,
+        "rules": [
+            {
+                "features": [
+                    "VerbForm=Inf"
+                ],
+                "marker": "i",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Pres"
+                ],
+                "marker": "as",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Past"
+                ],
+                "marker": "is",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "os",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Cnd"
+                ],
+                "marker": "us",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Imp"
+                ],
+                "marker": "u",
+                "type": "suffix"
+            }
+        ]
+    },
+    "copula_system": {
+        "enabled": true,
+        "copulas": [
+            {
+                "type": "present_default",
+                "form": "estas"
+            },
+            {
+                "conditions": [
+                    "Tense=Past"
+                ],
+                "form": "estis"
+            },
+            {
+                "conditions": [
+                    "Tense=Fut"
+                ],
+                "form": "estos"
+            },
+            {
+                "conditions": [
+                    "Mood=Cnd"
+                ],
+                "form": "estus"
+            },
+            {
+                "conditions": [
+                    "Mood=Imp"
+                ],
+                "form": "estu"
+            },
+            {
+                "conditions": [
+                    "VerbForm=Inf"
+                ],
+                "form": "esti"
+            }
+        ]
+    },
+    "negation_system": {
+        "enabled": true,
+        "strategies": [
+            {
+                "type": "verbal_negation",
+                "marker": "ne",
+                "position": "particle_before"
+            },
+            {
+                "type": "nominal_negation",
+                "marker": "ne",
+                "position": "particle_before"
+            }
+        ]
+    },
+    "interrogative_system": {
+        "enabled": true,
+        "question_particles": [
+            {
+                "type": "yes_no",
+                "particle": "ĉu"
+            }
+        ]
+    },
+    "determiner_system": {
+        "definite_article": {
+            "form": "la"
+        },
+        "demonstratives": {
+            "proximal": {
+                "sg_m": "ĉi tiu",
+                "sg_f": "ĉi tiu",
+                "pl": "ĉi tiuj"
+            },
+            "distal": {
+                "sg_m": "tiu",
+                "sg_f": "tiu",
+                "pl": "tiuj"
+            }
+        },
+        "possessives": {
+            "independent_forms": {
+                "1sg": "mia",
+                "2sg": "via",
+                "3sg": "lia",
+                "3sg_m": "lia",
+                "3sg_f": "ŝia",
+                "1pl": "nia",
+                "2pl": "via",
+                "3pl": "ilia"
+            }
+        }
+    },
+    "degree_system": {
+        "enabled": true,
+        "source_rules": [
+            {
+                "type": "diminutive",
+                "suffix": "inho",
+                "replacement": "o"
+            },
+            {
+                "type": "diminutive",
+                "suffix": "inha",
+                "replacement": "a"
+            },
+            {
+                "type": "augmentative",
+                "suffix": "ão",
+                "replacement": "o"
+            },
+            {
+                "type": "superlative",
+                "suffix": "íssimo",
+                "replacement": "o"
+            }
+        ],
+        "rules": {
+            "diminutive": {
+                "affix": "et",
+                "position": "suffix"
+            },
+            "augmentative": {
+                "affix": "eg",
+                "position": "suffix"
+            },
+            "superlative": {
+                "affix": "plej",
+                "position": "particle_before"
+            }
+        }
+    },
+    "affix_system": {
+        "enabled": true,
+        "derivation_rules": [
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "affix": "a",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "ADV",
+                "affix": "e",
+                "position": "suffix"
+            },
+            {
+                "type": "feminine",
+                "affix": "in",
+                "position": "suffix"
+            },
+            {
+                "type": "opposite",
+                "affix": "mal",
+                "position": "prefix"
+            },
+            {
+                "type": "place",
+                "affix": "ej",
+                "position": "suffix"
+            },
+            {
+                "type": "person",
+                "affix": "ist",
+                "position": "suffix"
+            },
+            {
+                "type": "tool",
+                "affix": "il",
+                "position": "suffix"
+            }
+        ]
+    },
+    "compounding": {
+        "enabled": true,
+        "head_position": "final",
+        "linking_elements": {
+            "o": {
+                "after": [
+                    "b",
+                    "c",
+                    "ĉ",
+                    "d",
+                    "f",
+                    "g",
+                    "ĝ",
+                    "h",
+                    "ĥ",
+                    "j",
+                    "ĵ",
+                    "k",
+                    "l",
+                    "m",
+                    "n",
+                    "p",
+                    "r",
+                    "s",
+                    "ŝ",
+                    "t",
+                    "v",
+                    "z"
+                ]
+            }
+        }
+    },
+    "polysemy_rules": {
+        "enabled": true,
+        "merges": {
+            "ser": "esti",
+            "estar": "esti",
+            "ter": "havi",
+            "fazer": "fari"
+        }
+    },
+    "vocabulary": {
+        "eu": "mi",
+        "tu": "vi",
+        "você": "vi",
+        "ele": "li",
+        "ela": "ŝi",
+        "nós": "ni",
+        "eles": "ili",
+        "elas": "ili",
+        "isso": "ĝi",
+        "meu": "mia",
+        "minha": "mia",
+        "seu": "via",
+        "sua": "via",
+        "nosso": "nia",
+        "o": "la",
+        "a": "la",
+        "os": "la",
+        "as": "la",
+        "um": "unu",
+        "uma": "unu",
+        "de": "de",
+        "em": "en",
+        "para": "por",
+        "com": "kun",
+        "por": "per",
+        "sobre": "sur",
+        "até": "ĝis",
+        "e": "kaj",
+        "mas": "sed",
+        "ou": "aŭ",
+        "que": "ke",
+        "se": "se",
+        "porque": "ĉar",
+        "como": "kiel",
+        "quando": "kiam",
+        "onde": "kie",
+        "quem": "kiu",
+        "qual": "kiu",
+        "que (pronome)": "kio",
+        "muito": "tre",
+        "mais": "pli",
+        "sim": "jes",
+        "não": "ne",
+        "olá": "saluton",
+        "adeus": "ĝis",
+        "obrigado": "dankon"
+    },
+    "style": {
+        "capitalization": true,
+        "punctuation_map": {
+            ".": ".",
+            "!": "!",
+            "?": "?",
+            ",": ",",
+            ";": ";",
+            ":": ":"
+        },
+        "sentence_terminators": [
+            ".",
+            "!",
+            "?"
+        ],
+        "secondary_terminators": [
+            ":",
+            ";"
+        ]
+    },
+    "consonant_mutation": {
+        "enabled": false
+    },
+    "vowel_harmony": {
+        "enabled": false
+    },
+    "gender_system": {
+        "enabled": false
+    },
+    "clitic_ordering": {
+        "enabled": false
+    }
+}

@@ -11,15 +11,16 @@
         "strata": [
             {
                 "source_id": "corimean_modern",
-                "weight": 0.68,
+                "weight": 68,
                 "type": "inheritance",
                 "mutation_intensity": 0.15,
                 "description": "Base lexical herdada do Alto Corimês"
             },
             {
-                "language_id": "aidanese",
-                "weight": 0.32,
-                "type": "contact",
+                "source_id": "aidanese",
+                "weight": 32,
+                "type": "inheritance",
+                "mutation_intensity": 0.10,
                 "description": "Influência forte do Aidanês por contato e evolução paralela"
             }
         ]
