@@ -1,6 +1,8 @@
 import tkinter as tk
 from tkinter import ttk, filedialog, messagebox
 import csv
+import json
+from pathlib import Path
 
 
 class IntelligibilityTab(ttk.Frame):
@@ -9,7 +11,9 @@ class IntelligibilityTab(ttk.Frame):
         self.colors = colors
         self.engine = engine
         self.engines_dict = {}
+        self.file_map = {}
         self.setup_ui()
+        self.load_available_conlangs()
 
     def setup_ui(self):
         self.paned = ttk.PanedWindow(self, orient=tk.HORIZONTAL)
@@ -25,13 +29,13 @@ class IntelligibilityTab(ttk.Frame):
         ttk.Label(sel_frame, text="Conlang A (Base):", foreground=self.colors.get(
             "fg_secondary", "black")).pack(anchor="w")
         self.cb_conlang_a = ttk.Combobox(
-            sel_frame, state="readonly", font=("Segoe UI", 10))
+            sel_frame, state="readonly", font=("Segoe UI", 10), foreground="black")
         self.cb_conlang_a.pack(fill=tk.X, pady=(0, 10))
 
         ttk.Label(sel_frame, text="Conlang B (Alvo):", foreground=self.colors.get(
             "fg_secondary", "black")).pack(anchor="w")
         self.cb_conlang_b = ttk.Combobox(
-            sel_frame, state="readonly", font=("Segoe UI", 10))
+            sel_frame, state="readonly", font=("Segoe UI", 10), foreground="black")
         self.cb_conlang_b.pack(fill=tk.X, pady=(0, 15))
 
         self.btn_compare = ttk.Button(
@@ -115,7 +119,7 @@ class IntelligibilityTab(ttk.Frame):
         ttk.Label(toolbar_dict, text="Filtrar por similaridade mínima (%):", foreground=self.colors.get(
             "fg_secondary", "black")).pack(side=tk.LEFT, padx=(0, 5))
         self.spin_filter = ttk.Spinbox(
-            toolbar_dict, from_=0, to=100, width=5, command=self.apply_dict_filter)
+            toolbar_dict, from_=0, to=100, width=5, command=self.apply_dict_filter, foreground="black")
         self.spin_filter.set(0)
         self.spin_filter.pack(side=tk.LEFT)
         self.spin_filter.bind("<Return>", lambda e: self.apply_dict_filter())
@@ -149,9 +153,22 @@ class IntelligibilityTab(ttk.Frame):
 
         self.current_word_data = []
 
-    def update_conlang_lists(self, engines_dict):
-        self.engines_dict = engines_dict
-        names = list(self.engines_dict.keys())
+    def load_available_conlangs(self):
+        path = Path("./conlangs")
+        path.mkdir(exist_ok=True)
+        files = sorted([f for f in path.glob("*.json")])
+        names = []
+        self.file_map = {}
+        for f in files:
+            try:
+                with open(f, 'r', encoding='utf-8') as file:
+                    data = json.load(file)
+                    name = data.get('metadata', {}).get(
+                        'name', data.get('id', f.stem))
+                    names.append(name)
+                    self.file_map[name] = f
+            except:
+                pass
         self.cb_conlang_a['values'] = names
         self.cb_conlang_b['values'] = names
         if len(names) >= 2:
@@ -160,6 +177,10 @@ class IntelligibilityTab(ttk.Frame):
         elif len(names) == 1:
             self.cb_conlang_a.set(names[0])
             self.cb_conlang_b.set(names[0])
+
+    def update_conlang_lists(self, engines_dict):
+        self.engines_dict.update(engines_dict)
+        self.load_available_conlangs()
 
     def levenshtein_distance(self, s1, s2):
         if len(s1) < len(s2):
@@ -285,8 +306,18 @@ class IntelligibilityTab(ttk.Frame):
         if not name_a or not name_b:
             return
 
-        engine_a = self.engines_dict.get(name_a)
-        engine_b = self.engines_dict.get(name_b)
+        def get_engine(name):
+            if name in self.engines_dict:
+                return self.engines_dict[name]
+            if hasattr(self, 'file_map') and name in self.file_map:
+                from engine import OriginalLanguageEngine
+                eng = OriginalLanguageEngine(str(self.file_map[name]))
+                self.engines_dict[name] = eng
+                return eng
+            return None
+
+        engine_a = get_engine(name_a)
+        engine_b = get_engine(name_b)
 
         if not engine_a or not engine_b:
             return
@@ -307,7 +338,7 @@ class IntelligibilityTab(ttk.Frame):
         self.current_word_data = []
 
         total_lemmas = len(shared_lemmas)
-        step = max(1, total_lemmas // 100)
+        step = max(1, total_lemmas // 100) if total_lemmas > 0 else 1
 
         for i, lemma in enumerate(shared_lemmas):
             wa = self._extract_word(cache_a[lemma])

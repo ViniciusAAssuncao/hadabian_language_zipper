@@ -1,0 +1,548 @@
+{
+    "id": "proto_phimrinvala",
+    "name": "Pṃimriinvala Rātmūkas",
+    "linguistic_family": "phimri_trunk",
+    "description": "Língua clássica e altamente culta, de estética inspirada no Sânscrito e linguagens védicas. É caracterizada por possuir regras sonoras rigorosas (Sandhi) que mesclam palavras para fluidez perfeita, uma gramática sintética rica com oito casos nominais, três números (incluindo o dual) e três gêneros. Seus sons são suaves, melodiosos e precisos, evitando guturais ásperas em favor de palatais e dentais.",
+    "word_order": "SOV",
+    "subordinate_word_order": "SOV",
+    "source_language_order": "SVO",
+    "alignment": "nominative-accusative",
+    "drop_articles": true,
+    "pro_drop": {
+        "enabled": true,
+        "conditions": [
+            "verb_agreement"
+        ]
+    },
+    "aesthetic_profile": {
+        "syllable_count_distribution": {
+            "1": 0.05,
+            "2": 0.35,
+            "3": 0.40,
+            "4": 0.20
+        },
+        "cluster_density": 0.3,
+        "vowel_consonant_ratio": 0.65
+    },
+    "global_seed": 108108,
+    "phonotactics": {
+        "vowels": "aāiīuūeo",
+        "consonants": "pbtdkgcjmnñlrvyśṣsḥṃ",
+        "syllable_templates": [
+            "CV",
+            "CVV",
+            "CVC",
+            "CCV",
+            "CCVC",
+            "V",
+            "VC"
+        ],
+        "min_syllables": 2,
+        "max_syllables": 5,
+        "max_consonant_cluster": 2,
+        "max_vowel_cluster": 2,
+        "forbidden_initial_clusters": [
+            "ṇm",
+            "ñr",
+            "lr",
+            "ṇl"
+        ],
+        "forbidden_final_consonants": [
+            "c",
+            "j",
+            "y",
+            "v"
+        ],
+        "epenthesis_vowel": "a",
+        "diphthongs": [
+            "ai",
+            "au"
+        ],
+        "sonority_hierarchy": {
+            "enabled": true,
+            "scale": {
+                "p": 1,
+                "b": 1,
+                "t": 1,
+                "d": 1,
+                "k": 1,
+                "g": 1,
+                "c": 1,
+                "j": 1,
+                "s": 2,
+                "ś": 2,
+                "ṣ": 2,
+                "ḥ": 2,
+                "m": 3,
+                "n": 3,
+                "ñ": 3,
+                "ṃ": 3,
+                "l": 4,
+                "r": 4,
+                "v": 5,
+                "y": 5,
+                "a": 6,
+                "ā": 6,
+                "i": 6,
+                "ī": 6,
+                "u": 6,
+                "ū": 6,
+                "e": 6,
+                "o": 6
+            }
+        },
+        "sandhi": {
+            "enabled": true,
+            "cross_word_boundary": true,
+            "rules": [
+                {
+                    "pattern": "a\\s+a",
+                    "replacement": "ā",
+                    "description": "Fusão de vogais idênticas curtas (a + a = ā)"
+                },
+                {
+                    "pattern": "ā\\s+a",
+                    "replacement": "ā",
+                    "description": "Fusão de longa e curta (ā + a = ā)"
+                },
+                {
+                    "pattern": "a\\s+ā",
+                    "replacement": "ā",
+                    "description": "Fusão de curta e longa (a + ā = ā)"
+                },
+                {
+                    "pattern": "i\\s+i",
+                    "replacement": "ī",
+                    "description": "Fusão de vogais (i + i = ī)"
+                },
+                {
+                    "pattern": "u\\s+u",
+                    "replacement": "ū",
+                    "description": "Fusão de vogais (u + u = ū)"
+                },
+                {
+                    "pattern": "a\\s+i",
+                    "replacement": "e",
+                    "description": "Guna Sandhi (a + i = e)"
+                },
+                {
+                    "pattern": "a\\s+u",
+                    "replacement": "o",
+                    "description": "Guna Sandhi (a + u = o)"
+                },
+                {
+                    "pattern": "i\\s+([aāuūeo])",
+                    "replacement": "y\\1",
+                    "description": "Yan Sandhi (i + V = yV)"
+                },
+                {
+                    "pattern": "u\\s+([aāiīeo])",
+                    "replacement": "v\\1",
+                    "description": "Yan Sandhi (u + V = vV)"
+                },
+                {
+                    "pattern": "as\\s+([bdgjlrvymnñ])",
+                    "replacement": "o \\1",
+                    "description": "Visarga Sandhi (as + vozeada = o)"
+                },
+                {
+                    "pattern": "s\\s+([bdgjlrvymnñ])",
+                    "replacement": "r \\1",
+                    "description": "Visarga Sandhi genérico (s + vozeada = r)"
+                },
+                {
+                    "pattern": "m\\s+([pbtdkgcjśṣs])",
+                    "replacement": "ṃ \\1",
+                    "description": "Anusvara Sandhi (m no final torna-se nasal pura ṃ antes de consoante)"
+                },
+                {
+                    "pattern": "t\\s+c",
+                    "replacement": "c c",
+                    "description": "Assimilação de T antes de C"
+                },
+                {
+                    "pattern": "t\\s+j",
+                    "replacement": "j j",
+                    "description": "Assimilação de T antes de J"
+                }
+            ]
+        }
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "weight",
+        "position": "penultimate",
+        "graphic_accent": false
+    },
+    "case_system": {
+        "enabled": true,
+        "preposition_handling": "replace",
+        "marker_position": "suffix",
+        "markers": {
+            "nominative": {
+                "marker": "",
+                "type": "suffix"
+            },
+            "accusative": {
+                "marker": "am",
+                "type": "suffix"
+            },
+            "instrumental": {
+                "marker": "el",
+                "type": "suffix"
+            },
+            "dative": {
+                "marker": "aya",
+                "type": "suffix"
+            },
+            "ablative": {
+                "marker": "ad",
+                "type": "suffix"
+            },
+            "genitive": {
+                "marker": "avya",
+                "type": "suffix"
+            },
+            "locative": {
+                "marker": "i",
+                "type": "suffix"
+            },
+            "vocative": {
+                "marker": "e",
+                "type": "suffix"
+            }
+        }
+    },
+    "gender_system": {
+        "enabled": true,
+        "genders": [
+            "masculine",
+            "feminine",
+            "neuter"
+        ],
+        "default": "masculine",
+        "inference": [
+            {
+                "suffix": "ā",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "ī",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "am",
+                "gender": "neuter"
+            },
+            {
+                "suffix": "as",
+                "gender": "masculine"
+            }
+        ],
+        "markers": {
+            "masculine": {
+                "targets": [
+                    "ADJ",
+                    "DET"
+                ],
+                "marker": "as",
+                "position": "suffix"
+            },
+            "feminine": {
+                "targets": [
+                    "ADJ",
+                    "DET"
+                ],
+                "marker": "ā",
+                "position": "suffix"
+            },
+            "neuter": {
+                "targets": [
+                    "ADJ",
+                    "DET"
+                ],
+                "marker": "am",
+                "position": "suffix"
+            }
+        }
+    },
+    "number_system": {
+        "numbers": [
+            "singular",
+            "dual",
+            "plural"
+        ],
+        "default": "singular",
+        "markers": {
+            "singular": {
+                "marker": ""
+            },
+            "plural": {
+                "marker": "ās"
+            }
+        },
+        "dual_markers": {
+            "nominative": "āu",
+            "accusative": "āu",
+            "instrumental": "vyām",
+            "dative": "vyām",
+            "ablative": "vyām",
+            "genitive": "os",
+            "locative": "os"
+        },
+        "broken_plurals": {
+            "enabled": false
+        }
+    },
+    "tam_system": {
+        "enabled": true,
+        "infer_imperative_from_context": true,
+        "person_marking": {
+            "enabled": true,
+            "position": "suffix",
+            "suffixes": {
+                "1sg": "mi",
+                "2sg": "si",
+                "3sg": "ti",
+                "1du": "vas",
+                "2du": "thas",
+                "3du": "tas",
+                "1pl": "mas",
+                "2pl": "tha",
+                "3pl": "nti"
+            }
+        },
+        "rules": [
+            {
+                "features": [
+                    "Tense=Past"
+                ],
+                "marker": "a",
+                "type": "prefix",
+                "description": "Augmento de passado (Aoristo/Imperfeito)"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "vyat",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Imp"
+                ],
+                "marker": "tu",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Sub"
+                ],
+                "marker": "yād",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Voice=Pass"
+                ],
+                "marker": "ya",
+                "type": "suffix"
+            }
+        ]
+    },
+    "pronominal_system": {
+        "independent_pronouns": {
+            "1sg": "avam",
+            "2sg": "tvim",
+            "3sg_m": "sar",
+            "3sg_f": "sā",
+            "3sg_n": "tat",
+            "1du": "āvām",
+            "2du": "yuvām",
+            "1pl": "vayam",
+            "2pl": "yuyam",
+            "3pl_m": "te",
+            "3pl_f": "tās",
+            "3pl_n": "tāni"
+        }
+    },
+    "determiner_system": {
+        "demonstratives": {
+            "proximal": {
+                "sg_m": "eṣas",
+                "sg_f": "eṣā",
+                "sg_n": "etad",
+                "pl": "ete"
+            },
+            "distal": {
+                "sg_m": "sar",
+                "sg_f": "sā",
+                "sg_n": "tat",
+                "pl": "te"
+            }
+        }
+    },
+    "copula_system": {
+        "enabled": true,
+        "copulas": [
+            {
+                "type": "present_default",
+                "form": "ar",
+                "conjugates": true
+            },
+            {
+                "type": "becoming",
+                "form": "vū",
+                "conjugates": true,
+                "conditions": [
+                    "change_of_state"
+                ]
+            }
+        ]
+    },
+    "compounding": {
+        "enabled": true,
+        "productivity": "very_high",
+        "head_position": "final",
+        "linking_elements": {
+            "": {
+                "after": [
+                    "a",
+                    "ā",
+                    "i",
+                    "ī",
+                    "u",
+                    "ū",
+                    "m",
+                    "s",
+                    "t"
+                ],
+                "description": "As palavras se unem diretamente para que o sistema de Sandhi faça as fusões fonéticas naturalmente, marca registrada do estilo Sânscrito."
+            }
+        }
+    },
+    "degree_system": {
+        "enabled": true,
+        "rules": {
+            "comparative": {
+                "affix": "tara",
+                "position": "suffix"
+            },
+            "superlative": {
+                "affix": "tama",
+                "position": "suffix"
+            }
+        }
+    },
+    "negation_system": {
+        "enabled": true,
+        "strategies": [
+            {
+                "type": "verbal_negation",
+                "marker": "nā",
+                "position": "before"
+            },
+            {
+                "type": "emphatic_negation",
+                "marker": "mā",
+                "position": "before",
+                "description": "Negação proibitiva (usada no imperativo)"
+            }
+        ]
+    },
+    "interrogative_system": {
+        "enabled": true,
+        "question_particles": [
+            {
+                "type": "yes_no",
+                "particle": "kim"
+            }
+        ],
+        "detection_rules": {
+            "wh_words": [
+                "kim",
+                "kutra",
+                "kadā",
+                "katham",
+                "kimartham"
+            ]
+        }
+    },
+    "affix_system": {
+        "enabled": true,
+        "derivation_rules": [
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "agent",
+                "affix": "tar",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "type": "relational",
+                "affix": "ika",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "NOUN",
+                "type": "abstract_noun",
+                "affix": "tva",
+                "position": "suffix"
+            }
+        ]
+    },
+    "functional_particles": {
+        "e": {
+            "noun_word": "kā",
+            "noun_position": "post_nominal",
+            "verb_word": "kā",
+            "verb_position": "post_verbal"
+        },
+        "como": {
+            "noun_word": "vai",
+            "noun_position": "post_nominal"
+        }
+    },
+    "style": {
+        "capitalization": true,
+        "punctuation_map": {
+            ".": ".",
+            "!": "!!",
+            "?": "?",
+            ",": ",",
+            ";": ";"
+        },
+        "sentence_terminators": [
+            ".",
+            "!!",
+            "?"
+        ]
+    },
+    "lexical_registers": {
+        "enabled": true,
+        "registers": [
+            {
+                "name": "vedic_archaic",
+                "chance": 0.15,
+                "mutation_factor": 0.3,
+                "description": "Registro litúrgico arcaico, preservando encontros consonantais pesados e o dual rigidamente."
+            },
+            {
+                "name": "classical",
+                "chance": 0.60,
+                "mutation_factor": 0.8,
+                "description": "A linguagem padrão dos épicos e da corte."
+            },
+            {
+                "name": "prakrit_colloquial",
+                "chance": 0.25,
+                "mutation_factor": 1.5,
+                "description": "Registro coloquial (estilo Prácrito), onde o Sandhi e terminações são simplificados."
+            }
+        ]
+    }
+}

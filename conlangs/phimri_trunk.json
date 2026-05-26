@@ -1,0 +1,155 @@
+{
+    "family_id": "phimri_trunk",
+    "name": "Tronco Linguístico Phimri",
+    "description": "Tronco de línguas do Sudeste de Oü em Hadab, dotadas de forte estética Indo-Ariana Antiga (Sânscrito/Védico). O tronco caracteriza-se pela coesão surpreendente e baixa divergência vernácula ao longo dos milênios. As línguas Phimri possuem fonética suave e polida, grande aversão a consoantes guturais, um uso sistemático de regras de junção (Sandhi) e extensa capacidade aglutinante por composição. Possuem uma forte estrutura gramatical com três gêneros, três números e uma morfologia complexa infusa.",
+    "diachronic_settings": {
+        "default_divergence_factor": 0.12,
+        "max_synonym_variants": 2
+    },
+    "proto_languages": [
+        {
+            "id": "proto_phimrinvala",
+            "name": "Proto-Phimrinvala",
+            "shared_lexicon_strength": 0.88,
+            "agglutination_strength": 0.85,
+            "shared_phonotactics": {
+                "vowels": "aāiīuūeo",
+                "consonants": "pbtdkgcjmnñlrvyśṣsḥṃ",
+                "sandhi": {
+                    "enabled": true,
+                    "cross_word_boundary": true,
+                    "rules": [
+                        {
+                            "pattern": "a\\s+a",
+                            "replacement": "ā"
+                        },
+                        {
+                            "pattern": "a\\s+i",
+                            "replacement": "e"
+                        },
+                        {
+                            "pattern": "a\\s+u",
+                            "replacement": "o"
+                        },
+                        {
+                            "pattern": "i\\s+([aāuūeo])",
+                            "replacement": "y\\1"
+                        },
+                        {
+                            "pattern": "u\\s+([aāiīeo])",
+                            "replacement": "v\\1"
+                        },
+                        {
+                            "pattern": "uz\\s+([bdgjlrvymnñ])",
+                            "replacement": "o \\1"
+                        },
+                        {
+                            "pattern": "m\\s+([pbtdkgcjśṣs])",
+                            "replacement": "ṃ \\1"
+                        },
+                        {
+                            "pattern": "t\\s+c",
+                            "replacement": "c c"
+                        }
+                    ]
+                }
+            },
+            "gender_system": {
+                "enabled": true,
+                "genders": [
+                    "masculine",
+                    "feminine",
+                    "neuter"
+                ],
+                "default": "masculine",
+                "inference": [
+                    {
+                        "suffix": "ā",
+                        "gender": "feminine"
+                    },
+                    {
+                        "suffix": "ī",
+                        "gender": "feminine"
+                    },
+                    {
+                        "suffix": "im",
+                        "gender": "neuter"
+                    },
+                    {
+                        "suffix": "uz",
+                        "gender": "masculine"
+                    }
+                ]
+            },
+            "lexical_registers_defaults": {
+                "enabled": true,
+                "registers": [
+                    {
+                        "name": "vedic_archaic",
+                        "chance": 0.15,
+                        "mutation_factor": 0.2,
+                        "description": "Registro litúrgico arcaico, rígido na preservação do número dual e encontros consonantais pesados."
+                    },
+                    {
+                        "name": "classical",
+                        "chance": 0.60,
+                        "mutation_factor": 0.5,
+                        "description": "Linguagem padrão e erudita da corte. Preserva o Sandhi impecável e declinações completas."
+                    },
+                    {
+                        "name": "prakrit_colloquial",
+                        "chance": 0.25,
+                        "mutation_factor": 1.2,
+                        "description": "Registro coloquial. Há flexibilização nas regras de junção de palavras e simplificação nas desinências."
+                    }
+                ]
+            }
+        }
+    ],
+    "branches": [
+        {
+            "id": "phimri_sul",
+            "parent_id": "proto_phimrinvala",
+            "name": "Ramo Phimri do Sul",
+            "description": "O ramo mais prestigioso e conservador. Engloba as línguas Cincinêsa, Lahoriana e Ambhaat. Apresenta enorme estabilidade e baixíssima distância com o vernáculo original.",
+            "shared_lexicon_strength": 0.94,
+            "dialect_variation": 0.05,
+            "agglutination_strength": 0.88
+        },
+        {
+            "id": "phimri_norte",
+            "parent_id": "proto_phimrinvala",
+            "name": "Ramo Phimri do Norte",
+            "description": "Desenvolvido em regiões mais isoladas. A retenção gramatical é alta, embora apresente um distanciamento léxico ligeiramente maior que o ramo Sul.",
+            "shared_lexicon_strength": 0.85,
+            "dialect_variation": 0.12,
+            "agglutination_strength": 0.82
+        },
+        {
+            "id": "phimri_leste",
+            "parent_id": "proto_phimrinvala",
+            "name": "Ramo Phimri do Leste",
+            "description": "Ramo marcado por maior cadência vocálica nas planícies. Conserva a alta cultura gramatical e estética melodiosa das raízes.",
+            "shared_lexicon_strength": 0.88,
+            "dialect_variation": 0.10,
+            "agglutination_strength": 0.80
+        },
+        {
+            "id": "phimri_oeste",
+            "parent_id": "proto_phimrinvala",
+            "name": "Ramo Phimri do Oeste",
+            "description": "Sendo a zona de maior comércio de Hadab, é o ramo mais divergente e mais suscetível a empréstimos estrangeiros, possuindo um Sandhi simplificado.",
+            "shared_lexicon_strength": 0.78,
+            "dialect_variation": 0.18,
+            "agglutination_strength": 0.75,
+            "loanword_policy_defaults": {
+                "enabled": true,
+                "modes": {
+                    "phonetic_adaptation": 0.70,
+                    "calque": 0.20,
+                    "semantic_extension": 0.10
+                }
+            }
+        }
+    ]
+}

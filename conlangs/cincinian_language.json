@@ -1,0 +1,437 @@
+{
+    "id": "cincinesa",
+    "name": "Cincina",
+    "family_node": "phimri_sul",
+    "linguistic_family": "phimri_trunk",
+    "description": "Língua descendente do Ramo Sul do tronco Phimri. A língua Cincinêsa preserva a elegância e sonoridade suave do vernáculo antigo (Proto-Phimrinvala), com grande conservadorismo léxico (98% de retenção), mas sua gramática passou por um drástico processo de simplificação ao longo dos milênios. O número dual desapareceu, os oito casos nominais foram reduzidos a cinco, e as desinências sofreram mutações orgânicas, conferindo-lhe uma estética próxima ao Hindi moderno e aos Prácritos antigos.",
+    "word_order": "SOV",
+    "subordinate_word_order": "SOV",
+    "source_language_order": "SVO",
+    "alignment": "nominative-accusative",
+    "drop_articles": true,
+    "pro_drop": {
+        "enabled": true,
+        "conditions": [
+            "verb_agreement"
+        ]
+    },
+    "aesthetic_profile": {
+        "syllable_count_distribution": {
+            "1": 0.10,
+            "2": 0.45,
+            "3": 0.35,
+            "4": 0.10
+        },
+        "cluster_density": 0.15,
+        "vowel_consonant_ratio": 0.70
+    },
+    "global_seed": 404040,
+    "phonotactics": {
+        "vowels": "aāiīuūeo",
+        "consonants": "pbtdkgcjmnñlrvyśsh",
+        "syllable_templates": [
+            "CV",
+            "CVV",
+            "CVC",
+            "V",
+            "VC"
+        ],
+        "min_syllables": 1,
+        "max_syllables": 4,
+        "max_consonant_cluster": 2,
+        "max_vowel_cluster": 2,
+        "forbidden_initial_clusters": [
+            "ṇm",
+            "ñr",
+            "lr",
+            "ṇl"
+        ],
+        "forbidden_final_consonants": [
+            "c",
+            "j",
+            "y",
+            "v",
+            "ś",
+            "h",
+            "b",
+            "d",
+            "g"
+        ],
+        "epenthesis_vowel": "a",
+        "diphthongs": [
+            "ai",
+            "au"
+        ],
+        "phonological_rules": [
+            {
+                "input": "as$",
+                "output": "o",
+                "register": null
+            },
+            {
+                "input": "am$",
+                "output": "an",
+                "register": null
+            },
+            {
+                "input": "ṣ",
+                "output": "s",
+                "register": null
+            },
+            {
+                "input": "rC",
+                "output": "CC",
+                "register": "prakrit_colloquial"
+            }
+        ],
+        "sandhi": {
+            "enabled": true,
+            "cross_word_boundary": true,
+            "rules": [
+                {
+                    "pattern": "a\\s+a",
+                    "replacement": "ā"
+                },
+                {
+                    "pattern": "a\\s+i",
+                    "replacement": "e"
+                },
+                {
+                    "pattern": "a\\s+u",
+                    "replacement": "o"
+                },
+                {
+                    "pattern": "i\\s+([aāuūeo])",
+                    "replacement": "y\\1"
+                },
+                {
+                    "pattern": "u\\s+([aāiīeo])",
+                    "replacement": "v\\1"
+                },
+                {
+                    "pattern": "o\\s+a",
+                    "replacement": "o"
+                },
+                {
+                    "pattern": "n\\s+([pbtdkgcj])",
+                    "replacement": "ṃ \\1"
+                }
+            ]
+        }
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "weight",
+        "position": "penultimate",
+        "graphic_accent": false
+    },
+    "case_system": {
+        "enabled": true,
+        "preposition_handling": "replace",
+        "marker_position": "suffix",
+        "markers": {
+            "nominative": {
+                "marker": "",
+                "type": "suffix"
+            },
+            "accusative": {
+                "marker": "n",
+                "type": "suffix"
+            },
+            "dative": {
+                "marker": "ya",
+                "type": "suffix"
+            },
+            "genitive": {
+                "marker": "so",
+                "type": "suffix"
+            },
+            "locative": {
+                "marker": "e",
+                "type": "suffix"
+            }
+        }
+    },
+    "gender_system": {
+        "enabled": true,
+        "genders": [
+            "masculine",
+            "feminine",
+            "neuter"
+        ],
+        "default": "masculine",
+        "inference": [
+            {
+                "suffix": "ā",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "ī",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "an",
+                "gender": "neuter"
+            },
+            {
+                "suffix": "o",
+                "gender": "masculine"
+            }
+        ],
+        "markers": {
+            "masculine": {
+                "targets": [
+                    "ADJ",
+                    "DET"
+                ],
+                "marker": "o",
+                "position": "suffix"
+            },
+            "feminine": {
+                "targets": [
+                    "ADJ",
+                    "DET"
+                ],
+                "marker": "ā",
+                "position": "suffix"
+            },
+            "neuter": {
+                "targets": [
+                    "ADJ",
+                    "DET"
+                ],
+                "marker": "an",
+                "position": "suffix"
+            }
+        }
+    },
+    "number_system": {
+        "numbers": [
+            "singular",
+            "plural"
+        ],
+        "default": "singular",
+        "markers": {
+            "singular": {
+                "marker": ""
+            },
+            "plural": {
+                "marker": "vi"
+            }
+        },
+        "broken_plurals": {
+            "enabled": false
+        }
+    },
+    "tam_system": {
+        "enabled": true,
+        "infer_imperative_from_context": true,
+        "person_marking": {
+            "enabled": true,
+            "position": "suffix",
+            "suffixes": {
+                "1sg": "m",
+                "2sg": "s",
+                "3sg": "e",
+                "1pl": "mo",
+                "2pl": "ta",
+                "3pl": "nt"
+            }
+        },
+        "rules": [
+            {
+                "features": [
+                    "Tense=Past"
+                ],
+                "marker": "a",
+                "type": "prefix"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "va",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Imp"
+                ],
+                "marker": "tu",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Voice=Pass"
+                ],
+                "marker": "ya",
+                "type": "suffix"
+            }
+        ]
+    },
+    "pronominal_system": {
+        "independent_pronouns": {
+            "1sg": "mai",
+            "2sg": "tu",
+            "3sg_m": "so",
+            "3sg_f": "sā",
+            "3sg_n": "ta",
+            "1pl": "ham",
+            "2pl": "tum",
+            "3pl_m": "te",
+            "3pl_f": "tā",
+            "3pl_n": "tān"
+        }
+    },
+    "determiner_system": {
+        "demonstratives": {
+            "proximal": {
+                "sg_m": "yo",
+                "sg_f": "yā",
+                "sg_n": "yan",
+                "pl": "ye"
+            },
+            "distal": {
+                "sg_m": "vo",
+                "sg_f": "vā",
+                "sg_n": "van",
+                "pl": "ve"
+            }
+        }
+    },
+    "copula_system": {
+        "enabled": true,
+        "copulas": [
+            {
+                "type": "present_default",
+                "form": "ho",
+                "conjugates": true
+            },
+            {
+                "type": "becoming",
+                "form": "bhu",
+                "conjugates": true,
+                "conditions": [
+                    "change_of_state"
+                ]
+            }
+        ]
+    },
+    "compounding": {
+        "enabled": true,
+        "productivity": "high",
+        "head_position": "final",
+        "linking_elements": {
+            "": {
+                "after": [
+                    "a",
+                    "ā",
+                    "i",
+                    "ī",
+                    "u",
+                    "ū",
+                    "n",
+                    "s"
+                ],
+                "description": "Fusão direta via Sandhi Cincinês."
+            }
+        }
+    },
+    "degree_system": {
+        "enabled": true,
+        "rules": {
+            "comparative": {
+                "affix": "tar",
+                "position": "suffix"
+            },
+            "superlative": {
+                "affix": "tam",
+                "position": "suffix"
+            }
+        }
+    },
+    "negation_system": {
+        "enabled": true,
+        "strategies": [
+            {
+                "type": "verbal_negation",
+                "marker": "nā",
+                "position": "before"
+            },
+            {
+                "type": "emphatic_negation",
+                "marker": "mā",
+                "position": "before"
+            }
+        ]
+    },
+    "interrogative_system": {
+        "enabled": true,
+        "question_particles": [
+            {
+                "type": "yes_no",
+                "particle": "ci"
+            }
+        ],
+        "detection_rules": {
+            "wh_words": [
+                "ci",
+                "caha",
+                "cadā",
+                "camo"
+            ]
+        }
+    },
+    "affix_system": {
+        "enabled": true,
+        "derivation_rules": [
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "agent",
+                "affix": "vāla",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "type": "relational",
+                "affix": "ic",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "NOUN",
+                "type": "abstract_noun",
+                "affix": "tā",
+                "position": "suffix"
+            }
+        ]
+    },
+    "lexical_confluence": {
+        "enabled": true,
+        "base_stability": 2,
+        "strata": [
+            {
+                "source_id": "proto_phmimrinv_language",
+                "weight": 98,
+                "mutation_intensity": 0.4
+            }
+        ]
+    },
+    "style": {
+        "capitalization": true,
+        "punctuation_map": {
+            ".": ".",
+            "!": "!",
+            "?": "?",
+            ",": ",",
+            ";": ";"
+        },
+        "sentence_terminators": [
+            ".",
+            "!",
+            "?"
+        ]
+    }
+}
