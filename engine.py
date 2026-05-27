@@ -799,8 +799,7 @@ class OriginalLanguageEngine:
         self.topicalization_handler = TopicalizationHandler(self.profile)
         self.focus_handler = FocusStructureHandler(self.profile)
         self.vowel_harmony_handler = VowelHarmonyHandler(self.profile)
-        self.affix_handler = AffixHandler(
-            self.profile, self.vowel_harmony_handler)
+        self.affix_handler = AffixHandler(self.profile)
         self.degree_handler = DegreeHandler(
             self.profile, self.vowel_harmony_handler)
         self.tam_handler = TAMHandler(self.profile)
@@ -822,10 +821,8 @@ class OriginalLanguageEngine:
             self.profile, self.phonology_handler)
         self.broken_plural_handler = BrokenPluralHandler(
             self.profile, self.phonology_handler)
-        self.dual_handler = DualHandler(
-            self.profile, self.phonology_handler)
-        self.construct_state_handler = ConstructStateHandler(
-            self.profile, self.gender_handler)
+        self.dual_handler = DualHandler(self.profile, self.phonology_handler)
+        self.construct_state_handler = ConstructStateHandler(self.profile)
         self.sun_letter_handler = SunLetterHandler(self.profile)
         self.sandhi_handler = SandhiHandler(self.profile)
         self.negation_handler = NegationHandler(self.profile)
@@ -849,7 +846,6 @@ class OriginalLanguageEngine:
         self.vocabulary_override = self.profile.get('vocabulary', {})
         self.load_word_cache()
         self.processing_stack = set()
-
         self.gramataki_manager = GramatakiManager(self.profile, self)
 
     def generate_gramataki_candidates(self, meaning: str, options: Dict) -> List[Dict]:
@@ -861,14 +857,12 @@ class OriginalLanguageEngine:
     def get_source_engine(self, source_id: str) -> Optional['OriginalLanguageEngine']:
         if source_id in self.source_engines:
             return self.source_engines[source_id]
-
         possible_paths = [
             Path(f"{source_id}.json"),
             Path(f"./conlangs/{source_id}.json"),
             Path(f"../conlangs/{source_id}.json"),
             Path(f"cache/{source_id}.json")
         ]
-
         for p in possible_paths:
             if p.exists():
                 try:
@@ -877,7 +871,6 @@ class OriginalLanguageEngine:
                     return new_engine
                 except Exception:
                     pass
-
         cache_path = Path(f"cache/{source_id}_words.json")
         if cache_path.exists():
             class DummyEngine:
@@ -893,9 +886,7 @@ class OriginalLanguageEngine:
                             return entry.get('default', lemma)
                         return str(entry)
                     return lemma
-
             return DummyEngine(cache_path)
-
         return None
 
     def _load_and_merge_family(self, family_path: Path):
@@ -1005,39 +996,29 @@ class OriginalLanguageEngine:
     def generate_compound(self, lemmas: List[str]) -> str:
         if not lemmas:
             return ""
-
         words = []
         for lemma in lemmas:
             word = self._get_word_form(lemma, tags=['compound_part'])
             words.append(word)
-
         compound_word = self.compounding_handler.construct_compound(
             words, self)
-
         if self.sandhi_handler.enabled:
             compound_word = self.sandhi_handler.apply_sandhi(compound_word)
-
         return compound_word
 
     def suggest_compounds(self, lemmas: List[str]) -> List[Dict]:
         if not lemmas:
             return []
-
         comp_config = self.profile.get('compounding', {})
         if not comp_config.get('enabled', False):
             return []
-
         words = [self._get_word_form(l, tags=['compound_part'])
                  for l in lemmas]
-
         suggestions = []
-
         primary_word = ""
         linking_rules = comp_config.get('linking_elements', {})
-
         components_processed = []
         rule_description = []
-
         for i, word in enumerate(words):
             components_processed.append(word)
             if i < len(words) - 1:
@@ -1054,22 +1035,18 @@ class OriginalLanguageEngine:
                     if linker:
                         break
                 components_processed.append(linker)
-
         raw_compound = "".join(components_processed)
         if self.sandhi_handler.enabled:
             processed = self.sandhi_handler.apply_sandhi(raw_compound)
         else:
             processed = raw_compound
-
         desc = "Regra de Ligação" if rule_description else "Concatenação Padrão"
         if rule_description:
             desc += f" ({', '.join(rule_description)})"
-
         suggestions.append({
             "word": processed,
             "desc": desc
         })
-
         raw_direct = "".join(words)
         if raw_direct != raw_compound:
             if self.sandhi_handler.enabled:
@@ -1080,7 +1057,6 @@ class OriginalLanguageEngine:
                 "word": proc_direct,
                 "desc": "Justaposição Direta"
             })
-
         if "s" in linking_rules and "s" not in components_processed:
             alt_components = []
             for i, word in enumerate(words):
@@ -1097,17 +1073,14 @@ class OriginalLanguageEngine:
                     "word": proc_s,
                     "desc": "Ligação Genitiva (-s)"
                 })
-
         return suggestions
 
     def _get_word_form(self, lemma: str, tags: List[str] = None, force_word: str = None, meta: Dict = None, pos: str = None, derivation_depth: int = 0, word_form: str = None, skip_cache: bool = False) -> str:
         lemma = lemma.lower().strip()
-
         if lemma in self.vocabulary_override:
             return self.vocabulary_override[lemma]
         if lemma.lower() in self.vocabulary_override:
             return self.vocabulary_override[lemma.lower()]
-
         if lemma in self.processing_stack:
             return self._generate_deterministic_word(lemma, depth=100, skip_cache=skip_cache)
         self.processing_stack.add(lemma)
@@ -1117,23 +1090,19 @@ class OriginalLanguageEngine:
                     lemma, self, word_form=word_form, pos=pos, skip_cache=skip_cache)
                 if res and res[2].get('origin') == 'mapping_table_surface':
                     return res[0]
-
             if pos == 'ADP':
                 basic_preps = self.profile.get(
                     'adposition_system', {}).get('basic_prepositions', {})
                 if lemma in basic_preps:
                     return basic_preps[lemma]
-
             if pos in {'PRON', 'DET'}:
                 possessives = self.profile.get('determiner_system', {}).get(
                     'possessives', {}).get('independent_forms', {})
                 pos_lemmas = self.profile.get('determiner_system', {}).get(
                     'possessives', {}).get('possessive_lemmas', {})
-
                 target_lemma = pos_lemmas.get(lemma)
                 if target_lemma and target_lemma in possessives:
                     return possessives[target_lemma]
-
             entry = self.word_cache.get(lemma)
             if not entry and force_word:
                 entry = {
@@ -1159,13 +1128,11 @@ class OriginalLanguageEngine:
                                     return syn.get('word', entry.get('default'))
                     return entry.get('default')
                 return str(entry)
-
             concept_result = self.concept_handler.resolve_concept(
                 lemma, self, word_form=word_form, pos=pos, skip_cache=skip_cache)
             if concept_result:
                 word, c_type, c_meta = concept_result
                 return self._get_word_form(lemma, tags=['concept'], force_word=word, meta=c_meta, skip_cache=skip_cache)
-
             if self.root_handler.enabled and (pos == 'VERB' or pos == 'NOUN'):
                 root = self.root_handler.generate_root(lemma)
                 pattern_def = self.root_handler.get_binyan_by_meaning('basic')
@@ -1192,10 +1159,9 @@ class OriginalLanguageEngine:
                     if not skip_cache:
                         self.word_cache[lemma] = entry
                     return generated_word
-
             if self.affix_handler.morph_derivation_enabled:
                 derived_word = self.affix_handler.try_derive_from_source(
-                    lemma, pos, self, current_depth=derivation_depth, skip_cache=skip_cache)
+                    lemma, pos, self, current_depth=derivation_depth, skip_cache=skip_cache, harmony_handler=self.vowel_harmony_handler)
                 if derived_word:
                     if self.special_mechanics_handler.enabled:
                         derived_word = self.special_mechanics_handler.apply_mechanics(
@@ -1237,16 +1203,12 @@ class OriginalLanguageEngine:
             'sentence_terminators', ['.', '!', '?']))
         all_terminators.update(self.profile.get('style', {}).get(
             'secondary_terminators', [':', ';']))
-
         last_content_word_str = None
         last_content_func = None
-
         for sent_idx, sent_data in enumerate(functions_info):
             ordered_functions = sent_data['functions']
-
             ordered_functions, idiom_absorbed_indices = self.idiom_manager.process_functions(
                 ordered_functions)
-
             translated_words = []
             transitivity_map = self.transitivity_analyzer.analyze(
                 ordered_functions)
@@ -1261,10 +1223,8 @@ class OriginalLanguageEngine:
                     if func['pos'] in {'NOUN', 'PROPN'}:
                         if self.construct_state_handler.is_construct_head(func, ordered_functions):
                             construct_heads_indices.add(func['index'])
-
             absorbed_indices = set()
             absorbed_indices.update(idiom_absorbed_indices)
-
             clitic_map = {}
             if self.clitic_handler.enabled:
                 clitic_map, clitic_absorbed = self.clitic_handler.analyze_clitics(
@@ -1295,23 +1255,19 @@ class OriginalLanguageEngine:
                 inflected_preps_map, prep_absorbed = self.preposition_handler.analyze_inflections(
                     ordered_functions, self)
                 absorbed_indices.update(prep_absorbed)
-
             compound_map = {}
             if self.compounding_handler.enabled:
                 compound_map, compound_absorbed = self.compounding_handler.apply_compounding(
                     ordered_functions, self)
                 absorbed_indices.update(compound_absorbed)
-
             for i, func in enumerate(ordered_functions):
                 if func['index'] in absorbed_indices:
                     continue
-
                 if func.get('pos') == 'IDIOM' or func.get('_fixed'):
                     translated_words.append(func['word'])
                     last_content_word_str = func['word']
                     last_content_func = func
                     continue
-
                 if 'mwt' in func and self.concept_handler.enabled:
                     mwt = func['mwt']
                     span_indices = set(mwt['span_indices'])
@@ -1333,7 +1289,6 @@ class OriginalLanguageEngine:
                                 last_content_word_str = word
                                 last_content_func = func
                                 continue
-
                 orig_word = func.get("word", "")
                 lemma = func.get("lemma", "")
                 pos = func.get("pos", "")
@@ -1342,11 +1297,9 @@ class OriginalLanguageEngine:
                 deprel = func.get("deprel", "")
                 is_named_entity = func.get("named_entity", False)
                 manual_tags = func.get("manual_tags", [])
-
                 clean_word_lower = self._clean_word(orig_word).lower()
                 raw_lemma = lemma if lemma else clean_word_lower
                 raw_lemma = raw_lemma.lower()
-
                 is_mapped = False
                 mapping_res = None
                 if self.concept_handler.enabled:
@@ -1354,31 +1307,25 @@ class OriginalLanguageEngine:
                         raw_lemma, self, word_form=clean_word_lower, pos=pos)
                     if mapping_res:
                         is_mapped = True
-
                 if preposition_handling == 'none' and pos == 'ADP' and self.profile.get('case_system', {}).get('enabled', False):
                     continue
                 elif preposition_handling == 'replace' and pos == 'ADP' and not is_mapped and self.profile.get('case_system', {}).get('enabled', False):
                     continue
-
                 should_drop_article = False
                 if self.profile.get('drop_articles', False):
                     is_det_pos = (pos == 'DET')
                     is_det_rel = (deprel == 'det')
-
                     if is_det_pos or is_det_rel:
                         f_feats = func.get('feats', '_')
                         word_lower = orig_word.lower()
                         if 'Definite=Def' in f_feats or 'PronType=Art' in f_feats or word_lower in {'o', 'a', 'os', 'as'}:
                             if 'PronType=Prs' not in f_feats and 'PronType=Dem' not in f_feats:
                                 should_drop_article = True
-
                 if should_drop_article:
                     continue
-
                 clean_word_lower = self._clean_word(orig_word).lower()
                 raw_lemma = lemma if lemma else clean_word_lower
                 raw_lemma = raw_lemma.lower()
-
                 if pos == 'PUNCT':
                     mapped_punct = punctuation_map.get(orig_word, orig_word)
                     if orig_word in hoistable_terminators:
@@ -1386,14 +1333,12 @@ class OriginalLanguageEngine:
                         continue
                     translated_words.append(mapped_punct)
                     continue
-
                 if ignore_digits and pos == 'NUM':
                     if re.search(r'\d', orig_word):
                         translated_words.append(orig_word)
                         last_content_word_str = orig_word
                         last_content_func = func
                         continue
-
                 is_copula_dep = (deprel == 'cop')
                 skip_copula_handler = False
                 if is_mapped and is_copula_dep:
@@ -1401,7 +1346,6 @@ class OriginalLanguageEngine:
                         skip_copula_handler = True
                     else:
                         skip_copula_handler = True
-
                 if self.copula_handler.enabled and is_copula_dep and not skip_copula_handler:
                     copula_form = self.copula_handler.get_copula_form(
                         func, ordered_functions, self)
@@ -1415,7 +1359,6 @@ class OriginalLanguageEngine:
                     last_content_word_str = copula_form
                     last_content_func = func
                     continue
-
                 if syntactic_func in {SyntacticFunction.QUANTIFIER, SyntacticFunction.VERB_PARTICLE, SyntacticFunction.INTENSIFIER}:
                     mapping = self.functional_config.get(raw_lemma, {})
                     translated_word = ""
@@ -1437,39 +1380,30 @@ class OriginalLanguageEngine:
                         last_content_word_str = translated_word
                         last_content_func = func
                         continue
-
                 if pos == 'DET' and self.construct_state_handler.enabled and self.construct_state_handler.suppress_article:
                     head_idx = func.get('dependencies', [-1])[0]
                     if head_idx in construct_heads_indices:
                         continue
-
                 degree_type = None
                 if self.degree_handler.enabled:
                     degree_type = self.degree_handler.detect_degree(
                         clean_word_lower, raw_lemma, feats)
-
                 base_lemma_for_translation = raw_lemma
                 if degree_type:
                     base_lemma_for_translation = self.degree_handler.get_base_lemma(
                         clean_word_lower, raw_lemma, degree_type, feats)
-
                 if self.polysemy_handler.enabled:
                     base_lemma_for_translation = self.polysemy_handler.resolve_lemma(
                         base_lemma_for_translation, func)
-
                 target_lemma = base_lemma_for_translation
                 current_pos = pos
                 translated_root = None
                 context_tags = manual_tags if manual_tags else []
-
                 if self.lexical_registers.get('enabled', False):
                     pass
-
                 current_form = ""
-
                 if is_mapped and mapping_res:
                     current_form = mapping_res[0]
-
                 if not current_form:
                     if self.demonstrative_handler.enabled and self.demonstrative_handler.is_demonstrative(func):
                         current_form = self.demonstrative_handler.get_form(
@@ -1497,14 +1431,11 @@ class OriginalLanguageEngine:
                         translated_root = self._get_word_form(
                             target_lemma, context_tags, pos=current_pos, word_form=clean_word_lower)
                         current_form = translated_root
-
                 if func['index'] in compound_map:
                     current_form = compound_map[func['index']]
-
                 if degree_type:
                     current_form = self.degree_handler.apply_degree(
                         current_form, degree_type)
-
                 if self.gender_handler.enabled and (pos in {'ADJ', 'DET', 'VERB'} or syntactic_func in {SyntacticFunction.MODIFIER, SyntacticFunction.COMPLEMENT}):
                     deps = func.get('dependencies', [])
                     head_idx = deps[0] if deps else -1
@@ -1523,122 +1454,93 @@ class OriginalLanguageEngine:
                                     head_conlang_word)
                                 current_form = self.gender_handler.apply_agreement(
                                     current_form, head_gender, pos)
-
                 if self.broken_plural_handler.enabled:
                     current_form = self.broken_plural_handler.apply_plural(
-                        current_form, feats, current_pos
-                    )
-
+                        current_form, feats, current_pos)
                 if self.dual_handler.enabled:
                     current_form = self.dual_handler.apply_dual(
-                        current_form, feats, deprel, current_pos
-                    )
-
+                        current_form, feats, deprel, current_pos)
                 if self.construct_state_handler.enabled and func['index'] in construct_heads_indices:
                     current_form = self.construct_state_handler.apply_construct_morphology(
-                        current_form, func)
-
+                        current_form, func, self.gender_handler)
                 if func['index'] in possessive_suffixes_map:
                     suffix = possessive_suffixes_map[func['index']]
                     current_form = f"{current_form}{suffix}"
-
                 is_topic = False
                 if topic_enabled and topic_idx is not None:
                     if func['index'] == topic_idx:
                         is_topic = True
-
                 is_focus = False
                 if focus_enabled:
                     if syntactic_func == SyntacticFunction.OBJECT:
                         is_focus = True
-
                 apply_case = True
                 if is_focus and suppress_case_on_focus:
                     apply_case = False
-
                 if apply_case and func['index'] not in compound_map:
                     is_transitive = transitivity_map.get(func['index'], False)
                     current_form = self.syntax_engine.case_morphology.apply_case(
                         current_form, syntactic_func, self.syntax_engine.word_order, deprel, clause_transitivity=is_transitive, func_data=func, all_functions=ordered_functions)
-
                 if is_topic and topic_marker:
                     current_form = f"{current_form} {topic_marker}"
-
                 if is_focus and object_focus_marker:
                     current_form = f"{current_form} {object_focus_marker}"
-
                 effective_feats = feats
                 if is_focus:
                     effective_feats = f"{effective_feats}|Focus=Yes"
-
                 if self.tam_handler.enabled and (pos in {'VERB', 'AUX'} or 'Tense=' in feats or 'Mood=' in feats or 'Aspect=' in feats or 'VerbForm=' in feats):
                     tam_feats = effective_feats
                     current_form = self.tam_handler.apply_tam(
                         current_form, tam_feats, func, ordered_functions)
-
                 is_negated, trigger_idx, neg_strategy = self.negation_handler.detect_negation(
                     func, ordered_functions)
-
                 clitic_handled_neg = False
                 if self.clitic_handler.enabled and func['index'] in clitic_map:
                     if 'neg' in self.clitic_handler.order and clitic_map[func['index']].get('neg'):
                         clitic_handled_neg = True
-
                 if is_negated and not clitic_handled_neg:
                     current_form = self.negation_handler.apply_negation(
                         current_form, neg_strategy)
-
                 if self.clitic_handler.enabled and func['index'] in clitic_map:
                     current_form = self.clitic_handler.apply_clitics(
                         current_form, func['index'], clitic_map)
-
                 if self.reduplication_handler.enabled:
                     current_form = self.reduplication_handler.apply_reduplication(
                         current_form, effective_feats, pos=current_pos)
-
                 if self.stress_handler.enabled:
                     current_form = self.stress_handler.apply_stress(
                         current_form)
-
                 if self.pharyngealization_handler.enabled:
                     current_form = self.pharyngealization_handler.apply_effect(
                         current_form)
-
                 if self.mutation_handler.enabled:
                     prev_word = last_content_word_str
                     current_form = self.mutation_handler.apply_mutation(
                         current_form, prev_word, last_content_func)
-
                 if is_named_entity:
                     current_form = current_form.capitalize()
-
                 if orig_word[0].isupper() and pos == 'PROPN':
                     current_form = current_form.capitalize()
-
                 if func['index'] in inflected_preps_map:
                     translated_root = inflected_preps_map[func['index']]
                     current_form = translated_root
-
                 translated_words.append(current_form)
                 last_content_word_str = current_form
                 last_content_func = func
-
                 if self.sun_letter_handler.enabled and len(translated_words) > 1 and last_content_func:
                     if last_content_func.get('pos') == 'DET':
                         prev_word = translated_words[-2]
                         assimilated_prev = self.sun_letter_handler.assimilate(
                             prev_word, current_form)
                         translated_words[-2] = assimilated_prev
-
             if sentence_terminator:
                 translated_words.append(sentence_terminator)
-
             if is_question and self.interrogative_handler.enabled:
                 particle = self.interrogative_handler.get_particle(q_type)
                 if particle:
                     translated_words.insert(0, particle)
-                    meta_config = self.profile.get('interrogative_system', {}).get(
-                        'particle_metadata', {})
+                    meta_config = self.profile.get(
+                        'interrogative_system', {}).get('particle_metadata', {})
                     particle_meta = {
                         'word': particle,
                         'lemma': particle,
@@ -1649,7 +1551,6 @@ class OriginalLanguageEngine:
                         'dependencies': []
                     }
                     ordered_functions.insert(0, particle_meta)
-
             if capitalization_enabled and translated_words:
                 force_capitalization = True
                 for idx, word in enumerate(translated_words):
@@ -1664,31 +1565,24 @@ class OriginalLanguageEngine:
                         force_capitalization = True
                     else:
                         force_capitalization = False
-
             if self.allomorphy_handler.enabled:
                 translated_words = self.allomorphy_handler.apply_allomorphy(
                     translated_words)
-
             functions_for_glue = []
             for func in ordered_functions:
                 if func['index'] not in absorbed_indices:
                     functions_for_glue.append(func)
-
             final_sentence_tokens = self.syntax_engine._glue_tokens(
                 translated_words, functions_for_glue)
-
             if final_sentence_tokens:
                 if capitalization_enabled:
                     first = final_sentence_tokens[0]
                     if first:
                         final_sentence_tokens[0] = first[0].upper() + first[1:]
-
             final_str = ' '.join(final_sentence_tokens)
             if self.sandhi_handler.enabled:
                 final_str = self.sandhi_handler.apply_sandhi(final_str)
-
             final_sentences.append(final_str)
-
         self.save_word_cache()
         final_output = ' '.join(final_sentences)
         final_output = polish_output(
@@ -1776,7 +1670,6 @@ class OriginalLanguageEngine:
             if hasattr(engine, 'save_word_cache') and not skip_cache:
                 engine.save_word_cache()
             return word
-
         rng = random.Random(self.global_seed + sum(ord(c) for c in lemma))
         fallback = "".join(rng.choice(list(self.phonotactics.get(
             'consonants', 'bcdfghjklmnpqrstvwxz'))) for _ in range(5))
@@ -1797,12 +1690,10 @@ class OriginalLanguageEngine:
             in_onset = True
             prev_consonant = None
             last_char_generated = prefix[-1] if prefix else None
-
             for char_type in template:
                 if char_type == 'C':
                     valid_candidates = []
                     candidates = list(self.consonants)
-
                     if prev_consonant:
                         for cand in candidates:
                             if in_onset:
@@ -1814,17 +1705,14 @@ class OriginalLanguageEngine:
                     else:
                         is_final_in_syllable = True
                         current_template_idx = template.find(char_type)
-
                         for j in range(current_template_idx + 1, len(template)):
                             if template[j] == 'V':
                                 is_final_in_syllable = False
                                 break
-
                         for cand in candidates:
                             if is_final_in_syllable and not self.phonology_handler.is_valid_final(cand):
                                 continue
                             valid_candidates.append(cand)
-
                     chosen_c = None
                     if valid_candidates:
                         chosen_c = self.phonology_handler.get_weighted_choice(
@@ -1832,12 +1720,10 @@ class OriginalLanguageEngine:
                     else:
                         if self.consonants:
                             chosen_c = random.choice(list(self.consonants))
-
                     if chosen_c:
                         generated_word += chosen_c
                         prev_consonant = chosen_c
                         last_char_generated = chosen_c
-
                 elif char_type == 'V':
                     if self.vowels:
                         chosen_v = self.phonology_handler.get_weighted_choice(
@@ -1847,22 +1733,18 @@ class OriginalLanguageEngine:
                     in_onset = False
                     prev_consonant = None
             return generated_word
-
         num_syllables = self.phonology_handler.get_syllable_count(random)
         generated_word = ""
         last_char_generated = None
-
         for _ in range(num_syllables):
             template = self.phonology_handler.select_template(
                 random, self.templates)
             in_onset = True
             prev_consonant = None
-
             for i, char_type in enumerate(template):
                 if char_type == 'C':
                     valid_candidates = []
                     candidates = list(self.consonants)
-
                     if prev_consonant:
                         for cand in candidates:
                             if in_onset:
@@ -1877,12 +1759,10 @@ class OriginalLanguageEngine:
                             if template[j] == 'V':
                                 is_final_in_syllable = False
                                 break
-
                         for cand in candidates:
                             if is_final_in_syllable and not self.phonology_handler.is_valid_final(cand):
                                 continue
                             valid_candidates.append(cand)
-
                     chosen_c = None
                     if valid_candidates:
                         chosen_c = self.phonology_handler.get_weighted_choice(
@@ -1890,12 +1770,10 @@ class OriginalLanguageEngine:
                     else:
                         if self.consonants:
                             chosen_c = random.choice(list(self.consonants))
-
                     if chosen_c:
                         generated_word += chosen_c
                         prev_consonant = chosen_c
                         last_char_generated = chosen_c
-
                 elif char_type == 'V':
                     if self.vowels:
                         chosen_v = self.phonology_handler.get_weighted_choice(
@@ -1912,14 +1790,13 @@ class OriginalLanguageEngine:
             return word
         if depth > 10:
             rng = random.Random(self.global_seed + sum(ord(c)
-                                                       for c in clean_word) + depth)
+                                for c in clean_word) + depth)
             return self._generate_word_from_seed(clean_word, rng.randint(0, 1000000))
         entry = {
             "lemma": clean_word,
             "default": "",
             "synsets": []
         }
-
         if self.confluence_handler.enabled:
             stratum = self.confluence_handler.determine_stratum(
                 clean_word, self.global_seed)
@@ -1930,7 +1807,6 @@ class OriginalLanguageEngine:
                 source_word = self._fetch_source_word(
                     source_id, clean_word, skip_cache=skip_cache)
                 nativized = self.phonology_handler.nativize_word(source_word)
-
                 mutation_intensity = stratum.get('mutation_intensity', 0)
                 if mutation_intensity > 0:
                     mutation_seed = int(hashlib.sha256(
@@ -1938,11 +1814,9 @@ class OriginalLanguageEngine:
                     rng_mut = random.Random(mutation_seed)
                     if rng_mut.random() < mutation_intensity:
                         nativized = self._mutate_word(nativized, mutation_seed)
-
                 if self.special_mechanics_handler.enabled:
                     nativized = self.special_mechanics_handler.apply_mechanics(
                         nativized, clean_word, self.global_seed)
-
                 entry["default"] = nativized
                 entry["synsets"].append({"word": nativized, "tags": [
                                         "loanword", f"source:{source_id}"], "affinity": 1.0})
@@ -1951,7 +1825,6 @@ class OriginalLanguageEngine:
                     self.word_cache[clean_word] = entry
                     self.save_word_cache()
                 return nativized
-
         manual_target = self.false_cognate_handler.get_manual_target(
             clean_word)
         collision_bucket = self.false_cognate_handler.should_collide_naturally(
@@ -2046,11 +1919,9 @@ class OriginalLanguageEngine:
                     base_word = self._mutate_word(base_word, mut_hash)
         base_word = base_word if base_word else word
         base_word = self.phonology_handler.apply_monophthongization(base_word)
-
         if self.special_mechanics_handler.enabled:
             base_word = self.special_mechanics_handler.apply_mechanics(
                 base_word, clean_word, self.global_seed)
-
         entry["default"] = base_word
         entry["synsets"].append(
             {"word": base_word, "tags": ["common", "neutral"], "affinity": 1.0})

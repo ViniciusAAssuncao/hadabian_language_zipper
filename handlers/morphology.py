@@ -24,12 +24,11 @@ class RootSystemHandler:
 
 
 class AffixHandler:
-    def __init__(self, profile: Dict, harmony_handler: Optional[VowelHarmonyHandler] = None):
+    def __init__(self, profile: Dict):
         self.profile = profile
         self.affix_system = profile.get('affix_system', {})
         self.enabled = self.affix_system.get('enabled', False)
         self.derivation_rules = self.affix_system.get('derivation_rules', [])
-        self.harmony_handler = harmony_handler
         self.agglutination_strength = profile.get(
             'agglutination_strength', 1.0)
         self.seed = profile.get('global_seed', 12345)
@@ -53,7 +52,7 @@ class AffixHandler:
                     return rule
         return None
 
-    def apply_affix(self, word: str, rule: Dict) -> str:
+    def apply_affix(self, word: str, rule: Dict, harmony_handler=None) -> str:
         affix = rule.get('affix', '')
         position = rule.get('position', 'suffix')
         force = rule.get('force', False)
@@ -66,8 +65,8 @@ class AffixHandler:
             probability = (hash_val % 1000) / 1000.0
             if probability > self.agglutination_strength:
                 return word
-        if position == 'suffix' and self.harmony_handler and self.harmony_handler.enabled:
-            affix = self.harmony_handler.apply_harmony(word, affix)
+        if position == 'suffix' and harmony_handler and harmony_handler.enabled:
+            affix = harmony_handler.apply_harmony(word, affix)
         if position == 'prefix':
             return f"{affix}{word}"
         elif position == 'suffix':
@@ -77,7 +76,7 @@ class AffixHandler:
             return f"{word[:mid]}{affix}{word[mid:]}"
         return word
 
-    def try_derive_from_source(self, lemma: str, pos: Optional[str], engine_ref, current_depth: int = 0, skip_cache: bool = False) -> Optional[str]:
+    def try_derive_from_source(self, lemma: str, pos: Optional[str], engine_ref, current_depth: int = 0, skip_cache: bool = False, harmony_handler=None) -> Optional[str]:
         if not self.morph_derivation_enabled:
             return None
         if current_depth >= self.max_derivation_depth:
@@ -121,12 +120,12 @@ class AffixHandler:
                                     root = engine_ref.root_handler.generate_root(
                                         base_source_lemma)
                                     return engine_ref.root_handler.apply_pattern(root, pat_def)
-                        return self.apply_affix(base_conlang_word, derivation_rule)
+                        return self.apply_affix(base_conlang_word, derivation_rule, harmony_handler)
                 if replacement and not derivation_rule:
                     source_stem = lemma[:-len(suf)]
-                    base_stem_word = engine_ref._get_word_form(
-                        source_stem, tags=['stem'], pos=target_pos, derivation_depth=current_depth + 1, skip_cache=skip_cache)
-                    return self.apply_affix(base_stem_word, {'affix': replacement, 'position': 'suffix', 'force': True})
+                    base_stem_word = engine_ref._get_word_form(source_stem, tags=[
+                                                               'stem'], pos=target_pos, derivation_depth=current_depth + 1, skip_cache=skip_cache)
+                    return self.apply_affix(base_stem_word, {'affix': replacement, 'position': 'suffix', 'force': True}, harmony_handler)
         return None
 
 
@@ -368,7 +367,7 @@ class ReduplicationHandler:
 
 
 class ConstructStateHandler:
-    def __init__(self, profile: Dict, gender_handler):
+    def __init__(self, profile: Dict):
         self.profile = profile
         self.config = profile.get('case_system', {}).get('construct_state', {})
         self.enabled = self.config.get('enabled', False)
@@ -377,7 +376,6 @@ class ConstructStateHandler:
         self.suppress_article = self.config.get(
             'suppress_article_on_head', True)
         self.changes = self.config.get('phonological_changes', [])
-        self.gender_handler = gender_handler
 
     def is_construct_head(self, func: Dict, all_functions: List[Dict]) -> bool:
         if not self.enabled:
@@ -392,10 +390,10 @@ class ConstructStateHandler:
                         return True
         return False
 
-    def apply_construct_morphology(self, word: str, func: Dict) -> str:
+    def apply_construct_morphology(self, word: str, func: Dict, gender_handler) -> str:
         if not self.changes:
             return word
-        gender = self.gender_handler.infer_gender(word)
+        gender = gender_handler.infer_gender(word)
         current_word = word
         for change in self.changes:
             pattern = change['pattern']
