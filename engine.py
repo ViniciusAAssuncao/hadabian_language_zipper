@@ -894,8 +894,7 @@ class OriginalLanguageEngine:
     def _mutate_word(self, word: str, seed: int) -> str:
         if not word or len(word) < 2:
             return word
-        import random
-        random.seed(seed)
+        random.Random(seed)
         chars = list(word)
         mutable_indices = [i for i, c in enumerate(chars) if c.isalpha()]
         if not mutable_indices:
@@ -932,14 +931,13 @@ class OriginalLanguageEngine:
         return fallback
 
     def _generate_word_from_seed(self, clean_word: str, seed: int, is_derived: bool = False, base_conlang_word: str = "") -> str:
-        import random
-        random.seed(seed)
+        random.Random(seed)
         if is_derived and base_conlang_word:
             split_idx = max(1, int(len(base_conlang_word) * 0.6))
             prefix = base_conlang_word[:split_idx]
             suffix_seed = int(hashlib.sha256(
                 clean_word.encode()).hexdigest(), 16)
-            random.seed(seed + suffix_seed)
+            random.Random(seed + suffix_seed)
             generated_word = prefix
             template = self.phonology_handler.select_template(
                 random, self.templates)
