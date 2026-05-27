@@ -18,6 +18,7 @@ from morphosyntax_analyzer import (
 )
 from special_mechanics import SpecialMechanicsHandler
 from idiom_manager import IdiomManager
+from constants import PORTUGUESE_STOP_WORDS
 
 
 class LexicalConfluenceHandler:
@@ -1830,8 +1831,6 @@ class GramatakiManager:
         }
 
     def _generate_component(self, comp_name: str, rule: Dict, culture: Dict, gender: str) -> Dict:
-        import random
-
         if comp_name in self.culture_names and random.random() < 0.25:
             w1 = random.choice(self.culture_names[comp_name])
             return {'word': w1, 'meaning': f"{w1} (Tradicional)"}
@@ -1967,13 +1966,7 @@ class GramatakiManager:
         return final_name
 
     def generate_names_from_concept(self, concept_phrase, culture=None, count=8):
-        stop_words = {
-            'o', 'a', 'os', 'as', 'de', 'do', 'da', 'dos', 'das',
-            'um', 'uma', 'uns', 'umas', 'em', 'no', 'na', 'nos', 'nas',
-            'por', 'para', 'com', 'que', 'e', 'ou', 'the', 'of', 'and',
-            'a', 'an', 'in', 'on', 'at', 'for', 'to', 'by', 'is', 'são',
-            'é', 'ser', 'estar', 'se'
-        }
+        stop_words = PORTUGUESE_STOP_WORDS
         results = []
         seen = set()
 
@@ -2636,7 +2629,6 @@ class GramatakiManager:
         return results
 
     def generate_random_name(self) -> str:
-        import random
         seed = random.randint(0, 9999999)
         word = self.engine._generate_word_from_seed(
             f"rand_{seed}", seed, is_derived=False)

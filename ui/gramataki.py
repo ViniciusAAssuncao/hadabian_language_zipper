@@ -5,6 +5,7 @@ from pathlib import Path
 import random
 import hashlib
 import re
+from constants import PORTUGUESE_STOP_WORDS
 
 
 class GramatakiTab(ttk.Frame):
@@ -1512,13 +1513,7 @@ class GramatakiManager:
         return final_name
 
     def generate_names_from_concept(self, concept_phrase, culture=None, count=8):
-        stop_words = {
-            'o', 'a', 'os', 'as', 'de', 'do', 'da', 'dos', 'das',
-            'um', 'uma', 'uns', 'umas', 'em', 'no', 'na', 'nos', 'nas',
-            'por', 'para', 'com', 'que', 'e', 'ou', 'the', 'of', 'and',
-            'a', 'an', 'in', 'on', 'at', 'for', 'to', 'by', 'is', 'são',
-            'é', 'ser', 'estar', 'se'
-        }
+        stop_words = PORTUGUESE_STOP_WORDS
         results = []
         seen = set()
 

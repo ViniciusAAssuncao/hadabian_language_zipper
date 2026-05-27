@@ -1,21 +1,14 @@
 import json
 from pathlib import Path
 from typing import List, Dict, Tuple, Set
-
+from constants import CONTRACTIONS
 
 class IdiomManager:
     def __init__(self, profile_id: str):
         self.profile_id = profile_id
         self.storage_path = Path(f"./cache/{profile_id}_idioms.json")
         self.idioms: Dict[str, Dict] = {}
-        self.contractions = {
-            'do': ['de', 'o'], 'da': ['de', 'a'], 'dos': ['de', 'os'], 'das': ['de', 'as'],
-            'no': ['em', 'o'], 'na': ['em', 'a'], 'nos': ['em', 'os'], 'nas': ['em', 'as'],
-            'pelo': ['por', 'o'], 'pela': ['por', 'a'], 'pelos': ['por', 'os'], 'pelas': ['por', 'as'],
-            'ao': ['a', 'o'], 'aos': ['a', 'os'],
-            'dum': ['de', 'um'], 'duma': ['de', 'uma'],
-            'num': ['em', 'um'], 'numa': ['em', 'uma']
-        }
+        self.contractions = CONTRACTIONS
         self.load()
 
     def load(self):

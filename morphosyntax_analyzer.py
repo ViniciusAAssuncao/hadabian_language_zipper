@@ -1,4 +1,5 @@
 from typing import List, Dict, Optional, Tuple, Set
+from constants import NEGATION_TRIGGERS
 from collections import defaultdict
 import re
 
@@ -153,7 +154,7 @@ class NegationHandler:
         self.config = profile.get('negation_system', {})
         self.enabled = self.config.get('enabled', False)
         self.strategies = self.config.get('strategies', [])
-        self.negation_triggers = {'não', 'nao', 'nem', 'jamais'}
+        self.negation_triggers = NEGATION_TRIGGERS
 
     def detect_negation(self, func: Dict, all_functions: List[Dict]) -> Tuple[bool, Optional[int], Optional[Dict]]:
         if not self.enabled:
