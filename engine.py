@@ -4,6 +4,8 @@ import hashlib
 from pathlib import Path
 import re
 import random
+import logging
+from constants import DEFAULT_PHONEME_FEATURES
 from gramataki_manager import GramatakiManager
 from handlers.discourse import AllomorphyHandler, CliticHandler, DemonstrativeHandler, PossessiveHandler, PrepositionHandler
 from handlers.lexicon import ConceptHandler, FalseCognateHandler, LexicalConfluenceHandler, LoanwordHandler, PolysemyHandler, SemanticFieldHandler, SynonymHandler
@@ -29,6 +31,7 @@ class OriginalLanguageEngine:
     def __init__(self, profile_path: str):
         with open(profile_path, 'r', encoding='utf-8') as f:
             self.profile = json.load(f)
+        self.phoneme_feature_db = self._load_phoneme_db()
         self.family_id = None
         self.shared_base_strength = self.profile.get(
             'shared_base_strength', 0.0)
@@ -109,6 +112,17 @@ class OriginalLanguageEngine:
         self.load_word_cache()
         self.processing_stack = set()
         self.gramataki_manager = GramatakiManager(self.profile, self)
+
+    def _load_phoneme_db(self) -> dict:
+        try:
+            db_path = Path("data/phoneme_features.json")
+            if db_path.exists():
+                with open(db_path, 'r', encoding='utf-8') as f:
+                    return json.load(f)
+        except Exception as e:
+            logging.warning(str(e))
+        logging.warning("Usando DEFAULT_PHONEME_FEATURES")
+        return DEFAULT_PHONEME_FEATURES
 
     def generate_gramataki_candidates(self, meaning: str, options: Dict) -> List[Dict]:
         return self.gramataki_manager.generate_candidates(meaning, options)
