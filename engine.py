@@ -11,6 +11,7 @@ from handlers.morphology import AffixHandler, AgreementChecker, BrokenPluralHand
 from handlers.morphosyntax import CopulaHandler, InterrogativeHandler, NegationHandler, TAMHandler
 from handlers.phonology import PharyngealizationHandler, PhonologyHandler, SandhiHandler, StressHandler, SunLetterHandler
 from handlers.sound_change import SoundChangeEngine
+from handlers.tone import ToneSystem
 from post_processor import polish_output
 from syntax_engine import SyntaxEngine, SyntacticFunction
 from morphosyntax_analyzer import (
@@ -43,6 +44,7 @@ class OriginalLanguageEngine:
         self.phonology_handler = PhonologyHandler(self.profile)
         self.phonotactics = self.profile.get('phonotactics', {})
         self.vowels = self.phonology_handler.vowels
+        self.tone_system = ToneSystem(self.profile, self.vowels)
         self.consonants = self.phonology_handler.consonants
         self.sound_change_engine = SoundChangeEngine(
             self.profile, self.consonants, self.vowels)
@@ -470,6 +472,7 @@ class OriginalLanguageEngine:
             ordered_functions, idiom_absorbed_indices = self.idiom_manager.process_functions(
                 ordered_functions)
             translated_words = []
+            translated_lemmas = []
             transitivity_map = self.transitivity_analyzer.analyze(
                 ordered_functions)
             topic_idx = self.topicalization_handler.identify_topic(
@@ -525,6 +528,7 @@ class OriginalLanguageEngine:
                     continue
                 if func.get('pos') == 'IDIOM' or func.get('_fixed'):
                     translated_words.append(func['word'])
+                    translated_lemmas.append("")
                     last_content_word_str = func['word']
                     last_content_func = func
                     continue
@@ -545,6 +549,7 @@ class OriginalLanguageEngine:
                             if found_count == len(remaining_span):
                                 word, _, _ = mapping
                                 translated_words.append(word)
+                                translated_lemmas.append(mwt['form'].lower())
                                 absorbed_indices.update(remaining_span)
                                 last_content_word_str = word
                                 last_content_func = func
@@ -592,10 +597,12 @@ class OriginalLanguageEngine:
                         sentence_terminator = mapped_punct
                         continue
                     translated_words.append(mapped_punct)
+                    translated_lemmas.append("")
                     continue
                 if ignore_digits and pos == 'NUM':
                     if re.search(r'\d', orig_word):
                         translated_words.append(orig_word)
+                        translated_lemmas.append("")
                         last_content_word_str = orig_word
                         last_content_func = func
                         continue
@@ -616,6 +623,7 @@ class OriginalLanguageEngine:
                         copula_form = self.mutation_handler.apply_mutation(
                             copula_form, prev_word, last_content_func)
                     translated_words.append(copula_form)
+                    translated_lemmas.append("")
                     last_content_word_str = copula_form
                     last_content_func = func
                     continue
@@ -637,6 +645,7 @@ class OriginalLanguageEngine:
                             translated_word = self.mutation_handler.apply_mutation(
                                 translated_word, prev_word, last_content_func)
                         translated_words.append(translated_word)
+                        translated_lemmas.append(raw_lemma)
                         last_content_word_str = translated_word
                         last_content_func = func
                         continue
@@ -785,6 +794,7 @@ class OriginalLanguageEngine:
                     translated_root = inflected_preps_map[func['index']]
                     current_form = translated_root
                 translated_words.append(current_form)
+                translated_lemmas.append(target_lemma)
                 last_content_word_str = current_form
                 last_content_func = func
                 if self.sun_letter_handler.enabled and len(translated_words) > 1 and last_content_func:
@@ -795,10 +805,12 @@ class OriginalLanguageEngine:
                         translated_words[-2] = assimilated_prev
             if sentence_terminator:
                 translated_words.append(sentence_terminator)
+                translated_lemmas.append("")
             if is_question and self.interrogative_handler.enabled:
                 particle = self.interrogative_handler.get_particle(q_type)
                 if particle:
                     translated_words.insert(0, particle)
+                    translated_lemmas.insert(0, "")
                     meta_config = self.profile.get(
                         'interrogative_system', {}).get('particle_metadata', {})
                     particle_meta = {
@@ -828,6 +840,19 @@ class OriginalLanguageEngine:
             if self.allomorphy_handler.enabled:
                 translated_words = self.allomorphy_handler.apply_allomorphy(
                     translated_words)
+
+            if self.tone_system.is_enabled():
+                tone_list = []
+                for lem in translated_lemmas:
+                    tone = ""
+                    if lem in self.word_cache:
+                        entry = self.word_cache[lem]
+                        if isinstance(entry, dict):
+                            tone = entry.get("lexical_tone", "")
+                    tone_list.append(tone)
+                translated_words, _ = self.tone_system.apply_sandhi(
+                    translated_words, tone_list)
+
             functions_for_glue = []
             for func in ordered_functions:
                 if func['index'] not in absorbed_indices:
@@ -1082,6 +1107,13 @@ class OriginalLanguageEngine:
                     entry["proto_form"] = pre_diachronic
                     entry["derived_via_era"] = self.target_era
                     entry["applied_rules"] = applied_rules
+                if self.tone_system.is_enabled():
+                    tone_name = self.tone_system.assign_lexical_tone(
+                        clean_word)
+                    if tone_name:
+                        nativized = self.tone_system.apply_tone_diacritic(
+                            nativized, tone_name)
+                        entry["lexical_tone"] = tone_name
                 entry["default"] = nativized
                 entry["synsets"].append({"word": nativized, "tags": [
                                         "loanword", f"source:{source_id}"], "affinity": 1.0})
@@ -1197,6 +1229,13 @@ class OriginalLanguageEngine:
             entry["applied_rules"] = applied_rules
             if "origin" not in entry:
                 entry["origin"] = "diachronic_derivation"
+
+        if self.tone_system.is_enabled():
+            tone_name = self.tone_system.assign_lexical_tone(clean_word)
+            if tone_name:
+                base_word = self.tone_system.apply_tone_diacritic(
+                    base_word, tone_name)
+                entry["lexical_tone"] = tone_name
 
         entry["default"] = base_word
         entry["synsets"].append(
