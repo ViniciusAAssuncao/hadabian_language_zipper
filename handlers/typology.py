@@ -262,3 +262,82 @@ class PhonologicalDistance:
 
         sim = 1.0 - (dist / max_possible_distance)
         return max(0.0, min(1.0, sim))
+
+
+class SwadeshComparator:
+    def __init__(self, swadesh_data: list, phonological_distance: PhonologicalDistance, cognate_threshold: float = 0.65):
+        self.swadesh_data = swadesh_data
+        self.phonological_distance = phonological_distance
+        self.cognate_threshold = cognate_threshold
+
+    def get_swadesh_concepts(self) -> list[str]:
+        return self.swadesh_data
+
+    def is_potential_cognate(self, similarity: float) -> bool:
+        return similarity >= self.cognate_threshold
+
+    def compare(self, engine_a, engine_b) -> dict:
+        concepts = self.get_swadesh_concepts()
+        total_concepts = len(concepts)
+
+        found_in_a = 0
+        found_in_b = 0
+        compared = 0
+        potential_cognate_pairs = 0
+        total_similarity = 0.0
+        pairs = []
+
+        cache_a = engine_a.word_cache
+        cache_b = engine_b.word_cache
+
+        for concept in concepts:
+            in_a = concept in cache_a
+            in_b = concept in cache_b
+
+            if in_a:
+                found_in_a += 1
+            if in_b:
+                found_in_b += 1
+
+            if in_a and in_b:
+                entry_a = cache_a[concept]
+                entry_b = cache_b[concept]
+
+                word_a = entry_a.get("default", "") if isinstance(
+                    entry_a, dict) else str(entry_a)
+                word_b = entry_b.get("default", "") if isinstance(
+                    entry_b, dict) else str(entry_b)
+
+                if word_a and word_b:
+                    similarity = self.phonological_distance.normalized_similarity(
+                        word_a, word_b)
+                    is_cognate = self.is_potential_cognate(similarity)
+
+                    if is_cognate:
+                        potential_cognate_pairs += 1
+
+                    total_similarity += similarity
+                    compared += 1
+
+                    pairs.append({
+                        "concept": concept,
+                        "word_a": word_a,
+                        "word_b": word_b,
+                        "similarity": round(similarity, 2),
+                        "is_potential_cognate": is_cognate
+                    })
+
+        not_found = total_concepts - compared
+        avg_phonological_similarity = (
+            total_similarity / compared) if compared > 0 else 0.0
+
+        return {
+            "concepts_in_swadesh": total_concepts,
+            "found_in_a": found_in_a,
+            "found_in_b": found_in_b,
+            "compared": compared,
+            "not_found": not_found,
+            "avg_phonological_similarity": round(avg_phonological_similarity, 2),
+            "potential_cognate_pairs": potential_cognate_pairs,
+            "pairs": pairs
+        }
