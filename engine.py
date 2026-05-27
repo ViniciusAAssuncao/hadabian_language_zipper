@@ -1076,8 +1076,12 @@ class OriginalLanguageEngine:
                     nativized = self.special_mechanics_handler.apply_mechanics(
                         nativized, clean_word, self.global_seed)
                 if self.target_era is not None and self.sound_change_engine.is_enabled():
-                    nativized = self.sound_change_engine.derive_from_proto(
+                    pre_diachronic = nativized
+                    nativized, applied_rules = self.sound_change_engine.derive_from_proto(
                         nativized, self.target_era, clean_word)
+                    entry["proto_form"] = pre_diachronic
+                    entry["derived_via_era"] = self.target_era
+                    entry["applied_rules"] = applied_rules
                 entry["default"] = nativized
                 entry["synsets"].append({"word": nativized, "tags": [
                                         "loanword", f"source:{source_id}"], "affinity": 1.0})
@@ -1183,9 +1187,17 @@ class OriginalLanguageEngine:
         if self.special_mechanics_handler.enabled:
             base_word = self.special_mechanics_handler.apply_mechanics(
                 base_word, clean_word, self.global_seed)
+
+        pre_diachronic = base_word
         if self.target_era is not None and self.sound_change_engine.is_enabled():
-            base_word = self.sound_change_engine.derive_from_proto(
+            base_word, applied_rules = self.sound_change_engine.derive_from_proto(
                 base_word, self.target_era, clean_word)
+            entry["proto_form"] = pre_diachronic
+            entry["derived_via_era"] = self.target_era
+            entry["applied_rules"] = applied_rules
+            if "origin" not in entry:
+                entry["origin"] = "diachronic_derivation"
+
         entry["default"] = base_word
         entry["synsets"].append(
             {"word": base_word, "tags": ["common", "neutral"], "affinity": 1.0})
@@ -1211,7 +1223,7 @@ class OriginalLanguageEngine:
                         variant_word = self.special_mechanics_handler.apply_mechanics(
                             variant_word, clean_word, self.global_seed)
                     if self.target_era is not None and self.sound_change_engine.is_enabled():
-                        variant_word = self.sound_change_engine.derive_from_proto(
+                        variant_word, _ = self.sound_change_engine.derive_from_proto(
                             variant_word, self.target_era, clean_word)
                     if variant_word != base_word:
                         entry["synsets"].append({

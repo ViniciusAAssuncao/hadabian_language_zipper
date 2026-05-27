@@ -3,7 +3,7 @@ import hashlib
 import json
 from pathlib import Path
 from dataclasses import dataclass
-from typing import List, Optional, Dict, Set
+from typing import List, Optional, Dict, Set, Tuple
 from constants import GRAMMATICAL_CONCEPT_IDS
 
 
@@ -180,16 +180,21 @@ class SoundChangeEngine:
         except Exception:
             return word
 
-    def apply_era(self, word: str, era: Era, lemma: str) -> str:
+    def apply_era(self, word: str, era: Era, lemma: str) -> Tuple[str, List[str]]:
         current_word = word
+        applied_rules = []
         for change in era.changes:
-            current_word = self.apply_single_change(
-                current_word, change, lemma)
-        return current_word
+            new_word = self.apply_single_change(current_word, change, lemma)
+            if new_word != current_word:
+                applied_rules.append(change.rule_id)
+                current_word = new_word
+        return current_word, applied_rules
 
-    def derive_from_proto(self, proto_form: str, target_era_id: str, lemma: str) -> str:
+    def derive_from_proto(self, proto_form: str, target_era_id: str, lemma: str) -> Tuple[str, List[str]]:
         chain = self.get_era_chain(target_era_id)
         current_form = proto_form
+        all_applied_rules = []
         for era in chain:
-            current_form = self.apply_era(current_form, era, lemma)
-        return current_form
+            current_form, applied_rules = self.apply_era(current_form, era, lemma)
+            all_applied_rules.extend(applied_rules)
+        return current_form, all_applied_rules
