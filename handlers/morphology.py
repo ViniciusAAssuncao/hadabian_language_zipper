@@ -156,20 +156,32 @@ class AffixHandler:
         return None
 
     def apply_affix(self, word: str, rule: Dict, harmony_handler=None) -> str:
-        affix = rule.get('affix', '')
         position = rule.get('position', 'suffix')
         force = rule.get('force', False)
-        if not affix:
+        affix = rule.get('affix', '')
+        circumfix_prefix = rule.get('circumfix_prefix', '')
+        circumfix_suffix = rule.get('circumfix_suffix', '')
+
+        if position != 'circumfix' and not affix:
             return word
+        if position == 'circumfix' and not circumfix_prefix and not circumfix_suffix:
+            return word
+
         if not force and self.agglutination_strength < 1.0:
-            input_str = f"{word}_{affix}_{self.seed}_agglutination"
+            input_str = f"{word}_{affix}_{circumfix_prefix}_{circumfix_suffix}_{self.seed}_agglutination"
             hash_obj = hashlib.sha256(input_str.encode())
             hash_val = int(hash_obj.hexdigest(), 16)
             probability = (hash_val % 1000) / 1000.0
             if probability > self.agglutination_strength:
                 return word
+
         if position == 'suffix' and harmony_handler and harmony_handler.enabled:
             affix = harmony_handler.apply_harmony(word, affix)
+
+        if position == 'circumfix' and harmony_handler and harmony_handler.enabled:
+            circumfix_suffix = harmony_handler.apply_harmony(
+                word, circumfix_suffix)
+
         if position == 'prefix':
             return f"{affix}{word}"
         elif position == 'suffix':
@@ -177,6 +189,9 @@ class AffixHandler:
         elif position == 'infix':
             mid = len(word) // 2
             return f"{word[:mid]}{affix}{word[mid:]}"
+        elif position == 'circumfix':
+            return f"{circumfix_prefix}{word}{circumfix_suffix}"
+
         return word
 
     def try_derive_from_source(self, lemma: str, pos: Optional[str], engine_ref, current_depth: int = 0, skip_cache: bool = False, harmony_handler=None) -> Optional[str]:
