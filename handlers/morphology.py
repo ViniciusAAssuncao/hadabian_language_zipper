@@ -1,26 +1,119 @@
-import hashlib
-import random
-import re
-from typing import Dict, List, Optional, Tuple, Union
-from morphosyntax_analyzer import VowelHarmonyHandler
 from .phonology import PhonologyHandler
+from morphosyntax_analyzer import VowelHarmonyHandler
+from typing import Dict, List, Optional, Tuple, Union
+import re
+import random
+import hashlib
 
 
 class RootSystemHandler:
     def __init__(self, profile: Dict, phonology_handler: PhonologyHandler):
         self.profile = profile
         self.phonology_handler = phonology_handler
-        self.morph_config = profile.get('morphological_derivation', {})
         self.root_config = profile.get('root_system', {})
-        self.enabled = self.morph_config.get(
-            'root_based', False) or self.root_config.get('enabled', False)
-        self.binyanim = self.morph_config.get('binyanim', [])
-        if not self.binyanim and 'binyanim' in self.root_config:
-            self.binyanim = self.root_config['binyanim']
-        self.nominal_patterns = self.morph_config.get('nominal_patterns', [])
-        self.root_registry = self.morph_config.get('root_registry', {})
+        self.enabled = self.root_config.get('enabled', False)
+        self.binyanim = self.root_config.get('binyanim', [])
+        self.nominal_patterns = self.root_config.get('nominal_patterns', [])
+        self.root_registry = self.root_config.get('root_registry', {})
         self.seed = profile.get('global_seed', 12345)
         self.consonants = self.phonology_handler.consonants
+
+    def generate_root(self, lemma: str) -> List[str]:
+        lemma_lower = lemma.lower()
+        if lemma_lower in self.root_registry:
+            return list(self.root_registry[lemma_lower].replace("-", ""))
+
+        rng = random.Random(self.seed + sum(ord(c) for c in lemma_lower))
+
+        phonotactics = self.profile.get('phonotactics', {})
+
+        allowed_initial = phonotactics.get('allowed_initial_clusters', [])
+        if not allowed_initial:
+            allowed_initial = list(self.consonants)
+
+        forbidden_finals = set(phonotactics.get(
+            'forbidden_final_consonants', []))
+        allowed_final = [
+            c for c in self.consonants if c not in forbidden_finals]
+        if not allowed_final:
+            allowed_final = list(self.consonants)
+
+        pref_initial = self.profile.get('root_generation', {}).get(
+            'preferred_initial_clusters', allowed_initial)
+        pref_final = self.profile.get('root_generation', {}).get(
+            'preferred_final_clusters', allowed_final)
+        pref_vowels = self.profile.get('root_generation', {}).get(
+            'preferred_nuclei', list(self.phonology_handler.vowels))
+
+        c1 = rng.choice(pref_initial)
+        v = rng.choice(pref_vowels)
+        c2 = rng.choice(pref_final)
+
+        return [c1, v, c2]
+
+    def apply_pattern(self, root: List[str], pattern_def: Union[str, Dict]) -> str:
+        if not root:
+            return ""
+
+        has_clusters = any(len(part) > 1 for part in root)
+
+        if has_clusters:
+            base = "".join(root)
+            if isinstance(pattern_def, dict):
+                suffix = pattern_def.get('suffix', '')
+                base += suffix
+            elif isinstance(pattern_def, str):
+                base = pattern_def.replace('R', base)
+        else:
+            pattern = ""
+            if isinstance(pattern_def, dict):
+                pattern = pattern_def.get('pattern', '1e2e3')
+            else:
+                pattern = pattern_def or '1e2e3'
+
+            result = []
+            i = 0
+            c_count = 0
+            while i < len(pattern):
+                char = pattern[i]
+                if char == '1':
+                    if len(root) > 0:
+                        result.append(root[0])
+                elif char == '2':
+                    if len(root) > 1:
+                        result.append(root[1])
+                elif char == '3':
+                    if len(root) > 2:
+                        result.append(root[2])
+                elif char == 'C':
+                    if c_count < len(root):
+                        result.append(root[c_count])
+                    else:
+                        result.append(char)
+                    c_count += 1
+                else:
+                    result.append(char)
+                i += 1
+            base = "".join(result)
+
+        return self.phonology_handler.nativize_word(base)
+
+    def get_binyan_by_meaning(self, meaning_tag: str) -> Optional[Dict]:
+        if not self.binyanim:
+            return None
+        matches = [
+            b for b in self.binyanim if meaning_tag in b.get('meaning', '')]
+        if matches:
+            return matches[0]
+        if meaning_tag == 'basic':
+            return next((b for b in self.binyanim if b.get('form') == 'I'), self.binyanim[0])
+        return None
+
+    def get_pattern_by_type(self, type_tag: str) -> Optional[Dict]:
+        for p in self.nominal_patterns:
+            if p.get('type') == type_tag:
+                return p
+        return None
 
 
 class AffixHandler:
@@ -407,103 +500,6 @@ class ConstructStateHandler:
                 break
         return current_word
 
-    def generate_root(self, lemma: str) -> List[str]:
-        lemma_lower = lemma.lower()
-        if lemma_lower in self.root_registry:
-            return list(self.root_registry[lemma_lower].replace("-", ""))
-
-        rng = random.Random(self.seed + sum(ord(c) for c in lemma_lower))
-
-        phonotactics = self.profile.get('phonotactics', {})
-
-        allowed_initial = phonotactics.get('allowed_initial_clusters', [])
-        if not allowed_initial:
-            allowed_initial = list(self.consonants)
-
-        forbidden_finals = set(phonotactics.get(
-            'forbidden_final_consonants', []))
-        allowed_final = [
-            c for c in self.consonants if c not in forbidden_finals]
-        if not allowed_final:
-            allowed_final = list(self.consonants)
-
-        pref_initial = self.profile.get('root_generation', {}).get(
-            'preferred_initial_clusters', allowed_initial)
-        pref_final = self.profile.get('root_generation', {}).get(
-            'preferred_final_clusters', allowed_final)
-        pref_vowels = self.profile.get('root_generation', {}).get(
-            'preferred_nuclei', list(self.phonology_handler.vowels))
-
-        c1 = rng.choice(pref_initial)
-        v = rng.choice(pref_vowels)
-        c2 = rng.choice(pref_final)
-
-        return [c1, v, c2]
-
-    def apply_pattern(self, root: List[str], pattern_def: Union[str, Dict]) -> str:
-        if not root:
-            return ""
-
-        has_clusters = any(len(part) > 1 for part in root)
-
-        if has_clusters:
-            base = "".join(root)
-            if isinstance(pattern_def, dict):
-                suffix = pattern_def.get('suffix', '')
-                base += suffix
-            elif isinstance(pattern_def, str):
-                base = pattern_def.replace('R', base)
-        else:
-            pattern = ""
-            if isinstance(pattern_def, dict):
-                pattern = pattern_def.get('pattern', '1e2e3')
-            else:
-                pattern = pattern_def or '1e2e3'
-
-            result = []
-            i = 0
-            c_count = 0
-            while i < len(pattern):
-                char = pattern[i]
-                if char == '1':
-                    if len(root) > 0:
-                        result.append(root[0])
-                elif char == '2':
-                    if len(root) > 1:
-                        result.append(root[1])
-                elif char == '3':
-                    if len(root) > 2:
-                        result.append(root[2])
-                elif char == 'C':
-                    if c_count < len(root):
-                        result.append(root[c_count])
-                    else:
-                        result.append(char)
-                    c_count += 1
-                else:
-                    result.append(char)
-                i += 1
-            base = "".join(result)
-
-        return self.phonology_handler.nativize_word(base)
-
-    def get_binyan_by_meaning(self, meaning_tag: str) -> Optional[Dict]:
-        if not self.binyanim:
-            return None
-        matches = [
-            b for b in self.binyanim if meaning_tag in b.get('meaning', '')]
-        if matches:
-            return matches[0]
-        if meaning_tag == 'basic':
-            return next((b for b in self.binyanim if b.get('form') == 'I'), self.binyanim[0])
-        return None
-
-    def get_pattern_by_type(self, type_tag: str) -> Optional[Dict]:
-        for p in self.nominal_patterns:
-            if p.get('type') == type_tag:
-                return p
-        return None
-
 
 class ConsonantMutationHandler:
     def __init__(self, profile: Dict):
@@ -647,11 +643,7 @@ class CaseMorphology:
                 return True
 
         pos = func_data.get('pos', '')
-        if pos in {'PROPN', 'PRON'}:
-            return True
-
-        feats = func_data.get('feats', '')
-        if 'Animacy=Anim' in feats:
+        if pos in {'PROPN', 'PRON'} or 'Animacy=Anim' in func_data.get('feats', ''):
             return True
 
         return False
@@ -783,9 +775,6 @@ class CaseMorphology:
                         break
                 if has_det:
                     return word
-
-            if is_det:
-                pass
 
             if is_noun and not has_det:
                 pass
