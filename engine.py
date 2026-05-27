@@ -251,6 +251,10 @@ class OriginalLanguageEngine:
             "origin": "loanword",
             "absorption_mode": mode
         }
+        if self.tone_system.is_enabled():
+            t_name = self.tone_system.assign_lexical_tone(foreign_term)
+            if t_name:
+                entry["tone"] = t_name
         self.word_cache[foreign_term] = entry
         self.save_word_cache()
         return entry
@@ -374,21 +378,39 @@ class OriginalLanguageEngine:
                 }
                 if meta:
                     entry.update(meta)
+                if self.tone_system.is_enabled():
+                    t_name = self.tone_system.assign_lexical_tone(lemma)
+                    if t_name:
+                        entry["tone"] = t_name
                 if not skip_cache:
                     self.word_cache[lemma] = entry
-                return force_word
+                ret_word = force_word
+                if self.tone_system.is_enabled() and "tone" in entry:
+                    ret_word = self.tone_system.apply_tone_diacritic(
+                        ret_word, entry["tone"])
+                return ret_word
             if entry:
                 if isinstance(entry, str):
                     return entry
                 if isinstance(entry, dict):
+                    ret_word = entry.get('default')
                     if tags:
                         synsets = entry.get('synsets', [])
+                        found_syn = False
                         for syn in synsets:
                             syn_tags = syn.get('tags', [])
                             for tag in tags:
                                 if tag in syn_tags:
-                                    return syn.get('word', entry.get('default'))
-                    return entry.get('default')
+                                    ret_word = syn.get(
+                                        'word', entry.get('default'))
+                                    found_syn = True
+                                    break
+                            if found_syn:
+                                break
+                    if self.tone_system.is_enabled() and "tone" in entry:
+                        ret_word = self.tone_system.apply_tone_diacritic(
+                            ret_word, entry["tone"])
+                    return ret_word
                 return str(entry)
             concept_result = self.concept_handler.resolve_concept(
                 lemma, self, word_form=word_form, pos=pos, skip_cache=skip_cache)
@@ -418,9 +440,17 @@ class OriginalLanguageEngine:
                         "origin": "triconsonantal_system",
                         "root": "".join(root)
                     }
+                    if self.tone_system.is_enabled():
+                        t_name = self.tone_system.assign_lexical_tone(lemma)
+                        if t_name:
+                            entry["tone"] = t_name
                     if not skip_cache:
                         self.word_cache[lemma] = entry
-                    return generated_word
+                    ret_word = generated_word
+                    if self.tone_system.is_enabled() and "tone" in entry:
+                        ret_word = self.tone_system.apply_tone_diacritic(
+                            ret_word, entry["tone"])
+                    return ret_word
             if self.affix_handler.morph_derivation_enabled:
                 derived_word = self.affix_handler.try_derive_from_source(
                     lemma, pos, self, current_depth=derivation_depth, skip_cache=skip_cache, harmony_handler=self.vowel_harmony_handler)
@@ -434,9 +464,17 @@ class OriginalLanguageEngine:
                         "synsets": [{"word": derived_word, "tags": ["derived", "morphology"], "affinity": 1.0}],
                         "origin": "derived"
                     }
+                    if self.tone_system.is_enabled():
+                        t_name = self.tone_system.assign_lexical_tone(lemma)
+                        if t_name:
+                            entry["tone"] = t_name
                     if not skip_cache:
                         self.word_cache[lemma] = entry
-                    return derived_word
+                    ret_word = derived_word
+                    if self.tone_system.is_enabled() and "tone" in entry:
+                        ret_word = self.tone_system.apply_tone_diacritic(
+                            ret_word, entry["tone"])
+                    return ret_word
             return self._generate_deterministic_word(lemma, depth=0, skip_cache=skip_cache)
         finally:
             self.processing_stack.remove(lemma)
@@ -848,7 +886,7 @@ class OriginalLanguageEngine:
                     if lem in self.word_cache:
                         entry = self.word_cache[lem]
                         if isinstance(entry, dict):
-                            tone = entry.get("lexical_tone", "")
+                            tone = entry.get("tone", "")
                     tone_list.append(tone)
                 translated_words, _ = self.tone_system.apply_sandhi(
                     translated_words, tone_list)
@@ -1107,13 +1145,12 @@ class OriginalLanguageEngine:
                     entry["proto_form"] = pre_diachronic
                     entry["derived_via_era"] = self.target_era
                     entry["applied_rules"] = applied_rules
+                tone_name = ""
                 if self.tone_system.is_enabled():
                     tone_name = self.tone_system.assign_lexical_tone(
                         clean_word)
                     if tone_name:
-                        nativized = self.tone_system.apply_tone_diacritic(
-                            nativized, tone_name)
-                        entry["lexical_tone"] = tone_name
+                        entry["tone"] = tone_name
                 entry["default"] = nativized
                 entry["synsets"].append({"word": nativized, "tags": [
                                         "loanword", f"source:{source_id}"], "affinity": 1.0})
@@ -1121,6 +1158,9 @@ class OriginalLanguageEngine:
                 if not skip_cache:
                     self.word_cache[clean_word] = entry
                     self.save_word_cache()
+                if tone_name:
+                    nativized = self.tone_system.apply_tone_diacritic(
+                        nativized, tone_name)
                 return nativized
         manual_target = self.false_cognate_handler.get_manual_target(
             clean_word)
@@ -1230,12 +1270,11 @@ class OriginalLanguageEngine:
             if "origin" not in entry:
                 entry["origin"] = "diachronic_derivation"
 
+        tone_name = ""
         if self.tone_system.is_enabled():
             tone_name = self.tone_system.assign_lexical_tone(clean_word)
             if tone_name:
-                base_word = self.tone_system.apply_tone_diacritic(
-                    base_word, tone_name)
-                entry["lexical_tone"] = tone_name
+                entry["tone"] = tone_name
 
         entry["default"] = base_word
         entry["synsets"].append(
@@ -1272,7 +1311,12 @@ class OriginalLanguageEngine:
                         })
         if not skip_cache:
             self.word_cache[clean_word] = entry
-        return base_word
+
+        final_word = base_word
+        if tone_name:
+            final_word = self.tone_system.apply_tone_diacritic(
+                final_word, tone_name)
+        return final_word
 
     def analyze_sentence_structure(self, text: str) -> Dict:
         reordered_text, functions_info = self.syntax_engine.process_text(text)
