@@ -1,0 +1,1 @@
+#Responsável por: resolução de conceitos, polissemia, campos semânticos, falsos cognatos, empréstimos, sinônimos, confluência lexical.

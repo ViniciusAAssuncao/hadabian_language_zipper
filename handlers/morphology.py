@@ -1,0 +1,1 @@
+#Responsável por: afixação, sistemas de raízes, plurais quebrados, dual, graus (diminutivo/aumentativo), reduplicação, estado construto.

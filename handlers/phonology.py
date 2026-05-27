@@ -1,0 +1,1 @@
+#Responsável por: inventário fonológico, regras fonotáticas, templates silábicos, geração de palavras, monoftongação, aplicação de regras fonológicas. Receberá futuramente: SoundChangeEngine, ToneSystem, PhonologicalDispersion.

@@ -1,0 +1,1 @@
+#Responsável por: preposições inflexionadas, clíticos, possessivos, demonstrativos, alomorfia.
