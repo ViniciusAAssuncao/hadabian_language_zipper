@@ -10,6 +10,7 @@ from handlers.lexicon import ConceptHandler, FalseCognateHandler, LexicalConflue
 from handlers.morphology import AffixHandler, AgreementChecker, BrokenPluralHandler, ConsonantMutationHandler, ConstructStateHandler, DegreeHandler, DualHandler, GenderHandler, ReduplicationHandler, RootSystemHandler
 from handlers.morphosyntax import CopulaHandler, InterrogativeHandler, NegationHandler, TAMHandler
 from handlers.phonology import PharyngealizationHandler, PhonologyHandler, SandhiHandler, StressHandler, SunLetterHandler
+from handlers.sound_change import SoundChangeEngine
 from post_processor import polish_output
 from syntax_engine import SyntaxEngine, SyntacticFunction
 from morphosyntax_analyzer import (
@@ -43,6 +44,9 @@ class OriginalLanguageEngine:
         self.phonotactics = self.profile.get('phonotactics', {})
         self.vowels = self.phonology_handler.vowels
         self.consonants = self.phonology_handler.consonants
+        self.sound_change_engine = SoundChangeEngine(
+            self.profile, self.consonants, self.vowels)
+        self.target_era = self.profile.get("target_era", None)
         self.templates = self.phonotactics.get('syllable_templates')
         if not self.templates:
             self.templates = self._infer_templates()
@@ -1071,6 +1075,9 @@ class OriginalLanguageEngine:
                 if self.special_mechanics_handler.enabled:
                     nativized = self.special_mechanics_handler.apply_mechanics(
                         nativized, clean_word, self.global_seed)
+                if self.target_era is not None and self.sound_change_engine.is_enabled():
+                    nativized = self.sound_change_engine.derive_from_proto(
+                        nativized, self.target_era, clean_word)
                 entry["default"] = nativized
                 entry["synsets"].append({"word": nativized, "tags": [
                                         "loanword", f"source:{source_id}"], "affinity": 1.0})
@@ -1176,6 +1183,9 @@ class OriginalLanguageEngine:
         if self.special_mechanics_handler.enabled:
             base_word = self.special_mechanics_handler.apply_mechanics(
                 base_word, clean_word, self.global_seed)
+        if self.target_era is not None and self.sound_change_engine.is_enabled():
+            base_word = self.sound_change_engine.derive_from_proto(
+                base_word, self.target_era, clean_word)
         entry["default"] = base_word
         entry["synsets"].append(
             {"word": base_word, "tags": ["common", "neutral"], "affinity": 1.0})
@@ -1200,6 +1210,9 @@ class OriginalLanguageEngine:
                     if self.special_mechanics_handler.enabled:
                         variant_word = self.special_mechanics_handler.apply_mechanics(
                             variant_word, clean_word, self.global_seed)
+                    if self.target_era is not None and self.sound_change_engine.is_enabled():
+                        variant_word = self.sound_change_engine.derive_from_proto(
+                            variant_word, self.target_era, clean_word)
                     if variant_word != base_word:
                         entry["synsets"].append({
                             "word": variant_word,
