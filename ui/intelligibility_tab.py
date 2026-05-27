@@ -3,7 +3,7 @@ from tkinter import ttk, filedialog, messagebox
 import csv
 import json
 from pathlib import Path
-from handlers.typology import PhonologicalDistance
+from handlers.typology import PhonologicalDistance, SwadeshComparator
 
 
 class IntelligibilityTab(ttk.Frame):
@@ -17,6 +17,18 @@ class IntelligibilityTab(ttk.Frame):
         if self.engine and hasattr(self.engine, 'phoneme_feature_db'):
             self.phonological_distance = PhonologicalDistance(
                 self.engine.phoneme_feature_db)
+        self.swadesh_list = [
+            "eu", "tu", "nós", "este", "aquele", "quem", "que", "não", "tudo", "muito",
+            "um", "dois", "grande", "longo", "pequeno", "mulher", "homem", "pessoa", "peixe", "pássaro",
+            "cachorro", "piolho", "árvore", "semente", "folha", "raiz", "casca", "pele", "carne", "sangue",
+            "osso", "gordura", "ovo", "chifre", "cauda", "pena", "cabelo", "cabeça", "orelha", "olho",
+            "nariz", "boca", "dente", "língua", "unha", "pé", "perna", "joelho", "mão", "barriga",
+            "pescoço", "peito", "coração", "fígado", "beber", "comer", "morder", "ver", "ouvir", "saber",
+            "dormir", "morrer", "matar", "nadar", "voar", "andar", "vir", "deitar", "sentar", "ficar",
+            "dar", "dizer", "sol", "lua", "estrela", "água", "chuva", "pedra", "areia", "terra",
+            "nuvem", "fumaça", "fogo", "cinza", "queimar", "caminho", "montanha", "vermelho", "verde", "amarelo",
+            "branco", "preto", "noite", "quente", "frio", "cheio", "novo", "bom", "redondo", "seco", "nome"
+        ]
         self.setup_ui()
         self.load_available_conlangs()
 
@@ -67,6 +79,10 @@ class IntelligibilityTab(ttk.Frame):
         ttk.Checkbutton(cfg_frame, text="Compatibilidade Fonotática",
                         variable=self.var_phonotactic).pack(anchor="w", pady=2)
 
+        self.var_swadesh = tk.BooleanVar(value=False)
+        ttk.Checkbutton(cfg_frame, text="Usar Lista Swadesh (análise tipologicamente válida)",
+                        variable=self.var_swadesh).pack(anchor="w", pady=2)
+
         stats_frame = ttk.LabelFrame(
             left_frame, text="Estatísticas Detalhadas", padding=15)
         stats_frame.pack(fill=tk.BOTH, expand=True)
@@ -75,7 +91,7 @@ class IntelligibilityTab(ttk.Frame):
             "metric", "value"), show="headings", height=8)
         self.tree_stats.heading("metric", text="Métrica")
         self.tree_stats.heading("value", text="Valor")
-        self.tree_stats.column("metric", width=150)
+        self.tree_stats.column("metric", width=220)
         self.tree_stats.column("value", width=60, anchor="center")
 
         scroll_stats = ttk.Scrollbar(
@@ -108,7 +124,17 @@ class IntelligibilityTab(ttk.Frame):
             justify="center",
             foreground=self.colors.get("fg_secondary", "black")
         )
-        self.lbl_summary.pack(pady=(0, 10))
+        self.lbl_summary.pack(pady=(0, 5))
+
+        self.lbl_warning = ttk.Label(
+            res_frame,
+            text="",
+            font=("Segoe UI", 10, "italic"),
+            foreground="red",
+            justify="center",
+            wraplength=380
+        )
+        self.lbl_warning.pack(pady=(0, 10))
 
         self.progress_bar = ttk.Progressbar(
             res_frame, mode="determinate", length=400)
@@ -342,47 +368,94 @@ class IntelligibilityTab(ttk.Frame):
         prof_a = engine_a.profile
         prof_b = engine_b.profile
 
-        shared_lemmas = set(cache_a.keys()).intersection(set(cache_b.keys()))
-
         lexical_similarities = []
         words_a_lavert = []
         words_b_lavert = []
         self.current_word_data = []
 
-        total_lemmas = len(shared_lemmas)
-        step = max(1, total_lemmas // 100) if total_lemmas > 0 else 1
+        self.lbl_warning.config(text="")
+        use_swadesh = self.var_swadesh.get()
+        total_lemmas = 0
+        swadesh_results = None
 
-        for i, lemma in enumerate(shared_lemmas):
-            wa = self._extract_word(cache_a[lemma])
-            wb = self._extract_word(cache_b[lemma])
+        if use_swadesh:
+            if not self.phonological_distance:
+                self.phonological_distance = PhonologicalDistance(
+                    engine_a.phoneme_feature_db if hasattr(engine_a, 'phoneme_feature_db') else {})
+            swadesh_comparator = SwadeshComparator(
+                self.swadesh_list, self.phonological_distance)
+            swadesh_results = swadesh_comparator.compare(engine_a, engine_b)
 
-            dist_classic = self.levenshtein_distance_classic(wa, wb)
+            total_lemmas = swadesh_results['compared']
+            if total_lemmas < 10:
+                self.lbl_warning.config(
+                    text="Poucos conceitos Swadesh encontrados nos caches. Execute o processamento de mais textos para enriquecer o vocabulário antes de usar esta comparação.")
 
-            if self.phonological_distance:
+            step = max(1, total_lemmas // 100) if total_lemmas > 0 else 1
+            for i, pair in enumerate(swadesh_results['pairs']):
+                lemma = pair['concept']
+                wa = pair['word_a']
+                wb = pair['word_b']
+                sim = pair['similarity']
+
+                dist_classic = self.levenshtein_distance_classic(wa, wb)
                 dist_phono = self.phonological_distance.weighted_edit_distance(
                     wa, wb)
-                sim = self.phonological_distance.normalized_similarity(wa, wb)
-            else:
-                dist_phono = float(dist_classic)
-                m_len = max(len(wa), len(wb))
-                sim = 1.0 - (dist_classic / m_len) if m_len > 0 else 0.0
 
-            lexical_similarities.append(sim)
-            words_a_lavert.append(wa)
-            words_b_lavert.append(wb)
+                lexical_similarities.append(sim)
+                words_a_lavert.append(wa)
+                words_b_lavert.append(wb)
 
-            self.current_word_data.append({
-                "lemma": lemma,
-                "wa": wa,
-                "wb": wb,
-                "dist_classic": dist_classic,
-                "dist_phono": round(dist_phono, 2),
-                "sim": round(sim * 100, 2)
-            })
+                self.current_word_data.append({
+                    "lemma": lemma,
+                    "wa": wa,
+                    "wb": wb,
+                    "dist_classic": dist_classic,
+                    "dist_phono": round(dist_phono, 2),
+                    "sim": round(sim * 100, 2)
+                })
 
-            if i % step == 0:
-                self.progress_bar['value'] = (i / total_lemmas) * 40
-                self.update_idletasks()
+                if i % step == 0:
+                    self.progress_bar['value'] = (i / total_lemmas) * 40
+                    self.update_idletasks()
+        else:
+            shared_lemmas = set(cache_a.keys()).intersection(
+                set(cache_b.keys()))
+            total_lemmas = len(shared_lemmas)
+            step = max(1, total_lemmas // 100) if total_lemmas > 0 else 1
+
+            for i, lemma in enumerate(shared_lemmas):
+                wa = self._extract_word(cache_a[lemma])
+                wb = self._extract_word(cache_b[lemma])
+
+                dist_classic = self.levenshtein_distance_classic(wa, wb)
+
+                if self.phonological_distance:
+                    dist_phono = self.phonological_distance.weighted_edit_distance(
+                        wa, wb)
+                    sim = self.phonological_distance.normalized_similarity(
+                        wa, wb)
+                else:
+                    dist_phono = float(dist_classic)
+                    m_len = max(len(wa), len(wb))
+                    sim = 1.0 - (dist_classic / m_len) if m_len > 0 else 0.0
+
+                lexical_similarities.append(sim)
+                words_a_lavert.append(wa)
+                words_b_lavert.append(wb)
+
+                self.current_word_data.append({
+                    "lemma": lemma,
+                    "wa": wa,
+                    "wb": wb,
+                    "dist_classic": dist_classic,
+                    "dist_phono": round(dist_phono, 2),
+                    "sim": round(sim * 100, 2)
+                })
+
+                if i % step == 0:
+                    self.progress_bar['value'] = (i / total_lemmas) * 40
+                    self.update_idletasks()
 
         lexical_score = sum(lexical_similarities) / \
             len(lexical_similarities) if lexical_similarities else 0.0
@@ -422,13 +495,26 @@ class IntelligibilityTab(ttk.Frame):
         for item in self.tree_stats.get_children():
             self.tree_stats.delete(item)
 
-        stats = [
+        stats = []
+        if use_swadesh and swadesh_results:
+            stats.extend([
+                ("Conceitos Swadesh Encontrados em A",
+                 f"{swadesh_results['found_in_a']}"),
+                ("Conceitos Swadesh Encontrados em B",
+                 f"{swadesh_results['found_in_b']}"),
+                ("Pares Analisados via Swadesh",
+                 f"{swadesh_results['compared']}"),
+                ("Pares Cognatos Potenciais",
+                 f"{swadesh_results['potential_cognate_pairs']}")
+            ])
+
+        stats.extend([
             ("Sobreposição Lexical", f"{lexical_score*100:.1f}%"),
             ("Aproximação Fonética (Lavert)", f"{lavert_score*100:.1f}%"),
             ("Divergência Morfossintática", f"{morph_score*100:.1f}%"),
             ("Compatibilidade Fonotática", f"{phono_score*100:.1f}%"),
             ("Lemas Compartilhados Analisados", f"{total_lemmas}")
-        ]
+        ])
 
         for k, v in stats:
             self.tree_stats.insert("", tk.END, values=(k, v))
