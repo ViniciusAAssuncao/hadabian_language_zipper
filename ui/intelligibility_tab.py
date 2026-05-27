@@ -3,6 +3,7 @@ from tkinter import ttk, filedialog, messagebox
 import csv
 import json
 from pathlib import Path
+from handlers.typology import PhonologicalDistance
 
 
 class IntelligibilityTab(ttk.Frame):
@@ -12,6 +13,10 @@ class IntelligibilityTab(ttk.Frame):
         self.engine = engine
         self.engines_dict = {}
         self.file_map = {}
+        self.phonological_distance = None
+        if self.engine and hasattr(self.engine, 'phoneme_feature_db'):
+            self.phonological_distance = PhonologicalDistance(
+                self.engine.phoneme_feature_db)
         self.setup_ui()
         self.load_available_conlangs()
 
@@ -128,21 +133,24 @@ class IntelligibilityTab(ttk.Frame):
             toolbar_dict, text="Exportar Dicionário", state="disabled", command=self.on_export_click)
         self.btn_export.pack(side=tk.RIGHT)
 
-        cols = ("lemma", "word_a", "word_b", "distance", "similarity")
+        cols = ("lemma", "word_a", "word_b", "distance_classic",
+                "distance_phono", "similarity")
         self.tree_words = ttk.Treeview(
             dict_frame, columns=cols, show="headings", style="Treeview")
 
         self.tree_words.heading("lemma", text="Conceito / Lema")
         self.tree_words.heading("word_a", text="Palavra em A")
         self.tree_words.heading("word_b", text="Palavra em B")
-        self.tree_words.heading("distance", text="Distância Levenshtein")
+        self.tree_words.heading("distance_classic", text="Dist. Clássica")
+        self.tree_words.heading("distance_phono", text="Dist. Fonológica")
         self.tree_words.heading("similarity", text="Similaridade (%)")
 
         self.tree_words.column("lemma", width=120)
-        self.tree_words.column("word_a", width=150)
-        self.tree_words.column("word_b", width=150)
-        self.tree_words.column("distance", width=130, anchor="center")
-        self.tree_words.column("similarity", width=120, anchor="center")
+        self.tree_words.column("word_a", width=130)
+        self.tree_words.column("word_b", width=130)
+        self.tree_words.column("distance_classic", width=100, anchor="center")
+        self.tree_words.column("distance_phono", width=110, anchor="center")
+        self.tree_words.column("similarity", width=110, anchor="center")
 
         scroll_words = ttk.Scrollbar(
             dict_frame, orient="vertical", command=self.tree_words.yview)
@@ -182,9 +190,9 @@ class IntelligibilityTab(ttk.Frame):
         self.engines_dict.update(engines_dict)
         self.load_available_conlangs()
 
-    def levenshtein_distance(self, s1, s2):
+    def levenshtein_distance_classic(self, s1, s2):
         if len(s1) < len(s2):
-            return self.levenshtein_distance(s2, s1)
+            return self.levenshtein_distance_classic(s2, s1)
         if len(s2) == 0:
             return len(s1)
         prev_row = list(range(len(s2) + 1))
@@ -322,6 +330,10 @@ class IntelligibilityTab(ttk.Frame):
         if not engine_a or not engine_b:
             return
 
+        if not self.phonological_distance and hasattr(engine_a, 'phoneme_feature_db'):
+            self.phonological_distance = PhonologicalDistance(
+                engine_a.phoneme_feature_db)
+
         self.progress_bar['value'] = 0
         self.update_idletasks()
 
@@ -344,9 +356,16 @@ class IntelligibilityTab(ttk.Frame):
             wa = self._extract_word(cache_a[lemma])
             wb = self._extract_word(cache_b[lemma])
 
-            dist = self.levenshtein_distance(wa, wb)
-            m_len = max(len(wa), len(wb))
-            sim = 1.0 - (dist / m_len) if m_len > 0 else 0.0
+            dist_classic = self.levenshtein_distance_classic(wa, wb)
+
+            if self.phonological_distance:
+                dist_phono = self.phonological_distance.weighted_edit_distance(
+                    wa, wb)
+                sim = self.phonological_distance.normalized_similarity(wa, wb)
+            else:
+                dist_phono = float(dist_classic)
+                m_len = max(len(wa), len(wb))
+                sim = 1.0 - (dist_classic / m_len) if m_len > 0 else 0.0
 
             lexical_similarities.append(sim)
             words_a_lavert.append(wa)
@@ -356,7 +375,8 @@ class IntelligibilityTab(ttk.Frame):
                 "lemma": lemma,
                 "wa": wa,
                 "wb": wb,
-                "dist": dist,
+                "dist_classic": dist_classic,
+                "dist_phono": round(dist_phono, 2),
                 "sim": round(sim * 100, 2)
             })
 
@@ -444,7 +464,7 @@ class IntelligibilityTab(ttk.Frame):
         for row in sorted_data:
             if row['sim'] >= min_sim:
                 self.tree_words.insert("", tk.END, values=(
-                    row['lemma'], row['wa'], row['wb'], row['dist'], f"{row['sim']}%"))
+                    row['lemma'], row['wa'], row['wb'], row['dist_classic'], row['dist_phono'], f"{row['sim']}%"))
 
     def on_export_click(self):
         if not self.current_word_data:
@@ -461,10 +481,10 @@ class IntelligibilityTab(ttk.Frame):
                 with open(file_path, mode='w', newline='', encoding='utf-8') as f:
                     writer = csv.writer(f)
                     writer.writerow(
-                        ["Conceito", "Palavra A", "Palavra B", "Distancia Levenshtein", "Similaridade (%)"])
+                        ["Conceito", "Palavra A", "Palavra B", "Distancia Classica", "Distancia Fonologica", "Similaridade (%)"])
                     for row in self.current_word_data:
                         writer.writerow(
-                            [row['lemma'], row['wa'], row['wb'], row['dist'], row['sim']])
+                            [row['lemma'], row['wa'], row['wb'], row['dist_classic'], row['dist_phono'], row['sim']])
                 messagebox.showinfo(
                     "Sucesso", "Dicionário exportado com sucesso!")
             except Exception as e:
@@ -472,3 +492,6 @@ class IntelligibilityTab(ttk.Frame):
 
     def update_engine(self, engine):
         self.engine = engine
+        if engine and hasattr(engine, 'phoneme_feature_db'):
+            self.phonological_distance = PhonologicalDistance(
+                engine.phoneme_feature_db)
