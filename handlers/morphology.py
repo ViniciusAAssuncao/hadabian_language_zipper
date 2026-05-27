@@ -15,6 +15,7 @@ class RootSystemHandler:
         self.binyanim = self.root_config.get('binyanim', [])
         self.nominal_patterns = self.root_config.get('nominal_patterns', [])
         self.root_registry = self.root_config.get('root_registry', {})
+        self.root_size = self.root_config.get('root_size', 3)
         self.seed = profile.get('global_seed', 12345)
         self.consonants = self.phonology_handler.consonants
 
@@ -42,14 +43,16 @@ class RootSystemHandler:
             'preferred_initial_clusters', allowed_initial)
         pref_final = self.profile.get('root_generation', {}).get(
             'preferred_final_clusters', allowed_final)
-        pref_vowels = self.profile.get('root_generation', {}).get(
-            'preferred_nuclei', list(self.phonology_handler.vowels))
 
-        c1 = rng.choice(pref_initial)
-        v = rng.choice(pref_vowels)
-        c2 = rng.choice(pref_final)
+        root = []
+        if self.root_size > 0:
+            root.append(rng.choice(pref_initial))
+        for _ in range(1, self.root_size - 1):
+            root.append(rng.choice(list(self.consonants)))
+        if self.root_size > 1:
+            root.append(rng.choice(pref_final))
 
-        return [c1, v, c2]
+        return root
 
     def apply_pattern(self, root: List[str], pattern_def: Union[str, Dict]) -> str:
         if not root:
@@ -76,24 +79,31 @@ class RootSystemHandler:
             c_count = 0
             while i < len(pattern):
                 char = pattern[i]
-                if char == '1':
-                    if len(root) > 0:
-                        result.append(root[0])
-                elif char == '2':
-                    if len(root) > 1:
-                        result.append(root[1])
-                elif char == '3':
-                    if len(root) > 2:
-                        result.append(root[2])
+                if char == 'C' and i + 1 < len(pattern) and pattern[i+1].isdigit():
+                    idx_str = ""
+                    j = i + 1
+                    while j < len(pattern) and pattern[j].isdigit():
+                        idx_str += pattern[j]
+                        j += 1
+                    idx = int(idx_str) - 1
+                    if 0 <= idx < len(root):
+                        result.append(root[idx])
+                    i = j
+                elif char.isdigit():
+                    idx = int(char) - 1
+                    if 0 <= idx < len(root):
+                        result.append(root[idx])
+                    i += 1
                 elif char == 'C':
                     if c_count < len(root):
                         result.append(root[c_count])
                     else:
                         result.append(char)
                     c_count += 1
+                    i += 1
                 else:
                     result.append(char)
-                i += 1
+                    i += 1
             base = "".join(result)
 
         return self.phonology_handler.nativize_word(base)
