@@ -1,4 +1,13 @@
 from .phonology import PhonologyHandler
+from .morphology import (
+    AffixHandler,
+    BrokenPluralHandler,
+    ConstructStateHandler,
+    DegreeHandler,
+    DualHandler,
+    ReduplicationHandler,
+    RootSystemHandler
+)
 
 __all__ = [
     "PhonologyHandler",

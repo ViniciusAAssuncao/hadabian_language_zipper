@@ -6,7 +6,6 @@ from pathlib import Path
 from typing import Dict, List, Optional
 from constants import PORTUGUESE_STOP_WORDS
 
-
 class GramatakiManager:
     def __init__(self, profile: Dict, engine_ref):
         self.profile = profile
