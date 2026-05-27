@@ -178,3 +178,87 @@ class PhonologicalDispersion:
                 best_additions.append(best_phoneme)
 
         return best_additions
+
+
+class PhonologicalDistance:
+    def __init__(self, phoneme_feature_db: dict):
+        self.db = phoneme_feature_db
+
+    def _count_shared_features(self, p1: str, p2: str) -> tuple[int, int]:
+        f1 = self.db.get(p1)
+        f2 = self.db.get(p2)
+        if not f1 or not f2:
+            return (0, 0)
+
+        shared = 0
+        total = 0
+        keys = set(f1.keys()).union(set(f2.keys()))
+
+        for k in keys:
+            total += 1
+            if k in f1 and k in f2:
+                if f1[k] == f2[k]:
+                    shared += 1
+
+        return (shared, total)
+
+    def feature_similarity(self, p1: str, p2: str) -> float:
+        if p1 == p2:
+            return 1.0
+
+        shared, total = self._count_shared_features(p1, p2)
+        if total == 0:
+            return 0.1
+
+        return float(shared) / float(total)
+
+    def substitution_cost(self, p1: str, p2: str) -> float:
+        if p1 == p2:
+            return 0.0
+
+        f1 = self.db.get(p1, {})
+        f2 = self.db.get(p2, {})
+
+        is_v1 = "height" in f1 or "backness" in f1
+        is_c1 = "place" in f1 or "manner" in f1
+        is_v2 = "height" in f2 or "backness" in f2
+        is_c2 = "place" in f2 or "manner" in f2
+
+        if (is_v1 and is_c2) or (is_c1 and is_v2):
+            return 1.5
+
+        return 1.0 - self.feature_similarity(p1, p2)
+
+    def weighted_edit_distance(self, s1: str, s2: str) -> float:
+        m = len(s1)
+        n = len(s2)
+        dp = [[0.0] * (n + 1) for _ in range(m + 1)]
+
+        for i in range(m + 1):
+            dp[i][0] = float(i)
+        for j in range(n + 1):
+            dp[0][j] = float(j)
+
+        for i in range(1, m + 1):
+            for j in range(1, n + 1):
+                cost = self.substitution_cost(s1[i - 1], s2[j - 1])
+                dp[i][j] = min(
+                    dp[i - 1][j] + 1.0,
+                    dp[i][j - 1] + 1.0,
+                    dp[i - 1][j - 1] + cost
+                )
+
+        return dp[m][n]
+
+    def normalized_similarity(self, s1: str, s2: str) -> float:
+        if not s1 and not s2:
+            return 1.0
+
+        dist = self.weighted_edit_distance(s1, s2)
+        max_possible_distance = max(len(s1), len(s2)) * 1.5
+
+        if max_possible_distance == 0.0:
+            return 1.0
+
+        sim = 1.0 - (dist / max_possible_distance)
+        return max(0.0, min(1.0, sim))
