@@ -1,0 +1,204 @@
+{
+  "consonants": {
+    "b": {
+      "place": "bilabial",
+      "manner": "stop",
+      "voice": true,
+      "nasal": false,
+      "lateral": false,
+      "rhotic": false
+    },
+    "c": {
+      "place": "velar",
+      "manner": "stop",
+      "voice": false,
+      "nasal": false,
+      "lateral": false,
+      "rhotic": false
+    },
+    "d": {
+      "place": "alveolar",
+      "manner": "stop",
+      "voice": true,
+      "nasal": false,
+      "lateral": false,
+      "rhotic": false
+    },
+    "f": {
+      "place": "labiodental",
+      "manner": "fricative",
+      "voice": false,
+      "nasal": false,
+      "lateral": false,
+      "rhotic": false
+    },
+    "g": {
+      "place": "velar",
+      "manner": "stop",
+      "voice": true,
+      "nasal": false,
+      "lateral": false,
+      "rhotic": false
+    },
+    "h": {
+      "place": "glottal",
+      "manner": "fricative",
+      "voice": false,
+      "nasal": false,
+      "lateral": false,
+      "rhotic": false
+    },
+    "j": {
+      "place": "palatal",
+      "manner": "approximant",
+      "voice": true,
+      "nasal": false,
+      "lateral": false,
+      "rhotic": false
+    },
+    "k": {
+      "place": "velar",
+      "manner": "stop",
+      "voice": false,
+      "nasal": false,
+      "lateral": false,
+      "rhotic": false
+    },
+    "l": {
+      "place": "alveolar",
+      "manner": "approximant",
+      "voice": true,
+      "nasal": false,
+      "lateral": true,
+      "rhotic": false
+    },
+    "m": {
+      "place": "bilabial",
+      "manner": "stop",
+      "voice": true,
+      "nasal": true,
+      "lateral": false,
+      "rhotic": false
+    },
+    "n": {
+      "place": "alveolar",
+      "manner": "stop",
+      "voice": true,
+      "nasal": true,
+      "lateral": false,
+      "rhotic": false
+    },
+    "p": {
+      "place": "bilabial",
+      "manner": "stop",
+      "voice": false,
+      "nasal": false,
+      "lateral": false,
+      "rhotic": false
+    },
+    "q": {
+      "place": "uvular",
+      "manner": "stop",
+      "voice": false,
+      "nasal": false,
+      "lateral": false,
+      "rhotic": false
+    },
+    "r": {
+      "place": "alveolar",
+      "manner": "tap",
+      "voice": true,
+      "nasal": false,
+      "lateral": false,
+      "rhotic": true
+    },
+    "s": {
+      "place": "alveolar",
+      "manner": "fricative",
+      "voice": false,
+      "nasal": false,
+      "lateral": false,
+      "rhotic": false
+    },
+    "t": {
+      "place": "alveolar",
+      "manner": "stop",
+      "voice": false,
+      "nasal": false,
+      "lateral": false,
+      "rhotic": false
+    },
+    "v": {
+      "place": "labiodental",
+      "manner": "fricative",
+      "voice": true,
+      "nasal": false,
+      "lateral": false,
+      "rhotic": false
+    },
+    "w": {
+      "place": "labial-velar",
+      "manner": "approximant",
+      "voice": true,
+      "nasal": false,
+      "lateral": false,
+      "rhotic": false
+    },
+    "x": {
+      "place": "velar",
+      "manner": "fricative",
+      "voice": false,
+      "nasal": false,
+      "lateral": false,
+      "rhotic": false
+    },
+    "y": {
+      "place": "palatal",
+      "manner": "approximant",
+      "voice": true,
+      "nasal": false,
+      "lateral": false,
+      "rhotic": false
+    },
+    "z": {
+      "place": "alveolar",
+      "manner": "fricative",
+      "voice": true,
+      "nasal": false,
+      "lateral": false,
+      "rhotic": false
+    }
+  },
+  "vowels": {
+    "a": {
+      "height": "low",
+      "backness": "central",
+      "rounded": false,
+      "long": false
+    },
+    "e": {
+      "height": "mid",
+      "backness": "front",
+      "rounded": false,
+      "long": false
+    },
+    "i": {
+      "height": "high",
+      "backness": "front",
+      "rounded": false,
+      "long": false
+    },
+    "o": {
+      "height": "mid",
+      "backness": "back",
+      "rounded": true,
+      "long": false
+    },
+    "u": {
+      "height": "high",
+      "backness": "back",
+      "rounded": true,
+      "long": false
+    }
+  }
+}
