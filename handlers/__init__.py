@@ -21,6 +21,9 @@ from .morphosyntax import (
     CopulaHandler,
     InterrogativeHandler
 )
+from .morphology_templates import (
+    MorphologyTemplateHandler
+)
 
 __all__ = [
     "PhonologyHandler",
@@ -51,5 +54,6 @@ __all__ = [
     "TAMHandler",
     "NegationHandler",
     "CopulaHandler",
-    "InterrogativeHandler"
+    "InterrogativeHandler",
+    "MorphologyTemplateHandler"
 ]
