@@ -1,7 +1,10 @@
 import re
 import hashlib
+import json
+from pathlib import Path
 from dataclasses import dataclass
-from typing import List, Optional, Dict
+from typing import List, Optional, Dict, Set
+from constants import GRAMMATICAL_CONCEPT_IDS
 
 
 @dataclass
@@ -33,10 +36,18 @@ class SoundChangeEngine:
         self.vowels = vowels
         self.eras = {}
 
+        high_freq_lemmas = self._infer_high_frequency_lemmas(profile)
+
         raw_eras = profile.get('diachronic_eras', [])
         for era_data in raw_eras:
             changes = []
             for c in era_data.get('changes', []):
+                prob = c.get('probability', 1.0)
+                hf_exceptions = set(c.get('high_frequency_exceptions', []))
+                
+                if prob == 1.0:
+                    hf_exceptions.update(high_freq_lemmas)
+
                 changes.append(SoundChange(
                     rule_id=c.get('rule_id', ''),
                     input_pattern=c.get('input_pattern', ''),
@@ -45,9 +56,8 @@ class SoundChangeEngine:
                     environment_right=c.get('environment_right', ''),
                     word_boundary_left=c.get('word_boundary_left', False),
                     word_boundary_right=c.get('word_boundary_right', False),
-                    probability=c.get('probability', 1.0),
-                    high_frequency_exceptions=c.get(
-                        'high_frequency_exceptions', []),
+                    probability=prob,
+                    high_frequency_exceptions=list(hf_exceptions),
                     description=c.get('description', '')
                 ))
 
@@ -58,6 +68,41 @@ class SoundChangeEngine:
                 changes=changes,
                 description=era_data.get('description', '')
             )
+
+    def _infer_high_frequency_lemmas(self, profile: Dict) -> Set[str]:
+        high_freq = set()
+
+        vocab_override = profile.get('vocabulary', {})
+        for lemma in vocab_override.keys():
+            high_freq.add(lemma)
+
+        abstract_concepts = profile.get('abstract_concepts', {}).get('mappings', {})
+        for lemma, concept_id in abstract_concepts.items():
+            if concept_id in GRAMMATICAL_CONCEPT_IDS:
+                high_freq.add(lemma)
+
+        swadesh_path = Path("data/swadesh_100.json")
+        swadesh_concepts = set()
+        if swadesh_path.exists():
+            try:
+                with open(swadesh_path, 'r', encoding='utf-8') as f:
+                    swadesh_data = json.load(f)
+                    if isinstance(swadesh_data, list):
+                        for item in swadesh_data:
+                            if isinstance(item, dict) and 'id' in item:
+                                swadesh_concepts.add(item['id'])
+                            elif isinstance(item, str):
+                                swadesh_concepts.add(item)
+                    elif isinstance(swadesh_data, dict):
+                        swadesh_concepts.update(swadesh_data.keys())
+            except Exception:
+                pass
+
+        for lemma, concept_id in abstract_concepts.items():
+            if concept_id in swadesh_concepts:
+                high_freq.add(lemma)
+
+        return high_freq
 
     def is_enabled(self) -> bool:
         for era in self.eras.values():

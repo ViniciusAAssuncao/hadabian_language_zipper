@@ -21,3 +21,9 @@ DEFAULT_PHONEME_FEATURES = {
     "vowels": ["a", "e", "i", "o", "u"],
     "consonants": ["p", "t", "k", "b", "d", "g", "f", "v", "s", "z", "m", "n", "l", "r"]
 }
+
+GRAMMATICAL_CONCEPT_IDS = {
+    'pron_1sg', 'pron_2sg', 'pron_3sg', 'pron_1pl', 'pron_2pl', 'pron_3pl',
+    'art_def', 'art_indef', 'prep_of', 'prep_in', 'prep_to', 'prep_for',
+    'conj_and', 'conj_or', 'conj_but', 'dem_this', 'dem_that'
+}
