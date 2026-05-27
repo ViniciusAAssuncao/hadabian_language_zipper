@@ -4,6 +4,7 @@ import re
 import random
 import unicodedata
 
+
 class PhonologyHandler:
     def __init__(self, profile: Dict):
         self.profile = profile
@@ -394,7 +395,7 @@ class SandhiHandler:
 
 
 class StressHandler:
-    def __init__(self, profile: Dict):
+    def __init__(self, profile: Dict, vowels: Optional[Union[List[str], str]] = None):
         self.profile = profile
         self.config = profile.get('stress_system', {})
         self.enabled = self.config.get('enabled', False)
@@ -404,10 +405,10 @@ class StressHandler:
         self.map = self.config.get(
             'accent_map', {'a': 'á', 'e': 'é', 'i': 'í', 'o': 'ó', 'u': 'ú'})
         self.phonotactics = profile.get('phonotactics', {})
-        self.vowels = self.phonotactics.get('vowels')
+        self.vowels = vowels if vowels is not None else self.phonotactics.get(
+            'vowels')
         if not self.vowels:
-            ph_handler = PhonologyHandler(profile)
-            self.vowels = ph_handler.base_vowels
+            self.vowels = []
         self.vowels = set(self.vowels)
 
     def apply_stress(self, word: str) -> str:
