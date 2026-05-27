@@ -442,6 +442,8 @@ class ConHabApp:
 
         self.intelligibility_widget.update_engine(self.engine)
 
+        self.profile_widget.update_engine(self.engine)
+
         self.loading_overlay.hide()
 
     def _on_load_error(self, error):
