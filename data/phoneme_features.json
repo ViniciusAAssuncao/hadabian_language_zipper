@@ -167,6 +167,62 @@
       "nasal": false,
       "lateral": false,
       "rhotic": false
+    },
+    "th": {
+      "place": "dental",
+      "manner": "fricative",
+      "voice": false,
+      "nasal": false,
+      "lateral": false,
+      "rhotic": false
+    },
+    "sh": {
+      "place": "postalveolar",
+      "manner": "fricative",
+      "voice": false,
+      "nasal": false,
+      "lateral": false,
+      "rhotic": false
+    },
+    "kh": {
+      "place": "velar",
+      "manner": "fricative",
+      "voice": false,
+      "nasal": false,
+      "lateral": false,
+      "rhotic": false
+    },
+    "gh": {
+      "place": "velar",
+      "manner": "fricative",
+      "voice": true,
+      "nasal": false,
+      "lateral": false,
+      "rhotic": false
+    },
+    "ng": {
+      "place": "velar",
+      "manner": "nasal",
+      "voice": true,
+      "nasal": true,
+      "lateral": false,
+      "rhotic": false
+    },
+    "ll": {
+      "place": "palatal",
+      "manner": "lateral",
+      "voice": true,
+      "nasal": false,
+      "lateral": true,
+      "rhotic": false
+    },
+    "rr": {
+      "place": "alveolar",
+      "manner": "trill",
+      "voice": true,
+      "nasal": false,
+      "lateral": false,
+      "rhotic": true
     }
   },
   "vowels": {
@@ -197,6 +253,102 @@
     "u": {
       "height": "high",
       "backness": "back",
+      "rounded": true,
+      "long": false
+    },
+    "á": {
+      "height": "low",
+      "backness": "central",
+      "rounded": false,
+      "long": true
+    },
+    "é": {
+      "height": "mid",
+      "backness": "front",
+      "rounded": false,
+      "long": true
+    },
+    "í": {
+      "height": "high",
+      "backness": "front",
+      "rounded": false,
+      "long": true
+    },
+    "ó": {
+      "height": "mid",
+      "backness": "back",
+      "rounded": true,
+      "long": true
+    },
+    "ú": {
+      "height": "high",
+      "backness": "back",
+      "rounded": true,
+      "long": true
+    },
+    "à": {
+      "height": "low",
+      "backness": "central",
+      "rounded": false,
+      "long": false
+    },
+    "â": {
+      "height": "low",
+      "backness": "central",
+      "rounded": false,
+      "long": true
+    },
+    "ê": {
+      "height": "mid",
+      "backness": "front",
+      "rounded": false,
+      "long": true
+    },
+    "î": {
+      "height": "high",
+      "backness": "front",
+      "rounded": false,
+      "long": true
+    },
+    "ô": {
+      "height": "mid",
+      "backness": "back",
+      "rounded": true,
+      "long": true
+    },
+    "û": {
+      "height": "high",
+      "backness": "back",
+      "rounded": true,
+      "long": true
+    },
+    "ä": {
+      "height": "low",
+      "backness": "front",
+      "rounded": false,
+      "long": false
+    },
+    "ë": {
+      "height": "mid",
+      "backness": "central",
+      "rounded": false,
+      "long": false
+    },
+    "ï": {
+      "height": "high",
+      "backness": "central",
+      "rounded": false,
+      "long": false
+    },
+    "ö": {
+      "height": "mid",
+      "backness": "front",
+      "rounded": true,
+      "long": false
+    },
+    "ü": {
+      "height": "high",
+      "backness": "front",
       "rounded": true,
       "long": false
     }
