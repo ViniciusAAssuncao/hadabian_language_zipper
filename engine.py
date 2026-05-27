@@ -10,6 +10,7 @@ from gramataki_manager import GramatakiManager
 from handlers.discourse import AllomorphyHandler, CliticHandler, DemonstrativeHandler, PossessiveHandler, PrepositionHandler
 from handlers.lexicon import ConceptHandler, FalseCognateHandler, LexicalConfluenceHandler, LoanwordHandler, PolysemyHandler, SemanticFieldHandler, SynonymHandler
 from handlers.morphology import AffixHandler, AgreementChecker, BrokenPluralHandler, ConsonantMutationHandler, ConstructStateHandler, DegreeHandler, DualHandler, GenderHandler, ReduplicationHandler, RootSystemHandler
+from handlers.morphology_templates import AblauthSystem
 from handlers.morphosyntax import CopulaHandler, InterrogativeHandler, NegationHandler, TAMHandler
 from handlers.phonology import PharyngealizationHandler, PhonologyHandler, SandhiHandler, StressHandler, SunLetterHandler
 from handlers.sound_change import SoundChangeEngine
@@ -64,7 +65,40 @@ class OriginalLanguageEngine:
         self.topicalization_handler = TopicalizationHandler(self.profile)
         self.focus_handler = FocusStructureHandler(self.profile)
         self.vowel_harmony_handler = VowelHarmonyHandler(self.profile)
+        self.ablauth_system = AblauthSystem(self.profile, self.vowels) if self.profile.get(
+            'ablaut_system', {}).get('enabled', False) else None
         self.affix_handler = AffixHandler(self.profile)
+
+        original_apply_affix = self.affix_handler.apply_affix
+
+        def patched_apply_affix(word: str, rule: Dict, harmony_handler=None) -> str:
+            rule_type = rule.get('type')
+            if rule_type == 'ablaut_grade' and getattr(self, 'ablauth_system', None):
+                set_id = rule.get('alternation_set_id')
+                slot = rule.get('slot')
+                return self.ablauth_system.apply_vowel_grade(word, set_id, slot)
+            elif rule_type == 'umlaut' and getattr(self, 'ablauth_system', None):
+                trigger = rule.get('trigger_context')
+                return self.ablauth_system.apply_umlaut(word, trigger)
+            elif rule.get('position') == 'infix' and rule.get('anchor_strategy'):
+                affix = rule.get('affix', '')
+                anchor = rule.get('anchor_strategy')
+                if anchor == 'after_first_consonant':
+                    for i, c in enumerate(word):
+                        if c.lower() in self.consonants:
+                            return word[:i+1] + affix + word[i+1:]
+                elif anchor == 'before_last_vowel':
+                    for i in range(len(word)-1, -1, -1):
+                        if word[i].lower() in self.vowels:
+                            return word[:i] + affix + word[i:]
+                elif anchor == 'after_first_vowel':
+                    for i, c in enumerate(word):
+                        if c.lower() in self.vowels:
+                            return word[:i+1] + affix + word[i+1:]
+                return word
+            return original_apply_affix(word, rule, harmony_handler)
+        self.affix_handler.apply_affix = patched_apply_affix
+
         self.degree_handler = DegreeHandler(
             self.profile, self.vowel_harmony_handler)
         self.tam_handler = TAMHandler(self.profile)
@@ -355,26 +389,39 @@ class OriginalLanguageEngine:
                 })
         return suggestions
 
-    def _get_word_form(self, lemma: str, tags: List[str] = None, force_word: str = None, meta: Dict = None, pos: str = None, derivation_depth: int = 0, word_form: str = None, skip_cache: bool = False) -> str:
+    def _apply_ablaut_if_needed(self, word: str, feats: str) -> str:
+        if not getattr(self, 'ablauth_system', None) or not self.ablauth_system.enabled or not feats or feats == '_':
+            return word
+        feat_list = feats.split('|')
+        for alt_set in self.ablauth_system.alternation_sets:
+            set_id = alt_set.get('set_id')
+            if set_id in feat_list or any(f.endswith(f"={set_id}") for f in feat_list):
+                slots = alt_set.get('slots', {})
+                for slot in slots:
+                    if slot in feat_list or any(f.endswith(f"={slot}") for f in feat_list):
+                        return self.ablauth_system.apply_vowel_grade(word, set_id, slot)
+        return word
+
+    def _get_word_form(self, lemma: str, tags: List[str] = None, force_word: str = None, meta: Dict = None, pos: str = None, derivation_depth: int = 0, word_form: str = None, skip_cache: bool = False, feats: str = None) -> str:
         lemma = lemma.lower().strip()
         if lemma in self.vocabulary_override:
-            return self.vocabulary_override[lemma]
+            return self._apply_ablaut_if_needed(self.vocabulary_override[lemma], feats)
         if lemma.lower() in self.vocabulary_override:
-            return self.vocabulary_override[lemma.lower()]
+            return self._apply_ablaut_if_needed(self.vocabulary_override[lemma.lower()], feats)
         if lemma in self.processing_stack:
-            return self._generate_deterministic_word(lemma, depth=100, skip_cache=skip_cache)
+            return self._apply_ablaut_if_needed(self._generate_deterministic_word(lemma, depth=100, skip_cache=skip_cache), feats)
         self.processing_stack.add(lemma)
         try:
             if word_form:
                 res = self.concept_handler.resolve_concept(
                     lemma, self, word_form=word_form, pos=pos, skip_cache=skip_cache)
                 if res and res[2].get('origin') == 'mapping_table_surface':
-                    return res[0]
+                    return self._apply_ablaut_if_needed(res[0], feats)
             if pos == 'ADP':
                 basic_preps = self.profile.get(
                     'adposition_system', {}).get('basic_prepositions', {})
                 if lemma in basic_preps:
-                    return basic_preps[lemma]
+                    return self._apply_ablaut_if_needed(basic_preps[lemma], feats)
             if pos in {'PRON', 'DET'}:
                 possessives = self.profile.get('determiner_system', {}).get(
                     'possessives', {}).get('independent_forms', {})
@@ -382,7 +429,7 @@ class OriginalLanguageEngine:
                     'possessives', {}).get('possessive_lemmas', {})
                 target_lemma = pos_lemmas.get(lemma)
                 if target_lemma and target_lemma in possessives:
-                    return possessives[target_lemma]
+                    return self._apply_ablaut_if_needed(possessives[target_lemma], feats)
             entry = self.word_cache.get(lemma)
             if not entry and force_word:
                 entry = {
@@ -402,10 +449,10 @@ class OriginalLanguageEngine:
                 if self.tone_system.is_enabled() and "tone" in entry:
                     ret_word = self.tone_system.apply_tone_diacritic(
                         ret_word, entry["tone"])
-                return ret_word
+                return self._apply_ablaut_if_needed(ret_word, feats)
             if entry:
                 if isinstance(entry, str):
-                    return entry
+                    return self._apply_ablaut_if_needed(entry, feats)
                 if isinstance(entry, dict):
                     ret_word = entry.get('default')
                     if tags:
@@ -424,13 +471,13 @@ class OriginalLanguageEngine:
                     if self.tone_system.is_enabled() and "tone" in entry:
                         ret_word = self.tone_system.apply_tone_diacritic(
                             ret_word, entry["tone"])
-                    return ret_word
-                return str(entry)
+                    return self._apply_ablaut_if_needed(ret_word, feats)
+                return self._apply_ablaut_if_needed(str(entry), feats)
             concept_result = self.concept_handler.resolve_concept(
                 lemma, self, word_form=word_form, pos=pos, skip_cache=skip_cache)
             if concept_result:
                 word, c_type, c_meta = concept_result
-                return self._get_word_form(lemma, tags=['concept'], force_word=word, meta=c_meta, skip_cache=skip_cache)
+                return self._get_word_form(lemma, tags=['concept'], force_word=word, meta=c_meta, skip_cache=skip_cache, feats=feats)
             if self.root_handler.enabled and (pos == 'VERB' or pos == 'NOUN'):
                 root = self.root_handler.generate_root(lemma)
                 pattern_def = self.root_handler.get_binyan_by_meaning('basic')
@@ -464,7 +511,7 @@ class OriginalLanguageEngine:
                     if self.tone_system.is_enabled() and "tone" in entry:
                         ret_word = self.tone_system.apply_tone_diacritic(
                             ret_word, entry["tone"])
-                    return ret_word
+                    return self._apply_ablaut_if_needed(ret_word, feats)
             if self.affix_handler.morph_derivation_enabled:
                 derived_word = self.affix_handler.try_derive_from_source(
                     lemma, pos, self, current_depth=derivation_depth, skip_cache=skip_cache, harmony_handler=self.vowel_harmony_handler)
@@ -488,8 +535,8 @@ class OriginalLanguageEngine:
                     if self.tone_system.is_enabled() and "tone" in entry:
                         ret_word = self.tone_system.apply_tone_diacritic(
                             ret_word, entry["tone"])
-                    return ret_word
-            return self._generate_deterministic_word(lemma, depth=0, skip_cache=skip_cache)
+                    return self._apply_ablaut_if_needed(ret_word, feats)
+            return self._apply_ablaut_if_needed(self._generate_deterministic_word(lemma, depth=0, skip_cache=skip_cache), feats)
         finally:
             self.processing_stack.remove(lemma)
 
@@ -684,13 +731,13 @@ class OriginalLanguageEngine:
                     translated_word = ""
                     if syntactic_func == SyntacticFunction.QUANTIFIER:
                         translated_word = mapping.get(
-                            'noun_word', self._get_word_form(f'{raw_lemma}_quant'))
+                            'noun_word', self._get_word_form(f'{raw_lemma}_quant', feats=feats))
                     elif syntactic_func == SyntacticFunction.VERB_PARTICLE:
                         translated_word = mapping.get(
-                            'verb_word', self._get_word_form(f'{raw_lemma}_verb'))
+                            'verb_word', self._get_word_form(f'{raw_lemma}_verb', feats=feats))
                     elif syntactic_func == SyntacticFunction.INTENSIFIER:
                         translated_word = mapping.get(
-                            'adj_word', self._get_word_form(f'{raw_lemma}_intens'))
+                            'adj_word', self._get_word_form(f'{raw_lemma}_intens', feats=feats))
                     if translated_word:
                         if self.mutation_handler.enabled:
                             prev_word = last_content_word_str
@@ -737,7 +784,7 @@ class OriginalLanguageEngine:
                             current_form = translated_root
                         else:
                             translated_root = self._get_word_form(
-                                target_lemma, context_tags, pos=current_pos, word_form=clean_word_lower)
+                                target_lemma, context_tags, pos=current_pos, word_form=clean_word_lower, feats=feats)
                             current_form = translated_root
                     elif pos == 'ADP':
                         basic_preps = self.profile.get(
@@ -746,11 +793,11 @@ class OriginalLanguageEngine:
                             current_form = basic_preps[raw_lemma]
                         else:
                             translated_root = self._get_word_form(
-                                target_lemma, context_tags, pos=current_pos, word_form=clean_word_lower)
+                                target_lemma, context_tags, pos=current_pos, word_form=clean_word_lower, feats=feats)
                             current_form = translated_root
                     else:
                         translated_root = self._get_word_form(
-                            target_lemma, context_tags, pos=current_pos, word_form=clean_word_lower)
+                            target_lemma, context_tags, pos=current_pos, word_form=clean_word_lower, feats=feats)
                         current_form = translated_root
                 if func['index'] in compound_map:
                     current_form = compound_map[func['index']]

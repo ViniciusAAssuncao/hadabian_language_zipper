@@ -22,7 +22,8 @@ from .morphosyntax import (
     InterrogativeHandler
 )
 from .morphology_templates import (
-    MorphologyTemplateHandler
+    MorphologyTemplateHandler,
+    AblauthSystem,
 )
 
 __all__ = [
@@ -55,5 +56,6 @@ __all__ = [
     "NegationHandler",
     "CopulaHandler",
     "InterrogativeHandler",
-    "MorphologyTemplateHandler"
+    "MorphologyTemplateHandler",
+    "AblauthSystem",
 ]
