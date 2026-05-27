@@ -1,7 +1,7 @@
 import hashlib
 import random
 import re
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Tuple, Union
 from morphosyntax_analyzer import VowelHarmonyHandler
 from .phonology import PhonologyHandler
 
@@ -503,3 +503,381 @@ class ConstructStateHandler:
             if p.get('type') == type_tag:
                 return p
         return None
+
+
+class ConsonantMutationHandler:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.config = profile.get('consonant_mutation', {})
+        self.enabled = self.config.get('enabled', False)
+        self.rules = self.config.get('rules', [])
+
+    def apply_mutation(self, current_word: str, previous_word: Optional[str], previous_func: Optional[Dict]) -> str:
+        if not self.enabled or not current_word:
+            return current_word
+
+        if not previous_word and not previous_func:
+            return current_word
+
+        processed_word = current_word
+
+        for rule in self.rules:
+            triggers = rule.get('triggers', {})
+            mutations = rule.get('mutations', {})
+            triggered = False
+
+            trigger_words = set(w.lower() for w in triggers.get('words', []))
+            if previous_word and previous_word.lower() in trigger_words:
+                triggered = True
+
+            if not triggered and previous_func:
+                trigger_pos = set(triggers.get('pos', []))
+                if previous_func.get('pos') in trigger_pos:
+                    triggered = True
+
+            if not triggered and previous_word:
+                trigger_ending_chars = triggers.get('ending_chars', [])
+                if trigger_ending_chars:
+                    for char in trigger_ending_chars:
+                        if previous_word.lower().endswith(char):
+                            triggered = True
+                            break
+
+            if triggered:
+                first_char = processed_word[0]
+                rest = processed_word[1:]
+
+                is_upper = first_char.isupper()
+                lower_char = first_char.lower()
+
+                if lower_char in mutations:
+                    new_char = mutations[lower_char]
+                    if is_upper:
+                        new_char = new_char.upper()
+                    processed_word = new_char + rest
+
+        return processed_word
+
+
+class GenderHandler:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.config = profile.get('gender_system', {})
+        self.enabled = self.config.get('enabled', False)
+        self.inference_rules = self.config.get('inference', [])
+        self.markers = self.config.get('markers', {})
+        self.default_gender = self.config.get('default', 'masculine')
+        self.harmony_handler = VowelHarmonyHandler(profile)
+
+    def infer_gender(self, word: str) -> str:
+        if not self.enabled or not word:
+            return self.default_gender
+
+        word_lower = word.lower()
+        for rule in self.inference_rules:
+            suffix = rule.get('suffix', '')
+            if suffix and word_lower.endswith(suffix):
+                return rule.get('gender', self.default_gender)
+
+        return self.default_gender
+
+    def apply_agreement(self, word: str, target_gender: str, pos: str) -> str:
+        if not self.enabled or not target_gender:
+            return word
+
+        marker_config = self.markers.get(target_gender)
+        if not marker_config:
+            return word
+
+        targets = marker_config.get('targets', [])
+        if pos not in targets:
+            return word
+
+        marker = marker_config.get('marker', '')
+        position = marker_config.get('position', 'suffix')
+
+        if not marker:
+            return word
+
+        if self.harmony_handler.enabled and position == 'suffix':
+            marker = self.harmony_handler.apply_harmony(word, marker)
+
+        if position == 'suffix':
+            return word + marker
+        elif position == 'prefix':
+            return marker + word
+
+        return word
+
+
+class CaseMorphology:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.case_system = profile.get('case_system', {})
+        self.enabled = self.case_system.get('enabled', False)
+        self.preposition_handling = self.case_system.get(
+            'preposition_handling', 'coexist')
+        self.harmony_config = profile.get('vowel_harmony', {})
+        self.harmony_enabled = self.harmony_config.get('enabled', False)
+        self.vowel_harmony_handler = VowelHarmonyHandler(profile)
+        self.alignment = profile.get('alignment', 'nominative-accusative')
+        self.semantic_config = profile.get('semantic_fields', {})
+        self.animate_domains = set(self.semantic_config.get(
+            'animate_domains', ['família', 'religião', 'human']))
+        self.manual_groups = self.semantic_config.get('manual_groups', {})
+
+    def _get_marker_config(self, key: str) -> Tuple[str, str, List[str], bool]:
+        case_markers = self.case_system.get('markers', {})
+        config = case_markers.get(key, '')
+
+        default_pos = self.case_system.get('marker_position', 'suffix')
+
+        if isinstance(config, dict):
+            return (config.get('marker', ''),
+                    config.get('type', default_pos),
+                    config.get('conditions', []),
+                    config.get('shift_to_determiner', False))
+        return config, default_pos, [], False
+
+    def _is_animate(self, func_data: Dict) -> bool:
+        lemma = func_data.get('lemma', '').lower()
+        if lemma in self.manual_groups:
+            group = self.manual_groups[lemma]
+            if group in self.animate_domains:
+                return True
+
+        pos = func_data.get('pos', '')
+        if pos in {'PROPN', 'PRON'}:
+            return True
+
+        feats = func_data.get('feats', '')
+        if 'Animacy=Anim' in feats:
+            return True
+
+        return False
+
+    def _is_definite(self, func_data: Dict, all_functions: List[Dict] = None) -> bool:
+        feats = func_data.get('feats', '')
+        if 'Definite=Def' in feats:
+            return True
+
+        pos = func_data.get('pos', '')
+        if pos in {'PROPN', 'PRON'}:
+            return True
+
+        my_index = func_data.get('index')
+        if all_functions:
+            for f in all_functions:
+                if my_index in f.get('dependencies', []) and f.get('pos') == 'DET':
+                    f_feats = f.get('feats', '')
+                    if 'Definite=Def' in f_feats or 'PronType=Art' in f_feats:
+                        return True
+
+        return False
+
+    def apply_case(self, word: str, function: str, word_order: str, deprel: str = '', clause_transitivity: bool = False, func_data: Dict = None, all_functions: List[Dict] = None) -> str:
+        if not self.enabled:
+            return word
+
+        if self.preposition_handling == 'none' and function not in {'SUBJECT', 'OBJECT', 'S', 'O'}:
+            return word
+        target_key = ''
+        current_deprel = deprel
+        current_function = function
+        if func_data and func_data.get('pos') == 'DET' and all_functions:
+            head_idx = func_data['dependencies'][0] if func_data['dependencies'] else -1
+            if head_idx != -1:
+                head_func = next(
+                    (f for f in all_functions if f['index'] == head_idx), None)
+                if head_func:
+                    current_deprel = head_func.get('deprel', '')
+                    current_function = head_func.get('function', '')
+                    effective_func_data = head_func
+                else:
+                    effective_func_data = func_data
+            else:
+                effective_func_data = func_data
+        else:
+            effective_func_data = func_data
+
+        if current_deprel:
+            core_dep = current_deprel.split(':')[0]
+            if core_dep == 'obj':
+                target_key = 'accusative'
+                if self.alignment == 'ergative-absolutive':
+                    target_key = 'absolutive'
+            elif core_dep == 'iobj':
+                target_key = 'dative'
+            elif core_dep == 'obl':
+                target_key = 'locative'
+                if not self.case_system.get('markers', {}).get('locative'):
+                    target_key = 'dative'
+            elif core_dep == 'nsubj':
+                if self.alignment == 'ergative-absolutive':
+                    target_key = 'ergative' if clause_transitivity else 'absolutive'
+                else:
+                    target_key = 'nominative'
+
+        if self.preposition_handling == 'none' and effective_func_data and all_functions:
+            my_idx = effective_func_data.get('index')
+            for child in all_functions:
+                if my_idx in child.get('dependencies', []) and child.get('deprel') == 'case':
+                    prep_lemma = child.get('lemma', '').lower()
+                    prep_to_case = self.case_system.get(
+                        'preposition_case_mapping', {})
+                    if prep_lemma in prep_to_case:
+                        target_key = prep_to_case[prep_lemma]
+                        break
+
+        if not target_key:
+            if current_function in {'SUBJECT', 'S'}:
+                if self.alignment == 'ergative-absolutive':
+                    target_key = 'ergative' if clause_transitivity else 'absolutive'
+                else:
+                    target_key = 'nominative'
+            elif current_function in {'OBJECT', 'O'}:
+                if self.alignment == 'ergative-absolutive':
+                    target_key = 'absolutive'
+                else:
+                    target_key = 'accusative'
+            elif current_function in {'ADJUNCT', 'ADJ'}:
+                target_key = 'locative'
+                if not self.case_system.get('markers', {}).get('locative'):
+                    target_key = 'dative'
+
+        if not target_key:
+            return word
+
+        marker_text, marker_type, conditions, shift_to_determiner = self._get_marker_config(
+            target_key)
+
+        if not marker_text:
+            return word
+
+        conditions_met = True
+        if conditions and effective_func_data:
+            for cond in conditions:
+                if cond == 'animate':
+                    if not self._is_animate(effective_func_data):
+                        conditions_met = False
+                        break
+                elif cond == 'definite':
+                    if not self._is_definite(effective_func_data, all_functions):
+                        conditions_met = False
+                        break
+
+        if not conditions_met:
+            return word
+
+        is_det = func_data.get('pos') == 'DET' if func_data else False
+        is_noun = func_data.get('pos') in {
+            'NOUN', 'PROPN', 'PRON'} if func_data else False
+
+        if shift_to_determiner:
+            if is_noun and all_functions:
+                has_det = False
+                my_index = func_data.get('index')
+                for f in all_functions:
+                    if my_index in f.get('dependencies', []) and f.get('pos') == 'DET':
+                        has_det = True
+                        break
+                if has_det:
+                    return word
+
+            if is_det:
+                pass
+
+            if is_noun and not has_det:
+                pass
+            elif is_det:
+                pass
+            else:
+                return word
+
+        if isinstance(marker_text, str) and marker_text.startswith('-'):
+            marker_text = marker_text[1:]
+
+        if self.harmony_enabled:
+            marker_text = self.vowel_harmony_handler.apply_harmony(
+                word, marker_text)
+
+        if marker_type == 'suffix':
+            return word + marker_text
+        elif marker_type == 'prefix':
+            is_capitalized = word and word[0].isupper()
+            result = marker_text + word.lower()
+            if is_capitalized:
+                result = result[0].upper() + result[1:]
+            return result
+        elif marker_type == 'particle_before':
+            if marker_text:
+                return f"{marker_text} {word}"
+            else:
+                return word
+        elif marker_type == 'particle_after':
+            if marker_text:
+                return f"{word} {marker_text}"
+            else:
+                return word
+
+        return word + marker_text
+
+
+class AgreementChecker:
+    def __init__(self, profile: Dict):
+        self.profile = profile
+        self.agreement_rules = profile.get('agreement_rules', {})
+        self.gender_enabled = self.agreement_rules.get(
+            'gender_agreement', False)
+        self.number_enabled = self.agreement_rules.get(
+            'number_agreement', False)
+        self.gender_handler = GenderHandler(profile)
+
+    def check_agreement(self, functions: List[Dict]) -> List[Dict]:
+        violations = []
+        for i, func in enumerate(functions):
+            if func['function'] == 'NOUN' and func['pos'] == 'NOUN':
+                modifiers = [f for f in functions if i in f.get(
+                    'dependencies', [])]
+                for mod in modifiers:
+                    if self.gender_enabled:
+                        violation = self._check_gender_agreement(func, mod)
+                        if violation:
+                            violations.append(violation)
+                    if self.number_enabled:
+                        violation = self._check_number_agreement(func, mod)
+                        if violation:
+                            violations.append(violation)
+        return violations
+
+    def _check_gender_agreement(self, head: Dict, modifier: Dict) -> Optional[Dict]:
+        head_gender = self.gender_handler.infer_gender(head['word'])
+        mod_gender = self.gender_handler.infer_gender(modifier['word'])
+        if head_gender != mod_gender:
+            return {
+                'type': 'gender_mismatch',
+                'head': head['word'],
+                'modifier': modifier['word'],
+                'head_gender': head_gender,
+                'modifier_gender': mod_gender
+            }
+        return None
+
+    def _check_number_agreement(self, head: Dict, modifier: Dict) -> Optional[Dict]:
+        head_number = self._infer_number(head['word'])
+        mod_number = self._infer_number(modifier['word'])
+        if head_number != mod_number:
+            return {
+                'type': 'number_mismatch',
+                'head': head['word'],
+                'modifier': modifier['word'],
+                'head_number': head_number,
+                'modifier_number': mod_number
+            }
+        return None
+
+    def _infer_number(self, word: str) -> str:
+        word_lower = word.lower()
+        if word_lower.endswith('s'):
+            return 'plural'
+        return 'singular'

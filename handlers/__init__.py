@@ -1,4 +1,11 @@
-from .phonology import PhonologyHandler
+from .phonology import (
+    PhonologyHandler,
+    SunLetterHandler,
+    SandhiHandler,
+    StressHandler,
+    VowelHarmonyHandler,
+    PharyngealizationHandler
+)
 from .morphology import (
     AffixHandler,
     BrokenPluralHandler,
@@ -8,9 +15,20 @@ from .morphology import (
     ReduplicationHandler,
     RootSystemHandler
 )
+from .morphosyntax import (
+    TAMHandler,
+    NegationHandler,
+    CopulaHandler,
+    InterrogativeHandler
+)
 
 __all__ = [
     "PhonologyHandler",
+    "SunLetterHandler",
+    "SandhiHandler",
+    "StressHandler",
+    "VowelHarmonyHandler",
+    "PharyngealizationHandler"
     "AffixHandler",
     "BrokenPluralHandler",
     "ConstructStateHandler",
@@ -29,5 +47,9 @@ __all__ = [
     "CliticHandler",
     "DemonstrativeHandler",
     "PossessiveHandler",
-    "PrepositionHandler"
+    "PrepositionHandler",
+    "TAMHandler",
+    "NegationHandler",
+    "CopulaHandler",
+    "InterrogativeHandler"
 ]

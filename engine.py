@@ -7,17 +7,17 @@ import random
 from gramataki_manager import GramatakiManager
 from handlers.discourse import AllomorphyHandler, CliticHandler, DemonstrativeHandler, PossessiveHandler, PrepositionHandler
 from handlers.lexicon import ConceptHandler, FalseCognateHandler, LexicalConfluenceHandler, LoanwordHandler, PolysemyHandler, SemanticFieldHandler, SynonymHandler
-from handlers.morphology import AffixHandler, BrokenPluralHandler, ConstructStateHandler, DegreeHandler, DualHandler, ReduplicationHandler, RootSystemHandler
-from handlers.phonology import PhonologyHandler, SandhiHandler, StressHandler, SunLetterHandler
+from handlers.morphology import AffixHandler, AgreementChecker, BrokenPluralHandler, ConsonantMutationHandler, ConstructStateHandler, DegreeHandler, DualHandler, GenderHandler, ReduplicationHandler, RootSystemHandler
+from handlers.morphosyntax import CopulaHandler, InterrogativeHandler, NegationHandler, TAMHandler
+from handlers.phonology import PharyngealizationHandler, PhonologyHandler, SandhiHandler, StressHandler, SunLetterHandler
 from post_processor import polish_output
 from syntax_engine import SyntaxEngine, SyntacticFunction
 from morphosyntax_analyzer import (
     DependencyParser, ConstituentAnalyzer, ClauseSegmenter,
-    AgreementChecker, SyntacticComplexityAnalyzer,
-    TopicalizationHandler, FocusStructureHandler, TAMHandler,
-    VowelHarmonyHandler, TransitivityAnalyzer, ConsonantMutationHandler,
-    GenderHandler, PharyngealizationHandler, NegationHandler,
-    InterrogativeHandler, CopulaHandler, CompoundingHandler
+    SyntacticComplexityAnalyzer,
+    TopicalizationHandler, FocusStructureHandler,
+    VowelHarmonyHandler, TransitivityAnalyzer,
+    CompoundingHandler
 )
 from special_mechanics import SpecialMechanicsHandler
 from idiom_manager import IdiomManager

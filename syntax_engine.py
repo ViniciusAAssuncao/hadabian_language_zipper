@@ -5,7 +5,8 @@ from collections import defaultdict
 from pathlib import Path
 import requests
 import re
-from morphosyntax_analyzer import CaseMorphology
+
+from handlers.morphology import CaseMorphology
 
 
 class SyntacticFunction:
