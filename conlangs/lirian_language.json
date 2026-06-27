@@ -1,0 +1,575 @@
+{
+    "id": "liriano",
+    "name": "Liriano",
+    "word_order": "SVO",
+    "subordinate_word_order": "SVO",
+    "alignment": "nominative-accusative",
+    "agglutination_strength": 0.2,
+    "pro_drop": false,
+    "drop_articles": false,
+    "global_seed": 1789,
+    "target_era": "liriano_moderne",
+    "phonotactics": {
+        "vowels": "aeiouyéèâêîôûœæ",
+        "consonants": "pbtdcgfvszjmnrlhqx",
+        "syllable_templates": [
+            "CV",
+            "CVC",
+            "CCV",
+            "V",
+            "VC",
+            "CVCC"
+        ],
+        "forbidden_initial_clusters": [
+            "tl",
+            "dl",
+            "pk",
+            "bg",
+            "sr",
+            "mr",
+            "lr",
+            "nr"
+        ],
+        "forbidden_final_consonants": [
+            "p",
+            "t",
+            "d",
+            "c",
+            "g",
+            "b",
+            "v",
+            "z",
+            "j"
+        ],
+        "min_syllables": 1,
+        "max_syllables": 4,
+        "sandhi": {
+            "enabled": true,
+            "rules": [
+                {
+                    "pattern": "([aeiouyéèâêîôûœæ])\\s+([aeiouyéèâêîôûœæ])",
+                    "replacement": "\\1\\2",
+                    "ignore_case": true
+                }
+            ]
+        }
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "fixed",
+        "position": "ultimate",
+        "graphic_accent": false
+    },
+    "gender_system": {
+        "enabled": true,
+        "default": "masculine",
+        "inference": [
+            {
+                "suffix": "ion",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "té",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "ette",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "eur",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "ance",
+                "gender": "feminine"
+            },
+            {
+                "suffix": "age",
+                "gender": "masculine"
+            },
+            {
+                "suffix": "ment",
+                "gender": "masculine"
+            },
+            {
+                "suffix": "eau",
+                "gender": "masculine"
+            },
+            {
+                "suffix": "isme",
+                "gender": "masculine"
+            }
+        ],
+        "markers": {
+            "feminine": {
+                "targets": [
+                    "ADJ",
+                    "DET",
+                    "NOUN"
+                ],
+                "marker": "e",
+                "position": "suffix"
+            }
+        }
+    },
+    "number_system": {
+        "markers": {
+            "plural": {
+                "marker": "s",
+                "alternatives": [
+                    "x",
+                    "z"
+                ]
+            }
+        }
+    },
+    "allomorphy": {
+        "enabled": true,
+        "rules": [
+            {
+                "target_word": "lo",
+                "environment": "before_vowel",
+                "replacement": "l'"
+            },
+            {
+                "target_word": "la",
+                "environment": "before_vowel",
+                "replacement": "l'"
+            },
+            {
+                "target_word": "di",
+                "environment": "before_vowel",
+                "replacement": "d'"
+            },
+            {
+                "target_word": "ne",
+                "environment": "before_vowel",
+                "replacement": "n'"
+            },
+            {
+                "target_word": "me",
+                "environment": "before_vowel",
+                "replacement": "m'"
+            },
+            {
+                "target_word": "te",
+                "environment": "before_vowel",
+                "replacement": "t'"
+            },
+            {
+                "target_word": "se",
+                "environment": "before_vowel",
+                "replacement": "s'"
+            },
+            {
+                "target_word": "ce",
+                "environment": "before_vowel",
+                "replacement": "cet"
+            }
+        ]
+    },
+    "adposition_system": {
+        "basic_prepositions": {
+            "de": "di",
+            "em": "en",
+            "para": "por",
+            "com": "avé",
+            "a": "ad"
+        },
+        "inflected_prepositions": {
+            "enabled": true,
+            "forms": {
+                "ad": {
+                    "def_m_sg": "au",
+                    "def_m_pl": "aux",
+                    "def_f_pl": "aux"
+                },
+                "di": {
+                    "def_m_sg": "du",
+                    "def_m_pl": "des",
+                    "def_f_pl": "des"
+                }
+            }
+        }
+    },
+    "determiner_system": {
+        "definite_article": {
+            "form": "lo",
+            "variants": [
+                "la",
+                "les",
+                "l'"
+            ]
+        },
+        "demonstratives": {
+            "proximal": {
+                "sg_m": "ce",
+                "sg_f": "cette",
+                "pl": "ces"
+            },
+            "distal": {
+                "sg_m": "cel",
+                "sg_f": "celle",
+                "pl": "ceux"
+            }
+        },
+        "possessives": {
+            "pronominal_suffixes": false,
+            "independent_forms": {
+                "1sg_m": "mien",
+                "1sg_f": "mia",
+                "1sg_pl": "mies",
+                "2sg_m": "tien",
+                "2sg_f": "tia",
+                "2sg_pl": "ties",
+                "3sg_m": "sien",
+                "3sg_f": "sia",
+                "3sg_pl": "sies",
+                "1pl_m": "notre",
+                "1pl_f": "notre",
+                "1pl_pl": "nos",
+                "2pl_m": "votre",
+                "2pl_f": "votre",
+                "2pl_pl": "vos"
+            }
+        }
+    },
+    "pronominal_system": {
+        "clitic_ordering": {
+            "enabled": true,
+            "order": [
+                "neg",
+                "obj_direct",
+                "obj_indirect",
+                "verb"
+            ],
+            "procliticizes": false,
+            "encliticizes": false
+        },
+        "object_pronouns": {
+            "direct": {
+                "1sg": "me",
+                "2sg": "te",
+                "3sg_m": "lo",
+                "3sg_f": "la",
+                "1pl": "nos",
+                "2pl": "vos",
+                "3pl": "les"
+            },
+            "indirect": {
+                "1sg": "me",
+                "2sg": "te",
+                "3sg": "li",
+                "1pl": "nos",
+                "2pl": "vos",
+                "3pl": "lor"
+            }
+        }
+    },
+    "tam_system": {
+        "enabled": true,
+        "person_marking": {
+            "enabled": true,
+            "suffixes": {
+                "1sg": "e",
+                "2sg": "es",
+                "3sg": "e",
+                "1pl": "am",
+                "2pl": "et",
+                "3pl": "ent"
+            }
+        },
+        "rules": [
+            {
+                "features": [
+                    "Tense=Past",
+                    "Aspect=Imp"
+                ],
+                "marker": "ais",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Past",
+                    "Aspect=Perf"
+                ],
+                "marker": "it",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "rai",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Cnd"
+                ],
+                "marker": "rais",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Sub"
+                ],
+                "marker": "i",
+                "type": "infix",
+                "anchor_strategy": "before_last_vowel"
+            },
+            {
+                "features": [
+                    "VerbForm=Inf"
+                ],
+                "marker": "er",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "VerbForm=Part",
+                    "Tense=Past"
+                ],
+                "marker": "é",
+                "type": "suffix"
+            }
+        ]
+    },
+    "negation_system": {
+        "enabled": true,
+        "strategies": [
+            {
+                "type": "verbal_negation",
+                "marker": "ne",
+                "suffix": " mie"
+            },
+            {
+                "type": "emphatic_negation",
+                "marker": "ne",
+                "suffix": " point"
+            },
+            {
+                "type": "nominal_negation",
+                "marker": "non"
+            }
+        ]
+    },
+    "copula_system": {
+        "enabled": true,
+        "copulas": [
+            {
+                "type": "present_default",
+                "form": "es",
+                "conjugates": true,
+                "conditions": [
+                    "Tense=Pres"
+                ]
+            },
+            {
+                "type": "past_default",
+                "form": "éteit",
+                "conjugates": true,
+                "conditions": [
+                    "Tense=Past"
+                ]
+            },
+            {
+                "type": "future_default",
+                "form": "ser",
+                "conjugates": true,
+                "conditions": [
+                    "Tense=Fut"
+                ]
+            }
+        ]
+    },
+    "interrogative_system": {
+        "enabled": true,
+        "question_particles": [
+            {
+                "type": "yes_no",
+                "particle": "es-ce"
+            },
+            {
+                "type": "yes_no_alternative",
+                "particle": "es-ce"
+            }
+        ],
+        "particle_metadata": {
+            "pos": "PART",
+            "function": "INT",
+            "deprel": "discourse"
+        }
+    },
+    "affix_system": {
+        "enabled": true,
+        "morph_derivation": {
+            "enabled": true,
+            "max_depth": 2
+        },
+        "derivation_rules": [
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "affix": "ment",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "action",
+                "affix": "ation",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "NOUN",
+                "affix": "ité",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "affix": "ique",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "type": "quality",
+                "affix": "eux",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "ADV",
+                "affix": "ment",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "ADJ",
+                "affix": "able",
+                "position": "suffix"
+            }
+        ]
+    },
+    "case_system": {
+        "enabled": false,
+        "preposition_handling": "coexist"
+    },
+    "style": {
+        "capitalization": true,
+        "sentence_terminators": [
+            ".",
+            "!",
+            "?"
+        ],
+        "secondary_terminators": [
+            ";",
+            ":"
+        ],
+        "punctuation_map": {
+            ",": ","
+        }
+    },
+    "diachronic_eras": [
+        {
+            "era_id": "gallo_liriano",
+            "name": "Gallo-Liriano",
+            "changes": [
+                {
+                    "rule_id": "lenition_p_b",
+                    "input_pattern": "p",
+                    "output": "b",
+                    "environment_left": "V",
+                    "environment_right": "V",
+                    "probability": 0.8,
+                    "description": "Lenition of intervocalic p"
+                },
+                {
+                    "rule_id": "lenition_t_d",
+                    "input_pattern": "t",
+                    "output": "d",
+                    "environment_left": "V",
+                    "environment_right": "V",
+                    "probability": 0.8,
+                    "description": "Lenition of intervocalic t"
+                },
+                {
+                    "rule_id": "palatalization_k",
+                    "input_pattern": "c",
+                    "output": "ch",
+                    "environment_left": "",
+                    "environment_right": "[eiyéè]",
+                    "probability": 1.0,
+                    "description": "Palatalization of c before front vowels"
+                }
+            ]
+        },
+        {
+            "era_id": "liriano_moderne",
+            "name": "Liriano Moderne",
+            "parent_era_id": "gallo_liriano",
+            "changes": [
+                {
+                    "rule_id": "drop_final_m",
+                    "input_pattern": "m",
+                    "output": "n",
+                    "environment_left": "V",
+                    "environment_right": "",
+                    "word_boundary_right": true,
+                    "probability": 0.9,
+                    "description": "Nasalization/shift of final m"
+                },
+                {
+                    "rule_id": "diphthongization_e",
+                    "input_pattern": "e",
+                    "output": "oi",
+                    "environment_left": "C",
+                    "environment_right": "C",
+                    "probability": 0.3,
+                    "description": "Historic diphthongization of stressed e"
+                },
+                {
+                    "rule_id": "drop_final_vowels",
+                    "input_pattern": "[aou]",
+                    "output": "e",
+                    "environment_left": "C",
+                    "environment_right": "",
+                    "word_boundary_right": true,
+                    "probability": 0.6,
+                    "description": "Reduction of unstressed final vowels to e (schwa)"
+                }
+            ]
+        }
+    ],
+    "functional_particles": {
+        "muito": {
+            "adj_word": "trés",
+            "adj_position": "pre_nominal"
+        },
+        "pouco": {
+            "adj_word": "pœu",
+            "adj_position": "pre_nominal"
+        },
+        "mais": {
+            "adj_word": "plus",
+            "adj_position": "pre_nominal"
+        },
+        "menos": {
+            "adj_word": "moin",
+            "adj_position": "pre_nominal"
+        },
+        "bem": {
+            "verb_word": "bien",
+            "verb_position": "post_verbal"
+        }
+    },
+    "agreement_rules": {
+        "gender_agreement": true,
+        "number_agreement": true,
+        "adjunct_position": "after_core"
+    }
+}

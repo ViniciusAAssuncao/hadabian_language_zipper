@@ -1,0 +1,525 @@
+{
+    "id": "fuesismor",
+    "name": "Fúë Sïsmor",
+    "description": "Corrupção demoníaca da língua Ghâzb dos gigantes de fogo, forjada por Rér. Uma língua áspera, de gramática brutalmente simples e pragmática, falada pelas criaturas e horrores das sombras de Ërda. É marcada por fonemas guturais agressivos e oclusivas pesadas.",
+    "word_order": "SOV",
+    "subordinate_word_order": "SOV",
+    "source_language_order": "SOV",
+    "drop_articles": true,
+    "pro_drop": {
+        "enabled": true,
+        "conditions": [
+            "verb_agreement"
+        ]
+    },
+    "aesthetic_profile": {
+        "syllable_count_distribution": {
+            "1": 0.45,
+            "2": 0.40,
+            "3": 0.15
+        },
+        "cluster_density": 0.85,
+        "vowel_consonant_ratio": 0.3
+    },
+    "alignment": "ergative-absolutive",
+    "global_seed": 66613,
+    "phonotactics": {
+        "vowels": "aouûôî",
+        "consonants": "bkdgqxrztshv",
+        "active_style": "guttural_harsh",
+        "inventory_styles": {
+            "guttural_harsh": {
+                "consonants": "kxgqrztshbd",
+                "vowels": "aouûôî"
+            }
+        },
+        "transition_matrix": {
+            "enabled": true,
+            "default_weight": 10,
+            "matrix": {
+                "k": {
+                    "h": 50,
+                    "r": 40,
+                    "u": 20
+                },
+                "g": {
+                    "h": 60,
+                    "r": 30,
+                    "u": 30
+                },
+                "z": {
+                    "r": 50,
+                    "g": 30,
+                    "u": 20
+                },
+                "x": {
+                    "r": 60,
+                    "u": 30,
+                    "a": 10
+                }
+            }
+        },
+        "syllable_templates": [
+            "CVC",
+            "CCVC",
+            "CVCC",
+            "CV"
+        ],
+        "min_syllables": 1,
+        "max_syllables": 3,
+        "max_consonant_cluster": 3,
+        "max_vowel_cluster": 1,
+        "forbidden_initial_clusters": [
+            "lr",
+            "rl",
+            "sz",
+            "zs",
+            "td",
+            "dt"
+        ],
+        "forbidden_final_consonants": [
+            "h",
+            "v"
+        ],
+        "epenthesis_vowel": "u",
+        "diphthongs": [
+            "au",
+            "ou",
+            "uo"
+        ],
+        "sonority_hierarchy": {
+            "enabled": false
+        }
+    },
+    "consonant_mutation": {
+        "enabled": true,
+        "rules": [
+            {
+                "name": "Endurecimento",
+                "description": "Endurece fricativas apos oclusivas.",
+                "triggers": {
+                    "ending_chars": [
+                        "k",
+                        "g",
+                        "t",
+                        "d"
+                    ]
+                },
+                "mutations": {
+                    "v": "b",
+                    "s": "t",
+                    "z": "d",
+                    "h": "k",
+                    "x": "q"
+                }
+            }
+        ]
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "fixed",
+        "position": "initial",
+        "graphic_accent": true,
+        "accent_map": {
+            "a": "â",
+            "o": "ô",
+            "u": "û",
+            "i": "î"
+        }
+    },
+    "vowel_harmony": {
+        "enabled": false
+    },
+    "case_system": {
+        "enabled": true,
+        "preposition_handling": "replace",
+        "markers": {
+            "ergative": {
+                "marker": "k",
+                "type": "suffix"
+            },
+            "absolutive": {
+                "marker": "",
+                "type": "suffix"
+            },
+            "dative": {
+                "marker": "ul",
+                "type": "suffix"
+            },
+            "locative": {
+                "marker": "um",
+                "type": "suffix"
+            },
+            "genitive": {
+                "marker": "ob",
+                "type": "suffix"
+            },
+            "instrumental": {
+                "marker": "uz",
+                "type": "suffix"
+            }
+        },
+        "marker_position": "suffix"
+    },
+    "tam_system": {
+        "enabled": true,
+        "infer_imperative_from_context": true,
+        "person_marking": {
+            "enabled": true,
+            "prefixes": {},
+            "suffixes": {
+                "1sg": "iz",
+                "2sg": "at",
+                "3sg": "uk",
+                "1pl": "uz",
+                "2pl": "ash",
+                "3pl": "ut"
+            }
+        },
+        "rules": [
+            {
+                "features": [
+                    "VerbForm=Inf"
+                ],
+                "marker": "at",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Past"
+                ],
+                "marker": "ug",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "ub",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Imp"
+                ],
+                "marker": "ak",
+                "type": "suffix"
+            }
+        ]
+    },
+    "number_system": {
+        "numbers": [
+            "singular",
+            "plural"
+        ],
+        "markers": {
+            "plural": {
+                "marker": "hai",
+                "alternatives": [
+                    "ai",
+                    "u"
+                ]
+            }
+        },
+        "broken_plurals": {
+            "enabled": false
+        }
+    },
+    "gender_system": {
+        "enabled": false
+    },
+    "determiner_system": {
+        "definite_article": {
+            "form": "",
+            "variants": [],
+            "sun_letter_assimilation": false
+        },
+        "demonstratives": {
+            "proximal": {
+                "sg_m": "zâ",
+                "sg_f": "zâ",
+                "pl": "zâi"
+            },
+            "distal": {
+                "sg_m": "tû",
+                "sg_f": "tû",
+                "pl": "tûi"
+            }
+        },
+        "possessives": {
+            "pronominal_suffixes": true,
+            "suffixes": {
+                "1sg": "iz",
+                "2sg": "at",
+                "3sg": "uk",
+                "1pl": "uz",
+                "2pl": "ash",
+                "3pl": "ut"
+            },
+            "possessive_lemmas": {
+                "meu": "1sg",
+                "minha": "1sg",
+                "teu": "2sg",
+                "tua": "2sg",
+                "seu": "3sg",
+                "sua": "3sg",
+                "nosso": "1pl",
+                "nossa": "1pl"
+            }
+        }
+    },
+    "pronominal_system": {
+        "independent_pronouns": {
+            "1sg": "khâr",
+            "2sg": "thaz",
+            "3sg": "zûg",
+            "1pl": "khrâm",
+            "2pl": "tharz",
+            "3pl": "zûgu"
+        },
+        "object_pronouns": {
+            "direct": {
+                "1sg": "iz",
+                "2sg": "at",
+                "3sg": "uk",
+                "1pl": "uz",
+                "2pl": "ash",
+                "3pl": "ut"
+            }
+        },
+        "clitic_ordering": {
+            "enabled": true,
+            "order": [
+                "verb",
+                "obj_direct",
+                "obj_indirect"
+            ],
+            "encliticizes": true,
+            "procliticizes": false
+        }
+    },
+    "compounding": {
+        "enabled": true,
+        "head_position": "final",
+        "linking_elements": {
+            "u": {
+                "after": [
+                    "k",
+                    "g",
+                    "z",
+                    "r",
+                    "t",
+                    "d",
+                    "x",
+                    "h"
+                ],
+                "words": []
+            }
+        }
+    },
+    "semantic_fields": {
+        "enabled": true,
+        "auto_detect": false,
+        "use_nltk": false,
+        "manual_groups": {
+            "fogo": "destruicao",
+            "sangue": "vida",
+            "escuro": "poder"
+        }
+    },
+    "polysemy_rules": {
+        "enabled": true,
+        "merges": {
+            "matar": "destruir",
+            "luz": "fogo",
+            "viver": "sofrer",
+            "amar": "possuir",
+            "dor": "sofrimento"
+        },
+        "splits": {}
+    },
+    "false_cognates": {
+        "enabled": false
+    },
+    "topicalization": {
+        "enabled": true,
+        "position": "initial",
+        "topic_marker": "mâ",
+        "reintroduce_articles": false
+    },
+    "focus_structure": {
+        "enabled": true,
+        "object_focus_marker": "zô",
+        "verb_focus_marker": "rô",
+        "suppress_case": false
+    },
+    "functional_particles": {
+        "muito": {
+            "noun_position": "post_nominal",
+            "adj_position": "pre_nominal",
+            "verb_position": "post_verbal"
+        },
+        "sempre": {
+            "verb_position": "post_verbal"
+        },
+        "nunca": {
+            "verb_position": "pre_verbal"
+        }
+    },
+    "degree_system": {
+        "enabled": true,
+        "source_rules": [
+            {
+                "type": "augmentative",
+                "suffix": "ão",
+                "replacement": "o"
+            },
+            {
+                "type": "superlative",
+                "suffix": "íssimo",
+                "replacement": "o"
+            }
+        ],
+        "rules": {
+            "augmentative": {
+                "affix": "gûl",
+                "position": "suffix"
+            },
+            "superlative": {
+                "affix": "ghâsh",
+                "position": "suffix"
+            }
+        }
+    },
+    "morphological_derivation": {
+        "enabled": true,
+        "max_depth": 2,
+        "exceptions": []
+    },
+    "affix_system": {
+        "enabled": true,
+        "source_suffixes": [
+            {
+                "input_pos": "VERB",
+                "suffix": "dor",
+                "replacement": "r",
+                "target_pos": "NOUN",
+                "priority": 0
+            }
+        ],
+        "derivation_rules": [
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "agent",
+                "affix": "zrû",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "affix": "âr",
+                "position": "suffix"
+            }
+        ]
+    },
+    "reduplication": {
+        "enabled": true,
+        "epenthesis_vowel": "u",
+        "rules": [
+            {
+                "features": [
+                    "Degree=Abs"
+                ],
+                "pos": [
+                    "ADJ",
+                    "NOUN"
+                ],
+                "method": "whole_word",
+                "separator": "z"
+            }
+        ]
+    },
+    "numeric_handling": {
+        "ignore_digits": true
+    },
+    "style": {
+        "capitalization": true,
+        "punctuation_map": {
+            ".": ".",
+            "!": "!",
+            "?": "?",
+            ",": ",",
+            ";": ";",
+            ":": ":"
+        },
+        "sentence_terminators": [
+            ".",
+            "!",
+            "?"
+        ],
+        "secondary_terminators": [
+            ":",
+            ";"
+        ]
+    },
+    "vocabulary": {
+        "anel": "zruk",
+        "um": "gokh",
+        "dois": "tâg",
+        "três": "khâg",
+        "fogo": "ghûz",
+        "escuridão": "khrûm",
+        "sombra": "dûrz",
+        "terra": "khërd",
+        "homem": "mîk",
+        "homens": "mîku",
+        "achar": "vrog",
+        "encontrar": "vrog",
+        "trazer": "torg",
+        "governar": "krad",
+        "dominar": "thôk",
+        "prender": "grak",
+        "todos": "mâkh",
+        "tudo": "mâkh",
+        "eles": "tûz",
+        "luz": "gûlk",
+        "água": "slûg",
+        "morte": "zgûr",
+        "vida": "zrâk",
+        "sangue": "ghrûz",
+        "ferro": "thûg",
+        "guerra": "krâz",
+        "rei": "khûr",
+        "deus": "khâsh",
+        "falar": "zlag",
+        "inimigo": "shnâg",
+        "espada": "khrûk",
+        "fortaleza": "gûrg",
+        "sol": "ghrâsh",
+        "noite": "zûl",
+        "gigante": "gorm",
+        "demônio": "xûl",
+        "matar": "drâg",
+        "destruir": "drâg",
+        "dor": "zgrû",
+        "sofrimento": "zgrû",
+        "poder": "zhâk",
+        "força": "zhâk",
+        "sim": "zâ",
+        "não": "nâb",
+        "e": "âg",
+        "ou": "ûg",
+        "com": "zî",
+        "sem": "nî",
+        "onde": "thâr",
+        "como": "krû",
+        "quem": "zgâ",
+        "que": "tôk",
+        "este": "zâ",
+        "esse": "zâ",
+        "aquele": "tû",
+        "aqui": "zâr",
+        "lá": "tûr"
+    }
+}

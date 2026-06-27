@@ -1,0 +1,882 @@
+{
+    "family_id": "cantavetic_family",
+    "schema_version": "1.0",
+    "metadata": {
+        "name": "Tronco Cantavético",
+        "native_self_designations": "Os falantes históricos quase nunca nomeavam a própria fala com um termo abrangente. 'Cantavético' é uma designação cunhada por filólogos hadabianos modernos a partir do etnônimo ancestral reconstruído *Cantavet. Em cada época, os próprios falantes geralmente chamavam a língua simplesmente de 'a Fala', 'o Canto' ou pelo nome do seu povo, reino ou templo (ex.: falantes do Cantálio Moderno chamam a própria língua de 'cantal', com letra minúscula, distinguindo-a do nome do Reino, 'Cantal').",
+        "author": "ConHab Generator",
+        "version": "1.0",
+        "region": "Hadab — originária dos planaltos frios do interior, posteriormente difundida por uma vasta área que vai das cordilheiras orientais às costas ocidentais",
+        "total_speakers_estimate_today": "~30.300.000 (ver lore.population_summary para a distribuição completa)",
+        "time_depth": "Mais de 60.000 anos de história reconstruída — um dos troncos linguísticos mais profundos já catalogados em Hadab",
+        "primary_inspiration": "Armênio — inspiração intensa e crescente, mais marcada no Cantavético Clássico e culminando no Cantálio Moderno",
+        "secondary_inspiration": "Georgiano e Curdo — traços pontuais, mais discretos, concentrados na linhagem Cantavético Oriental → Cantálio",
+        "inspiration_disclaimer": "IMPORTANTE: toda a inspiração descrita acima é estética, fonológica e tipológica — NUNCA lexical ou morfológica direta. Nenhuma palavra, afixo, terminação, nome próprio ou morfema real do Armênio, Georgiano ou Curdo foi copiado, adaptado ou transliterado neste arquivo. Absolutamente tudo o que segue (fonemas, raízes, nomes próprios, padrões de mudança sonora) é inventado do zero, projetado apenas para evocar a 'textura' sonora e algumas TENDÊNCIAS TIPOLÓGICAS gerais dessas línguas reais — por exemplo: inventário consonantal denso com múltiplas séries de oclusivas, perda histórica de gênero gramatical, sincretismo genitivo-dativo, ordem SOV com marcação casual rica, e estatuto de língua clássica/litúrgica que sobrevive à evolução do vernáculo. Nenhuma dessas tendências, por si só, é exclusiva de nenhuma língua real — são fenômenos comuns na tipologia linguística mundial, aqui apenas combinados de um jeito que evoca aquela região cultural.",
+        "description": "Arquivo-tronco (trunk file) definindo a árvore genealógica completa da família Cantavético, do Proto-Cantavético (60.000+ anos atrás) até seus ramos e dialetos modernos, com foco especial na linhagem que leva ao Cantálio. Compatível com o mecanismo de herança de OriginalLanguageEngine._load_and_merge_family()."
+    },
+    "engine_compatibility_notes": {
+        "how_inheritance_works": "OriginalLanguageEngine._load_and_merge_family() monta a cadeia de um idioma a partir do seu 'family_node', caminhando da RAIZ (nó com parent_id=null) até o próprio nó indicado, e então percorre essa cadeia NESSA ORDEM (raiz → alvo). Para cada campo herdável (shared_phonotactics.vowels/consonants, shared_lexicon_strength, agglutination_strength, gender_system, pidgin_rules, dialect_variation, lexical_registers_defaults, loanword_policy_defaults), o motor aplica APENAS a primeira definição encontrada nesse percurso — ou seja, definições em nós mais ANCESTRAIS têm precedência sobre definições em nós mais DESCENDENTES, sempre que o perfil do idioma final não defina o campo por conta própria.",
+        "practical_implication_phonotactics": "Por isso, 'shared_phonotactics' funcional (chave lida pelo motor) está definido apenas em 'protocantavetico' — qualquer idioma desta família herdará, por padrão, a fonotática ANCESTRAL (rica, arcaica), e NÃO a fonotática evoluída do seu próprio estágio histórico. Cada nó abaixo também documenta sua fonotática histórica real (campo 'phonological_notes'), mas esse campo é APENAS documental. Para que cantalio_moderno.json (ou qualquer outro idioma final) reflita corretamente sua fonologia evoluída, o PRÓPRIO arquivo de perfil do idioma deve declarar seu campo 'phonotactics' completo (vowels, consonants, syllable_templates etc.), exatamente como midorian_language.json faz — isso sobrescreve totalmente a herança da família.",
+        "root_system": "Esta família é NÃO-radical (sem sistema de raízes triconsonantais semíticas). Nenhum nó deste arquivo define 'root_system'; todo perfil de idioma desta família deve manter root_system.enabled = false (ou omitir o campo), consistente com a tipologia aglutinante-fusional inspirada no Armênio.",
+        "gender_loss_note": "'protocantavetico' define um gender_system ativo de 3 categorias baseadas em animacidade. Pela regra de precedência da raiz, QUALQUER idioma desta família que não defina seu próprio gender_system herdará automaticamente esse sistema ancestral — o que é HISTORICAMENTE INCORRETO a partir de cantalio_classico (inclusive), estágio em que o gênero gramatical já desapareceu por completo (eco direto da perda de gênero do Armênio real). É, portanto, OBRIGATÓRIO que os perfis individuais de cantalio_classico.json, cantalio_medio.json, cantalio_moderno.json e todos os seus descendentes/dialetos definam explicitamente \"gender_system\": {\"enabled\": false}.",
+        "agglutination_and_lexicon_strength": "Diferentemente do gender_system, este arquivo preenche 'agglutination_strength' e 'shared_lexicon_strength' em TODOS os nós com os valores historicamente corretos para cada estágio — não apenas na raiz. Isso é proposital: mesmo sabendo que, devido à precedência da raiz, apenas o valor de 'protocantavetico' será herdado automaticamente por idiomas que não definam o campo, mantivemos o dado correto em cada nó por completude documental e para facilitar uma futura correção do motor (ex.: trocar a herança de 'primeiro encontrado a partir da raiz' por 'nó mais próximo do alvo'). Todo perfil de idioma final DEVE, na prática, declarar seu próprio agglutination_strength/shared_lexicon_strength.",
+        "fields_placed_for_real_inheritance": "Os seguintes campos foram posicionados deliberadamente em nós onde NENHUM ancestral os define antes — ou seja, eles VÃO de fato funcionar via herança automática para qualquer descendente que não os sobrescreva: lexical_registers_defaults (definido em 'cantavetico_classico', herdado por toda a família), loanword_policy_defaults (definido em 'cantavetico_ocidental' e novamente, mais agressivo, em 'doreshim'), pidgin_rules (definido apenas em 'doreshim'), dialect_variation (definido apenas em 'cantalio_moderno').",
+        "diachronic_eras_note": "O campo de topo 'recommended_diachronic_eras' NÃO é lido automaticamente por _load_and_merge_family() — SoundChangeEngine lê 'diachronic_eras' diretamente do PERFIL DO IDIOMA, não do arquivo de família. Este campo é um modelo de referência: para ativá-lo, copie a cadeia de eras relevante para o campo 'diachronic_eras' do perfil final (ex.: cantalio_moderno.json) e defina \"target_era\": \"era_cantalio_moderno\" nesse mesmo perfil. Isso habilita a derivação automática de formas modernas a partir de raízes proto-reconstruídas."
+    },
+    "diachronic_settings": {
+        "default_divergence_factor": 0.18,
+        "max_synonym_variants": 4,
+        "notes": "Reflete a riqueza de sinônimos e epítetos poéticos típica da tradição literária de Oü Central, herdada por toda a família — especialmente viva nos registros litúrgico e poético do Cantavético Clássico e ainda muito presente na poesia do Cantálio Moderno."
+    },
+    "phoneme_legend": {
+        "vowels": {
+            "a": "vogal central aberta",
+            "e": "vogal anterior média",
+            "i": "vogal anterior fechada",
+            "o": "vogal posterior média",
+            "u": "vogal posterior fechada",
+            "ə": "vogal central reduzida (schwa) — fonema pleno apenas no Proto-Cantavético e no Cantavético Antigo; fundida em /a/ a partir do Cantavético Clássico"
+        },
+        "consonants": {
+            "p": "oclusiva bilabial surda",
+            "b": "oclusiva bilabial sonora",
+            "t": "oclusiva alveolar surda",
+            "d": "oclusiva alveolar sonora",
+            "k": "oclusiva velar surda",
+            "g": "oclusiva velar sonora",
+            "q": "oclusiva uvular surda — fundida em /k/ pela Reforma Ortográfica de 1823 AH no Cantálio Moderno",
+            "c": "africada alveolar surda (≈ts)",
+            "j": "africada pós-alveolar sonora (≈dj)",
+            "ç": "africada pós-alveolar surda (≈tx) — fundida em /c/ já no Cantálio Clássico",
+            "x": "fricativa pós-alveolar surda (≈sh)",
+            "ž": "fricativa pós-alveolar sonora (≈zh) — fundida em /j/ já no Cantavético Clássico",
+            "f": "fricativa labiodental surda",
+            "v": "fricativa labiodental sonora",
+            "s": "fricativa alveolar surda",
+            "z": "fricativa alveolar sonora",
+            "h": "fricativa glotal surda",
+            "m": "nasal bilabial",
+            "n": "nasal alveolar",
+            "r": "vibrante/tepe alveolar",
+            "l": "aproximante lateral alveolar",
+            "w": "aproximante labiovelar — perdida como fonema distinto já no Cantavético Clássico",
+            "y": "aproximante palatal",
+            "ğ": "fricativa velar/uvular sonora — inovação de contato EXCLUSIVA do Cantavético Oriental (substrato montanhês), eliminada no Cantálio Clássico",
+            "ŋ": "nasal velar — inovação de contato EXCLUSIVA do Zovaico (substrato estépico), não ocorre em nenhum outro ramo"
+        }
+    },
+    "lore": {
+        "overview": "O Cantavético é, segundo o consenso da filologia hadabiana contemporânea, um dos troncos linguísticos mais profundos e mais bem preservados do mundo: suas raízes reconstruídas remontam a mais de 60.000 anos, a um período em que os planaltos frios do interior de Hadab abrigavam pequenas comunidades pastoris que se identificavam — a julgar pela etimologia reconstruída do próprio etnônimo — como 'o Povo do Canto Sagrado'. Hoje, mais de sessenta milênios depois, os descendentes diretos e indiretos dessa fala ancestral somam pouco mais de 30 milhões de falantes, distribuídos por um leque de línguas e dialetos que vai do prestigiado Cantálio Moderno, língua nacional do Reino de Cantal, até pequenas línguas montanhesas e crioulos costeiros quase esquecidos pela história escrita.",
+        "homeland": "A pátria ancestral reconstruída — convencionalmente chamada de Cantavet pelos linguistas modernos, em homenagem ao etnônimo presumido — situava-se em planaltos elevados e frios, hoje conhecidos apenas por vestígios arqueológicos dispersos. Era terra de pastagem dura, lagos glaciais e invernos longos, onde a sobrevivência dependia tanto do conhecimento prático quanto da memória coletiva: leis, genealogias, tratados de paz e mitos fundadores não eram escritos — eram cantados, ritmados, memorizados por especialistas orais que a reconstrução chama de Vozeiros (*kantavoz-, 'aqueles que dão voz ao canto'). Essa centralidade do canto cerimonial como veículo de verdade e memória social é, segundo a hipótese mais aceita, a própria origem do nome da família: a raiz proto-cantavética *kanta- ('canto sagrado, voz cerimonial, palavra que compromete quem a profere') está na base tanto do etnônimo *Cantavet quanto, milênios depois, do nome dinástico Cantal e do glotônimo Cantálio. Ver lore.etymology_case_study para o rastreamento completo desta raiz através de toda a árvore.",
+        "the_parsegh_feature": "Dessa tradição do canto-testemunho nasceu, já no Proto-Cantavético em forma embrionária e plenamente desenvolvido no Cantavético Oriental, um mecanismo gramatical hoje conhecido entre os linguistas pelo nome convencional de Parsegh: um sistema aglutinante de partículas evidenciais pospostas ao verbo, que obrigava o falante a declarar, em toda afirmação relevante, a NATUREZA da sua fonte de conhecimento — se testemunhara o fato com os próprios olhos, se o ouvira de terceiros confiáveis, se o inferira por raciocínio, ou se o conhecia apenas pela tradição cantada. Numa cultura em que jurar falso equivalia a romper o pacto com os ancestrais, o Parsegh não era só gramática: era também uma instituição quase jurídica, manejada com extremo cuidado pelos Vozeiros e, mais tarde, pelo clero do Templo de Oü. O Cantálio Antigo herdou e preservou esse sistema quase intacto. Foi apenas com a virada literária e comercial do Cantálio Clássico — quando a língua deixou de ser primariamente cantada/testemunhada e passou a ser primariamente escrita/contratual — que o Parsegh entrou em colapso, simplificando-se numa forma verbal declarativa neutra, sem marcação evidencial. Esse colapso ocorre exatamente no mesmo momento em que a língua perde boa parte de sua aglutinação morfológica: na reconstrução filológica, os dois processos são vistos como dois sintomas da mesma mudança sociolinguística profunda. NOTA DE ETIMOLOGIA DO TERMO: o próprio rótulo técnico 'Parsegh', usado hoje pelos linguistas hadabianos, deriva de uma forma arcaica do Cantálio Antigo, *parsavi ('testemunho jurado, voz declarada perante os ancestrais'). Por ser o nome da própria categoria gramatical sagrada que descreve, essa palavra resistiu às mudanças sonoras regulares que afetaram o resto do vocabulário (um fenômeno real e bem documentado: termos técnicos/religiosos de altíssima frequência tendem a resistir a mudanças sonoras regulares). Quando filólogos hadabianos modernos retomaram o termo para uso acadêmico transversal, sua forma foi levemente adaptada na transliteração escolar para 'Parsegh' — por isso a palavra técnica não corresponde exatamente a nenhum reflexo regular esperado em Cantálio Moderno; é um empréstimo erudito do Cantálio Antigo direto para o vocabulário científico hadabiano, e não uma palavra nativa do Cantálio falado hoje.",
+        "grande_separacao": "Há aproximadamente 43.000 anos, a confederação têmporo-comercial centrada na fértil bacia do rio Oü — berço do Cantavético Clássico, língua de teólogos, poetas e mercadores — entrou em colapso após várias gerações de instabilidade climática que a tradição reconstruída chama de Grande Secura. A população que dependia da bacia do Oü dispersou-se em duas grandes ondas migratórias: uma para leste, em direção às cordilheiras altas, e outra para oeste, em direção às planícies baixas e, eventualmente, ao litoral. Esse evento de fissão demográfica e linguística é chamado pelos filólogos hadabianos de Grande Separação, e marca o ponto de bifurcação entre o Cantavético Oriental (mais conservador, mais isolado, mais próximo do perfil fonológico e morfológico clássico) e o Cantavético Ocidental (mais inovador, mais exposto a contato externo, mais simplificado). Ainda que as línguas vernáculas tenham se afastado drasticamente uma da outra nos milênios seguintes, o próprio Cantavético Clássico NUNCA deixou de ser falado: sobrevive, fixado em sua forma escrita litúrgica, como língua sagrada do Templo de Oü, recitada até hoje por clérigos de ambos os lados da família, do Cantálio Moderno ao Vendrico.",
+        "writing_systems": "O Proto-Cantavético, o Cantavético Antigo e os primeiros séculos do Cantavético Clássico foram inteiramente orais. A escrita nasceu apenas na fase madura do Cantavético Clássico, quando escribas-sacerdotes do Templo de Oü desenvolveram o Silabário Oünico para fixar leis, contratos comerciais e, sobretudo, o cânone litúrgico antes confiado apenas à memória dos Vozeiros. Após a Grande Separação, o Cantavético Oriental adaptou o silabário rumo a um sistema mais alfabético — os chamados Glifos Cantálicos —, posteriormente reformados pelos escribas do Cantálio Clássico num alfabeto mais regular, o Alfabeto Sávrico, que acompanhou (e talvez tenha acelerado) a perda da aglutinação e do Parsegh, ao favorecer formas verbais mais curtas e regulares na escrita comercial e legal. O período do Cantálio Médio foi marcado por fragmentação ortográfica: cada região, corte ou mosteiro escrevia a língua à sua própria maneira fonética, sem padrão central. Essa anarquia gráfica só foi resolvida pela Reforma Ortográfica de 1823 AH, patrocinada pela coroa recém-unificada do Reino de Cantal, que estabeleceu o moderno Alfabeto Cantálio, eliminou letras arcaicas (como o grafema correspondente à oclusiva uvular /q/, já fundida em /k/ na fala corrente) e fixou, de uma vez por todas, a norma escrita usada até hoje.",
+        "sociolinguistics_today": "Hoje o Cantálio Moderno é a língua nacional e majoritária de Cantália, falada por cerca de 22 milhões de pessoas em três grandes variedades modernas (setentrional, meridional e diaspórica — ver branches.cantalio_moderno.modern_dialects). É amplamente vista, mesmo por falantes de outras línguas de Hadab, como uma língua de extraordinária densidade fonética e elegância literária — é praticamente um clichê entre viajantes hadabianos dizer que o Cantálio Moderno 'tem textura de Armênio', mesmo sem compreender uma palavra, numa alusão à sensação fonético-estética da língua, e não a qualquer parentesco real (que, de resto, não existe fora desta reconstrução: trata-se apenas de uma semelhança de inspiração). Fora do Reino de Cantal sobrevivem o Vrenídico e o Zovaico (línguas montanhesas e estépicas do ramo Cantavético Oriental, com populações pequenas e em declínio), além do Vendrico (língua nacional das antigas coroas ocidentais, hoje organizadas como as Ligas Vendrias, com cerca de 4,2 milhões de falantes) e do Doreshim (crioulo comercial costeiro das Cidades-Porto de Doresh, ~1,3 milhão de falantes). O Cantavético Clássico, por fim, continua vivo como língua litúrgica e cerimonial, com um número reduzido mas estável de clérigos, eruditos e poetas capazes de compô-lo e recitá-lo fluentemente em todo o espaço cultural Cantavético, de ambos os lados da Grande Separação.",
+        "population_summary": {
+            "cantalio_moderno": "~22.000.000 (9.000.000 setentrional + 8.000.000 meridional + 5.000.000 diaspórico)",
+            "vrenidico": "~1.600.000",
+            "zovaico": "~900.000",
+            "vendrico": "~4.200.000",
+            "doreshim": "~1.300.000",
+            "outras_variedades_nao_catalogadas_individualmente": "~300.000",
+            "total_aproximado": "~30.300.000",
+            "nota": "O Cantavético Clássico, como língua litúrgica de aquisição predominantemente erudita/religiosa, não está incluído nesta soma de falantes nativos."
+        },
+        "etymology_case_study": {
+            "concept_tracked": "canto sagrado / testemunho-palavra → simplesmente 'palavra' (deriva semântica completa)",
+            "proto_root": "*kanta- ('canto sagrado, voz cerimonial, palavra que compromete')",
+            "chain": [
+                {
+                    "stage": "protocantavetico",
+                    "form": "kantawə",
+                    "gloss": "ato de cantar ritualmente / proferir um voto cantado",
+                    "note": "raiz *kanta- + sufixo nominalizador arcaico -wə"
+                },
+                {
+                    "stage": "cantavetico_antigo",
+                    "form": "kantawa",
+                    "gloss": "idem",
+                    "note": "aplicação de schwa_merger (ə>a)"
+                },
+                {
+                    "stage": "cantavetico_classico",
+                    "form": "kantava",
+                    "gloss": "palavra sagrada; testemunho cantado; verbo solene",
+                    "note": "nivelamento lexical de /w/ intervocálico em /v/ (caso a caso, fora da regra regular de w_to_v_merger, que exige contexto pós-consonantal)"
+                },
+                {
+                    "stage": "cantavetico_oriental",
+                    "form": "kantava",
+                    "gloss": "testemunho-palavra (sentido evidencial em consolidação)",
+                    "note": "palavra não-afetada pela inovação esporádica mountain_fricative_innovation (não termina em /k/)"
+                },
+                {
+                    "stage": "cantalio_antigo",
+                    "form": "kantavi",
+                    "gloss": "testemunho falado, palavra-juramento — núcleo lexical do sistema Parsegh",
+                    "note": "aplicação de final_vowel_raising (a>i, posição final)"
+                },
+                {
+                    "stage": "cantalio_classico",
+                    "form": "kandav",
+                    "gloss": "palavra (sentido generalizado; perda da conotação evidencial com o colapso do Parsegh)",
+                    "note": "aplicação de apocope_final_i (i > Ø após consoante, final de palavra) + sonorização lexicalizada t>d"
+                },
+                {
+                    "stage": "cantalio_medio",
+                    "form": "kandav (variante regional coloquial: khandav)",
+                    "gloss": "palavra",
+                    "note": "palavra-base não afetada pela regra esporádica sporadic_k_to_x_intervocalic (k inicial, não intervocálico); variante 'khandav' é inovação dialetal impressionística do período, não derivada de uma regra regular"
+                },
+                {
+                    "stage": "cantalio_moderno",
+                    "form": "candav (tônica final: candáv)",
+                    "gloss": "palavra",
+                    "note": "convenção ortográfica de 1823 AH (grafia 'c' para /k/ diante de vogal não-anterior); sem mudança fonológica adicional nesta palavra específica"
+                }
+            ],
+            "western_divergence": [
+                {
+                    "stage": "cantavetico_ocidental",
+                    "form": "kanava",
+                    "gloss": "narrativa contada, história recitada",
+                    "note": "elisão total (não apenas sonorização) do /t/ intervocálico — padrão ocidental mais radical; deriva semântica rumo à tradição épica/narrativa, em vez da tradição testemunhal/religiosa oriental"
+                },
+                {
+                    "stage": "vendrico",
+                    "form": "canva",
+                    "gloss": "história, narrativa, conto recitado",
+                    "note": "contração vocálica adicional /kanava/ > /kanva/ > /canva/ (grafia vendria usa 'c' diante de qualquer vogal)"
+                },
+                {
+                    "stage": "doreshim",
+                    "form": "kana",
+                    "gloss": "fala, conversa, papo (sentido bastante generalizado)",
+                    "note": "nivelamento típico de crioulo comercial: perda da consoante final e generalização semântica radical"
+                }
+            ]
+        }
+    },
+    "proto_languages": [
+        {
+            "id": "protocantavetico",
+            "parent_id": null,
+            "name": "Proto-Cantavético",
+            "self_designation": "Desconhecida; reconstruída convencionalmente como *Kantavet-vaz ('a fala do Povo do Canto')",
+            "era_label": "Era Pré-Glífica",
+            "approx_date": "~62.000 a ~52.000 anos atrás (a.P.)",
+            "region": "Planaltos altos e frios do interior de Hadab — a pátria reconstruída de Cantavet",
+            "status": "extinta; inteiramente reconstruída pelo método comparativo",
+            "population_estimate_then": "Comunidades dispersas; provavelmente não mais que algumas dezenas de milhares de falantes ao todo",
+            "description": "Estágio mais profundo e hipotético da família, reconstruído a partir de correspondências regulares observadas em todos os ramos modernos. Língua altamente aglutinante, rica em casos, com sistema evidencial embrionário (precursor direto do Parsegh) e gênero gramatical baseado em animacidade.",
+            "lore": "Falado por pequenas comunidades pastoris dos planaltos de Cantavet, o Proto-Cantavético não deixou registro escrito algum — sua existência só é conhecida pela reconstrução comparativa. A tradição reconstruída sugere uma sociedade organizada em torno de pactos verbais sagrados, em que 'cantar uma verdade' (raiz *kanta-) tinha peso quase jurídico. Esse valor cultural atribuído à fala cerimonial é, segundo a hipótese mais aceita, a origem última de todo o sistema evidencial que mais tarde se cristalizaria como o Parsegh nos ramos orientais.",
+            "shared_phonotactics": {
+                "vowels": "aeiouə",
+                "consonants": "pbtdkgqcjçxžfvszhmnrlwy"
+            },
+            "phonological_notes": "Inventário rico (23 consoantes, 6 vogais incluindo o schwa pleno /ə/), com encontros consonantais permitidos em onset e coda (templates: CV, CVC, CCV, CCVC, VC, V; densidade de encontros consonantais ≈0.45). Inspirado livremente na densidade típica de inventários caucasiano-armênios reais, mas com valores fonéticos, distribuição e todo o léxico inteiramente inventados — nenhum fonema aqui corresponde a uma letra ou som de uma língua real específica.",
+            "agglutination_strength": 0.95,
+            "shared_lexicon_strength": 0.95,
+            "gender_system": {
+                "enabled": true,
+                "default": "inanimado",
+                "categories": [
+                    "animado-pessoal",
+                    "animado-nao-pessoal",
+                    "inanimado"
+                ],
+                "basis": "animacidade, não sexo gramatical",
+                "notes": "Sistema fadado a colapsar por completo na linhagem Cantálio a partir do estágio Clássico — eco tipológico da perda histórica de gênero do Armênio real, aqui motivado internamente pela reanálise do sistema evidencial do Parsegh."
+            },
+            "case_system_notes": "Oito casos reconstruídos por empilhamento aglutinante de sufixos: nominativo, acusativo, genitivo, dativo, ablativo, instrumental, locativo, vocativo.",
+            "word_order": "SOV, com ordem relativamente livre dentro da oração graças à rica marcação casual",
+            "stress_notes": "Provavelmente tônica na penúltima sílaba da raiz, antes da pilha de sufixos casuais",
+            "script": {
+                "exists": false,
+                "notes": "Transmissão inteiramente oral, confiada a especialistas mnemônicos — os Vozeiros."
+            },
+            "notable_features": [
+                "Sistema evidencial embrionário, precursor direto do Parsegh",
+                "Empilhamento aglutinante extensivo de sufixos casuais e derivacionais",
+                "Gênero gramatical baseado em animacidade, não em sexo biológico",
+                "Inventário consonantal denso com três séries de oclusivas (tensa surda / surda / sonora) — eco tipológico do Armênio/Georgiano real, sem qualquer correspondência lexical real"
+            ]
+        },
+        {
+            "id": "cantavetico_antigo",
+            "parent_id": "protocantavetico",
+            "name": "Cantavético Antigo",
+            "era_label": "Era da Estabilização",
+            "approx_date": "~52.000 a ~47.000 a.P.",
+            "region": "Expansão gradual dos planaltos de Cantavet em direção à futura bacia fértil do rio Oü",
+            "status": "extinta; reconstruída com confiança moderada",
+            "description": "Primeira fase de cristalização gramatical da família: o paradigma de oito casos se estabiliza definitivamente, surgem os primeiros artigos definidos pospostos (traço que se manteria por toda a história da família) e o sistema evidencial embrionário se elabora em direção ao que se tornaria o Parsegh pleno.",
+            "lore": "Com a migração gradual dos planaltos para as terras mais baixas e férteis em torno do que se tornaria a bacia do Oü, as comunidades cantavéticas antigas começam a se sedentarizar parcialmente, intensificando o contato entre clãs antes dispersos. Esse contato mais intenso é, segundo a hipótese padrão, o que acelera a regularização gramatical observada neste estágio — uma língua ainda totalmente oral, mas já claramente mais 'gramaticalizada' que sua antecessora.",
+            "shared_phonotactics": {
+                "vowels": "aeiouə",
+                "consonants": "pbtdkgqcjçxžfvszhmnrlwy"
+            },
+            "phonological_notes": "Inventário idêntico ao do Proto-Cantavético (23 consoantes, 6 vogais) — as mudanças deste estágio são predominantemente morfossintáticas, não fonológicas. (Ver engine_compatibility_notes.practical_implication_phonotactics: por precedência da raiz, este campo aqui é puramente documental.)",
+            "agglutination_strength": 0.92,
+            "shared_lexicon_strength": 0.93,
+            "case_system_notes": "Os oito casos do Proto-Cantavético tornam-se totalmente regulares e produtivos; surgem os primeiros artigos definidos pospostos, ainda como clíticos livres, não totalmente fundidos ao nome.",
+            "word_order": "SOV consolidado como padrão estatístico dominante, embora ainda flexível",
+            "stress_notes": "Mantém o padrão penúltimo do estágio anterior",
+            "script": {
+                "exists": false,
+                "notes": "Ainda oral; primeiros sistemas de marcas de contagem e fichas comerciais (não-linguísticas) aparecem no registro arqueológico hipotético."
+            },
+            "notable_features": [
+                "Cristalização do paradigma de 8 casos",
+                "Surgimento do artigo definido posposto",
+                "Elaboração do sistema evidencial em direção ao Parsegh pleno",
+                "Sedentarização parcial e aumento do contato interclânico"
+            ]
+        },
+        {
+            "id": "cantavetico_classico",
+            "parent_id": "cantavetico_antigo",
+            "name": "Cantavético Clássico",
+            "era_label": "Era de Oü / Idade de Ouro Literária",
+            "approx_date": "~47.000 a ~43.000 a.P.",
+            "region": "Bacia fértil do rio Oü, com centro civilizacional em Oü Central",
+            "status": "tecnicamente extinta como vernáculo, mas viva até hoje como língua litúrgica e cerimonial do Templo de Oü",
+            "description": "Auge clássico da família: língua teológica do Templo de Oü, língua dos poetas e dos Vozeiros (já organizados em colégios semissacerdotais) e uma das línguas dominantes do comércio fluvial. Estágio em que o Parsegh atinge sua forma mais elaborada e em que a inspiração armênia da família fica mais evidente, tanto na densidade fonológica quanto na riqueza derivacional.",
+            "lore": "Em Oü Central, a confluência de rotas comerciais fluviais com o prestígio religioso do Templo de Oü transformou o Cantavético Clássico na principal lingua franca de uma vasta região por quase quatro milênios. Foi aqui que a escrita nasceu (ver lore.writing_systems), que o cânone teológico foi fixado por escrito pela primeira vez, e que floresceu uma tradição de poesia épica e lírica cujos ecos métricos ainda influenciam a poesia do Cantálio Moderno. O Cantavético Clássico é, em todos os sentidos, o 'Cantavético Grabar' desta família: uma língua que deixou de ser falada cotidianamente, mas sobrevive como veículo sagrado, recitada por clérigos em cerimônias até hoje, dos dois lados da Grande Separação.",
+            "shared_phonotactics": {
+                "vowels": "aeiou",
+                "consonants": "pbtdkgqcjçxfvszhmnrly"
+            },
+            "phonological_notes": "Perda do schwa pleno /ə/ (fundido em /a/), perda de /ž/ (fundido em /j/) e perda de /w/ como fonema distinto (fundido em /v/ ou na vogal /u/, caso a caso) — processo de regularização típico de uma koiné literária prestigiada. Inventário resultante: 21 consoantes, 5 vogais. (Documental — ver engine_compatibility_notes; recomenda-se que qualquer idioma final baseado neste estágio declare seu próprio 'phonotactics' completo.)",
+            "agglutination_strength": 0.88,
+            "shared_lexicon_strength": 0.9,
+            "lexical_registers_defaults": {
+                "enabled": true,
+                "registers": [
+                    {
+                        "name": "liturgico",
+                        "chance": 0.18,
+                        "mutation_factor": 1,
+                        "description": "Registro conservador, ligado ao Templo de Oü; tende a preservar formas arcaicas mesmo em estágios tardios da família."
+                    },
+                    {
+                        "name": "poetico",
+                        "chance": 0.22,
+                        "mutation_factor": 2,
+                        "description": "Registro elevado dos bardos e poetas; admite variantes lexicais mais ornamentadas e sinônimos raros."
+                    },
+                    {
+                        "name": "comercial",
+                        "chance": 0.15,
+                        "mutation_factor": 1,
+                        "description": "Registro pragmático das rotas de comércio fluvial e, mais tarde, terrestres e marítimas; mais aberto a empréstimos."
+                    },
+                    {
+                        "name": "coloquial",
+                        "chance": 0.3,
+                        "mutation_factor": 3,
+                        "description": "Fala cotidiana, a mais inovadora e sujeita a mudanças fonéticas e simplificações morfológicas."
+                    }
+                ],
+                "notes": "Definido aqui porque nenhum ancestral (protocantavetico, cantavetico_antigo) declara este campo — por isso ele se propaga corretamente, via herança, para TODOS os descendentes desta família que não o sobrescreverem."
+            },
+            "case_system_notes": "Mantém os 8 casos, agora plenamente regulares e produtivos na norma literária; primeira documentação escrita do paradigma completo.",
+            "word_order": "SOV como norma literária fixa; a prosa comercial já admite alguma flexibilidade estilística",
+            "stress_notes": "Tendência à tonicidade na penúltima sílaba, com exceções métricas frequentes na poesia cerimonial",
+            "script": {
+                "exists": true,
+                "name": "Silabário Oünico",
+                "notes": "Primeiro sistema de escrita da família, criado por escribas-sacerdotes do Templo de Oü para fixar leis, contratos e o cânone litúrgico."
+            },
+            "notable_features": [
+                "Nascimento da escrita (Silabário Oünico)",
+                "Parsegh em sua forma evidencial mais elaborada e socialmente relevante",
+                "Diglossia inicial entre a norma literária/litúrgica e a fala cotidiana de Oü Central",
+                "Estatuto de lingua franca comercial e religiosa, comparável ao papel de línguas clássicas reais que sobrevivem hoje apenas em uso litúrgico"
+            ],
+            "key_events": [
+                "Fundação do Templo de Oü e organização dos Vozeiros em colégio semissacerdotal",
+                "Invenção do Silabário Oünico",
+                "Codificação do Cânone Litúrgico de Oü",
+                "Apogeu da poesia épica clássica ('os Cantos de Oü')",
+                "Início da Grande Secura, multigeracional, que levaria à Grande Separação"
+            ]
+        }
+    ],
+    "branches": [
+        {
+            "id": "cantavetico_oriental",
+            "parent_id": "cantavetico_classico",
+            "name": "Cantavético Oriental",
+            "era_label": "Era da Grande Separação (ramo leste)",
+            "approx_date": "a partir de ~43.000 a.P., estendendo-se até ~30.000 a.P.",
+            "region": "Cordilheiras de Vrenta, a leste da antiga bacia do Oü",
+            "status": "extinta como unidade única; sobrevive fragmentada em Cantálio Antigo e nas línguas-irmãs Vrenídico e Zovaico",
+            "description": "Ramo formado pela onda migratória oriental da Grande Separação. Isolado nas cordilheiras altas, preserva com notável conservadorismo o perfil fonológico e morfológico do Cantavético Clássico, inclusive o sistema Parsegh em sua forma mais robusta — e é, por isso, o ramo onde a inspiração armênia da família permanece mais forte e reconhecível.",
+            "lore": "A onda oriental da Grande Separação levou parte da população de Oü Central para as Cordilheiras de Vrenta, onde o isolamento geográfico (vales profundos, passagens sazonais) favoreceu um conservadorismo linguístico notável. Foi nesse contexto que o Cantavético Oriental absorveu, por contato com povos de substrato já estabelecidos nas montanhas, alguns poucos traços fonológicos novos — nenhum deles copiado de qualquer língua real, mas escolhidos para reforçar a 'textura' montanhesa pesada e consonantalmente densa que aproxima ainda mais este ramo, esteticamente, do Georgiano e do Curdo.",
+            "shared_phonotactics": {
+                "vowels": "aeiou",
+                "consonants": "pbtdkgqcjçxfvszhmnrlyğ"
+            },
+            "phonological_notes": "Herda os 21 consoantes/5 vogais do Cantavético Clássico e ACRESCENTA /ğ/ (fricativa velar/uvular sonora), inovação de contato com substrato montanhês — totalizando 22 consoantes. (Documental; por precedência da raiz protocantavetico, este campo não é herdado automaticamente — ver notas de engenharia.)",
+            "agglutination_strength": 0.85,
+            "shared_lexicon_strength": 0.8,
+            "case_system_notes": "Mantém os 8 casos clássicos sem syncretismos relevantes.",
+            "word_order": "SOV rígido, reforçado pelo isolamento e conservadorismo dialetal",
+            "stress_notes": "Penúltima sílaba, com alongamento expressivo da vogal tônica em contextos litúrgicos/poéticos",
+            "notable_features": [
+                "Preservação quase intacta do Parsegh em sua forma evidencial completa",
+                "Inovação fonológica de contato (/ğ/), de origem em substrato montanhês não-Cantavético",
+                "Ponto de partida comum para Cantálio Antigo, Vrenídico e Zovaico",
+                "Maior proximidade estética e tipológica com o perfil 'armênio/georgiano/curdo' de toda a família"
+            ],
+            "key_events": [
+                "Assentamento nas Cordilheiras de Vrenta",
+                "Contato e fusão parcial com povos de substrato montanhês",
+                "Fragmentação tardia em Cantálio Antigo (vale central, rota comercial de montanha) e nas periferias Vrenídico/Zovaico"
+            ]
+        },
+        {
+            "id": "cantavetico_ocidental",
+            "parent_id": "cantavetico_classico",
+            "name": "Cantavético Ocidental",
+            "era_label": "Era da Grande Separação (ramo oeste)",
+            "approx_date": "a partir de ~43.000 a.P., estendendo-se até ~28.000 a.P.",
+            "region": "Planícies de Doresh e a Costa de Vendra, a oeste da antiga bacia do Oü",
+            "status": "extinta como unidade única; sobrevive fragmentada em Vendrico e Doreshim",
+            "description": "Ramo formado pela onda migratória ocidental da Grande Separação. Ao se mover para as planícies baixas e depois para o litoral, este ramo teve contato muito mais intenso com povos não-Cantavéticos, o que acelerou sua simplificação fonológica e morfológica e o tornou consideravelmente mais aberto a empréstimos do que o ramo Oriental.",
+            "lore": "Diferente da introspecção montanhesa do ramo Oriental, o Cantavético Ocidental se expandiu por planícies abertas e, séculos depois, alcançou a costa, onde o comércio marítimo trouxe contato constante com povos e línguas inteiramente estranhos à família. Esse contato favoreceu uma deriva tipológica própria: em vez do conservadorismo evidencial e aglutinante do leste, o oeste desenvolveu uma forte tradição de narrativa épica itinerante — bardos de feira e marinheiros que recitavam histórias longas em praças e portos, e não juramentos sagrados em templos. Essa diferença cultural está refletida até na deriva semântica da própria raiz *kanta- entre os dois ramos (ver lore.etymology_case_study.western_divergence).",
+            "shared_phonotactics": {
+                "vowels": "aeiou",
+                "consonants": "pbtdkgcjxfvszhmnrly"
+            },
+            "phonological_notes": "Herda o inventário do Cantavético Clássico e perde /q/ (fundido em /k/) e /ç/ (fundido em /x/) — simplificação típica de planície/litoral, resultando em 19 consoantes. (Documental.)",
+            "agglutination_strength": 0.75,
+            "shared_lexicon_strength": 0.7,
+            "loanword_policy_defaults": {
+                "enabled": true,
+                "modes": {
+                    "phonetic_adaptation": 0.7,
+                    "calque": 0.2,
+                    "semantic_extension": 0.1
+                },
+                "notes": "Linha de base moderadamente aberta a empréstimos, refletindo o contato marítimo/comercial já estabelecido neste ramo. Definido aqui porque nenhum ancestral (protocantavetico, antigo, classico) declara loanword_policy_defaults — propaga-se corretamente para Vendrico e Doreshim, a menos que estes o sobrescrevam (o que Doreshim faz, com uma política ainda mais aberta)."
+            },
+            "case_system_notes": "Início de erosão do paradigma casual: ablativo e instrumental começam a colapsar num único caso ablativo-instrumental, processo que se completaria nos descendentes.",
+            "word_order": "SOV ainda dominante, mas com ordem mais livre que no ramo Oriental devido ao contato linguístico intenso",
+            "notable_features": [
+                "Maior abertura a empréstimos lexicais de toda a família",
+                "Início do sincretismo ablativo-instrumental",
+                "Deriva cultural rumo à tradição narrativa/épica, em contraste com a tradição testemunhal/religiosa do leste",
+                "Ponto de partida comum para Vendrico (herdeiro literário principal) e Doreshim (crioulo comercial costeiro)"
+            ],
+            "key_events": [
+                "Travessia das Planícies de Doresh",
+                "Chegada à Costa de Vendra e início do comércio marítimo de longo alcance",
+                "Fragmentação tardia em Vendrico (interior, herdeiro literário) e Doreshim (cidades-porto, crioulo comercial)"
+            ]
+        },
+        {
+            "id": "cantalio_antigo",
+            "parent_id": "cantavetico_oriental",
+            "name": "Cantálio Antigo",
+            "era_label": "Era do Vale de Cantal",
+            "approx_date": "~30.000 a ~12.000 a.P.",
+            "region": "Vale central das Cordilheiras de Vrenta, em torno do que se tornaria o Reino de Cantal",
+            "status": "extinta; preservada apenas em inscrições rituais e na camada lexical mais arcaica do Cantálio Clássico",
+            "description": "Fortemente inspirado no Armênio, preserva quase intactos os traços do Cantavético Oriental — incluindo o sistema Parsegh em seu apogeu evidencial e a aglutinação morfológica plena. É o estágio em que o etnônimo 'Cantal' (do qual deriva 'Cantálio') se fixa como nome do vale e, depois, do povo.",
+            "lore": "Estabelecida num vale fértil protegido por desfiladeiros, a comunidade que os textos rituais mais tardios chamariam de 'povo de Cantal' floresceu como rota de passagem obrigatória do comércio de montanha. Foi um período de extraordinária estabilidade linguística — quase 18 milênios em que a língua mudou surpreendentemente pouco, graças ao isolamento geográfico e ao prestígio social ligado ao domínio correto do Parsegh, que continuava a ser, nesta fase, tanto uma ferramenta gramatical quanto um instrumento de legitimação social e religiosa.",
+            "shared_phonotactics": {
+                "vowels": "aeiou",
+                "consonants": "pbtdkgqcjçxfvszhmnrlyğ"
+            },
+            "phonological_notes": "Idêntico ao inventário do Cantavético Oriental (22 consoantes, 5 vogais) — nenhuma mudança fonológica relevante neste estágio, em contraste com a intensa elaboração morfológica e evidencial. (Documental.)",
+            "agglutination_strength": 0.8,
+            "shared_lexicon_strength": 0.82,
+            "case_system_notes": "Mantém os 8 casos do Cantavético Clássico; o Parsegh funciona como uma camada evidencial adicional, aglutinada após a flexão casual do verbo.",
+            "word_order": "SOV estrito",
+            "stress_notes": "Penúltima sílaba; vogal tônica frequentemente alongada em contexto ritual",
+            "script": {
+                "exists": true,
+                "name": "Glifos Cantálicos",
+                "notes": "Adaptação regional, mais alfabética, do antigo Silabário Oünico."
+            },
+            "notable_features": [
+                "Apogeu absoluto do sistema Parsegh",
+                "Aglutinação morfológica plena (agglutination_strength = 0.8, o mais alto de toda a linhagem Cantálio)",
+                "Fixação do etnônimo 'Cantal' e origem do glotônimo 'Cantálio'",
+                "Estabilidade linguística extraordinária ao longo de quase 18 milênios"
+            ],
+            "key_events": [
+                "Assentamento permanente no Vale de Cantal",
+                "Consolidação do Parsegh como instituição social, não apenas gramatical",
+                "Primeiras inscrições rituais em Glifos Cantálicos",
+                "Início do declínio gradual da estabilidade política que levaria à virada Clássica"
+            ]
+        },
+        {
+            "id": "cantalio_classico",
+            "parent_id": "cantalio_antigo",
+            "name": "Cantálio Clássico",
+            "era_label": "Era da Virada Literária",
+            "approx_date": "~12.000 a ~4.000 a.P.",
+            "region": "Vale de Cantal, em expansão comercial para rotas de montanha vizinhas",
+            "status": "extinta como vernáculo; sobrevive como camada literária/arcaizante de prestígio dentro do Cantálio Moderno",
+            "description": "Língua de prestígio e altíssima produção literária — mas é também o estágio da grande ruptura: perde sua característica aglutinante e o sistema Parsegh, num mesmo e único processo de simplificação morfológica acelerada pela ascensão do comércio escrito e da burocracia legal sobre a antiga tradição oral-testemunhal.",
+            "lore": "Com o crescimento do Vale de Cantal como entreposto comercial entre as cordilheiras e as terras baixas, a língua deixou de pertencer primariamente aos Vozeiros e ao templo e passou a pertencer também — e cada vez mais — a mercadores, escribas contratuais e a uma nova nobreza guerreira em ascensão. Essas três classes não tinham nenhum interesse em preservar a complexa maquinaria evidencial do Parsegh: queriam contratos rápidos, leis claras e poesia que pudesse ser recitada em festas, não juramentos sagrados intermináveis. Em poucos séculos — um instante, comparado aos 18 milênios de estabilidade anteriores —, o Parsegh colapsou numa forma declarativa neutra, e a aglutinação morfológica cedeu lugar a um sistema mais fusional e mais regular. Paradoxalmente, é justamente nesse período de simplificação gramatical que a literatura cantálica vive seu auge mais celebrado: épicos de fundação, códigos legais em verso e uma vastíssima tradição de poesia amorosa e elegíaca que ainda hoje serve de modelo aos poetas do Cantálio Moderno.",
+            "shared_phonotactics": {
+                "vowels": "aeiou",
+                "consonants": "pbtdkgqcjxfvszhmnrly"
+            },
+            "phonological_notes": "Perde /ğ/ (reabsorvida em /g/) e funde /ç/ em /c/, num movimento de 'purismo' fonológico que acompanha a reforma morfológica — 20 consoantes, 5 vogais. (Documental.)",
+            "agglutination_strength": 0.45,
+            "shared_lexicon_strength": 0.7,
+            "gender_system_status": "Perdido por completo neste estágio (eco direto da perda de gênero do Armênio real). Qualquer perfil de idioma baseado em cantalio_classico (ou seus descendentes) DEVE definir explicitamente \"gender_system\": {\"enabled\": false} — ver engine_compatibility_notes.gender_loss_note.",
+            "case_system_notes": "Sincretismo genitivo-dativo (os dois casos se fundem num único caso genitivo-dativo, eco direto de um fenômeno real do Armênio) e sincretismo ablativo-instrumental; o paradigma cai de 8 para 6 casos: nominativo, acusativo, genitivo-dativo, ablativo-instrumental, locativo, vocativo.",
+            "word_order": "SOV como norma culta; a prosa legal e comercial já admite SVO em certas construções enfáticas",
+            "stress_notes": "Início do deslocamento do acento para a última sílaba (tendência que se completaria no Cantálio Moderno)",
+            "script": {
+                "exists": true,
+                "name": "Alfabeto Sávrico",
+                "notes": "Reforma alfabética dos antigos Glifos Cantálicos, favorecendo formas verbais mais curtas e regulares na escrita legal/comercial."
+            },
+            "notable_features": [
+                "Colapso do Parsegh num declarativo neutro",
+                "Queda abrupta da força aglutinante (de 0.8 para 0.45)",
+                "Perda total do gênero gramatical",
+                "Sincretismo genitivo-dativo e ablativo-instrumental",
+                "Auge da literatura cantálica clássica (épicos, códigos legais em verso, poesia elegíaca)"
+            ],
+            "key_events": [
+                "Ascensão da nobreza guerreira e da classe mercantil-escribal do Vale de Cantal",
+                "Colapso gramatical do Parsegh em poucos séculos",
+                "Reforma do Alfabeto Sávrico",
+                "Composição dos grandes épicos de fundação cantálicos",
+                "Início da fragmentação política que levaria ao Cantálio Médio"
+            ]
+        },
+        {
+            "id": "cantalio_medio",
+            "parent_id": "cantalio_classico",
+            "name": "Cantálio Médio",
+            "era_label": "Era da Fragmentação",
+            "approx_date": "~4.000 a.P. até poucos séculos antes da Reforma de 1823 AH",
+            "region": "Vale de Cantal e territórios vizinhos, divididos entre cortes regionais rivais",
+            "status": "extinta como sistema unificado; sobrevive apenas em manuscritos regionais com ortografias divergentes",
+            "description": "Período turbulento de fragmentação política e dialetal: sem nenhuma autoridade central capaz de impor um padrão, cada corte, mosteiro ou cidade-mercado escrevia o Cantálio à sua própria maneira fonética, produzindo uma anarquia ortográfica que duraria milênios — e que só seria resolvida pela Reforma de 1823 AH.",
+            "lore": "Com o colapso da unidade política do Vale de Cantal em uma constelação de pequenas cortes rivais, a língua sofreu o que os filólogos chamam de 'deriva sem ancoragem': sem um centro de prestígio único (o Templo de Oü já era, a essa altura, uma referência distante e puramente cerimonial), cada região desenvolveu suas próprias inovações fonéticas, muitas vezes mutuamente incompreensíveis na fala rápida, embora a tradição literária clássica continuasse a ser ensinada e copiada nos mosteiros como base comum. É deste período que vêm a maioria dos textos jurídicos, crônicas de corte e tratados de paz (e de guerra) entre as pequenas cortes cantálicas — e também o anedotário (provavelmente exagerado) sobre embaixadores que precisavam de tradutores para se entenderem com cortes vizinhas falando, supostamente, 'a mesma língua'.",
+            "shared_phonotactics": {
+                "vowels": "aeiou",
+                "consonants": "pbtdkgqcjxfvszhmnrly"
+            },
+            "phonological_notes": "Inventário nominalmente igual ao do Cantálio Clássico (20 consoantes, 5 vogais), mas extremamente instável na prática: a distinção entre /k/ e /x/ intervocálicos vacila de região para região (ver recommended_diachronic_eras.era_cantalio_medio), e variantes dialetais como 'khandav' (ao lado do padrão 'kandav') circulam sem nenhuma norma que as arbitre. (Documental.)",
+            "agglutination_strength": 0.25,
+            "shared_lexicon_strength": 0.6,
+            "gender_system_status": "Permanece ausente, como herdado de cantalio_classico.",
+            "case_system_notes": "O paradigma de 6 casos sobrevive na tradição escrita culta, mas na fala corrente muitas variedades regionais já tendem a marcar relações gramaticais por meio de preposições e ordem de palavras, antecipando a tipologia mais analítica do Cantálio Moderno.",
+            "word_order": "Predominantemente SOV na escrita culta; SVO cada vez mais comum na fala regional",
+            "notable_features": [
+                "Anarquia ortográfica: nenhum padrão gráfico unificado por milênios",
+                "Fragmentação política em pequenas cortes rivais",
+                "Instabilidade fonológica regional (k/x intervocálicos)",
+                "Tendência analítica crescente, antecipando o Cantálio Moderno",
+                "Sobrevivência da tradição literária clássica como referência comum nos mosteiros, mesmo sem unidade política"
+            ],
+            "key_events": [
+                "Colapso da unidade política do Vale de Cantal",
+                "Período das Pequenas Cortes",
+                "Compilação de crônicas e tratados regionais, cada um em sua própria convenção gráfica",
+                "Guerras de unificação que culminariam na coroação do primeiro monarca do Reino de Cantal",
+                "Encomenda real da Reforma Ortográfica, concluída em 1823 AH"
+            ]
+        },
+        {
+            "id": "cantalio_moderno",
+            "parent_id": "cantalio_medio",
+            "name": "Cantálio Moderno",
+            "era_label": "Era do Reino de Cantal",
+            "approx_date": "desde 1823 AH (Reforma Ortográfica) até hoje",
+            "region": "Reino de Cantal e suas comunidades diaspóricas",
+            "status": "viva; língua nacional do Reino de Cantal",
+            "population_estimate_today": "~22.000.000",
+            "description": "Marcado por reformas ortográficas profundas e pela perda total da aglutinação, mas ainda caracterizado por beleza e complexidade fonética. É inspirado no Armênio a tal ponto que um falante nativo de outra língua hadabiana, ao ouvi-lo, costuma reconhecer uma 'textura de Armênio' — mesmo sem compreender uma palavra.",
+            "lore": "A coroação do primeiro monarca do Reino de Cantal, após séculos de guerras de unificação entre as Pequenas Cortes do Cantálio Médio, trouxe consigo um projeto de Estado claro: uma língua, uma ortografia, um reino. Em 1823 AH, uma comissão mista de clérigos do Templo de Oü, professores das antigas escolas monásticas e juristas da nova coroa promulgou a Reforma Ortográfica de 1823 AH, que fixou o moderno Alfabeto Cantálio, eliminou letras arcaicas redundantes (como o grafema da extinta oclusiva uvular /q/, já fundida em /k/ havia gerações na fala), e estabeleceu a variedade da capital como base da norma escrita — sem, no entanto, eliminar três grandes variedades regionais vivas até hoje (ver modern_dialects). O resultado é uma língua sem aglutinação, sem gênero gramatical, com um sistema de seis casos ainda razoavelmente robusto, acento tônico fixo na última sílaba, e uma tradição literária ininterrupta de mais de 16 milênios que remonta, através do Cantálio Clássico, até os primeiros poetas de Oü Central.",
+            "shared_phonotactics": {
+                "vowels": "aeiou",
+                "consonants": "pbtdkgcjxfvszhmnrly"
+            },
+            "phonological_notes": "Perde /q/ (fundido em /k/ pela Reforma de 1823 AH) — 19 consoantes, 5 vogais. Mantém densidade de encontros consonantais moderada (≈0.25) e admite distinção fonêmica de duração vocálica em poesia formal e em alguns dialetos conservadores, registrada ortograficamente por dobramento de vogal ou acento (traço suprassegmental adicional, não alterando o inventário fonêmico de base). (Documental — qualquer perfil de idioma para cantalio_moderno.json deve declarar este 'phonotactics' diretamente, e não confiar na herança automática da família, que aplicaria por padrão a fonotática arcaica de protocantavetico.)",
+            "agglutination_strength": 0.05,
+            "shared_lexicon_strength": 0.55,
+            "gender_system_status": "Ausente. O perfil de idioma cantalio_moderno.json DEVE definir \"gender_system\": {\"enabled\": false} explicitamente.",
+            "case_system_notes": "Seis casos herdados do Cantálio Clássico (nominativo, acusativo, genitivo-dativo, ablativo-instrumental, locativo, vocativo), todos ainda produtivos na norma padrão, embora o registro coloquial mostre uso crescente de preposições em vez de marcação casual em alguns contextos.",
+            "word_order": "SVO é hoje a ordem dominante na fala e na prosa coloquial; SOV sobrevive como marca de registro formal, jurídico e poético — um traço de prestígio estilístico, não a norma neutra.",
+            "stress_notes": "Acento tônico fixo na ÚLTIMA sílaba (eco direto do padrão de acentuação do Armênio real) — mudança completa em relação ao padrão penúltimo ancestral.",
+            "script": {
+                "exists": true,
+                "name": "Alfabeto Cantálio (Reforma de 1823 AH)",
+                "notes": "Sistema alfabético moderno, oficial e padronizado, com ortografia etimológica conservadora em topônimos e termos religiosos (ex.: 'Candaq', grafia arcaizante preservada por tradição — ver recommended_diachronic_eras.era_cantalio_moderno)."
+            },
+            "notable_features": [
+                "Perda total da aglutinação morfológica (agglutination_strength = 0.05, a mais baixa de toda a família)",
+                "Ausência completa de gênero gramatical",
+                "Deslocamento do acento tônico para a última sílaba",
+                "Mudança de SOV para SVO como ordem neutra dominante, com SOV reservado a registros formais",
+                "Reconhecida por falantes de outras línguas hadabianas pela 'textura de Armênio', mesmo sem qualquer parentesco real com essa língua"
+            ],
+            "modern_dialects": [
+                {
+                    "name": "Cantálio Setentrional",
+                    "region": "terras altas do norte do Reino de Cantal, mais próximas das antigas Cordilheiras de Vrenta",
+                    "population_estimate": "~9.000.000",
+                    "notes": "Variedade mais conservadora, preserva alguns traços fonéticos do Cantálio Médio; considerada de prestígio em contextos literários e religiosos."
+                },
+                {
+                    "name": "Cantálio Meridional",
+                    "region": "planícies do sul do reino, em torno da capital",
+                    "population_estimate": "~8.000.000",
+                    "notes": "Base da norma escrita oficial de 1823 AH; variedade mais inovadora foneticamente, com tendência a sonorização adicional de oclusivas intervocálicas em registros muito coloquiais."
+                },
+                {
+                    "name": "Cantálio Diaspórico",
+                    "region": "comunidades mercantis e missionárias estabelecidas ao longo de rotas comerciais por todo Hadab, fora do Reino de Cantal",
+                    "population_estimate": "~5.000.000",
+                    "notes": "Variedade fortemente influenciada por contato com línguas locais das regiões de acolhimento; mantém grande lealdade simbólica à norma escrita de 1823 AH mesmo onde a fala cotidiana diverge bastante dela."
+                }
+            ],
+            "dialect_variation": {
+                "enabled": true,
+                "notes": "Estrutura ilustrativa cobrindo os três grandes dialetos listados em 'modern_dialects' (setentrional, meridional, diaspórico). O esquema de consumo detalhado deste campo não está documentado no núcleo do motor atualmente disponível; recomenda-se que o perfil final de cantalio_moderno.json implemente sua própria lógica de variação dialetal com base nestes três polos. Definido aqui porque nenhum ancestral na cadeia (protocantavetico → ... → cantalio_medio) declara 'dialect_variation' antes deste ponto — portanto, esta é a primeira definição encontrada e seria, de fato, herdada por qualquer eventual idioma-filho que não a sobrescreva."
+            },
+            "key_events": [
+                "Guerras de Unificação e coroação do primeiro monarca do Reino de Cantal",
+                "Reforma Ortográfica de 1823 AH",
+                "Fundação da Academia Cantálica de Letras, guardiã da norma escrita",
+                "Expansão comercial e missionária que origina a variedade diaspórica",
+                "Renascimento poético moderno, com forte revalorização consciente da métrica clássica do Cantálio Clássico"
+            ]
+        },
+        {
+            "id": "vrenidico",
+            "parent_id": "cantavetico_oriental",
+            "name": "Vrenídico",
+            "era_label": "Línguas periféricas das Cordilheiras de Vrenta",
+            "approx_date": "fragmentação a partir de ~30.000 a.P., contínua até hoje como dialeto vivo",
+            "region": "Vales altos e rotas de transumância das Cordilheiras de Vrenta, à margem do Reino de Cantal",
+            "status": "viva; língua minoritária sem padronização estatal",
+            "population_estimate_today": "~1.600.000",
+            "description": "Língua-irmã do Cantálio dentro do Cantavético Oriental, falada por comunidades pastoris de transumância que nunca se urbanizaram nem desenvolveram um centro político único capaz de padronizar a língua — por isso permanece, até hoje, um contínuo dialetal mais do que uma língua unificada.",
+            "lore": "Enquanto o Vale de Cantal concentrava comércio, templos e, mais tarde, uma coroa, as comunidades vrenídicas permaneceram dispersas pelos vales altos, vivendo de pastoreio sazonal entre pastagens de verão e de inverno. Essa mobilidade constante impediu a formação de qualquer centro de prestígio linguístico comparável a Cantal, e o Vrenídico nunca passou pela reforma literária que simplificou o Cantálio: mantém, até hoje, traços morfológicos mais arcaicos e conservadores que seu parente mais famoso e prestigiado.",
+            "shared_phonotactics": {
+                "vowels": "aeiou",
+                "consonants": "pbtdkgqcjçxfvszhmnrlyğ"
+            },
+            "phonological_notes": "Praticamente idêntico ao inventário do Cantavético Oriental (22 consoantes, 5 vogais) — a divergência do Vrenídico é principalmente lexical e morfológica, não fonológica.",
+            "agglutination_strength": 0.78,
+            "shared_lexicon_strength": 0.65,
+            "gender_system_status": "Conservador: ao contrário do Cantálio, mantém resquícios do sistema ancestral de 3 categorias baseadas em animacidade, hoje reduzido a uma distinção binária animado/inanimado.",
+            "notable_features": [
+                "Contínuo dialetal sem padronização central",
+                "Conservação de traços morfológicos mais arcaicos que o Cantálio",
+                "Vestígios residuais de gênero gramatical (animado/inanimado), em contraste com a perda total no Cantálio",
+                "Forte identidade pastoril de transumância, refletida em vocabulário extremamente especializado para clima, terreno e rebanhos"
+            ]
+        },
+        {
+            "id": "zovaico",
+            "parent_id": "cantavetico_oriental",
+            "name": "Zovaico",
+            "era_label": "Línguas periféricas das estepes orientais",
+            "approx_date": "fragmentação a partir de ~30.000 a.P., contínua até hoje",
+            "region": "Estepes a leste das Cordilheiras de Vrenta, além da fronteira tradicional do Reino de Cantal",
+            "status": "viva; língua minoritária em declínio",
+            "population_estimate_today": "~900.000",
+            "description": "O ramo mais divergente do Cantavético Oriental, falado por antigos povos nômades das estepes orientais. Intenso contato com povos não-Cantavéticos da estepe produziu o inventário fonológico mais distinto de toda a família — incluindo a única nasal velar fonêmica (/ŋ/) registrada em qualquer ramo deste tronco.",
+            "lore": "Ao se separarem da rota de comércio de montanha que levaria ao Vale de Cantal, os ancestrais zovaicos seguiram para leste, adentrando as estepes abertas e adotando, ao longo de milênios, um modo de vida nômade equestre, em contato constante com povos de origem totalmente alheia ao tronco Cantavético. Esse contato profundo deixou marcas fonológicas e lexicais que tornam o Zovaico, hoje, a língua mais 'exótica' da família aos ouvidos de um falante de Cantálio — e também a mais ameaçada, por estar hoje cada vez mais cercada por línguas estépicas dominantes não relacionadas.",
+            "shared_phonotactics": {
+                "vowels": "aeiou",
+                "consonants": "pbtdkgqcjçxfvszhmnrlyŋ"
+            },
+            "phonological_notes": "Não desenvolveu /ğ/ (ausência de contato com o substrato montanhês que afetou o Cantavético Oriental nuclear); em vez disso, fonologizou /ŋ/ por contato com línguas estépicas vizinhas — inovação exclusiva deste ramo dentro de toda a família. 22 consoantes, 5 vogais.",
+            "agglutination_strength": 0.7,
+            "shared_lexicon_strength": 0.55,
+            "gender_system_status": "Perdido de forma independente, por via de contato com línguas estépicas sem gênero gramatical — um caso paralelo, mas historicamente não-relacionado, à perda de gênero no Cantálio Clássico.",
+            "notable_features": [
+                "Único ramo da família com a nasal velar /ŋ/ como fonema distintivo",
+                "Maior grau de influência lexical externa (não-Cantavética) de toda a árvore",
+                "Cultura nômade equestre, em contraste com o pastoreio de transumância vrenídico e o urbanismo cantálico",
+                "Língua ameaçada, com número de falantes em declínio constante nas últimas gerações"
+            ]
+        },
+        {
+            "id": "vendrico",
+            "parent_id": "cantavetico_ocidental",
+            "name": "Vendrico",
+            "era_label": "Línguas das Ligas Vendrias",
+            "approx_date": "fragmentação a partir de ~28.000 a.P., contínua até hoje",
+            "region": "Costa de Vendra e interior próximo, hoje organizado como as Ligas Vendrias",
+            "status": "viva; língua nacional de facto das Ligas Vendrias (confederação de cidades-estado, sem coroa única)",
+            "population_estimate_today": "~4.200.000",
+            "description": "Principal herdeiro literário do Cantavético Ocidental — o equivalente, no oeste, ao papel que o Cantálio desempenha no leste —, embora sem nunca ter se consolidado sob uma única coroa, preferindo a forma de confederação de cidades-estado autônomas mas culturalmente unificadas pela língua e pela tradição épica narrativa.",
+            "lore": "Onde o Cantálio desenvolveu uma tradição de testemunho jurado e prestígio jurídico-religioso (o Parsegh e seus descendentes literários), o Vendrico desenvolveu, a partir do mesmo tronco ocidental, uma rica tradição de narrativa épica itinerante — longos poemas narrativos recitados em praças de mercado e portos por bardos profissionais, contando histórias de viagem, naufrágio, comércio e fundação de cidades. Essa diferença de vocação cultural está refletida diretamente na deriva semântica da raiz ancestral *kanta- (ver lore.etymology_case_study.western_divergence): enquanto no leste a palavra evoluiu para significar simplesmente 'palavra', no oeste evoluiu para significar 'história contada, narrativa'.",
+            "shared_phonotactics": {
+                "vowels": "aeiou",
+                "consonants": "pbtdkgcjxfvszhmnrly"
+            },
+            "phonological_notes": "Idêntico ao inventário do Cantavético Ocidental (19 consoantes, 5 vogais) — a divergência do Vendrico em relação ao seu ancestral imediato é majoritariamente morfossintática e lexical.",
+            "agglutination_strength": 0.4,
+            "shared_lexicon_strength": 0.5,
+            "gender_system_status": "Perdido de forma independente, em paralelo (mas não-relacionado historicamente) à perda de gênero no Cantálio Clássico — um caso interessante de mudança paralela em dois ramos já bastante distantes um do outro.",
+            "case_system_notes": "Completou o sincretismo ablativo-instrumental iniciado no Cantavético Ocidental e reduziu o paradigma a 5 casos: nominativo, acusativo, genitivo-dativo, ablativo-instrumental, vocativo (o locativo foi inteiramente substituído por preposições).",
+            "word_order": "SVO, consolidado há muitos milênios como ordem neutra — o ramo ocidental abandonou o SOV ancestral muito antes do Cantálio Moderno",
+            "notable_features": [
+                "Tradição épica narrativa itinerante (bardos de praça e porto), em contraste com a tradição testemunhal/jurídica cantálica",
+                "Organização política em confederação de cidades-estado (as Ligas Vendrias), nunca unificada sob uma coroa única",
+                "Sincretismo casual mais avançado que qualquer outro ramo vivo da família",
+                "Deriva semântica própria da raiz *kanta- rumo a 'narrativa, história contada'"
+            ]
+        },
+        {
+            "id": "doreshim",
+            "parent_id": "cantavetico_ocidental",
+            "name": "Doreshim",
+            "era_label": "Crioulo comercial das Cidades-Porto de Doresh",
+            "approx_date": "formação a partir de ~25.000 a.P., consolidação crioula contínua até os últimos séculos",
+            "region": "Cidades-Porto de Doresh, ao longo da costa comercial do antigo Cantavético Ocidental",
+            "status": "viva; língua veicular e materna das comunidades portuárias de Doresh",
+            "population_estimate_today": "~1.300.000",
+            "description": "Língua-irmã do Vendrico nascida do intenso e prolongado contato comercial entre falantes cantavéticos ocidentais e marinheiros, mercadores e colonos de origem totalmente externa à família — um caso clássico de nivelamento linguístico por contato comercial sustentado, com fortíssima abertura a empréstimos.",
+            "lore": "Nas Cidades-Porto de Doresh, onde dezenas de línguas se cruzavam diariamente nos cais e mercados, a variedade local do Cantavético Ocidental foi nivelada, simplificada e reabastecida de vocabulário externo numa escala sem paralelo em qualquer outro ponto da família. O resultado, consolidado ao longo de várias gerações de bilinguismo intenso, foi uma língua materna de pleno direito — não um mero jargão comercial —, mas com uma morfologia muito mais reduzida que qualquer outro descendente cantavético e uma camada lexical maciçamente importada, sinalizada no perfil de idioma recomendado pela ativação de pidgin_rules e por uma política de empréstimo muito mais aberta que a do restante da família.",
+            "shared_phonotactics": {
+                "vowels": "aeiou",
+                "consonants": "pbtdkgcfvszhmnrly"
+            },
+            "phonological_notes": "A partir do inventário do Cantavético Ocidental (19 consoantes), o Doreshim perde ainda /j/ (fundido em /z/) e /x/ (fundido em /s/) — nivelamento típico de formação crioula —, resultando em 17 consoantes, 5 vogais.",
+            "agglutination_strength": 0.2,
+            "shared_lexicon_strength": 0.35,
+            "gender_system_status": "Ausente; nunca chegou a herdar de forma estável o sistema ancestral, dado o forte nivelamento por contato.",
+            "loanword_policy_defaults": {
+                "enabled": true,
+                "modes": {
+                    "phonetic_adaptation": 0.5,
+                    "calque": 0.3,
+                    "semantic_extension": 0.2
+                },
+                "notes": "Sobrescreve a política já herdada de cantavetico_ocidental com uma abertura ainda maior a empréstimos, refletindo a formação crioula. Como nenhum ancestral mais próximo na cadeia define este campo entre cantavetico_ocidental e doreshim, esta definição é a que efetivamente prevalece para este nó."
+            },
+            "pidgin_rules": {
+                "enabled": true,
+                "notes": "Único ponto da árvore com este campo ativado — reflete a origem do Doreshim como língua de contato simplificada entre falantes cantavéticos e povos marítimos não-Cantavéticos. Esquema de consumo detalhado não documentado no núcleo do motor disponível; recomenda-se que o perfil final de doreshim.json detalhe regras próprias de simplificação morfológica condicionadas por contexto de contato."
+            },
+            "case_system_notes": "Sistema casual quase inteiramente substituído por preposições e ordem de palavras fixa; resta apenas uma distinção residual nominativo/acusativo em pronomes pessoais.",
+            "word_order": "SVO rígido, sem exceções estilísticas relevantes",
+            "notable_features": [
+                "Formação por nivelamento crioulo em contexto de contato comercial intenso e sustentado",
+                "Camada lexical massivamente importada de línguas externas à família",
+                "Morfologia mais reduzida de toda a família Cantavético",
+                "Único ramo com pidgin_rules e a política de empréstimo mais aberta de toda a árvore"
+            ]
+        }
+    ],
+    "recommended_diachronic_eras": [
+        {
+            "era_id": "era_protocantavetico",
+            "name": "Proto-Cantavético",
+            "parent_era_id": null,
+            "description": "Era-base; nenhuma mudança sonora aplicada — ponto de partida reconstruído.",
+            "changes": []
+        },
+        {
+            "era_id": "era_cantavetico_antigo",
+            "name": "Cantavético Antigo",
+            "parent_era_id": "era_protocantavetico",
+            "description": "Início da redução vocálica átona.",
+            "changes": [
+                {
+                    "rule_id": "schwa_merger",
+                    "input_pattern": "ə",
+                    "output": "a",
+                    "environment_left": "",
+                    "environment_right": "",
+                    "word_boundary_left": false,
+                    "word_boundary_right": false,
+                    "probability": 0.75,
+                    "high_frequency_exceptions": [],
+                    "description": "Fusão do schwa átono pleno /ə/ com /a/, antecipando a perda total do schwa como fonema distinto no Cantavético Clássico."
+                }
+            ]
+        },
+        {
+            "era_id": "era_cantavetico_classico",
+            "name": "Cantavético Clássico",
+            "parent_era_id": "era_cantavetico_antigo",
+            "description": "Regularização fonológica da koiné literária de Oü Central.",
+            "changes": [
+                {
+                    "rule_id": "intervocalic_lenition_t_d",
+                    "input_pattern": "t",
+                    "output": "d",
+                    "environment_left": "V",
+                    "environment_right": "V",
+                    "word_boundary_left": false,
+                    "word_boundary_right": false,
+                    "probability": 0.85,
+                    "high_frequency_exceptions": [],
+                    "description": "Sonorização regular do /t/ intervocálico em /d/, processo característico da koiné literária de Oü Central."
+                },
+                {
+                    "rule_id": "zh_to_j_merger",
+                    "input_pattern": "ž",
+                    "output": "j",
+                    "environment_left": "",
+                    "environment_right": "",
+                    "word_boundary_left": false,
+                    "word_boundary_right": false,
+                    "probability": 1.0,
+                    "high_frequency_exceptions": [],
+                    "description": "Fusão completa de /ž/ em /j/ na norma literária clássica."
+                },
+                {
+                    "rule_id": "w_to_v_merger",
+                    "input_pattern": "w",
+                    "output": "v",
+                    "environment_left": "C",
+                    "environment_right": "",
+                    "word_boundary_left": false,
+                    "word_boundary_right": false,
+                    "probability": 0.9,
+                    "high_frequency_exceptions": [],
+                    "description": "Fusão de /w/ pós-consonantal em /v/. Em posição intervocálica, /w/ tende a se fundir antes na vogal /u/ — mudança lexicalizada caso a caso, não coberta por esta regra regular."
+                }
+            ]
+        },
+        {
+            "era_id": "era_cantavetico_oriental",
+            "name": "Cantavético Oriental",
+            "parent_era_id": "era_cantavetico_classico",
+            "description": "Inovação de contato com substrato montanhês após a Grande Separação.",
+            "changes": [
+                {
+                    "rule_id": "mountain_fricative_innovation",
+                    "input_pattern": "k",
+                    "output": "ğ",
+                    "environment_left": "",
+                    "environment_right": "",
+                    "word_boundary_left": false,
+                    "word_boundary_right": true,
+                    "probability": 0.3,
+                    "high_frequency_exceptions": [],
+                    "description": "Inovação de contato com substrato montanhês: /k/ final de palavra ocasionalmente fricativiza em /ğ/. Mudança esporádica, não regular — afeta apenas uma fração do léxico."
+                }
+            ]
+        },
+        {
+            "era_id": "era_cantalio_antigo",
+            "name": "Cantálio Antigo",
+            "parent_era_id": "era_cantavetico_oriental",
+            "description": "Elevação vocálica final, típica do isolamento conservador do Vale de Cantal.",
+            "changes": [
+                {
+                    "rule_id": "final_vowel_raising",
+                    "input_pattern": "a",
+                    "output": "i",
+                    "environment_left": "",
+                    "environment_right": "",
+                    "word_boundary_left": false,
+                    "word_boundary_right": true,
+                    "probability": 0.6,
+                    "high_frequency_exceptions": [],
+                    "description": "Elevação da vogal átona final /a/ > /i/, mudança regular típica do período Cantálio Antigo."
+                }
+            ]
+        },
+        {
+            "era_id": "era_cantalio_classico",
+            "name": "Cantálio Clássico",
+            "parent_era_id": "era_cantalio_antigo",
+            "description": "Simplificação fonológica simultânea ao colapso morfológico e do Parsegh.",
+            "changes": [
+                {
+                    "rule_id": "apocope_final_i",
+                    "input_pattern": "i",
+                    "output": "",
+                    "environment_left": "C",
+                    "environment_right": "",
+                    "word_boundary_left": false,
+                    "word_boundary_right": true,
+                    "probability": 0.55,
+                    "high_frequency_exceptions": [
+                        "parsavi"
+                    ],
+                    "description": "Apócope da vogal final átona /i/ após consoante, associada à perda da aglutinação. O termo técnico-litúrgico 'parsavi' (origem do rótulo moderno 'Parsegh') resiste a esta mudança por alta frequência ritual, mantendo a forma arcaica."
+                },
+                {
+                    "rule_id": "affricate_merger_palatal",
+                    "input_pattern": "ç",
+                    "output": "c",
+                    "environment_left": "",
+                    "environment_right": "",
+                    "word_boundary_left": false,
+                    "word_boundary_right": false,
+                    "probability": 1.0,
+                    "high_frequency_exceptions": [],
+                    "description": "Fusão da africada pós-alveolar surda /ç/ na africada alveolar /c/, parte da regularização fonológica que acompanha a reforma literária clássica."
+                },
+                {
+                    "rule_id": "loss_of_mountain_fricative",
+                    "input_pattern": "ğ",
+                    "output": "g",
+                    "environment_left": "",
+                    "environment_right": "",
+                    "word_boundary_left": false,
+                    "word_boundary_right": false,
+                    "probability": 1.0,
+                    "high_frequency_exceptions": [],
+                    "description": "Eliminação da fricativa de substrato /ğ/, reabsorvida em /g/ pela norma literária purista do Cantálio Clássico."
+                }
+            ]
+        },
+        {
+            "era_id": "era_cantalio_medio",
+            "name": "Cantálio Médio",
+            "parent_era_id": "era_cantalio_classico",
+            "description": "Variação dialetal instável, sem padrão unificado.",
+            "changes": [
+                {
+                    "rule_id": "sporadic_k_to_x_intervocalic",
+                    "input_pattern": "k",
+                    "output": "x",
+                    "environment_left": "V",
+                    "environment_right": "V",
+                    "word_boundary_left": false,
+                    "word_boundary_right": false,
+                    "probability": 0.25,
+                    "high_frequency_exceptions": [],
+                    "description": "Mudança dialetal esporádica e regionalmente instável, nunca generalizada antes da Reforma de 1823 AH — um dos sintomas da fragmentação ortográfica e fonológica do período médio."
+                }
+            ]
+        },
+        {
+            "era_id": "era_cantalio_moderno",
+            "name": "Cantálio Moderno",
+            "parent_era_id": "era_cantalio_medio",
+            "description": "Reforma Ortográfica de 1823 AH.",
+            "changes": [
+                {
+                    "rule_id": "orthographic_merger_q_to_k",
+                    "input_pattern": "q",
+                    "output": "k",
+                    "environment_left": "",
+                    "environment_right": "",
+                    "word_boundary_left": false,
+                    "word_boundary_right": false,
+                    "probability": 1.0,
+                    "high_frequency_exceptions": [
+                        "candaq"
+                    ],
+                    "description": "Reforma Ortográfica de 1823 AH: fusão fonológica e gráfica de /q/ em /k/ na norma padrão. Topônimos e termos religiosos arcaizantes (como o nome cerimonial 'Candaq' do Templo de Oü) preservam a grafia histórica por tradição."
+                }
+            ]
+        }
+    ]
+}

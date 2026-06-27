@@ -1,0 +1,675 @@
+{
+    "id": "ruinian_language",
+    "name": "Ruínico",
+    "description": "Língua do povo ruíno, fortemente inspirada na estética e evolução fonética do ucraniano. Tem laços históricos profundos com o Tsevério, derivando ambos do Proto-Aslávika, mas apresenta uma inteligibilidade mútua baixa (cerca de 65% de similaridade lexical). Diferencia-se do Tsevério por reter o caso vocativo (totalizando 7 casos), possuir mutações vocálicas em sílabas fechadas (iotacismo), forte uso da fricativa glotal 'h' em oposição à oclusiva 'g', e permitir pro-drop. Recebeu fortes influências lexicais de línguas estepianas e lecianas ao longo de seu desenvolvimento isolado nas planícies do sul.",
+    "word_order": "SVO",
+    "subordinate_word_order": "SVO",
+    "source_language_order": "SVO",
+    "drop_articles": true,
+    "pro_drop": {
+        "enabled": true,
+        "conditions": [
+            "verb_agreement"
+        ]
+    },
+    "aesthetic_profile": {
+        "syllable_count_distribution": {
+            "1": 0.15,
+            "2": 0.45,
+            "3": 0.3,
+            "4": 0.1
+        },
+        "cluster_density": 0.65,
+        "vowel_consonant_ratio": 0.48
+    },
+    "alignment": "nominative-accusative",
+    "global_seed": 19910824,
+    "phonotactics": {
+        "vowels": "aeiouy",
+        "consonants": "pbtdkhfvszšžcčmnlrjw",
+        "syllable_templates": [
+            "CV",
+            "CVC",
+            "CCV",
+            "CCVC",
+            "V",
+            "VC",
+            "CVCC",
+            "CCVCC"
+        ],
+        "min_syllables": 1,
+        "max_syllables": 4,
+        "max_consonant_cluster": 3,
+        "max_vowel_cluster": 2,
+        "forbidden_initial_clusters": [
+            "nm",
+            "mr",
+            "nl",
+            "tl",
+            "dl",
+            "sr"
+        ],
+        "forbidden_final_consonants": [
+            "w"
+        ],
+        "epenthesis_vowel": "e",
+        "diphthongs": [
+            "ai",
+            "ei",
+            "ou",
+            "au",
+            "ij",
+            "yj"
+        ],
+        "sonority_hierarchy": {
+            "enabled": true,
+            "scale": {
+                "p": 1,
+                "b": 1,
+                "t": 1,
+                "d": 1,
+                "k": 1,
+                "f": 2,
+                "v": 2,
+                "s": 2,
+                "z": 2,
+                "š": 2,
+                "ž": 2,
+                "h": 2,
+                "c": 2,
+                "č": 2,
+                "m": 3,
+                "n": 3,
+                "l": 4,
+                "r": 4,
+                "j": 5,
+                "w": 5
+            },
+            "onset_rules": {
+                "min_distance": 1,
+                "allow_plateau": false,
+                "allow_reversal": false
+            },
+            "coda_rules": {
+                "min_distance": 0,
+                "allow_plateau": true,
+                "allow_reversal": true
+            }
+        },
+        "phonological_rules": [
+            {
+                "name": "palatalization",
+                "input": "([pbtdkhfvszmnlrw])([i])",
+                "output": "\\1j\\2",
+                "context": "all",
+                "obligatory": false,
+                "description": "Palatalização branda antes de i"
+            },
+            {
+                "name": "ruinian_iotacism_o",
+                "input": "o([pbtdkhfvszšžcčmnlrjw])+$",
+                "output": "i\\1",
+                "context": "word_final",
+                "obligatory": true,
+                "description": "Oclusão vocálica: 'o' passa a 'i' em sílaba final fechada"
+            },
+            {
+                "name": "ruinian_iotacism_e",
+                "input": "e([pbtdkhfvszšžcčmnlrjw])+$",
+                "output": "i\\1",
+                "context": "word_final",
+                "obligatory": true,
+                "description": "Oclusão vocálica: 'e' passa a 'i' em sílaba final fechada"
+            },
+            {
+                "name": "g_to_h_mutation",
+                "input": "g",
+                "output": "h",
+                "context": "all",
+                "obligatory": true,
+                "description": "Mudança histórica de g para h em raízes herdadas"
+            }
+        ]
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "fixed",
+        "position": "penultimate",
+        "graphic_accent": false
+    },
+    "case_system": {
+        "enabled": true,
+        "preposition_handling": "replace",
+        "marker_position": "suffix",
+        "markers": {
+            "nominative": {
+                "marker": "",
+                "type": "suffix",
+                "conditions": []
+            },
+            "genitive": {
+                "marker": "y",
+                "type": "suffix",
+                "conditions": []
+            },
+            "dative": {
+                "marker": "ov",
+                "type": "suffix",
+                "conditions": []
+            },
+            "accusative": {
+                "marker": "",
+                "type": "suffix",
+                "conditions": [
+                    "inanimate"
+                ]
+            },
+            "instrumental": {
+                "marker": "yt",
+                "type": "suffix",
+                "conditions": []
+            },
+            "locative": {
+                "marker": "ih",
+                "type": "suffix",
+                "conditions": []
+            },
+            "vocative": {
+                "marker": "e",
+                "type": "suffix",
+                "conditions": [
+                    "animate"
+                ]
+            }
+        }
+    },
+    "number_system": {
+        "numbers": [
+            "singular",
+            "plural"
+        ],
+        "default": "singular",
+        "markers": {
+            "plural": {
+                "marker": "y",
+                "alternatives": [
+                    {
+                        "marker": "i",
+                        "conditions": [
+                            "ends_with_consonant"
+                        ],
+                        "frequency": 0.4
+                    }
+                ]
+            }
+        }
+    },
+    "broken_plurals": {
+        "enabled": false
+    },
+    "tam_system": {
+        "enabled": true,
+        "infer_imperative_from_context": true,
+        "person_marking": {
+            "enabled": true,
+            "suffixes": {
+                "1sg": "u",
+                "2sg": "eš",
+                "3sg": "e",
+                "1pl": "em",
+                "2pl": "et",
+                "3pl": "ut"
+            }
+        },
+        "rules": [
+            {
+                "features": [
+                    "Tense=Past"
+                ],
+                "marker": "v",
+                "type": "suffix",
+                "description": "Passado marcado pelo sufixo -v"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "mu",
+                "type": "suffix",
+                "description": "Futuro sintético derivado do auxiliar aglutinado -mu"
+            },
+            {
+                "features": [
+                    "Aspect=Perf"
+                ],
+                "marker": "nu",
+                "type": "infix",
+                "anchor_strategy": "before_last_vowel",
+                "description": "Aspecto perfectivo (infixo -nu-)"
+            },
+            {
+                "features": [
+                    "Aspect=Imp"
+                ],
+                "marker": "",
+                "type": "suffix",
+                "description": "Imperfectivo não marcado"
+            },
+            {
+                "features": [
+                    "Mood=Imp"
+                ],
+                "marker": "ij",
+                "type": "suffix",
+                "description": "Imperativo"
+            }
+        ]
+    },
+    "gender_system": {
+        "enabled": true,
+        "genders": [
+            "masculine",
+            "feminine",
+            "neuter"
+        ],
+        "default": "masculine",
+        "inference": [
+            {
+                "suffix": "a",
+                "gender": "feminine",
+                "confidence": 0.95
+            },
+            {
+                "suffix": "ja",
+                "gender": "feminine",
+                "confidence": 0.9
+            },
+            {
+                "suffix": "o",
+                "gender": "neuter",
+                "confidence": 0.85
+            },
+            {
+                "suffix": "e",
+                "gender": "neuter",
+                "confidence": 0.8
+            },
+            {
+                "suffix": "",
+                "gender": "masculine",
+                "confidence": 0.7
+            }
+        ],
+        "markers": {
+            "masculine": {
+                "marker": "ij",
+                "position": "suffix",
+                "targets": [
+                    "ADJ",
+                    "DET"
+                ]
+            },
+            "feminine": {
+                "marker": "a",
+                "position": "suffix",
+                "targets": [
+                    "ADJ",
+                    "DET"
+                ]
+            },
+            "neuter": {
+                "marker": "e",
+                "position": "suffix",
+                "targets": [
+                    "ADJ",
+                    "DET"
+                ]
+            }
+        }
+    },
+    "agreement_rules": {
+        "gender_agreement": true,
+        "number_agreement": true,
+        "person_agreement": true,
+        "adjunct_position": "auto"
+    },
+    "copula_system": {
+        "enabled": true,
+        "copulas": [
+            {
+                "type": "past",
+                "form": "biv",
+                "conjugates": true,
+                "conditions": [
+                    "Tense=Past"
+                ],
+                "description": "Cópula no passado"
+            },
+            {
+                "type": "future",
+                "form": "bude",
+                "conjugates": true,
+                "conditions": [
+                    "Tense=Fut"
+                ],
+                "description": "Cópula no futuro"
+            },
+            {
+                "type": "present_default",
+                "form": "je",
+                "conjugates": false,
+                "conditions": [
+                    "Tense=Pres"
+                ],
+                "description": "Cópula do presente invariável"
+            }
+        ]
+    },
+    "negation_system": {
+        "enabled": true,
+        "strategies": [
+            {
+                "type": "verbal_negation",
+                "marker": "na",
+                "position": "before_verb",
+                "description": "Negação verbal com partícula na"
+            },
+            {
+                "type": "nominal_negation",
+                "marker": "nij",
+                "position": "before_noun",
+                "description": "Negação nominal com nij"
+            }
+        ]
+    },
+    "interrogative_system": {
+        "enabled": true,
+        "question_particles": [
+            {
+                "type": "yes_no",
+                "particle": "či",
+                "position": "before_verb"
+            }
+        ],
+        "detection_rules": {
+            "wh_words": [
+                "kvo",
+                "švo",
+                "hadi",
+                "koli",
+                "jak",
+                "naščo"
+            ],
+            "alternative_indicators": [
+                "abo"
+            ]
+        }
+    },
+    "determiner_system": {
+        "definite_article": {
+            "form": "",
+            "procliticizes": false
+        },
+        "demonstratives": {
+            "gender_inheritance_heuristic": true,
+            "proximal": {
+                "sg_m": "sej",
+                "sg_f": "sja",
+                "sg_n": "se",
+                "pl": "si"
+            },
+            "distal": {
+                "sg_m": "tij",
+                "sg_f": "tja",
+                "sg_n": "te",
+                "pl": "ti"
+            }
+        },
+        "possessives": {
+            "pronominal_suffixes": false,
+            "independent_forms": {
+                "1sg": "mij",
+                "2sg": "tvij",
+                "3sg_m": "jehv",
+                "3sg_f": "jija",
+                "1pl": "naš",
+                "2pl": "vaš",
+                "3pl": "jini"
+            }
+        }
+    },
+    "pronominal_system": {
+        "independent_pronouns": {
+            "1sg": "jaz",
+            "2sg": "ti",
+            "3sg_m": "vin",
+            "3sg_f": "vna",
+            "3sg_n": "vno",
+            "1pl": "mi",
+            "2pl": "vi",
+            "3pl": "vni"
+        },
+        "object_pronouns": {
+            "accusative": {
+                "1sg": "mna",
+                "2sg": "tja",
+                "3sg_m": "jeh",
+                "3sg_f": "jij",
+                "3sg_n": "jeh",
+                "1pl": "nas",
+                "2pl": "vas",
+                "3pl": "jih"
+            },
+            "dative": {
+                "1sg": "mni",
+                "2sg": "tobi",
+                "3sg_m": "jem",
+                "3sg_f": "jij",
+                "3sg_n": "jem",
+                "1pl": "nam",
+                "2pl": "vam",
+                "3pl": "jim"
+            }
+        },
+        "reflexive_pronouns": {
+            "accusative": "sja",
+            "dative": "sobi"
+        }
+    },
+    "adposition_system": {
+        "type": "prepositions",
+        "case_government": {
+            "enabled": true
+        }
+    },
+    "functional_particles": {
+        "muito": {
+            "adj_word": "duže",
+            "adj_position": "pre_nominal",
+            "noun_word": "bahato",
+            "noun_position": "pre_nominal",
+            "verb_word": "micno",
+            "verb_position": "post_verbal"
+        },
+        "pouco": {
+            "adj_word": "malo",
+            "adj_position": "pre_nominal"
+        },
+        "bem": {
+            "verb_word": "dobre",
+            "verb_position": "post_verbal"
+        }
+    },
+    "degree_system": {
+        "enabled": true,
+        "rules": {
+            "comparative": {
+                "affix": "šij",
+                "position": "suffix"
+            },
+            "superlative": {
+                "affix": "naj",
+                "position": "prefix"
+            },
+            "diminutive": {
+                "affix": "enk",
+                "position": "suffix"
+            },
+            "augmentative": {
+                "affix": "yšč",
+                "position": "suffix"
+            }
+        }
+    },
+    "reduplication": {
+        "enabled": false
+    },
+    "compounding": {
+        "enabled": true,
+        "head_position": "final",
+        "linking_elements": {
+            "o": {
+                "after": [
+                    "k",
+                    "h",
+                    "v"
+                ]
+            },
+            "e": {
+                "after": [
+                    "č",
+                    "š",
+                    "ž",
+                    "c",
+                    "j"
+                ]
+            }
+        }
+    },
+    "morphological_derivation": {
+        "enabled": true,
+        "root_based": false,
+        "max_depth": 3
+    },
+    "affix_system": {
+        "enabled": true,
+        "derivation_rules": [
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "agent",
+                "affix": "ar",
+                "position": "suffix",
+                "gender": "masculine",
+                "examples": "robyt -> robytar"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "NOUN",
+                "type": "abstract",
+                "affix": "ist",
+                "position": "suffix",
+                "gender": "feminine",
+                "examples": "svitlij -> svitlist"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "type": "relational",
+                "affix": "śkij",
+                "position": "suffix",
+                "examples": "mist -> miskij"
+            }
+        ]
+    },
+    "root_system": {
+        "enabled": false
+    },
+    "semantic_fields": {
+        "enabled": true,
+        "manual_groups": {
+            "ludyna": "human",
+            "žinka": "human",
+            "čolovik": "human",
+            "ditva": "human",
+            "voda": "nature",
+            "zemla": "nature",
+            "vohon": "nature",
+            "hata": "building",
+            "mist": "building"
+        }
+    },
+    "polysemy_rules": {
+        "enabled": true,
+        "splits": {
+            "mist": [
+                {
+                    "target_suffix": "_city",
+                    "rules": {
+                        "feats": [
+                            "Definite=Def"
+                        ]
+                    }
+                },
+                {
+                    "target_suffix": "_bridge",
+                    "rules": {
+                        "deprel": [
+                            "obl"
+                        ]
+                    }
+                }
+            ]
+        }
+    },
+    "false_cognates": {
+        "enabled": false
+    },
+    "loanword_policy": {
+        "enabled": true,
+        "modes": {
+            "phonetic_adaptation": 0.5,
+            "calque": 0.4,
+            "semantic_extension": 0.1
+        },
+        "calque_connector": "-"
+    },
+    "lexical_confluence": {
+        "enabled": true,
+        "base_stability": 15,
+        "strata": [
+            {
+                "source_id": "tsever_language",
+                "weight": 70,
+                "mutation_intensity": 0.6,
+                "description": "Camada principal de empréstimos e cognatos compartilhados com o Tsevério, refletindo a história comum e a inteligibilidade mútua entre as línguas."
+            },
+            {
+                "source_id": "protoaslaviik_language",
+                "weight": 15,
+                "mutation_intensity": 0.8,
+                "description": "Base profunda do Proto-Aslávika compartilhada com o Tsevério, mas sujeita às regras de iotacismo ruínico."
+            }
+        ]
+    },
+    "style": {
+        "capitalization": true,
+        "punctuation_map": {
+            ".": ".",
+            "!": "!",
+            "?": "?",
+            ",": ",",
+            ";": ";",
+            ":": ":"
+        },
+        "sentence_terminators": [
+            ".",
+            "!",
+            "?"
+        ],
+        "secondary_terminators": [
+            ":",
+            ";"
+        ]
+    }
+}

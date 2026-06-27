@@ -8,14 +8,20 @@
     "drop_articles": true,
     "lexical_confluence": {
         "enabled": true,
-        "base_stability": 75,
+        "base_stability": 45,
         "strata": [
             {
                 "source_id": "rmp",
-                "weight": 25,
+                "weight": 45,
                 "type": "inheritance",
-                "mutation_intensity": 0.8,
+                "mutation_intensity": 0.3,
                 "description": "Base lexical do Raabiano, fortemente nurgatizada (suavizada)"
+            },
+            {
+                "source_id": "eresseo",
+                "weight": 10,
+                "type": "inheritance",
+                "mutation_intensity": 0.8
             }
         ]
     },

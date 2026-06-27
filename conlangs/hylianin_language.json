@@ -1,0 +1,833 @@
+{
+    "id": "hylianin",
+    "name": "Hylianïn",
+    "description": "O 'Cantar dos Deuses'. Língua forjada pelo Senhor Escuro Magote para ser o idioma oficial de sua corte e de Veruír. Combina a estruturação nobre, fundacional e complexa de línguas élficas com uma fonética profundamente gutural, imponente e arranhada. Mais tarde corrompida por Rér no Fúë Sïsmor. Na Quarta Era, é uma língua morta, amplamente estudada por elfos e universidades humanas entre os Povos Livres.",
+    "word_order": "SVO",
+    "subordinate_word_order": "VSO",
+    "source_language_order": "SVO",
+    "drop_articles": false,
+    "pro_drop": {
+        "enabled": true,
+        "conditions": [
+            "verb_agreement"
+        ]
+    },
+    "aesthetic_profile": {
+        "syllable_count_distribution": {
+            "1": 0.20,
+            "2": 0.50,
+            "3": 0.25,
+            "4": 0.05
+        },
+        "cluster_density": 0.65,
+        "vowel_consonant_ratio": 0.40
+    },
+    "alignment": "nominative-accusative",
+    "global_seed": 88471,
+    "phonotactics": {
+        "vowels": "aeiouyäëïöü",
+        "consonants": "bcdfghklmnpqrstvwxz",
+        "active_style": "noble_guttural",
+        "inventory_styles": {
+            "noble_guttural": {
+                "consonants": "ptkmnlsrvhfdgbqxzw",
+                "vowels": "aeiouyäëöü"
+            }
+        },
+        "transition_matrix": {
+            "enabled": true,
+            "default_weight": 10,
+            "matrix": {
+                "k": {
+                    "r": 50,
+                    "h": 40,
+                    "w": 30
+                },
+                "g": {
+                    "r": 60,
+                    "h": 50,
+                    "w": 30,
+                    "l": 20
+                },
+                "r": {
+                    "n": 40,
+                    "th": 30,
+                    "g": 30
+                },
+                "th": {
+                    "r": 50,
+                    "w": 30
+                },
+                "x": {
+                    "t": 40,
+                    "r": 30
+                }
+            }
+        },
+        "syllable_templates": [
+            "CVC",
+            "CVCC",
+            "CCVC",
+            "CV"
+        ],
+        "min_syllables": 1,
+        "max_syllables": 4,
+        "max_consonant_cluster": 3,
+        "max_vowel_cluster": 2,
+        "forbidden_initial_clusters": [
+            "lr",
+            "rl",
+            "nm",
+            "mn",
+            "sz",
+            "zs"
+        ],
+        "forbidden_final_consonants": [
+            "b",
+            "d",
+            "v",
+            "w",
+            "j"
+        ],
+        "epenthesis_vowel": "u",
+        "diphthongs": [
+            "au",
+            "ui",
+            "ae",
+            "oe",
+            "ei",
+            "ai"
+        ],
+        "sonority_hierarchy": {
+            "enabled": true,
+            "scale": {
+                "p": 1,
+                "t": 1,
+                "k": 1,
+                "q": 1,
+                "b": 2,
+                "d": 2,
+                "g": 2,
+                "f": 3,
+                "v": 3,
+                "th": 3,
+                "dh": 3,
+                "s": 4,
+                "z": 4,
+                "x": 4,
+                "h": 4,
+                "m": 5,
+                "n": 5,
+                "l": 6,
+                "r": 6,
+                "w": 7,
+                "y": 7
+            },
+            "onset_rules": {
+                "min_distance": 1,
+                "allow_plateau": false,
+                "allow_reversal": false
+            },
+            "coda_rules": {
+                "min_distance": 0,
+                "allow_plateau": true,
+                "allow_reversal": true
+            }
+        }
+    },
+    "consonant_mutation": {
+        "enabled": true,
+        "rules": [
+            {
+                "name": "Lenição Gutural",
+                "description": "Suaviza oclusivas em fricativas ásperas e guturais após vogais, típico após artigos ou preposições.",
+                "triggers": {
+                    "words": [
+                        "in",
+                        "en",
+                        "na",
+                        "go"
+                    ],
+                    "pos": [
+                        "DET",
+                        "ADP"
+                    ]
+                },
+                "mutations": {
+                    "p": "f",
+                    "t": "th",
+                    "k": "x",
+                    "b": "v",
+                    "d": "dh",
+                    "g": "gh",
+                    "m": "v"
+                }
+            },
+            {
+                "name": "Mutação Nasal Obscura",
+                "description": "Endurece a mutação nasal, criando oclusivas pesadas e nasais velares.",
+                "triggers": {
+                    "words": [
+                        "dan",
+                        "un",
+                        "morth"
+                    ],
+                    "ending_chars": [
+                        "n",
+                        "m",
+                        "g"
+                    ]
+                },
+                "mutations": {
+                    "p": "mb",
+                    "t": "nd",
+                    "k": "ng",
+                    "b": "m",
+                    "d": "n",
+                    "g": "ng"
+                }
+            }
+        ]
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "fixed",
+        "position": "penultimate",
+        "graphic_accent": true,
+        "accent_map": {
+            "a": "â",
+            "e": "ê",
+            "i": "î",
+            "o": "ô",
+            "u": "û",
+            "y": "ŷ"
+        }
+    },
+    "vowel_harmony": {
+        "enabled": true,
+        "groups": {
+            "front": "eiyäëöü",
+            "back": "aou"
+        },
+        "rules": [
+            {
+                "input": "a",
+                "map": {
+                    "front": "e",
+                    "back": "a"
+                }
+            },
+            {
+                "input": "o",
+                "map": {
+                    "front": "ö",
+                    "back": "o"
+                }
+            },
+            {
+                "input": "u",
+                "map": {
+                    "front": "ü",
+                    "back": "u"
+                }
+            }
+        ]
+    },
+    "case_system": {
+        "enabled": true,
+        "preposition_handling": "coexist",
+        "markers": {
+            "nominative": {
+                "marker": "",
+                "type": "suffix"
+            },
+            "accusative": {
+                "marker": "n",
+                "type": "suffix"
+            },
+            "genitive": {
+                "marker": "ob",
+                "type": "suffix"
+            },
+            "dative": {
+                "marker": "ur",
+                "type": "suffix"
+            },
+            "locative": {
+                "marker": "së",
+                "type": "suffix"
+            },
+            "allative": {
+                "marker": "ad",
+                "type": "suffix"
+            },
+            "instrumental": {
+                "marker": "nen",
+                "type": "suffix"
+            }
+        },
+        "marker_position": "suffix"
+    },
+    "number_system": {
+        "numbers": [
+            "singular",
+            "plural",
+            "dual"
+        ],
+        "markers": {
+            "plural": {
+                "marker": "rin",
+                "alternatives": [
+                    "ung",
+                    "ath",
+                    "in"
+                ]
+            }
+        },
+        "dual_markers": {
+            "nominative": "at",
+            "accusative": "at",
+            "genitive": "oth"
+        },
+        "broken_plurals": {
+            "enabled": true,
+            "patterns": [
+                {
+                    "singular_pattern": "aC",
+                    "plural_pattern": "eC"
+                },
+                {
+                    "singular_pattern": "oC",
+                    "plural_pattern": "eC"
+                },
+                {
+                    "singular_pattern": "uC",
+                    "plural_pattern": "yC"
+                },
+                {
+                    "singular_pattern": "âC",
+                    "plural_pattern": "êC"
+                }
+            ]
+        }
+    },
+    "tam_system": {
+        "enabled": true,
+        "infer_imperative_from_context": true,
+        "person_marking": {
+            "enabled": true,
+            "prefixes": {},
+            "suffixes": {
+                "1sg": "n",
+                "2sg": "g",
+                "3sg": "r",
+                "1pl": "m",
+                "2pl": "ch",
+                "3pl": "th",
+                "1du": "ng",
+                "2du": "dh",
+                "3du": "th"
+            }
+        },
+        "rules": [
+            {
+                "features": [
+                    "VerbForm=Inf"
+                ],
+                "marker": "ad",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "VerbForm=Ger"
+                ],
+                "marker": "ol",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "VerbForm=Part",
+                    "Tense=Past"
+                ],
+                "marker": "en",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Past"
+                ],
+                "marker": "nt",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "uva",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Imp"
+                ],
+                "marker": "o",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Cnd"
+                ],
+                "marker": "xë",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Sub"
+                ],
+                "marker": "ai",
+                "type": "particle_before"
+            }
+        ]
+    },
+    "gender_system": {
+        "enabled": true,
+        "default": "animado",
+        "inference": [
+            {
+                "suffix": "rin",
+                "gender": "animado"
+            },
+            {
+                "suffix": "iel",
+                "gender": "feminino"
+            },
+            {
+                "suffix": "on",
+                "gender": "masculino"
+            },
+            {
+                "suffix": "ung",
+                "gender": "inanimado"
+            },
+            {
+                "suffix": "ath",
+                "gender": "inanimado"
+            }
+        ],
+        "markers": {
+            "masculino": {
+                "targets": [
+                    "ADJ"
+                ],
+                "marker": "on",
+                "position": "suffix"
+            },
+            "feminino": {
+                "targets": [
+                    "ADJ"
+                ],
+                "marker": "eth",
+                "position": "suffix"
+            },
+            "inanimado": {
+                "targets": [
+                    "ADJ"
+                ],
+                "marker": "ur",
+                "position": "suffix"
+            },
+            "animado": {
+                "targets": [
+                    "ADJ"
+                ],
+                "marker": "ir",
+                "position": "suffix"
+            }
+        }
+    },
+    "determiner_system": {
+        "definite_article": {
+            "form": "in",
+            "variants": [
+                "i",
+                "en"
+            ],
+            "sun_letter_assimilation": false
+        },
+        "demonstratives": {
+            "proximal": {
+                "sg_m": "sen",
+                "sg_f": "sin",
+                "pl": "sïn"
+            },
+            "distal": {
+                "sg_m": "thon",
+                "sg_f": "then",
+                "pl": "thïn"
+            }
+        },
+        "possessives": {
+            "pronominal_suffixes": true,
+            "suffixes": {
+                "1sg": "nya",
+                "2sg": "lya",
+                "3sg": "ya",
+                "1pl": "mya",
+                "2pl": "cha",
+                "3pl": "thya"
+            },
+            "independent_forms": {
+                "1sg_m": "nïn",
+                "1sg_f": "nïn",
+                "1pl_m": "mïn",
+                "1pl_f": "mïn",
+                "2sg_m": "lïn",
+                "2sg_f": "lïn",
+                "3sg_m": "tïn",
+                "3sg_f": "tïn"
+            },
+            "possessive_lemmas": {
+                "meu": "1sg",
+                "minha": "1sg",
+                "meus": "1sg",
+                "minhas": "1sg",
+                "teu": "2sg",
+                "tua": "2sg",
+                "teus": "2sg",
+                "tuas": "2sg",
+                "seu": "3sg",
+                "sua": "3sg",
+                "seus": "3sg",
+                "suas": "3sg",
+                "nosso": "1pl",
+                "nossa": "1pl",
+                "nossos": "1pl",
+                "nossas": "1pl"
+            }
+        }
+    },
+    "pronominal_system": {
+        "independent_pronouns": {
+            "1sg": "nï",
+            "2sg": "lï",
+            "3sg": "sï",
+            "1pl": "mï",
+            "2pl": "chï",
+            "3pl": "thï"
+        },
+        "object_pronouns": {
+            "direct": {
+                "1sg": "en",
+                "2sg": "el",
+                "3sg": "es",
+                "1pl": "em",
+                "2pl": "ech",
+                "3pl": "enth"
+            }
+        },
+        "clitic_ordering": {
+            "enabled": true,
+            "order": [
+                "obj_direct",
+                "verb",
+                "obj_indirect"
+            ],
+            "encliticizes": false,
+            "procliticizes": true
+        }
+    },
+    "compounding": {
+        "enabled": true,
+        "head_position": "initial",
+        "linking_elements": {
+            "a": {
+                "after": [
+                    "r",
+                    "l",
+                    "n",
+                    "m",
+                    "th",
+                    "gh"
+                ],
+                "words": []
+            }
+        }
+    },
+    "semantic_fields": {
+        "enabled": true,
+        "auto_detect": false,
+        "use_nltk": false,
+        "manual_groups": {
+            "rio": "água",
+            "chuva": "água",
+            "lago": "água",
+            "floresta": "árvore",
+            "folha": "árvore",
+            "poder": "magia",
+            "rei": "nobreza",
+            "senhor": "nobreza"
+        }
+    },
+    "polysemy_rules": {
+        "enabled": true,
+        "merges": {
+            "música": "canção",
+            "cidade": "fortaleza",
+            "rei": "senhor",
+            "poder": "força",
+            "matar": "destruir",
+            "luz": "visão"
+        },
+        "splits": {}
+    },
+    "false_cognates": {
+        "enabled": false
+    },
+    "topicalization": {
+        "enabled": true,
+        "position": "initial",
+        "topic_marker": "nä",
+        "reintroduce_articles": false
+    },
+    "focus_structure": {
+        "enabled": true,
+        "object_focus_marker": "të",
+        "verb_focus_marker": "së",
+        "suppress_case": false
+    },
+    "functional_particles": {
+        "muito": {
+            "noun_position": "pre_nominal",
+            "adj_position": "pre_nominal",
+            "verb_position": "post_verbal"
+        },
+        "sempre": {
+            "verb_position": "pre_verbal"
+        },
+        "nunca": {
+            "verb_position": "pre_verbal"
+        }
+    },
+    "degree_system": {
+        "enabled": true,
+        "source_rules": [
+            {
+                "type": "diminutive",
+                "suffix": "zinho",
+                "replacement": ""
+            },
+            {
+                "type": "diminutive",
+                "suffix": "zinha",
+                "replacement": ""
+            },
+            {
+                "type": "augmentative",
+                "suffix": "ão",
+                "replacement": "o"
+            },
+            {
+                "type": "superlative",
+                "suffix": "íssimo",
+                "replacement": "o"
+            }
+        ],
+        "rules": {
+            "diminutive": {
+                "affix": "pïn",
+                "position": "suffix"
+            },
+            "augmentative": {
+                "affix": "dâur",
+                "position": "suffix"
+            },
+            "superlative": {
+                "affix": "gûr",
+                "position": "suffix"
+            }
+        }
+    },
+    "morphological_derivation": {
+        "enabled": true,
+        "max_depth": 2,
+        "exceptions": []
+    },
+    "affix_system": {
+        "enabled": true,
+        "source_suffixes": [
+            {
+                "input_pos": "ADJ",
+                "suffix": "mente",
+                "replacement": "",
+                "target_pos": "ADV",
+                "priority": 1
+            }
+        ],
+        "derivation_rules": [
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "affix": "ui",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "agent",
+                "affix": "dir",
+                "position": "suffix"
+            }
+        ]
+    },
+    "reduplication": {
+        "enabled": true,
+        "epenthesis_vowel": "e",
+        "rules": [
+            {
+                "features": [
+                    "Aspect=Iter"
+                ],
+                "pos": [
+                    "VERB"
+                ],
+                "method": "first_syllable",
+                "separator": "-"
+            }
+        ]
+    },
+    "numeric_handling": {
+        "ignore_digits": true
+    },
+    "style": {
+        "capitalization": true,
+        "punctuation_map": {
+            ".": ".",
+            "!": "!",
+            "?": "?",
+            ",": ",",
+            ";": ";",
+            ":": ":"
+        },
+        "sentence_terminators": [
+            ".",
+            "!",
+            "?"
+        ],
+        "secondary_terminators": [
+            ":",
+            ";"
+        ]
+    },
+    "vocabulary": {
+        "terra": "glôrn",
+        "mundo": "ardh",
+        "sol": "ghâlh",
+        "lua": "rîth",
+        "estrela": "thîr",
+        "estrelas": "thîrin",
+        "céu": "menel",
+        "água": "nûrn",
+        "rio": "sîrn",
+        "mar": "gârn",
+        "fogo": "rûzg",
+        "chama": "lâxh",
+        "árvore": "vëa",
+        "floresta": "taurung",
+        "folha": "lass",
+        "homem": "ëdan",
+        "homens": "ëdrin",
+        "elfo": "ëldar",
+        "elfos": "ëldrin",
+        "anão": "naug",
+        "sombra": "gwrûth",
+        "escuridão": "morthung",
+        "luz": "gâlh",
+        "rei": "thôrak",
+        "rainha": "thôris",
+        "senhor": "mâgor",
+        "senhora": "híril",
+        "amigo": "mell",
+        "inimigo": "xoth",
+        "guerra": "auth",
+        "paz": "sîdh",
+        "espada": "magol",
+        "lâmina": "hathol",
+        "escudo": "thang",
+        "arco": "xû",
+        "flecha": "pilin",
+        "magia": "gûl",
+        "canto": "gland",
+        "canção": "gland",
+        "palavra": "peth",
+        "língua": "lamm",
+        "olá": "fanyá",
+        "adeus": "gwelwâ",
+        "sim": "nâ",
+        "não": "vâ",
+        "bem": "mâlh",
+        "mal": "ûk",
+        "grande": "dâur",
+        "pequeno": "pïn",
+        "bom": "mâlh",
+        "ruim": "ûk",
+        "belo": "bain",
+        "forte": "bell",
+        "fraco": "nîd",
+        "ir": "men",
+        "vir": "thol",
+        "fazer": "xer",
+        "ver": "thîr",
+        "ouvir": "lhath",
+        "falar": "peth",
+        "amar": "mel",
+        "odiar": "fuig",
+        "viver": "cûl",
+        "morrer": "gûrth",
+        "estar": "naw",
+        "ser": "naw",
+        "é": "naw",
+        "está": "naw",
+        "são": "nar",
+        "estão": "nar",
+        "um": "mûn",
+        "dois": "thâd",
+        "três": "nûl",
+        "quatro": "xân",
+        "cinco": "lëb",
+        "e": "a",
+        "ou": "eg",
+        "mas": "ax",
+        "que": "i",
+        "se": "ae",
+        "como": "sui",
+        "quando": "ir",
+        "onde": "ias",
+        "o": "in",
+        "a": "in",
+        "os": "in",
+        "as": "in",
+        "de": "en",
+        "da": "en",
+        "do": "en",
+        "em": "vi",
+        "no": "vi",
+        "na": "vi",
+        "para": "an",
+        "com": "na",
+        "sem": "pen",
+        "por": "thrî",
+        "sobre": "or",
+        "sob": "nu",
+        "eu": "nï",
+        "você": "lï",
+        "tu": "lï",
+        "ele": "sï",
+        "ela": "sï",
+        "nós": "mïn",
+        "vós": "chï",
+        "eles": "thï",
+        "elas": "thï",
+        "deus": "valar",
+        "deuses": "valrin"
+    }
+}

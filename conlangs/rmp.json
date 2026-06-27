@@ -1677,11 +1677,9 @@
             "e": "wa",
             "em": "hī",
             "que": "anna",
-            "ser": "kāna",
+            "ser": "wīy",
             "fazer": "ʕamila",
-            "terra": "arḍ",
-            "raab": "R'aab",
-            "hadab": "Hadab"
+            "terra": "arḍ"
         },
         "definitions": {}
     },
@@ -1750,9 +1748,9 @@
             "description": "Quantificador 'pouco'"
         },
         "mais": {
-            "adj_word": "akṯar",
+            "adj_word": "bīy",
             "adj_position": "pre_nominal",
-            "noun_word": "akṯar",
+            "noun_word": "bīy",
             "noun_position": "pre_nominal",
             "description": "Comparativo 'mais'"
         },
@@ -1764,7 +1762,7 @@
             "description": "Comparativo 'menos'"
         },
         "bem": {
-            "verb_word": "ħasanan",
+            "verb_word": "ṭērya",
             "verb_position": "post_verbal",
             "description": "Advérbio 'bem'"
         },
@@ -1819,7 +1817,7 @@
         "e": "wa",
         "que": "anna",
         "em": "fī",
-        "ser": "kāna",
+        "ser": "wīy",
         "fazer": "ʕamila"
     },
     "phonological_processes": {

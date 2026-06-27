@@ -421,9 +421,9 @@
     },
     "determiner_system": {
         "definite_article": {
-            "form": "de",
+            "form": "taue",
             "variants": [
-                "die"
+                "taui"
             ],
             "procliticizes": false,
             "description": "Artigo definido simplificado"

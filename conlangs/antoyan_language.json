@@ -31,7 +31,7 @@
         "base_stability": 65,
         "strata": [
             {
-                "source_id": "mabadi",
+                "source_id": "mabadi_language",
                 "weight": 15,
                 "mutation_intensity": 0.1
             },
