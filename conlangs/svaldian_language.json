@@ -4,7 +4,7 @@
     "description": "Língua mais divergente do tronco garmânico, isolada por milênios nas tundras e florestas orientais do norte. Desenvolveu uma estética única que mistura um ritmo de entonação inicial forte com uma profunda morfologia aglutinante. Possui apenas dois gêneros (comum e neutro) e um sistema rigoroso de harmonia vocálica. Mantém a base SVO germânica, mas substituiu a maioria das preposições por um denso sistema de casos espaciais e relacionais.",
     "family_id": "garmanic_trunk",
     "linguistic_family": "garmanic_trunk.json",
-    "family_node": "svaldian_branch",
+    "family_node": "proto-corimean",
     "word_order": "SVO",
     "subordinate_word_order": "SOV",
     "source_language_order": "SVO",
@@ -116,6 +116,24 @@
                     "front": "y",
                     "back": "u"
                 }
+            }
+        ]
+    },
+    "lexical_confluence": {
+        "enabled": true,
+        "base_stability": 65,
+        "strata": [
+            {
+                "source_id": "old_noric_language",
+                "weight": 20,
+                "mutation_intensity": 0.3,
+                "description": "Influência do Nórico Antigo (empréstimos antigos)"
+            },
+            {
+                "source_id": "corimean_modern",
+                "weight": 15,
+                "mutation_intensity": 0.2,
+                "description": "Influência corimesa (vocabulário técnico)"
             }
         ]
     },

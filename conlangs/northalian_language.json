@@ -1,0 +1,583 @@
+{
+    "id": "northalian_language",
+    "name": "Northálio",
+    "description": "Língua do tronco garmânico do norte, pertencente ao ramo nórico-antigo. É caracterizada por uma fonologia pesada e gutural, fortemente contrastante com o seu parente Sváldio. Possui um sistema tonal estrito de dois tons lexicais, perdeu totalmente a conjugação verbal por pessoa (mantendo apenas distinções de tempo e modo) e utiliza artigos definidos enclíticos. Sua morfologia preservou apenas vestígios do sistema de casos germânico, dependendo mais da ordem SVO estrita e de preposições.",
+    "family_id": "garmanic_trunk",
+    "linguistic_family": "garmanic_trunk.json",
+    "family_node": "proto-corimean",
+    "word_order": "SVO",
+    "subordinate_word_order": "SVO",
+    "source_language_order": "SVO",
+    "alignment": "nominative-accusative",
+    "global_seed": 94821,
+    "phonotactics": {
+        "vowels": "aeiouyæøå",
+        "consonants": "ptkbdgfshvmnlrjxʀ",
+        "syllable_templates": [
+            "CVC",
+            "CCVC",
+            "CVCC",
+            "CCVCC",
+            "CV",
+            "CCV",
+            "VC",
+            "V"
+        ],
+        "min_syllables": 1,
+        "max_syllables": 4,
+        "max_consonant_cluster": 3,
+        "forbidden_initial_clusters": [
+            "tl",
+            "dl",
+            "sr",
+            "zr",
+            "nm",
+            "lr",
+            "ʀr",
+            "rʀ"
+        ],
+        "forbidden_final_consonants": [
+            "h",
+            "j",
+            "v"
+        ],
+        "epenthesis_vowel": "e",
+        "diphthongs": [
+            "ei",
+            "øy",
+            "au",
+            "æi",
+            "åu"
+        ],
+        "sonority_hierarchy": {
+            "enabled": true,
+            "scale": {
+                "p": 1,
+                "t": 1,
+                "k": 1,
+                "b": 2,
+                "d": 2,
+                "g": 2,
+                "f": 3,
+                "s": 3,
+                "h": 3,
+                "x": 3,
+                "v": 4,
+                "m": 5,
+                "n": 5,
+                "l": 6,
+                "r": 7,
+                "ʀ": 7,
+                "j": 8
+            },
+            "onset_rules": {
+                "min_distance": 1,
+                "allow_plateau": false,
+                "allow_reversal": false
+            },
+            "coda_rules": {
+                "min_distance": 0,
+                "allow_plateau": true,
+                "allow_reversal": true
+            }
+        },
+        "phonological_rules": [
+            {
+                "input": "rs$",
+                "output": "ʀs",
+                "register": "colloquial"
+            },
+            {
+                "input": "k$",
+                "output": "x",
+                "register": "colloquial"
+            }
+        ]
+    },
+    "tone_system": {
+        "enabled": true,
+        "tones": [
+            {
+                "name": "tone1",
+                "diacritic": "́",
+                "mapping": {
+                    "a": "á",
+                    "e": "é",
+                    "i": "í",
+                    "o": "ó",
+                    "u": "ú",
+                    "y": "ý",
+                    "æ": "ǽ",
+                    "ø": "ǿ",
+                    "å": "ǻ"
+                }
+            },
+            {
+                "name": "tone2",
+                "diacritic": "̂",
+                "mapping": {
+                    "a": "â",
+                    "e": "ê",
+                    "i": "î",
+                    "o": "ô",
+                    "u": "û",
+                    "y": "ŷ",
+                    "æ": "æ̂",
+                    "ø": "ø̂",
+                    "å": "å̂"
+                }
+            }
+        ],
+        "applies_to": "initial"
+    },
+    "vowel_harmony": {
+        "enabled": false
+    },
+    "lexical_confluence": {
+        "enabled": true,
+        "base_stability": 15,
+        "strata": [
+            {
+                "source_id": "old_noric_language",
+                "weight": 55,
+                "mutation_intensity": 0.4,
+                "description": "Base herdada do Nórico Antigo, fortemente mutada com aspirações e sons uvulares"
+            },
+            {
+                "source_id": "svaldian_language",
+                "weight": 25,
+                "mutation_intensity": 0.2,
+                "description": "Influência por inteligibilidade mútua e proximidade com o Sváldio"
+            },
+            {
+                "source_id": "corimean_modern",
+                "weight": 20,
+                "mutation_intensity": 0.3,
+                "description": "Raízes profundas garmânicas comuns"
+            }
+        ]
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "fixed",
+        "position": "initial",
+        "graphic_accent": false
+    },
+    "case_system": {
+        "enabled": true,
+        "preposition_handling": "coexist",
+        "marker_position": "suffix",
+        "markers": {
+            "nominative": {
+                "marker": "",
+                "type": "suffix"
+            },
+            "accusative": {
+                "marker": "",
+                "type": "suffix"
+            },
+            "genitive": {
+                "marker": "-s",
+                "type": "suffix"
+            }
+        },
+        "preposition_case_mapping": {
+            "tíl": "genitive",
+            "frå": "nominative",
+            "på": "accusative"
+        }
+    },
+    "gender_system": {
+        "enabled": true,
+        "genders": [
+            "comum",
+            "neutro"
+        ],
+        "default": "comum",
+        "inference": [
+            {
+                "suffix": "t",
+                "gender": "neutro"
+            },
+            {
+                "suffix": "x",
+                "gender": "neutro"
+            },
+            {
+                "suffix": "e",
+                "gender": "comum"
+            },
+            {
+                "suffix": "r",
+                "gender": "comum"
+            }
+        ],
+        "markers": {
+            "comum": {
+                "targets": [
+                    "ADJ",
+                    "DET",
+                    "PRON"
+                ],
+                "marker": "",
+                "position": "suffix"
+            },
+            "neutro": {
+                "targets": [
+                    "ADJ",
+                    "DET",
+                    "PRON"
+                ],
+                "marker": "-t",
+                "position": "suffix"
+            }
+        }
+    },
+    "number_system": {
+        "numbers": [
+            "singular",
+            "plural"
+        ],
+        "markers": {
+            "plural": {
+                "marker": "ar",
+                "alternatives": [
+                    "er",
+                    "r"
+                ]
+            }
+        },
+        "broken_plurals": {
+            "enabled": true,
+            "patterns": [
+                {
+                    "singular_pattern": "CåC",
+                    "plural_pattern": "CøC-er"
+                },
+                {
+                    "singular_pattern": "CaC",
+                    "plural_pattern": "CæC-er"
+                }
+            ]
+        }
+    },
+    "tam_system": {
+        "enabled": true,
+        "infer_imperative_from_context": true,
+        "person_marking": {
+            "enabled": false
+        },
+        "rules": [
+            {
+                "features": [
+                    "Tense=Past"
+                ],
+                "marker": "-te",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Past",
+                    "VerbForm=Part"
+                ],
+                "marker": "-t",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "skål",
+                "type": "particle_before"
+            },
+            {
+                "features": [
+                    "Mood=Imp"
+                ],
+                "marker": "",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Voice=Pass"
+                ],
+                "marker": "-s",
+                "type": "suffix"
+            }
+        ]
+    },
+    "agreement_rules": {
+        "gender_agreement": true,
+        "number_agreement": true
+    },
+    "consonant_mutation": {
+        "enabled": true,
+        "rules": [
+            {
+                "name": "Velar to Uvular Spirantization",
+                "triggers": {
+                    "ending_chars": [
+                        "r",
+                        "l"
+                    ]
+                },
+                "mutations": {
+                    "k": "x",
+                    "g": "ʀ"
+                }
+            }
+        ]
+    },
+    "compounding": {
+        "enabled": true,
+        "productivity": "very_high",
+        "head_position": "final",
+        "linking_elements": {
+            "s": {
+                "after": [
+                    "-r",
+                    "-n",
+                    "-t",
+                    "-d"
+                ],
+                "words": []
+            },
+            "e": {
+                "after": [
+                    "-k",
+                    "-x",
+                    "-g"
+                ]
+            }
+        }
+    },
+    "morphological_derivation": {
+        "enabled": true,
+        "max_depth": 3,
+        "exceptions": []
+    },
+    "affix_system": {
+        "enabled": true,
+        "derivation_rules": [
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "type": "relational",
+                "affix": "-lix",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "NOUN",
+                "type": "abstract",
+                "affix": "-xet",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "agent",
+                "affix": "-ar",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "NOUN",
+                "to_pos": "NOUN",
+                "type": "collective",
+                "affix": "-skåp",
+                "position": "suffix"
+            }
+        ]
+    },
+    "determiner_system": {
+        "definite_article": {
+            "form": "en",
+            "variants": [
+                "et",
+                "n",
+                "t"
+            ],
+            "procliticizes": false,
+            "sun_letter_assimilation": false
+        },
+        "demonstratives": {
+            "proximal": {
+                "sg_m": "dænne",
+                "sg_f": "dænne",
+                "sg_n": "dætte",
+                "pl": "disse"
+            },
+            "distal": {
+                "sg_m": "dæn",
+                "sg_f": "dæn",
+                "sg_n": "dæt",
+                "pl": "dæm"
+            }
+        },
+        "possessives": {
+            "pronominal_suffixes": false,
+            "independent_forms": {
+                "1sg": "mín",
+                "2sg": "dín",
+                "3sg_m": "xåns",
+                "3sg_f": "xænnas",
+                "3sg_n": "dæts",
+                "1pl": "vår",
+                "2pl": "jer",
+                "3pl": "dæras"
+            }
+        }
+    },
+    "adposition_system": {
+        "basic_prepositions": {
+            "em": "í",
+            "de": "frå",
+            "para": "tíl",
+            "com": "mæd",
+            "sem": "úten",
+            "sobre": "på",
+            "sob": "under"
+        }
+    },
+    "negation_system": {
+        "enabled": true,
+        "strategies": [
+            {
+                "type": "verbal_negation",
+                "marker": "íxxe",
+                "suffix": ""
+            }
+        ]
+    },
+    "interrogative_system": {
+        "enabled": true,
+        "question_particles": [],
+        "detection_rules": {
+            "wh_words": [
+                "væm",
+                "vå",
+                "vår",
+                "vårfør",
+                "vårdan"
+            ]
+        }
+    },
+    "copula_system": {
+        "enabled": true,
+        "copulas": [
+            {
+                "type": "present_default",
+                "form": "ær",
+                "conjugates": false
+            },
+            {
+                "type": "past",
+                "form": "vår",
+                "conjugates": false
+            }
+        ]
+    },
+    "degree_system": {
+        "enabled": true,
+        "rules": {
+            "comparative": {
+                "affix": "-are",
+                "position": "suffix"
+            },
+            "superlative": {
+                "affix": "-ast",
+                "position": "suffix"
+            }
+        }
+    },
+    "pronominal_system": {
+        "independent_pronouns": {
+            "1sg": "jæg",
+            "2sg": "dú",
+            "3sg_m": "xån",
+            "3sg_f": "xún",
+            "3sg_n": "dæt",
+            "1pl": "ví",
+            "2pl": "dere",
+            "3pl": "deí"
+        },
+        "object_pronouns": {
+            "1sg": "mæg",
+            "2sg": "dæg",
+            "3sg_m": "xåns",
+            "3sg_f": "xænne",
+            "3sg_n": "dæt",
+            "1pl": "åss",
+            "2pl": "dere",
+            "3pl": "dæm"
+        }
+    },
+    "lexical_registers_defaults": {
+        "enabled": true,
+        "registers": [
+            {
+                "name": "formal",
+                "chance": 0.20,
+                "mutation_factor": 0.5,
+                "description": "Registro formal que preserva ditongos e evita contrações guturais excessivas"
+            },
+            {
+                "name": "colloquial",
+                "chance": 0.50,
+                "mutation_factor": 1.5,
+                "description": "Registro coloquial com forte síncope e substituição de k/g por fricativas uvulares (x/ʀ)"
+            }
+        ]
+    },
+    "style": {
+        "capitalization": true,
+        "punctuation_map": {
+            ".": ".",
+            "!": "!",
+            "?": "?",
+            ",": ",",
+            ";": ";",
+            ":": ":"
+        },
+        "sentence_terminators": [
+            ".",
+            "!",
+            "?"
+        ],
+        "secondary_terminators": [
+            ":",
+            ";"
+        ]
+    },
+    "vocabulary": {
+        "floresta": "skårx",
+        "fogo": "æld",
+        "água": "vån",
+        "gelo": "íss",
+        "neve": "snøv",
+        "urso": "byrg",
+        "lobo": "vålgr",
+        "árvore": "træk",
+        "sol": "såll",
+        "lua": "mǫnx",
+        "estrela": "stjærne",
+        "homem": "månn",
+        "mulher": "kvinne",
+        "criança": "bårn",
+        "casa": "xús",
+        "dia": "dåg",
+        "noite": "nått",
+        "espada": "sværd",
+        "escudo": "skjåld",
+        "rei": "kånge",
+        "frio": "kåld",
+        "bom": "gåd",
+        "mau": "vånd",
+        "grande": "stúr",
+        "pequeno": "líte",
+        "ir": "gå",
+        "vir": "kåmme",
+        "comer": "spíse",
+        "beber": "dríkke"
+    }
+}
