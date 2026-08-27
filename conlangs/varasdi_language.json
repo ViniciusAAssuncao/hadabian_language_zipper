@@ -1,0 +1,1128 @@
+{
+    "id": "varasdi",
+    "name": "Varásdi (A Língua dos Fogos Antigos de Hadab)",
+    "description": "Língua monumental de Hadab documentada há cerca de 280 mil anos antes do presente. Fortemente inspirada na fonética e morfologia do Avéstico e na nobreza estrutural do Manfuë Tardio. Possui alinhamento nominativo-acusativo estrito, rica flexão sintética com oito casos, distinção tripartite de número (singular, dual e plural), sistema triplo de gênero e morfologia verbal com reduplicações de aspecto e sandhi consonantal arcaico.",
+    "word_order": "SOV",
+    "subordinate_word_order": "SOV",
+    "source_language_order": "SVO",
+    "drop_articles": true,
+    "pro_drop": {
+        "enabled": true,
+        "conditions": [
+            "verb_agreement"
+        ]
+    },
+    "aesthetic_profile": {
+        "syllable_count_distribution": {
+            "1": 0.12,
+            "2": 0.48,
+            "3": 0.30,
+            "4": 0.10
+        },
+        "cluster_density": 0.45,
+        "vowel_consonant_ratio": 0.52
+    },
+    "alignment": "nominative-accusative",
+    "global_seed": 280420,
+    "shared_base_strength": 0.25,
+    "cultural_purism": 0.85,
+    "phonotactics": {
+        "vowels": "aeiouāēīōūäëïöüâêîôû",
+        "consonants": "ptkbgdfvszšžxγθhrlmnwyjç",
+        "active_style": "varasdi_classical",
+        "inventory_styles": {
+            "varasdi_classical": {
+                "consonants": "ptkbdgvzšžxrthlsmnwyhf",
+                "vowels": "aeiouāēīōūäëïöü"
+            },
+            "varasdi_archaic_ritual": {
+                "consonants": "ptkbgdθvszšžxγhrlmnwyjç",
+                "vowels": "aeiouāēīōūâêîôû"
+            }
+        },
+        "transition_matrix": {
+            "enabled": true,
+            "default_weight": 10,
+            "matrix": {
+                "š": {
+                    "t": 80,
+                    "k": 40,
+                    "p": 30,
+                    "v": 20,
+                    "a": 50,
+                    "u": 40
+                },
+                "z": {
+                    "d": 70,
+                    "m": 50,
+                    "v": 30,
+                    "a": 40,
+                    "i": 30
+                },
+                "x": {
+                    "š": 60,
+                    "r": 70,
+                    "v": 40,
+                    "a": 50,
+                    "u": 30
+                },
+                "θ": {
+                    "r": 80,
+                    "w": 30,
+                    "a": 50,
+                    "e": 30
+                },
+                "r": {
+                    "š": 50,
+                    "t": 40,
+                    "d": 40,
+                    "k": 30,
+                    "a": 50,
+                    "ō": 30
+                },
+                "v": {
+                    "a": 60,
+                    "e": 40,
+                    "ī": 30,
+                    "r": 30
+                },
+                "y": {
+                    "a": 70,
+                    "o": 40,
+                    "u": 30,
+                    "ā": 50
+                },
+                "m": {
+                    "n": 30,
+                    "a": 50,
+                    "b": 40,
+                    "v": 20
+                }
+            }
+        },
+        "syllable_templates": [
+            "CV",
+            "CVC",
+            "V",
+            "VC",
+            "CCV",
+            "CCVC",
+            "CVCC"
+        ],
+        "min_syllables": 1,
+        "max_syllables": 4,
+        "max_consonant_cluster": 3,
+        "max_vowel_cluster": 2,
+        "forbidden_initial_clusters": [
+            "rt",
+            "rk",
+            "lp",
+            "lt",
+            "mn",
+            "nm",
+            "ŋg",
+            "ŋk",
+            "ss",
+            "zz",
+            "tt",
+            "dd"
+        ],
+        "forbidden_final_consonants": [
+            "b",
+            "d",
+            "g",
+            "v",
+            "z",
+            "ž",
+            "j"
+        ],
+        "epenthesis_vowel": "i",
+        "diphthongs": [
+            "ai",
+            "au",
+            "ei",
+            "eu",
+            "oi",
+            "ou",
+            "āi",
+            "āu",
+            "ōi",
+            "äu",
+            "eä",
+            "uō"
+        ],
+        "sonority_hierarchy": {
+            "enabled": true,
+            "scale": {
+                "p": 1,
+                "t": 1,
+                "k": 1,
+                "b": 2,
+                "d": 2,
+                "g": 2,
+                "θ": 3,
+                "f": 3,
+                "v": 3,
+                "s": 3,
+                "z": 3,
+                "š": 3,
+                "ž": 3,
+                "x": 3,
+                "h": 3,
+                "m": 4,
+                "n": 4,
+                "l": 5,
+                "r": 5,
+                "w": 6,
+                "y": 6
+            },
+            "onset_rules": {
+                "min_distance": 2,
+                "allow_plateau": false,
+                "allow_reversal": false
+            },
+            "coda_rules": {
+                "min_distance": 0,
+                "allow_plateau": true,
+                "allow_reversal": true
+            }
+        },
+        "sandhi": {
+            "enabled": true,
+            "rules": [
+                {
+                    "pattern": "t\\s+s",
+                    "replacement": "ss",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "d\\s+š",
+                    "replacement": "šš",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "n\\s+p",
+                    "replacement": "mp",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "n\\s+k",
+                    "replacement": "ŋk",
+                    "ignore_case": true
+                },
+                {
+                    "pattern": "h\\s+t",
+                    "replacement": "št",
+                    "ignore_case": true
+                }
+            ]
+        }
+    },
+    "consonant_mutation": {
+        "enabled": true,
+        "rules": [
+            {
+                "name": "Espirantização Pós-Vocálica",
+                "description": "Transforma oclusivas surdas em fricativas após artigos clíticos ou palavras terminadas em vogal.",
+                "triggers": {
+                    "ending_chars": [
+                        "a",
+                        "e",
+                        "i",
+                        "o",
+                        "u",
+                        "ā",
+                        "ē",
+                        "ī",
+                        "ō",
+                        "ū"
+                    ]
+                },
+                "mutations": {
+                    "p": "f",
+                    "t": "θ",
+                    "k": "x",
+                    "b": "v",
+                    "d": "z",
+                    "g": "γ"
+                }
+            },
+            {
+                "name": "Assibilação Sagrada",
+                "description": "Assibilação arcaica perante termos nominais e partículas do campo sagrado.",
+                "triggers": {
+                    "words": [
+                        "yazata",
+                        "ahura",
+                        "atar"
+                    ]
+                },
+                "mutations": {
+                    "t": "š",
+                    "d": "ž",
+                    "s": "š"
+                }
+            }
+        ]
+    },
+    "stress_system": {
+        "enabled": true,
+        "type": "weight",
+        "position": "penultimate",
+        "graphic_accent": true,
+        "accent_map": {
+            "a": "á",
+            "e": "é",
+            "i": "í",
+            "o": "ó",
+            "u": "ú",
+            "ā": "ā́",
+            "ē": "ḗ",
+            "ī": "ī́",
+            "ō": "ṓ",
+            "ū": "ū́",
+            "ä": "ä́",
+            "ë": "ë́",
+            "ï": "ḯ",
+            "ö": "ö́",
+            "ü": "ǘ"
+        }
+    },
+    "vowel_harmony": {
+        "enabled": true,
+        "groups": {
+            "front": "eēiīäëïöü",
+            "back": "aāoōūu"
+        },
+        "rules": [
+            {
+                "input": "a",
+                "map": {
+                    "front": "e",
+                    "back": "a"
+                }
+            },
+            {
+                "input": "ā",
+                "map": {
+                    "front": "ē",
+                    "back": "ā"
+                }
+            },
+            {
+                "input": "o",
+                "map": {
+                    "front": "ö",
+                    "back": "o"
+                }
+            },
+            {
+                "input": "u",
+                "map": {
+                    "front": "ü",
+                    "back": "u"
+                }
+            },
+            {
+                "input": "ō",
+                "map": {
+                    "front": "ē",
+                    "back": "ō"
+                }
+            }
+        ]
+    },
+    "case_system": {
+        "enabled": true,
+        "preposition_handling": "replace",
+        "preposition_case_mapping": {
+            "em": "locative",
+            "de": "ablative",
+            "para": "dative",
+            "com": "instrumental",
+            "por": "instrumental",
+            "a": "allative",
+            "sobre": "locative",
+            "sem": "ablative"
+        },
+        "markers": {
+            "nominative": {
+                "marker": "š",
+                "type": "suffix"
+            },
+            "accusative": {
+                "marker": "əm",
+                "type": "suffix"
+            },
+            "genitive": {
+                "marker": "hē",
+                "type": "suffix"
+            },
+            "dative": {
+                "marker": "āi",
+                "type": "suffix"
+            },
+            "locative": {
+                "marker": "ōi",
+                "type": "suffix"
+            },
+            "ablative": {
+                "marker": "at",
+                "type": "suffix"
+            },
+            "allative": {
+                "marker": "ana",
+                "type": "suffix"
+            },
+            "instrumental": {
+                "marker": "ā",
+                "type": "suffix"
+            }
+        },
+        "marker_position": "suffix"
+    },
+    "tam_system": {
+        "enabled": true,
+        "infer_imperative_from_context": true,
+        "person_marking": {
+            "enabled": true,
+            "prefixes": {},
+            "suffixes": {
+                "1sg": "mi",
+                "2sg": "ši",
+                "3sg": "ti",
+                "1du": "vahi",
+                "2du": "tō",
+                "3du": "tō",
+                "1pl": "mahi",
+                "2pl": "θa",
+                "3pl": "ənti"
+            }
+        },
+        "rules": [
+            {
+                "features": [
+                    "VerbForm=Inf"
+                ],
+                "marker": "dīai",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "VerbForm=Ger"
+                ],
+                "marker": "anto",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "VerbForm=Part",
+                    "Tense=Past"
+                ],
+                "marker": "ta",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Past"
+                ],
+                "marker": "at",
+                "type": "prefix"
+            },
+            {
+                "features": [
+                    "Tense=Fut"
+                ],
+                "marker": "šya",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Tense=Imp"
+                ],
+                "marker": "na",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Imp"
+                ],
+                "marker": "u",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Cnd"
+                ],
+                "marker": "yāt",
+                "type": "suffix"
+            },
+            {
+                "features": [
+                    "Mood=Sub"
+                ],
+                "marker": "ā",
+                "type": "suffix"
+            }
+        ]
+    },
+    "number_system": {
+        "numbers": [
+            "singular",
+            "plural",
+            "dual"
+        ],
+        "markers": {
+            "plural": {
+                "marker": "ō",
+                "alternatives": [
+                    "āŋhō",
+                    "iš"
+                ]
+            }
+        },
+        "dual_markers": {
+            "nominative": "ā",
+            "accusative": "ā",
+            "genitive": "å"
+        },
+        "broken_plurals": {
+            "enabled": true,
+            "patterns": [
+                {
+                    "singular_pattern": "CaCCa",
+                    "plural_pattern": "CāCō"
+                },
+                {
+                    "singular_pattern": "CuCa",
+                    "plural_pattern": "CōCā"
+                }
+            ]
+        }
+    },
+    "gender_system": {
+        "enabled": true,
+        "default": "masculino",
+        "inference": [
+            {
+                "suffix": "a",
+                "gender": "masculino"
+            },
+            {
+                "suffix": "ō",
+                "gender": "masculino"
+            },
+            {
+                "suffix": "ā",
+                "gender": "feminino"
+            },
+            {
+                "suffix": "ī",
+                "gender": "feminino"
+            },
+            {
+                "suffix": "i",
+                "gender": "feminino"
+            },
+            {
+                "suffix": "əm",
+                "gender": "neutro"
+            },
+            {
+                "suffix": "u",
+                "gender": "neutro"
+            }
+        ],
+        "markers": {
+            "masculino": {
+                "targets": [
+                    "ADJ"
+                ],
+                "marker": "ō",
+                "position": "suffix"
+            },
+            "feminino": {
+                "targets": [
+                    "ADJ"
+                ],
+                "marker": "ā",
+                "position": "suffix"
+            },
+            "neutro": {
+                "targets": [
+                    "ADJ"
+                ],
+                "marker": "əm",
+                "position": "suffix"
+            }
+        }
+    },
+    "determiner_system": {
+        "definite_article": {
+            "form": "hō",
+            "variants": [
+                "hā",
+                "tat"
+            ],
+            "sun_letter_assimilation": false
+        },
+        "demonstratives": {
+            "proximal": {
+                "sg_m": "ayam",
+                "sg_f": "imā",
+                "pl": "imē"
+            },
+            "distal": {
+                "sg_m": "hōu",
+                "sg_f": "hāu",
+                "pl": "avē"
+            }
+        },
+        "possessives": {
+            "pronominal_suffixes": true,
+            "suffixes": {
+                "1sg": "mē",
+                "2sg": "tē",
+                "3sg": "hē",
+                "1pl": "nō",
+                "2pl": "vō",
+                "3pl": "šąm"
+            },
+            "independent_forms": {
+                "1sg_m": "manā",
+                "1sg_f": "manā",
+                "1pl_m": "ahmākəm",
+                "1pl_f": "ahmākəm",
+                "2sg_m": "tavā",
+                "2sg_f": "tavā"
+            },
+            "possessive_lemmas": {
+                "meu": "1sg",
+                "minha": "1sg",
+                "meus": "1sg",
+                "minhas": "1sg",
+                "teu": "2sg",
+                "tua": "2sg",
+                "teus": "2sg",
+                "tuas": "2sg",
+                "seu": "3sg",
+                "sua": "3sg",
+                "seus": "3sg",
+                "suas": "3sg",
+                "nosso": "1pl",
+                "nossa": "1pl",
+                "nossos": "1pl",
+                "nossas": "1pl"
+            }
+        }
+    },
+    "pronominal_system": {
+        "independent_pronouns": {
+            "1sg": "azəm",
+            "2sg": "tūm",
+            "3sg": "hō",
+            "1pl": "vaēm",
+            "2pl": "yūžəm",
+            "3pl": "tē"
+        },
+        "object_pronouns": {
+            "direct": {
+                "1sg": "mā",
+                "2sg": "θvā",
+                "3sg": "hīm",
+                "1pl": "nō",
+                "2pl": "vō",
+                "3pl": "dīš"
+            }
+        },
+        "clitic_ordering": {
+            "enabled": true,
+            "order": [
+                "neg",
+                "verb",
+                "obj_direct",
+                "obj_indirect"
+            ],
+            "encliticizes": true,
+            "procliticizes": false
+        }
+    },
+    "negation_system": {
+        "enabled": true,
+        "strategies": [
+            {
+                "type": "verbal_negation",
+                "marker": "nōit",
+                "suffix": ""
+            },
+            {
+                "type": "nominal_negation",
+                "marker": "an-",
+                "suffix": ""
+            },
+            {
+                "type": "emphatic_negation",
+                "marker": "mā",
+                "suffix": ""
+            }
+        ]
+    },
+    "copula_system": {
+        "enabled": true,
+        "copulas": [
+            {
+                "type": "present_default",
+                "form": "asti",
+                "conditions": [
+                    "Tense=Pres"
+                ],
+                "conjugates": true
+            },
+            {
+                "type": "past_default",
+                "form": "āha",
+                "conditions": [
+                    "Tense=Past"
+                ],
+                "conjugates": true
+            }
+        ]
+    },
+    "compounding": {
+        "enabled": true,
+        "head_position": "final",
+        "linking_elements": {
+            "ō": {
+                "after": [
+                    "a",
+                    "e",
+                    "i",
+                    "o",
+                    "u",
+                    "ā",
+                    "ē",
+                    "ī",
+                    "ō",
+                    "ū"
+                ],
+                "words": [
+                    "ātar",
+                    "varas",
+                    "hadab",
+                    "manθra"
+                ]
+            },
+            "i": {
+                "after": [
+                    "r",
+                    "l",
+                    "s",
+                    "š",
+                    "z"
+                ]
+            }
+        }
+    },
+    "semantic_fields": {
+        "enabled": true,
+        "auto_detect": false,
+        "use_nltk": false,
+        "manual_groups": {
+            "fogo": "sagrado",
+            "chama": "sagrado",
+            "luz": "sagrado",
+            "sol": "sagrado",
+            "sacerdote": "religião",
+            "rei": "nobreza",
+            "rio": "natureza",
+            "mar": "natureza",
+            "estrela": "sagrado",
+            "alma": "espírito",
+            "deus": "sagrado"
+        },
+        "animate_domains": [
+            "sagrado",
+            "religião",
+            "nobreza",
+            "espírito",
+            "human"
+        ]
+    },
+    "polysemy_rules": {
+        "enabled": true,
+        "merges": {
+            "chama": "fogo",
+            "claridade": "luz",
+            "monarca": "rei",
+            "oceano": "mar",
+            "espírito": "alma",
+            "trevas": "noite"
+        },
+        "splits": {}
+    },
+    "false_cognates": {
+        "enabled": false
+    },
+    "topicalization": {
+        "enabled": true,
+        "position": "initial",
+        "topic_marker": "zī",
+        "reintroduce_articles": false
+    },
+    "focus_structure": {
+        "enabled": true,
+        "object_focus_marker": "bā",
+        "verb_focus_marker": "cit",
+        "suppress_case": false
+    },
+    "functional_particles": {
+        "muito": {
+            "noun_position": "pre_nominal",
+            "adj_position": "pre_nominal",
+            "verb_position": "pre_verbal"
+        },
+        "sempre": {
+            "verb_position": "pre_verbal"
+        },
+        "ainda": {
+            "verb_position": "pre_verbal"
+        }
+    },
+    "degree_system": {
+        "enabled": true,
+        "source_rules": [
+            {
+                "type": "diminutive",
+                "suffix": "zinho",
+                "replacement": ""
+            },
+            {
+                "type": "diminutive",
+                "suffix": "zinha",
+                "replacement": ""
+            },
+            {
+                "type": "augmentative",
+                "suffix": "ão",
+                "replacement": "o"
+            },
+            {
+                "type": "superlative",
+                "suffix": "íssimo",
+                "replacement": "o"
+            }
+        ],
+        "rules": {
+            "diminutive": {
+                "affix": "ka",
+                "position": "suffix"
+            },
+            "augmentative": {
+                "affix": "vazr-",
+                "position": "prefix"
+            },
+            "superlative": {
+                "affix": "təma",
+                "position": "suffix"
+            }
+        }
+    },
+    "morphological_derivation": {
+        "enabled": true,
+        "max_depth": 3,
+        "exceptions": []
+    },
+    "affix_system": {
+        "enabled": true,
+        "source_suffixes": [
+            {
+                "input_pos": "ADJ",
+                "suffix": "mente",
+                "replacement": "",
+                "target_pos": "ADV",
+                "priority": 1
+            },
+            {
+                "input_pos": "VERB",
+                "suffix": "dor",
+                "replacement": "r",
+                "target_pos": "NOUN",
+                "priority": 0
+            },
+            {
+                "input_pos": "VERB",
+                "suffix": "ção",
+                "replacement": "r",
+                "target_pos": "NOUN",
+                "priority": 0
+            }
+        ],
+        "derivation_rules": [
+            {
+                "from_pos": "NOUN",
+                "to_pos": "ADJ",
+                "affix": "vant",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "agent",
+                "affix": "tar",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "ADJ",
+                "to_pos": "ADV",
+                "affix": "ahvat",
+                "position": "suffix"
+            },
+            {
+                "from_pos": "VERB",
+                "to_pos": "NOUN",
+                "type": "action",
+                "affix": "šnō",
+                "position": "suffix"
+            }
+        ]
+    },
+    "reduplication": {
+        "enabled": true,
+        "epenthesis_vowel": "i",
+        "rules": [
+            {
+                "features": [
+                    "Aspect=Iter"
+                ],
+                "pos": [
+                    "VERB"
+                ],
+                "method": "first_syllable",
+                "separator": ""
+            },
+            {
+                "features": [
+                    "Degree=Abs"
+                ],
+                "pos": [
+                    "ADJ"
+                ],
+                "method": "first_syllable",
+                "separator": "-"
+            }
+        ]
+    },
+    "numeric_handling": {
+        "ignore_digits": true
+    },
+    "style": {
+        "capitalization": true,
+        "punctuation_map": {
+            ".": " ·",
+            "!": " !",
+            "?": " ?",
+            ",": " ,",
+            ";": " ;",
+            ":": " :"
+        },
+        "sentence_terminators": [
+            "·",
+            ".",
+            "!",
+            "?"
+        ],
+        "secondary_terminators": [
+            ":",
+            ";"
+        ]
+    },
+    "vocabulary": {
+        "sacro": "spənta",
+        "sagrado": "spənta",
+        "divino": "yazata",
+        "império": "xšaθra",
+        "governo": "xšaθra",
+        "homem": "marəta",
+        "homens": "marətō",
+        "olá": "drvatāt",
+        "saudações": "hvarəštā",
+        "luz": "raočah",
+        "sol": "hvarə",
+        "sonho": "xvafna",
+        "como": "yaθā",
+        "ir": "āzaiti",
+        "vai": "azaiti",
+        "bem": "vaŋhu",
+        "bom": "vohu",
+        "boa": "vaŋhī",
+        "tudo": "vispa",
+        "onde": "yada",
+        "estar": "ahmi",
+        "está": "asti",
+        "aí": "aθra",
+        "perdão": "paitita",
+        "desculpe": "paitita",
+        "eu": "azəm",
+        "você": "tūm",
+        "ele": "hō",
+        "eles": "tē",
+        "nós": "vaēm",
+        "noite": "xšap",
+        "dia": "ayarə",
+        "tarde": "uzayara",
+        "tempestuoso": "vaγdō",
+        "caótico": "drujiš",
+        "conhecimento": "dānā",
+        "mar": "zrayah",
+        "rio": "dāityā",
+        "curso": "frava",
+        "polo": "arəzurō",
+        "central": "maidyāna",
+        "universo": "stīš",
+        "fogo": "ātar",
+        "ouro": "zaranya",
+        "dourado": "zaranēna",
+        "prata": "ərəzata",
+        "ferro": "ayah",
+        "rei": "kavi",
+        "reis": "kavayō",
+        "grão-rei": "kavaxšaθra",
+        "príncipe": "visōpuθra",
+        "reino": "xšaθra",
+        "sacerdote": "aθravan",
+        "casta": "pištra",
+        "orar": "yaza",
+        "ore": "yaza",
+        "por": "ana",
+        "sabedoria": "mazdā",
+        "pois": "zī",
+        "de": "hacā",
+        "já": "para",
+        "bastam": "bavaiti",
+        "guerra": "arəθa",
+        "força": "ama",
+        "forças": "amō",
+        "sangue": "vohunī",
+        "puro": "yaozdāta",
+        "vitória": "vərəθraγna",
+        "morte": "mərəθyu",
+        "viver": "jvāiti",
+        "é": "asti",
+        "pássaro": "mərəγa",
+        "lobo": "vəhrka",
+        "cavalo": "aspa",
+        "touro": "gao",
+        "boi": "uxšan",
+        "espada": "karəta",
+        "lâmina": "karəta",
+        "cidade": "vara",
+        "fortaleza": "dərəza",
+        "casa": "nmāna",
+        "eterno": "yavaētāt",
+        "vida": "ahū",
+        "alma": "urvan",
+        "espírito": "mainyu",
+        "santo": "spəntō",
+        "senhor": "ahura",
+        "senhora": "ahurānī",
+        "céu": "asman",
+        "estrela": "stāra",
+        "estrelas": "stārō",
+        "lua": "māŋha",
+        "vento": "vāta",
+        "água": "āp",
+        "águas": "āpō",
+        "árvore": "urvarā",
+        "montanha": "gairi",
+        "palavra": "vāxš",
+        "palavras": "vāčō",
+        "canto": "gāθā",
+        "música": "gāθyā",
+        "verdade": "aša",
+        "justiça": "aša",
+        "mentira": "druj",
+        "traição": "drujištā",
+        "inimigo": "dušman",
+        "amigo": "frya",
+        "irmão": "brātar",
+        "irmã": "xvaŋhar",
+        "pai": "pitar",
+        "mãe": "mātar",
+        "filho": "puθra",
+        "filha": "duγdar",
+        "criança": "apərənāyu",
+        "povo": "dahyu",
+        "tribo": "zantu",
+        "lei": "dāta",
+        "coração": "zərədaya",
+        "olho": "čašman",
+        "mão": "zasta",
+        "mãos": "zastayō",
+        "pé": "pāda",
+        "cabeça": "sarah",
+        "tempo": "zrvān",
+        "ano": "sarəd",
+        "século": "satōzarəda",
+        "era": "yākarə",
+        "antigo": "parō",
+        "novo": "nava",
+        "grande": "vazra",
+        "pequeno": "kasu",
+        "alto": "bərəzant",
+        "profundo": "jafra",
+        "belo": "srīra",
+        "sábio": "hudānū",
+        "forte": "taxma",
+        "rápido": "āsu",
+        "escuro": "təmaŋhvant",
+        "claro": "raoxšna",
+        "fazer": "kərənaoiti",
+        "dizer": "mraoti",
+        "ver": "vaēnaiti",
+        "ouvir": "srunaoiti",
+        "saber": "vaēda",
+        "dar": "dadāiti",
+        "levar": "baraiti",
+        "amar": "friyāiti",
+        "odiar": "dvaēšaiti",
+        "combater": "yūiδyaiti",
+        "proteger": "pāiti",
+        "salvar": "saošyant",
+        "criar": "dā",
+        "destruir": "mərəncaiti",
+        "brilhar": "brāzaiti",
+        "queimar": "saocaiti",
+        "andar": "caraiti",
+        "falar": "sandaiti",
+        "pensar": "manaiti",
+        "pensamento": "manah",
+        "ação": "šyaona",
+        "que": "ya",
+        "esteja": "bavāt",
+        "com": "hača",
+        "sem": "anā",
+        "e": "utā",
+        "mas": "tū",
+        "ou": "vā",
+        "se": "yezi",
+        "não": "nōit",
+        "nunca": "mā-kic",
+        "ainda": "nūram",
+        "muito": "vərəti",
+        "sempre": "yavatait",
+        "um": "aēva",
+        "dois": "dva",
+        "três": "θri",
+        "quatro": "čaθwar",
+        "cinco": "panča",
+        "dez": "dasa",
+        "cem": "satəm",
+        "mil": "hazazra",
+        "da": "hē",
+        "do": "hē",
+        "os": "tē",
+        "as": "tå",
+        "o": "hō",
+        "a": "hā"
+    }
+}
